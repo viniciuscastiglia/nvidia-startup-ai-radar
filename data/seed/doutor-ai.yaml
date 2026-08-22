@@ -1,0 +1,92 @@
+# Doutor-AI
+# Coletado em 2026-08-22. Todo `conteudo_texto` é o texto REAL da página em
+# `url_fonte`, extraído com `scripts/coletar.py` — não é paráfrase. `perfil_alvo` é
+# anotação de curadoria e NÃO é inserido no banco (ver o docstring de scripts/seed.py).
+nome: Doutor-AI
+site: https://doutor-ai.com/
+setor: saúde
+estagio: pre-seed
+localizacao: São Paulo, SP
+ano_fundacao: 2024
+tamanho_time: null
+descricao_curta: Plataforma multiagente que automatiza a jornada do paciente — agendamento, triagem, transcrição
+  de consulta e pós-consulta — para hospitais, clínicas e operadoras.
+fonte_descoberta: startups.com.br — cobertura de healthtechs
+coletado_em: '2026-08-22'
+perfil_alvo: AI-native
+perfil_alvo_nota: |-
+  Caso SWEET SPOT do modelo de dois eixos. Linguagem de autopilot pura ('força de trabalho digital', 'funcionários robôs'), 700+ agentes, breakeven em 8 meses — posicionamento AI-native claro. Mas nenhuma menção a modelo próprio, self-hosting, quantização, avaliação ou observabilidade: stack imatura. É o melhor prospect de conversão e o caso que o motor de recomendação existe para achar.
+documentos:
+- tipo: noticia
+  titulo: Doutor-AI aposta em IA para transformar a jornada do paciente
+  url_fonte: https://startups.com.br/negocios/healthtechs/doutor-ai-aposta-em-ia-para-transformar-a-jornada-do-paciente/
+  data_publicacao: '2025-09-09'
+  conteudo_texto: |-
+    Doutor-AI aposta em IA para transformar a jornada do paciente
+    Solução da Doutor-AI consegue acompanhar toda a jornada do paciente, desde o 1º atendimento ao pós-consulta
+    Copiar Link?
+    Maurício Honorato, CEO da Doutor-AI (Imagem: Divulgação)
+    Imagine que você saiu de uma consulta médica e percebeu que o profissional não levou em conta seu histórico de saúde, ou que esqueceu de registrar informações importantes no prontuário. Situações assim são comuns no dia a dia, seja por falha humana ou por falhas de sistemas, o que acarreta filas mais longas, diagnósticos menos precisos e pacientes insatisfeitos com seu atendimento.
+    É justamente levando isso em consideração que a healthtech
+    quer fazer a diferença. Com a operação iniciada em fevereiro deste ano, a startup desenvolveu uma plataforma de IA e agentes autônomos capaz de acompanhar toda a jornada do paciente, incluindo o primeiro atendimento, agendamento, triagem, consulta, pós-consulta e monitoramento.
+    Hoje, a solução possui mais de 700 agentes treinados, com cada um deles responsável por uma funcionalidade diferente. “O que a gente está provando é que a IA na saúde não é sobre o hype. É sobre como você utiliza, se adapta a ela e como você co-cria com seus clientes. Nossa tese sempre foi sobre ouvir, adaptar e escalar com velocidade”, disse Mauricio Honorato, CEO da
+    , em entrevista ao
+    .
+    Do zero ao breakeven
+    Em dezembro de 2024, a Doutor-AI recebeu um aporte de US$ 1 milhão (cerca de R$ 6 milhões) em rodada pré-seed, liderada pela
+    e com participação de dois investidores-anjo, cujos nomes não foram revelados.
+    Além disso, de acordo com o CEO, a empresa já atingiu o breakeven em apenas oito meses de operação. Esse crescimento já conseguiu chamar a atenção de grandes players do mercado, conquistando clientes de peso como
+    Clínica da Cidade
+    .
+    Dell: "Crise de componentes nunca foi tão generalizada"
+    Enquanto big techs disputam semicondutores para abastecer data centers, fabricantes de computadores enfrentam picos inflacionários
+    ASUS quer estar entre os líderes de mercado no B2B até 2030
+    Em meio à alta global no preço de componentes, ASUS aposta em montagem nacional e em notebook premium com segurança pós-quântica
+    “Estamos reposicionando a IA como uma ferramenta operacional real. O nosso foco são operadoras de saúde, hospitais e grandes redes de clínicas e laboratórios. Enterprise, B2B médio e grande. Comercializamos as nossas aplicações para esse público”, explica o CEO.
+    Integração a qualquer sistema
+    Plataforma da Doutor-AI (Imagem: Divulgação/Doutor-AI)
+    A proposta da
+    é funcionar como uma “força de trabalho digital” dentro das instituições de saúde. Sendo assim, seus agentes de IA podem ser plugados diretamente em canais já usados por hospitais, clínicas ou operadoras, como WhatsApp, plataformas próprias de atendimento, telefonia ou sistemas de agendamento.
+    Cada agente executa uma função específica. Isso significa que a tecnologia é capaz de responder dúvidas iniciais de pacientes, organizar agendas, confirmar consultas, enviar lembretes, realizar check-ins e até conduzir triagens prévias. Tudo isso com atendimento humanizado — só que feito por robôs.
+    Além do atendimento direto ao paciente, os agentes também atuam no suporte ao médico e na gestão das instituições. Durante a consulta, por exemplo, podem transcrever em tempo real a conversa, preencher automaticamente o prontuário com linguagem médica adequada e até sugerir exames ou encaminhamentos clínicos, evitando esquecimentos por parte do profissional.
+    No pós-consulta, os “funcionários robôs” enviam feedbacks, monitoram adesão ao tratamento e acompanham a evolução do paciente. Já na camada de gestão, oferecem dashboards que mensuram desde a qualidade do atendimento até o nível de satisfação dos pacientes, permitindo identificar falhas ou op
+- tipo: noticia
+  titulo: 'Doutor-AI: startup cria agentes de IA para saúde'
+  url_fonte: https://www.mobiletime.com.br/noticias/17/04/2025/doutor-ai/
+  data_publicacao: '2025-04-17'
+  conteudo_texto: |-
+    Doutor-AI: startup cria agentes de IA para saúde, do atendimento ao pós-consulta
+    Fernando Paiva | 17/04/25 08:45
+    Clínicas, hospitais e planos de saúde perdem muito tempo e dinheiro com a execução de diversos processos ao longo da jornada de saúde de um paciente, desde o atendimento e agendamento até o acompanhamento pós-consulta. Boa parte desse trabalho pode ser automatizado, a um custo muito menor e com um ganho de eficiência e qualidade, usando agentes de
+    . É o que propõe a startup brasileira
+    , recém-chegada ao mercado.
+    Lançada oficialmente em fevereiro deste ano, A Doutor-AI já conta com 10 clientes, incluindo Conexa, Leve Saúde e Rede D’Or, e projeta ter mais de 10 milhões de eventos automatizados por seus agentes ao longo do seu primeiro ano de operação.
+    “Nosso público-alvo é corporativo: planos de saúde, operadoras de saúde, grandes hospitais, redes de clínicas e laboratórios. Nossa persona é o gestor da saúde, não o médico”, explica Maurício Honorato, fundador e CEO da startup.
+    A Doutor AI cria agentes para cada etapa dessa jornada, de acordo com as regras de cada instituição. Os agentes são integrados aos sistemas utilizados pelo contratante e passam a automatizar uma série de procedimentos burocráticos. Funcionam também em qualquer canal de contato com os pacientes utilizado pela instituição, seja seu site, app ou WhatsApp, por exemplo, sempre usando linguagem natural e inteligência artificial generativa para manter uma conversa fluida, mas dentro de limites previamente parametrizados.
+    Maurício Honorato, fundador e CEO da Doutor-AI
+    Uma jornada convencional, fim a fim, custa entre R$ 180 e R$ 200 na rede privada, considerando desde o atendimento até o pós-consulta, incluindo o custo do médico para a consulta, estima Honorato. A Doutor-AI consegue reduzir os custos operacionais pela metade, variando entre R$ 90 e R$ 120, afirma.
+    “Reduzimos o tempo médio de atendimento, que fica mais assertivo. O agendamento custa uma fração do custo que teria com um ser humano”, garante.
+    Cabe lembrar que a solução não substitui a consulta médica em si, mas inclui ferramentas que conferem maior eficiência para o profissional de saúde. O agente adianta para o médico, em seu computador ou celular, informações sobre o paciente que ele vai receber, coletadas durante o agendamento, o que poupa tempo.
+    “Na triagem, antecipamos os problemas que um paciente teria em uma consulta. Fazemos uma espécie de pré-consulta, já entregando uma previsão para o médico. E este pode cuidar melhor do paciente, pois tem tempo disponível para fazer a sua função, sem preencher tantos dados. O paciente conta o histórico antes e o médico apenas valida e faz perguntas adicionais. O médico consegue ser profundo. Geramos mais qualidade clínica”, relata Honorato.
+    Apoio ao médico durante a consulta
+    A consulta, seja presencial ou remota, pode ser gravada e transcrita pela solução. O agente, em tempo real, atua como um copiloto do médico, relembrando protocolos da instituição e sugerindo perguntas para eliminar determinadas hipóteses. “Auxiliamos na assertividade diagnóstica”, afirma o executivo. O agente pode até sugerir remédios e tratamentos. Além disso, o agente emite um relatório para os gestores avaliando o atendimento prestado pelo médico.
+    Hoje a gravação e a interação com o agente durante a consulta acontecem pelo computador, mas em breve será lançado um app da Doutor-AI. E a startup estuda também importar um device da China que facilita esse procedimento quando acoplado a um smartphone.
+    Todos os dados são encriptados e armazenados de maneira separada para cada cliente. Segundo Honorato, a Doutor-AI já nasceu cumprindo a LGPD.
+    Exemplo de tela do Doutor-AI (Crédito: Divulgação)
+    Modelos de negócios da Doutor-AI
+    A solução é dividida em módulos, que podem ser contratados
+- tipo: release
+  titulo: Doutor-AI aposta em inteligência artificial para otimizar experiência em saúde
+  url_fonte: https://portal.clientesa.com.br/doutor-ai-aposta-em-inteligencia-artificial-para-otimizar-experiencia-em-saude/
+  data_publicacao: null
+  conteudo_texto: |-
+    Com mais de 700 multiagentes e tecnologia própria, a plataforma chega  ao mercado  integrando todas as etapas da jornada do paciente
+    A Doutor-AI é a nova healthtech que chega ao mercado com a missão de revolucionar o setor de saúde por meio da inteligência artificial. Sua plataforma multiagentes promete conectar pacientes, médicos, clínicas, hospitais e operadoras de saúde, garantindo eficiência operacional, redução de custos e uma jornada mais fluida para o paciente. Fundada em 2024 e liderada por Maurício Honorato (CEO), Thiago Santos (CTO) e Maximiliano Moreno (COO), a startup já atende grandes empresas do setor, incluindo clínicas, hospitais, planos de saúde e plataformas de telemedicina.
+    “A Doutor-AI é a primeira plataforma no Brasil a integrar todas as etapas da jornada do paciente. Suas soluções incluem agendamento de consultas, triagem, medicina inteligente – com preenchimento automático de prontuário e copiloto do médico -, acompanhamento pós-consulta e um módulo de dashboards para otimização de processos. Com tecnologia escalável e acessível, a plataforma digitaliza tanto as atividades clínicas quanto as administrativas e de suporte em clínicas e hospitais, gerando múltiplos ganhos de eficiência”, assegutou Honorato.
+    De acordo com o executivo, “nossos clientes estão vivenciando um novo patamar de eficiência e experiência. Além de automatizar tarefas operacionais a um custo reduzido, nossa solução proporciona insights qualitativos inimagináveis antes do surgimento da IA. Comprometida com a excelência na experiência do paciente e na gestão de instituições de saúde, a startup busca enfrentar desafios críticos do setor. Atualmente, estima-se que 30% dos custos sejam desperdiçados em processos operacionais e que mais de 800 mil diagnósticos imprecisos ocorram anualmente, afetando milhões de pessoas”.
+    A Doutor-AI foi criada para mitigar esses problemas, automatizando desde o agendamento até o acompanhamento pós-consulta. A tecnologia reduz tarefas repetitivas, otimiza o tempo de resposta e aprimora o atendimento. “Nossos multiagentes assumem tarefas operacionais para otimizar o trabalho de médicos, secretárias e atendentes, garantindo uma experiência mais fluida para pacientes e profissionais da saúde. Isso gera mais segurança e eficiência para as instituições, beneficiando todos os envolvidos”, explicou o CEO.
+    No setor da saúde, onde a proteção de dados é essencial, a empresa garante adotar os mais altos padrões de governança e segurança. “O que nos diferencia dos concorrentes é que muitos atuam de forma segmentada e pulverizada. Além disso, os chatbots de IA disponíveis no mercado apresentam falhas de segurança, comprometendo a reputação de profissionais e instituições de saúde. Nossa plataforma se destaca como a única a oferecer uma arquitetura robusta, com alto nível de segurança e compliance.”, concluiu Honorato.
+    Recentemente, a empresa captou US$ 1 milhão em uma rodada pré-seed e agora planeja acelerar sua expansão, disponibilizando um modelo plug-and-play para o setor de saúde até o fim do ano. A expectativa é alcançar 200 clientes B2B e superar 10 milhões de atendimentos até o final de 2025.
+    Deixe um comentário
+    Você precisa fazer o
+    para publicar um comentário.

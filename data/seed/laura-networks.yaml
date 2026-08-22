@@ -1,0 +1,88 @@
+# Laura Networks
+# Coletado em 2026-08-22. Todo `conteudo_texto` é o texto REAL da página em
+# `url_fonte`, extraído com `scripts/coletar.py` — não é paráfrase. `perfil_alvo` é
+# anotação de curadoria e NÃO é inserido no banco (ver o docstring de scripts/seed.py).
+nome: Laura Networks
+site: https://lauranetworks.com/
+setor: saúde
+estagio: seed
+localizacao: Curitiba, PR
+ano_fundacao: 2016
+tamanho_time: 80
+descricao_curta: Robô cognitivo que monitora prontuários hospitalares e alerta equipes médicas sobre risco
+  de sepse e deterioração clínica.
+fonte_descoberta: busca por healthtechs brasileiras de IA (Exame, InfoMoney)
+coletado_em: '2026-08-22'
+perfil_alvo: AI-native
+perfil_alvo_nota: |-
+  Caso de EVIDÊNCIA DATADA. Os sinais de negócio são fortes (vende desfecho clínico, mortalidade -25%, dado hospitalar proprietário), mas o site institucional fala em 'computação cognitiva' sem citar um único modelo, framework ou métrica técnica, e a notícia mais rica é de 2021. Exercita a regra 3 do Evidence Validator: documento antigo vale menos. O esperado é AI-native com confiança BAIXA e maturidade de stack indeterminada — não AI-native com confiança alta.
+documentos:
+- tipo: site
+  titulo: Laura Networks — Empoderar o talento é a nossa vocação
+  url_fonte: https://lauranetworks.com/
+  data_publicacao: null
+  conteudo_texto: |-
+    EMPODERAR O TALENTO É A NOSSA VOCAÇÃO.
+    Somos uma empresa especializada no desenvolvimento de sistemas dotados de computação cognitiva.
+    “Oi! Eu sou o Robô Laura!”
+    “Meu papel dentro da sua instituição é encontrar possíveis falhas operacionais e informá-las as pessoas responsáveis.”
+    O Robô Laura foi desenvolvido usando tecnologia cognitiva, ou seja, ele é capaz de aprender. Seu maior diferencial é que ela analisa, entende e conversa diretamente com a área operacional de uma instituição, e assim, sabe de que forma pode auxiliar e facilitar o dia-a-dia dentro da corporação.
+    Encontrar falhas operacionais e informar as pessoas responsáveis a tempo pode poupar tempo, recursos e até vidas.
+    O Robô Laura foi desenvolvido usando tecnologia cognitiva, ou seja, ele é capaz de aprender. Seu maior diferencial é que ela analisa, entende e conversa diretamente com a área operacional de uma instituição, e assim, sabe de que forma pode auxiliar e facilitar o dia-a-dia dentro da corporação.
+    Encontrar falhas operacionais e informar as pessoas responsáveis a tempo pode poupar tempo, recursos e até vidas.
+    O Robô Laura utiliza da computação cognitiva para fazer a gestão dos processos, possibilitando que o sistema aprenda e tome decisões baseado em dados.
+    A plataforma do Robô Laura foi desenvolvida com o objetivo de suportar diversas interfaces e sistemas em uma só ferramenta.
+    Estamos com você, seja onde for. O Robô Laura pode ser acessado por computadores, tablets e smartphones. Sua comunicação se dá através de notificações, e-mails e SMS.
+    A capacidade cognitiva torna possível ao Robô Laura uma adaptação natural a sua operação. Você treina o robô segundo as suas necessidades, de modo interativo e
+    amigável.
+    CASOS DE SUCESSO
+    Hospital Nossa Senhora de Fátima
+    O Robô Laura foi desenvolvido usando tecnologia cognitiva, ou seja, ele é capaz de aprender. Seu maior diferencial é que ela analisa, entende e conversa diretamente com a área operacional de uma instituição, e assim, sabe de que forma pode auxiliar e facilitar o dia-a-dia dentro da corporação.
+    Encontrar falhas operacionais e informar as pessoas responsáveis a tempo pode poupar tempo, recursos e até vidas.
+    Sepse é uma resposta desregulada e exagerada do seu sistema imunológico a uma infecção, que provoca uma disfunção orgânica. Estima-se que haja 2 milhões e meio de casos de Sepse por ano no Brasil e, desse número, cerca de 250 mil pessoas morrem anualmente. O Sonho de Laura tem como objetivo, reduzir estes números, salvando vidas.
+    QUEM ESTÁ CONOSCO
+    Instituições já estão utilizando o Robô Laura para salvar tempo, recursos e vidas. Quer saber mais sobre o primeiro robô cognitivo de gestão de risco do mundo?
+- tipo: noticia
+  titulo: Como esta startup reduz internações e mortalidade em hospitais — e recebeu R$ 10 milhões
+  url_fonte: https://www.infomoney.com.br/negocios/como-esta-startup-reduz-internacoes-e-mortalidade-em-hospitais-e-recebeu-r-10-milhoes/
+  data_publicacao: '2021-05-20'
+  conteudo_texto: |-
+    Como esta startup reduz internações e mortalidade em hospitais — e recebeu R$ 10 milhões
+    A Laura atende mais de 40 instituições de saúde, ajudando a priorizar pacientes e a definir quais são as melhores formas de acompanhá-los
+    Atualizado 4 anos atrás
+    Fundadores da Laura: Hugo Morales, Jacsson Fressatti e Cristian Rocha (Ale Carnieri/Divulgação)
+    SÃO PAULO – A pandemia de coronavírus colocou holofotes sobre a necessidade de gerenciar melhor recursos hospitalares — como enfermeiros, médicos intensivistas, médicos especializados, unidades de terapia intensiva (UTI). Mas algumas startups de saúde estão de olhos nos gargalos da saúde há anos.
+    Uma delas é a Laura. A healthtech atende mais de 40 instituições de saúde com sua inteligência artificial. A coleta e processamento de informações permite ajudar hospitais, secretarias municipais e operadoras de saúde a decidir qual paciente deve ter o atendimento priorizado e se seu acompanhamento será presencial ou virtual.
+    Essa proposta atraiu a primeira captação externa para a Laura. A startup de saúde anunciou um aporte semente de R$ 10 milhões, que será usado para expansão nacional e internacional. O
+    conversou com os fundadores da Laura para entender o modelo de negócio, os próximos passos depois do aporte e o cenário das healthtechs no Brasil.
+    Inteligência artificial para a saúde
+    A Laura foi criada por Christian Rocha, Hugo Morales e Jacson Fressatto. Fressato tem
+    em tecnologia e segurança. Sua relação com a área da saúde começou a partir de uma experiência pessoal, em 2010. A filha de Fressatto faleceu em uma UTI. “Levei para casa o incômodo de se o suficiente havia sido feito. O que a vitimou foram procedimentos tardios e a sepse [infecção generalizada]. Não são problemas exclusivos de hospitais públicos”, diz.
+    A Organização Mundial de Saúde (OMS) afirma que a sepse é responsável por uma a cada cinco mortes no mundo. São 11 milhões de mortes anualmente, 85% delas ocorrendo em ambientes com poucos recursos. 27% das pessoas com sepse em hospitais, e 42% das pessoas especificamente com sepse nas UTIs, perderão a vida.
+    Fressatto começou a estudar sobre como melhorar esse quadro por meio da inteligência artificial. Ente 2012 e 2015, colocou recursos próprios para testar, homologar e colocar protótipos em hospitais. Os testes começaram efetivamente em 2016, após um investimento anjo de R$ 150 mil.
+    Continua depois da publicidade
+    Fressatto conheceu Christian Rocha na mesma época. O cientista da computação tem um mestrado focado em inteligência artificial na saúde pela Universidade de Estrasburgo (França). “Queria participar de projetos de impacto, e foi aí que conheci o Jacson”, conta.
+    Hugo Morales se juntou ao time de fundadores para fornecer a visão dos médicos. O infectologista trabalhava com gestão de pacientes e via desperdício constante de tempo e desinformação nos prontuários. “Esse é um problema sistêmico, então também precisa de uma solução sistêmica. Conheci o Jacson e o Christian em um simpósio e me interessei pela ideia de mudar completamente o padrão de atendimento”, diz Morales.
+    “Plataformas que fornecem análises com base em inteligência artificial existem aos montes e serão commodity. Nosso diferencial está em levar para o operacional, usando metodologias como design thinking para colocar essa tecnologia na mão dos profissionais de saúde”, defende Fressatto.
+    Continua depois da publicidade
+    A Laura atende mais de 40 hospitais, secretarias municipais e operadoras de saúde por meio de 10,7 milhões de atendimentos em seus quatro anos de operação. O objetivo é identificar pacientes com maior risco antecipadamente. “Nos hospitais, o paciente pode morrer em horas caso seu quadro piore e nada seja feito. Fora dos hospitais, pacientes com sintomas e sem acompanhamento podem acabar internados”
+- tipo: noticia
+  titulo: 'Robô Laura: a startup curitibana que já salvou 24 mil vidas no Brasil'
+  url_fonte: https://gazzconecta.com.br/gazz-conecta/robo-laura-tecnologia-e-saude/
+  data_publicacao: null
+  conteudo_texto: |-
+    de tecnologia desenvolve inteligência
+    artificial para a área da saúde.
+    Robô Laura: a startup curitibana que já salvou 24 mil vidas no Brasil
+    Maria Clara Dias, especial para o GazzConecta
+    Unir tecnologia à missão de salvar vidas é uma tarefa complicada, principalmente em um país com dimensões continentais e realidades socioeconômicas tão distintas como o Brasil. Mas foi com essa premissa que a startup Laura deu o primeiro passo ao digitalizar – e facilitar – o cuidado de pacientes em hospitais na região Sul do país.
+    Tudo começou em 2010, quando o empreendedor Jacson Fressatto perdeu a sua filha recém-nascida diagnosticada com sepse – termo clínico para infecções generalizadas potencialmente perigosas. A ausência de informações tornou impossível um diagnóstico antecipado. E foi nesse cenário que o empreendedor decidiu agir.
+    Em 2016, ele fundou a Laura, empresa curitibana de tecnologia que desenvolve inteligência artificial para a área da saúde. A empresa criou uma plataforma que auxilia médicos nos cuidados com pacientes em internação. O foco inicial da ajudante tecnológica, também carinhosamente apelidada de “Laura”, era indicar à equipe médica sobre possíveis casos de sepse dentro dos hospitais.
+    Como um vírus do bem, a Laura se conecta aos prontuários eletrônicos e monitora os relatórios de saúde e informações clínicas de cada paciente e, ao identificar qualquer piora ou anormalidade, gera um alerta para a equipe médica. Nessa lógica de “machine learning”, ou aprendizado de máquina, a robô analisa mais de 90 variáveis.
+    Desde então, a Laura soma resultados positivos: entre outubro de 2016 e maio de 2020, foram 8,6 milhões de pessoas atendidas e 24 mil pessoas salvas — o equivalente a 18 vidas por dia que a robô ajudou a salvar.
+    Para os hospitais, o benefício da inteligência artificial também se resume em números: com a ajuda das métricas da Laura, a taxa de mortalidade é 25% menor, enquanto o tempo de internação de um paciente cai de 103 para 96 horas, segundo a empresa. “Desde o início, pensávamos em como democratizar o acesso à saúde por meio da tecnologia para mais pessoas, mantendo a mesma excelência do cuidado, mas olhando para a otimização dos custos”, diz Cristian Rocha, CEO da Startup Laura.
+    A pandemia também foi uma oportunidade para a empresa, que desenvolveu uma tecnologia especialmente voltada aos pacientes infectados pelo coronavírus, chamada de PA Digital. O serviço funciona como uma espécie de atendimento digital, no qual é possível informar à robô sobre o seu atual estado de saúde. A partir da primeira análise do quadro clínico, a tecnologia aconselha ou não o paciente a procurar atendimento médico.
+    O processo de triagem foi desenvolvido pela startup em apenas um mês e ajudou a salvar milhares de vidas ao evitar aglomerações e idas desnecessárias ao hospital, segundo Rocha. “O que fizemos foi encontrar uma maneira de usar a tecnologia da Laura para cuidar dos pacientes que também estão fora dos hospitais”, disse. Os procedimentos seguem parâmetros estabelecidos pela Organização Mundial de Saúde (OMS) e Ministério da Saúde.
+    A tecnologia está em funcionamento em 25 instituições, entre prefeituras e hospitais, e atendeu mais de 111 mil pessoas nos últimos oito meses.  Sem o trabalho do PA Digital, o sistema de saúde teria de absorver cerca de 3 mil atendimentos diários a mais.
+    Além disso, o novo braço da Laura ajudou a startup a expandir sua atuação para além do ambiente hospitalar – um adendo importante para reforçar a missão da empresa em democratizar o atendimento de qualidade. “O PA Digital reforça um conceito importante para nós, que é o do acompanhamento contínuo, ao monitorar aquele paciente por 14 dias de forma constante’’, explica o executivo.
+    A ideia é que, em um cenário pós- -covid, o PA digital possa ser us

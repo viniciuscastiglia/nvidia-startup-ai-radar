@@ -1,0 +1,24 @@
+---
+config:
+  flowchart:
+    curve: linear
+---
+graph TD;
+	__start__([<p>__start__</p>]):::first
+	extractor(extractor)
+	classifier(classifier)
+	evidence_validator(evidence_validator)
+	nvidia_rag(nvidia_rag)
+	recommendation(recommendation)
+	elegibilidade(elegibilidade)
+	__end__([<p>__end__</p>]):::last
+	__start__ --> extractor;
+	classifier --> evidence_validator;
+	evidence_validator --> nvidia_rag;
+	extractor --> classifier;
+	nvidia_rag --> recommendation;
+	recommendation --> elegibilidade;
+	elegibilidade --> __end__;
+	classDef default fill:#f2f0ff,line-height:1.2
+	classDef first fill-opacity:0
+	classDef last fill:#bfb6fc

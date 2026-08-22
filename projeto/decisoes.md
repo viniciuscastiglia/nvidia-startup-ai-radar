@@ -321,6 +321,61 @@ arquivo nos dois caminhos. Atrito de reprodução conta no critério 7.
 
 ---
 
+## D-018 — Stubs que produzem evidência REAL, não texto inventado
+**Data:** 22/08/2026
+**Decisão:** os nós-stub da sessão 01 casam o vocabulário de sinal de `contexto/02` §5 contra as
+frases reais dos documentos e devolvem o **trecho literal** como `Evidencia`. Nenhum stub inventa
+texto. E dois nós não são stub nenhum: o **Retriever** (SQL sobre `tsvector`) e o **Evidence
+Validator** (as 5 regras de `contexto/02` §6 são lógica pura).
+**Alternativas descartadas:** stubs que devolvem objetos hard-coded só para o grafo compilar.
+**Motivo:** o que precisava ser provado hoje não era que a extração é boa — era que a
+**rastreabilidade sobrevive aos cinco saltos** até o Briefing. Um stub com texto inventado
+compilaria igual e não provaria nada; o teste `test_toda_recomendacao_tem_evidencia` passaria
+sobre dados falsos. Com evidência real, o teste tem valor desde o dia 1.
+**Reversível?** N/A — os stubs são substituídos por LLM na M4, mantendo a assinatura.
+
+---
+
+## D-019 — Diagramas do grafo como Mermaid em texto, não PNG
+**Data:** 22/08/2026
+**Decisão:** `docs/grafo-pai.mmd` e `docs/subgrafo-analise.mmd` via `draw_mermaid()`.
+**Alternativas descartadas:** `draw_mermaid_png()`, que é o que a documentação do LangGraph
+sugere de imediato.
+**Motivo:** `draw_mermaid_png()` chama a API externa `mermaid.ink` — vira dependência de rede
+para gerar um artefato de build, e quebra offline. O GitHub renderiza Mermaid nativamente, então
+o `.mmd` aparece como diagrama no README sem imagem intermediária, e continua legível e
+versionável em diff. Bônus: o diagrama gerado mostra `defer = True` no nó de Briefing, o que
+torna a decisão de topologia (D-007) visível no próprio desenho.
+**Reversível?** Fácil.
+
+---
+
+## D-020 — Limitações conhecidas dos stubs, registradas em vez de escondidas
+**Data:** 22/08/2026
+**Decisão:** registrar o que a heurística da sessão 01 erra, com a causa, em vez de ajustar
+palavra-chave até a saída parecer boa.
+**O que está errado hoje, e por quê:**
+1. **Falso positivo de inelegibilidade na Axenya.** O filtro do Inception a marcou como
+   consultoria porque o site dela diz *"Integramos consultoria, dados e operação clínica em uma
+   única plataforma"*. Ela não é uma consultoria — ela **absorve** a função de consultoria num
+   produto, que é justamente o wedge da Sequoia (`contexto/02` §1). Casamento de substring não
+   distingue "somos uma consultoria" de "substituímos a consultoria".
+2. **Todas as empresas acusam quase todas as 8 dores.** Os gatilhos ("custo", "escala",
+   "monitoramento") são termos comuns em qualquer texto de negócio.
+3. **Doutor-AI saiu AI-enabled apesar de linguagem de autopilot pura** ("força de trabalho
+   digital", "funcionários robôs"): a palavra "plataforma" acionou o contador de copilot.
+4. **Confiança baixa em tudo**, porque muitos documentos não têm `data_publicacao` — o que é
+   comportamento **correto** da regra 3, não bug.
+**Motivo de registrar em vez de corrigir:** os três primeiros são exatamente o argumento de por
+que este trabalho precisa de LLM com evidência e validação, e não de regex. Um sistema de
+palavra-chave produz erro **confiante** — a Axenya foi reprovada com uma justificativa que soa
+plausível e cita a fonte certa. É o melhor material de "antes e depois" possível para o vídeo, e
+some se eu ajustar a lista de termos até a saída ficar bonita.
+**Encaminhamento:** itens 1-3 são resolvidos na M4, quando os nós passam a usar LLM com saída
+estruturada. O item 4 fica como está.
+
+---
+
 ## Decisões pendentes
 
 Levantadas em `contexto/05-achados-e-decisoes.md` §4, a serem fechadas na sessão 01:

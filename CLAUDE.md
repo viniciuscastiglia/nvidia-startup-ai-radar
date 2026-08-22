@@ -86,13 +86,51 @@ Consulta do usuário
 Qdrant para vetores, BM25 para busca lexical, Cohere Rerank — todos *recomendados*, não obrigatórios.
 Frontend livre.
 
-**Em aberto** (ver `contexto/05-achados-e-decisoes.md`): provedor de LLM e embeddings, reranker,
-como popular a base de startups, framework de frontend.
+**Fechado na sessão 01** (justificativas em `projeto/decisoes.md`):
 
-**Candidato forte a Diferencial:** rodar o RAG inteiro na própria stack NVIDIA via
-`build.nvidia.com` — créditos grátis que não expiram, embedding multilíngue
-`llama-3.2-nv-embedqa-1b-v2` (inclui português) e reranker `llama-3.2-nv-rerankqa-1b-v2`.
-Substitui o Cohere (pago) e dá o argumento "usei a stack que o sistema recomenda" no vídeo.
+| Camada | Escolha | Decisão |
+|---|---|---|
+| LLM dos agentes | `meta/llama-3.1-8b-instruct` via build.nvidia.com | D-012 |
+| Embeddings | `nvidia/llama-nemotron-embed-1b-v2`, **`dimensions=1024`** | D-014 |
+| Reranking | `nvidia/llama-nemotron-rerank-1b-v2` (text-only, não o VL) | D-015 |
+| Vetores | pgvector no mesmo Postgres | D-016 |
+| Busca lexical | `bm25s` em processo para o RAG · `tsvector` para documentos de startup | D-016 |
+| Topologia | subgrafo de análise + fan-out por `Send` | D-007 |
+
+> **Atenção — os modelos que o TAPI cita estão mortos.** `llama-3.2-nv-embedqa-1b-v2` e
+> `llama-3.2-nv-rerankqa-1b-v2` respondem **HTTP 410 Gone** desde 18/05/2026. Nunca usar esses
+> nomes. Ver D-013 e `contexto/03` §3.
+
+**Em aberto:** framework de frontend (P-06) e quantas startups entram na base final.
+
+**Diferencial:** o RAG roda inteiro na própria stack NVIDIA — embedding e reranking do NeMo
+Retriever no lugar do Cohere (pago). Dá o argumento "usei a stack que o sistema recomenda".
+
+## Comandos
+
+```bash
+conda activate case-nvidia                 # Python 3.12.13
+
+python scripts/smoke_nvidia.py             # valida as 3 capacidades da stack NVIDIA
+psql -d case_nvidia -f scripts/init_db.sql # schema (idempotente)
+python scripts/seed.py --verificar-urls    # semeia e confere que toda url_fonte resolve
+python scripts/seed.py --so-validar        # valida as fixtures sem tocar no banco
+python -m src.graph "sua consulta aqui"    # roda o pipeline ponta a ponta
+pytest -q                                  # 11 testes
+python scripts/coletar.py <url>            # auxiliar de curadoria: texto real de uma página
+```
+
+Para quem for avaliar sem Postgres local: `docker compose up -d` (porta 5433) e ajustar
+`DATABASE_URL` no `.env`.
+
+## Convenções
+
+- **Um agente por módulo** em `src/agents/`, cada um exportando `node(state) -> dict`
+- **Dois estados**: `EstadoRadar` (grafo pai) e `EstadoAnalise` (subgrafo). Ver `src/state.py`
+- **Nada é afirmado sem `list[Evidencia]`** — `Afirmacao` é a unidade que os agentes produzem
+- **Fixtures do seed em `data/seed/*.yaml`**, uma startup por arquivo. `perfil_alvo` é anotação
+  de curadoria e **não entra no banco**
+- **Provedor de LLM/embedding/rerank só via `src/config.py`** — nenhum agente conhece a NVIDIA
 
 ## Estrutura e índice
 

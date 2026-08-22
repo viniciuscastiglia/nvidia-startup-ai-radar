@@ -1,0 +1,188 @@
+# Axenya
+# Coletado em 2026-08-22. Todo `conteudo_texto` é o texto REAL da página em
+# `url_fonte`, extraído com `scripts/coletar.py` — não é paráfrase. `perfil_alvo` é
+# anotação de curadoria e NÃO é inserido no banco (ver o docstring de scripts/seed.py).
+nome: Axenya
+site: https://www.axenya.com/
+setor: saúde corporativa
+estagio: série A
+localizacao: São Paulo, SP
+ano_fundacao: 2020
+tamanho_time: null
+descricao_curta: Plataforma de saúde corporativa que usa modelos preditivos para antecipar doenças crônicas
+  e reduzir sinistralidade de planos empresariais.
+fonte_descoberta: startups.com.br — cobertura de healthtechs
+coletado_em: '2026-08-22'
+perfil_alvo: AI-native
+perfil_alvo_nota: |-
+  Caso de CARGA DE INFERÊNCIA REAL. Declara 96 milhões de inferências clínicas por mês — é a única empresa da base com volume que torna custo e escalabilidade dores concretas e não hipotéticas. Modelos próprios, dado proprietário e substituição de trabalho terceirizado (broker/TPA), que é o wedge da Sequoia. Deve ser o prospect de maior prioridade da base; a recomendação esperada envolve NIM e TensorRT-LLM, não Inception isolado.
+documentos:
+- tipo: site
+  titulo: Sobre a Axenya — Uma Nova Categoria de Saúde Corporativa
+  url_fonte: https://www.axenya.com/sobre-nos
+  data_publicacao: null
+  conteudo_texto: |-
+    Uma Nova Categoria
+    Melhor saúde.
+    Menor custo.
+    A Axenya é uma
+    nova categoria de player de saúde corporativa
+    . Integramos consultoria, dados e operação clínica em uma única plataforma para prevenir antes que a doença vire custo.
+    Entrar em Contato
+    custam caro.
+    85% dos custos de saúde vêm de doenças crônicas mal geridas. O modelo tradicional espera a doença para reagir — e cobra caro por isso.
+    Diabetes, hipertensão e outras condições evitáveis consomem recursos que poderiam ser investidos em prevenção e produtividade.
+    R$ 34 bi
+    O Padrão de Mercado
+    Reagir à Doença
+    A Lógica Axenya
+    Gerir a Saúde
+    -37% Custo Crônicos
+    Inteligente.
+    Conectamos dados financeiros e clínicos em uma única visão. Isso nos permite agir antes que o problema vire custo.
+    Centralizamos informações de sinistros, ocupacional e check-ups para ter a visão completa.
+    Algoritmos que identificam riscos antes que eles virem internações e custos.
+    Equipe clínica atuando em tempo real para guiar pacientes ao cuidado certo.
+    Comprovado.
+    Quando você sai do “piloto automático” e aplica governança real, o impacto é mensurável.
+    Redução real gerada por nossa plataforma
+    Benchmark -54% vs média de mercado
+    Custo por Crônico
+    Gestão proativa reduz internações
+    Taxa de Renovação
+    Dos clientes da carteira Axenya
+    Imprensa.
+    A tese da Axenya reportada pelos principais veículos de tecnologia, economia e saúde do mundo.
+    Global | Economia
+    Axenya Raises US$12 Million to Scale AI-Driven Corporate Health Platform with Predictive Data
+    Cobertura internacional da rodada Serie A da Axenya com foco em expansao, IA e interoperabilidade de dados.
+    Global | Distribuicao
+    Anuncio oficial da rodada de US$ 12 milhoes da Axenya
+    Global | Tendencias
+    Future Health Index: referencia global em transformacao da saude
+    Nacional | Negocios
+    Mariano Garcia-Valino: 'Aprendi a deixar tudo fluir, sem tentar controlar o destino'
+    Nacional | Seguros
+    Healthtech Axenya em pauta no ecossistema de inovacao em seguros
+    A categoria mudou.
+    A escolha é sua.
+    Junte-se a empresas líderes que decidiram trocar o modelo fragmentado por uma
+    .
+    Entrar em Contato
+- tipo: noticia
+  titulo: Após captar US$ 12M, Axenya avança em tecnologia e mira 500 mil vidas em 2026
+  url_fonte: https://startups.com.br/negocios/apos-captar-us-12m-axenya-avanca-em-tecnologia-e-mira-500-mil-vidas-em-2026/
+  data_publicacao: '2026-04-10'
+  conteudo_texto: |-
+    Após captar US$ 12M, Axenya avança em tecnologia e mira 500 mil vidas em 2026
+    Startup de saúde corporativa aposta em IA e modelos preditivos para reduzir sinistralidade, economizar custos e escalar a base de clientes
+    Gabriela Del Carmen
+    Copiar Link?
+    Mariano García-Valiño, fundador e CEO da Axenya | Crédito: Divulgação
+    entrou em uma nova fase de crescimento. Após captar US$ 12 milhões em 2025, a startup de saúde corporativa acelera o desenvolvimento tecnológico e a expansão comercial com uma meta ambiciosa: quintuplicar sua base para 500 mil vidas sob gestão e atingir R$ 16 milhões em faturamento ao longo de 2026.
+    Fundada em 2020, a companhia desenvolveu um sistema de gestão contínua da saúde dos colaboradores baseado em modelos preditivos. Com tecnologia proprietária orientada por dados e inteligência artificial, a plataforma cruza informações clínicas, históricas e comportamentais para identificar a propensão a doenças crônicas antes que elas evoluam e passem a pressionar os custos dos planos de saúde.
+    “A habilidade de capturar dados de forma remota e analisá-los com velocidade faz uma diferença enorme em saúde”, afirma Mariano García-Valiño, fundador e CEO da
+    . Segundo o executivo, a startup já gerou R$ 13 milhões em economia para empresas clientes, com uma redução de 76% na sinistralidade ao antecipar potenciais condições de saúde.
+    Esse avanço acontece em um contexto de pressão crescente sobre os custos corporativos. Dados da Associação Brasileira de Recursos Humanos mostram que, em 2025, 28% das empresas registraram aumentos superiores a 20% nos gastos com planos de saúde – mais que o triplo dos 8% observados em 2020. No período, apenas 15% conseguiram manter reajustes abaixo de 5%.
+    Para Mariano, as doenças crônicas estão no centro desse problema. “Elas respondem por 85% dos custos de saúde e, por evoluírem sem sintomas evidentes, acabam chegando tarde ao sistema. A informação para tratar o paciente existe, mas não está acessível no momento certo”, diz.
+    atende mais de 200 empresas, conectando organizações, colaboradores e operadoras em um único ambiente. O crescimento da base, segundo o CEO, também retroalimenta o negócio: quanto maior o volume de dados, mais precisos se tornam os modelos preditivos.
+    Dell: "Crise de componentes nunca foi tão generalizada"
+    Enquanto big techs disputam semicondutores para abastecer data centers, fabricantes de computadores enfrentam picos inflacionários
+    ASUS quer estar entre os líderes de mercado no B2B até 2030
+    Em meio à alta global no preço de componentes, ASUS aposta em montagem nacional e em notebook premium com segurança pós-quântica
+    Modelo de negócio
+    O desenho atual da operação levou cerca de três anos para ser estruturado. Atualmente, a
+    combina uma taxa fixa de uso da plataforma com uma taxa de sucesso atrelada à redução da sinistralidade dos clientes.
+    A proposta, segundo Mariano, é inverter a lógica tradicional do mercado. “Grande parte das corretoras cobra um percentual sobre o valor total gasto com o plano de saúde”, diz. Nesse modelo, quanto maior o custo do plano, maior também a remuneração da corretora – o que desincentiva a redução dessas despesas. “Aqui, nossa remuneração cresce quando o cliente gasta menos”, afirma.
+    Embora atenda empresas de diferentes portes, o modelo tende a gerar mais impacto em populações acima de mil vidas, onde a base estatística é mais robusta e os ganhos são mais evidentes.
+    Validação e próximos passos
+    A rodada de US$ 12 milhões, anunciada em agosto de 2025 e liderada por
+    , acelerou a estratégia de crescimento da startup. Os recursos foram direcionados à evolução da plataforma, ao aprimoramento dos modelos de dados e à expansão da operação comercial. A estratégia incluiu a integração com parceiros da cadeia assistencial e expansão da atuação junto a empresa
+- tipo: blog
+  titulo: 'O Futuro Digital da Medicina: 5 Insights Fundamentais'
+  url_fonte: https://drops.axenya.com/p/o-futuro-digital-da-medicina-5-insights
+  data_publicacao: null
+  conteudo_texto: |-
+    O Futuro Digital da Medicina: 5 Insights Fundamentais
+    mar 12, 2025
+    O futuro da medicina já começou
+    transformação digital na medicina
+    está reconfigurando a atuação de profissionais de saúde em todo o mundo. Com a ascensão de tecnologias como
+    inteligência artificial em saúde
+    dispositivos vestíveis inteligentes
+    e algoritmos de apoio clínico, a prática médica está entrando em uma nova era — mais conectada, eficiente e personalizada.
+    Essa evolução também influencia diretamente a
+    gestão de saúde corporativa
+    , à medida que empresas buscam soluções que aliem cuidado integral,
+    estratificação de risco populacional
+    monitoramento contínuo com base em dados reais
+    .
+    1. Tecnologia médica como ferramenta indispensável
+    A tecnologia não será opcional na medicina do futuro — será indispensável. Nos Estados Unidos,
+    1 em cada 3 adultos já utiliza tecnologia vestível
+    para monitorar a saúde, segundo a Pew Research. Dispositivos como o
+    monitoramento remoto em tempo real
+    , permitindo que pacientes enviem
+    dados clínicos digitais
+    diretamente a seus cardiologistas.
+    Do lado médico, ferramentas como
+    ultrassons portáteis Clarius e Philips Lumify
+    avaliações críticas descentralizadas
+    , melhorando a agilidade do atendimento e reduzindo gargalos no sistema. Esses dispositivos são componentes centrais de plataformas de
+    saúde digital preditiva e personalizada
+    .
+    2. O papel insubstituível das habilidades humanas
+    Mesmo com o avanço da tecnologia, a
+    se torna ainda mais crucial. À medida que algoritmos assumem tarefas repetitivas e administrativas, médicos ganham tempo para desenvolver relações de confiança com os pacientes.
+    , por exemplo,
+    chatbots com IA
+    podem realizar triagens iniciais e acompanhar sintomas, mas o
+    julgamento clínico e as habilidades interpessoais
+    permanecem fundamentais para o diagnóstico e o tratamento efetivo.
+    3. Automação como aliada estratégica
+    Ferramentas como o
+    , do Google, mostram que algoritmos podem superar humanos na detecção de certos padrões radiológicos. Ainda assim, a
+    automatização de processos médicos
+    é mais eficaz quando usada para
+    complementar o raciocínio clínico
+    , e não substituí-lo.
+    Essa abordagem se alinha ao modelo de
+    saúde baseada em valor (VBHC)
+    , que privilegia
+    eficiência, desfechos clínicos positivos e cuidado coordenado
+    , especialmente em sistemas corporativos que enfrentam desafios de
+    sinistralidade em saúde
+    .
+    4. IA: o novo estetoscópio do século XXI
+    inteligência artificial na saúde
+    já é vista como o “novo estetoscópio” da medicina moderna. Soluções como a
+    , com deep learning aprovado pelo FDA, ajudam a detectar anomalias radiológicas com mais rapidez e precisão.
+    , esse princípio orienta o desenvolvimento de soluções como o
+    , nossa plataforma de IA que apoia o trabalho clínico com
+    analytics em saúde preditiva
+    decisões clínicas personalizadas com base em dados reais
+    , integradas à
+    estratificação de risco
+    populacional.
+    5. O paciente como protagonista
+    O novo paradigma coloca o
+    paciente no centro
+    do cuidado. Tecnologias digitais tornam os indivíduos
+    protagonistas da própria saúde
+    , participando ativamente de decisões clínicas, monitorando sintomas e colaborando com dados em tempo real.
+    Esse modelo requer
+    interoperabilidade em saúde
+    , plataformas integradas e uma cultura de cuidado contínuo. Profissionais deixam de ser apenas prescritores e se tornam
+    facilitadores de uma jornada personalizada
+    , com apoio de IA,
+    painéis de saúde populacional (employee health dashboards)
+    e feedback contínuo.
+    Conclusão: saúde digital que conecta dados, empatia e valor
+    medicina do futuro
+    será sustentada pela combinação de
+    tecnologia avançada, cuidado humano e decisões orientadas por dados
+    . Modelos como o da
+    , que unem
+    engajamento do colaborador em saúde
+    , representam a evolução do setor.
+    Essa revolução não substitui médicos — ela os fortalece. E quan

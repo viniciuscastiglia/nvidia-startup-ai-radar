@@ -1,0 +1,20 @@
+---
+config:
+  flowchart:
+    curve: linear
+---
+graph TD;
+	__start__([<p>__start__</p>]):::first
+	query_planner(query_planner)
+	retriever(retriever)
+	analisar_startup(analisar_startup)
+	briefing(briefing<hr/><small><em>defer = True</em></small>)
+	__end__([<p>__end__</p>]):::last
+	__start__ --> query_planner;
+	analisar_startup --> briefing;
+	query_planner --> retriever;
+	retriever -.-> analisar_startup;
+	briefing --> __end__;
+	classDef default fill:#f2f0ff,line-height:1.2
+	classDef first fill-opacity:0
+	classDef last fill:#bfb6fc
