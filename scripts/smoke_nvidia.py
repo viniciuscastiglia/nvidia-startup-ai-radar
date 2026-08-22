@@ -131,7 +131,7 @@ def _embed(textos: list[str], input_type: str, dimensao: int | None) -> tuple[li
 
 
 def teste_embedding() -> None:
-    print("\n2. EMBEDDING — llama-3.2-nv-embedqa-1b-v2 (português + crosslingual)")
+    print(f"\n2. EMBEDDING — {EMBEDDING.modelo} (português + crosslingual)")
 
     consulta_pt = "startup que precisa reduzir o custo e a latência de inferência de LLM"
     passagem_pt_relevante = (
@@ -178,8 +178,12 @@ def teste_embedding() -> None:
         sim_pt_irr = cosseno(q[0], ps[1])
         sim_en_rel = cosseno(q[0], ps[2])
 
-        pt_ok = sim_pt_rel > sim_pt_irr
-        cross_ok = sim_en_rel > sim_pt_irr
+        # Margem mínima, não apenas ">". Descoberto em 22/08 testando o nv-embedqa-e5-v5:
+        # ele passava num teste de ">" com 0.3107 contra 0.3096 — diferença de 0.001, que é
+        # ruído numérico, não separação semântica. Um teste que aceita isso não testa nada.
+        MARGEM = 0.10
+        pt_ok = (sim_pt_rel - sim_pt_irr) >= MARGEM
+        cross_ok = (sim_en_rel - sim_pt_irr) >= MARGEM
         detalhes.append(
             f"PT  relevante {sim_pt_rel:.4f} vs irrelevante {sim_pt_irr:.4f} "
             f"{'(ok)' if pt_ok else '(FALHOU — semântica em português não separa)'}"
@@ -200,7 +204,7 @@ def teste_embedding() -> None:
 # 3. RERANKING
 # ─────────────────────────────────────────────────────────────────────────────
 def teste_rerank() -> None:
-    print("\n3. RERANKING — llama-3.2-nv-rerankqa-1b-v2 (cross-encoder)")
+    print(f"\n3. RERANKING — {RERANK.modelo} (cross-encoder)")
 
     consulta = "Como reduzir a latência de inferência de um LLM em produção?"
     passagens = [
@@ -210,11 +214,10 @@ def teste_rerank() -> None:
     ]
     # Esperado: índice 1 no topo. É o teste de que o reranker de fato ordena por relevância.
 
-    candidatos = [
-        RERANK.url,
-        "https://ai.api.nvidia.com/v1/retrieval/nvidia/llama-3_2-nv-rerankqa-1b-v2/reranking",
-        "https://integrate.api.nvidia.com/v1/ranking",
-    ]
+    # Um candidato só: a URL da config. A varredura de paths foi feita à mão em 22/08 e
+    # está registrada em D-012 — deixar o script tentando N endpoints mascararia uma
+    # regressão futura ("passou, mas por outro caminho").
+    candidatos = [RERANK.url]
     vistos: set[str] = set()
 
     for url in candidatos:
@@ -245,7 +248,8 @@ def teste_rerank() -> None:
                 f"endpoint que respondeu: {url}\n"
                 f"ordem: {ordem}\n"
                 f"topo = passagem #{topo} "
-                f"{'(correto — TensorRT-LLM é a resposta certa)' if acertou else '(ERRADO — esperado #1)'}",
+                f"{'(correto — TensorRT-LLM é a resposta certa)' if acertou else '(ERRADO — esperado #1)'}\n"
+                f"margem topo->2º: {rankings[0]['logit'] - rankings[1]['logit']:.2f}",
             )
             return
         except Exception as exc:  # noqa: BLE001

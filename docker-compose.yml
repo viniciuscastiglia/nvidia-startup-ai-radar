@@ -1,0 +1,33 @@
+# Postgres com pgvector para quem for avaliar o projeto.
+#
+# POR QUE ISTO EXISTE JUNTO DO POSTGRES LOCAL (ver D-017):
+# em desenvolvimento o banco é o Postgres.app que já está de pé na máquina. Este arquivo
+# é para quem clona o repositório e não tem Postgres instalado — `docker compose up -d`
+# e o schema roda sozinho pelo init.
+#
+# A imagem já traz a extensão `vector`; `pg_trgm` e `unaccent` são contrib padrão.
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg17
+    container_name: case-nvidia-db
+    environment:
+      POSTGRES_DB: case_nvidia
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      # Locale importa: a base é em português e o schema usa a config FTS 'portuguese'.
+      LANG: pt_BR.utf8
+    ports:
+      - "5433:5432"   # 5433 de propósito: não colidir com um Postgres local na 5432
+    volumes:
+      - dados_pg:/var/lib/postgresql/data
+      # Tudo em docker-entrypoint-initdb.d roda na primeira subida do container.
+      - ./scripts/init_db.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d case_nvidia"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  dados_pg:

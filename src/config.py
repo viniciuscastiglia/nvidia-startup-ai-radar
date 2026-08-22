@@ -84,14 +84,14 @@ LLM = ConfigLLM(
 EMBEDDING = ConfigEmbedding(
     base_url=_env("EMBEDDING_BASE_URL", "https://integrate.api.nvidia.com/v1"),
     api_key=_API_KEY,
-    modelo=_env("EMBEDDING_MODEL", "nvidia/llama-3.2-nv-embedqa-1b-v2"),
+    modelo=_env("EMBEDDING_MODEL", "nvidia/llama-nemotron-embed-1b-v2"),
     dimensao=int(_env("EMBEDDING_DIM", "1024")),
 )
 
 RERANK = ConfigRerank(
-    url=_env("RERANK_URL", "https://integrate.api.nvidia.com/v1/ranking"),
+    url=_env("RERANK_URL", "https://ai.api.nvidia.com/v1/retrieval/nvidia/llama-nemotron-rerank-1b-v2/reranking"),
     api_key=_API_KEY,
-    modelo=_env("RERANK_MODEL", "nvidia/llama-3.2-nv-rerankqa-1b-v2"),
+    modelo=_env("RERANK_MODEL", "nvidia/llama-nemotron-rerank-1b-v2"),
 )
 
 DATABASE_URL = _env("DATABASE_URL", "postgresql://localhost:5432/case_nvidia")

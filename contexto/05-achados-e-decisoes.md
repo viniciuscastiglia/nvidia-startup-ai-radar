@@ -15,6 +15,7 @@ nomenclaturas demonstra que a fonte atual foi consultada — vale ponto no víde
 | **RAPIDS** | **CUDA-X Data Science** | Rebrand em **11/08/2026**; funcionalidade idêntica. cuDF, cuML, cuGraph e cuxfilter seguem com os mesmos nomes |
 | **Triton Inference Server** | **Dynamo-Triton** | Continua open source; agora parte do NVIDIA AI Enterprise. **NVIDIA Dynamo** é o framework distribuído de serving em escala de datacenter que trabalha junto |
 | **NVIDIA Clara** | *desmembrado* | **Não existe mais como marca guarda-chuva.** O portfólio de Healthcare & Life Sciences hoje é BioNeMo, MONAI, Parabricks, Holoscan SDK e Isaac for Healthcare |
+| **NeMo Retriever** (embedding e reranking) | família **Nemotron** | **Os modelos `llama-3.2-nv-embedqa-1b-v2` e `llama-3.2-nv-rerankqa-1b-v2` foram descontinuados em 18/05/2026** — respondem HTTP 410 Gone. Atuais: `llama-nemotron-embed-1b-v2` e `llama-nemotron-rerank-1b-v2`. Verificado por chamada real em 22/08/2026 |
 | **NVIDIA Riva** | família **Nemotron Speech** | Riva segue sendo o nome do produto; os modelos são apresentados como Nemotron Speech, ~40 idiomas |
 
 ## 2. Inconsistências do próprio TAPI

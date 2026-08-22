@@ -26,7 +26,7 @@ começam com APIs externas pela simplicidade e, ao crescer, enfrentam **custo, l
 escalabilidade, governança, privacidade, avaliação, observabilidade e dependência de
 fornecedores**. A stack NVIDIA leva de protótipo em API a sistema de produção.
 
-> Essa lista de sete dores é o gatilho de recomendação. Ver `03-stack-nvidia.md`.
+> Essa lista de oito dores é o gatilho de recomendação. Ver `03-stack-nvidia.md`.
 
 ## Objetivo do sistema
 

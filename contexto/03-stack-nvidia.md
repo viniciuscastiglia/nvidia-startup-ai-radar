@@ -305,15 +305,35 @@ para usar a própria stack no projeto.
 
 ### NeMo Retriever — embedding e reranking
 
-| Papel | Modelo | Detalhe |
-|---|---|---|
-| Embedding | **`llama-3.2-nv-embedqa-1b-v2`** | **multilíngue, 26 idiomas incluindo português**. Dimensões Matryoshka configuráveis: 384 / 512 / 768 / 1024 / 2048 |
-| Embedding | `llama-3.2-nemoretriever-300m-embed-v1` | variante menor |
-| Reranking | **`llama-3.2-nv-rerankqa-1b-v2`** | cross-encoder, endpoint **`/v1/ranking`**; recebe query + lista de passagens e devolve scores de relevância ordenados |
-| Reranking | `nv-rerankqa-mistral-4b-v3` | 4B, 3.5x maior que o de 1b |
+> **Verificado por chamada real em 22/08/2026.** Os modelos que o TAPI e a documentação de
+> junho citavam **não existem mais**: os endpoints `llama-3.2-nv-embedqa-1b-v2` e
+> `llama-3.2-nv-rerankqa-1b-v2` respondem **HTTP 410 Gone**, com a mensagem
+> *"This endpoint has reached its end of life on 2026-05-18"*. A tabela abaixo é o que
+> responde hoje, medido com `scripts/smoke_nvidia.py`.
 
-O par `llama-3.2-nv-embedqa-1b-v2` + `llama-3.2-nv-rerankqa-1b-v2` é apresentado pela NVIDIA
-como pipeline de alta acurácia em BEIR+TechQA, com suporte multilíngue e crosslingual.
+| Papel | Modelo atual | Endpoint | Medido em 22/08 |
+|---|---|---|---|
+| Embedding | **`nvidia/llama-nemotron-embed-1b-v2`** | `https://integrate.api.nvidia.com/v1/embeddings` | 593 ms · 2048 dims nativas, **aceita `dimensions`** (Matryoshka) |
+| Embedding | `nvidia/nemotron-3-embed-1b` | idem | 679 ms · 2048 dims, **não trunca** (HTTP 400 em `dimensions`) |
+| Embedding | `nvidia/nv-embedqa-e5-v5` | idem | 494 ms · 1024 dims nativas |
+| Reranking | **`nvidia/llama-nemotron-rerank-1b-v2`** | `https://ai.api.nvidia.com/v1/retrieval/nvidia/llama-nemotron-rerank-1b-v2/reranking` | 520 ms · margem topo→2º de **12.94** |
+| Reranking | `nvidia/llama-nemotron-rerank-vl-1b-v2` | idem, com o nome do modelo no path | 535 ms · margem **3.24** (multimodal, separa menos em texto puro) |
+
+**Dois detalhes que só aparecem chamando:**
+
+1. **A URL de reranking embute o nome do modelo no path.** Trocar de reranker exige trocar a
+   URL junto — por isso `src/config.py` guarda a URL completa em vez de `base_url` + sufixo.
+2. **Os embedders são assimétricos:** exigem `input_type="query"` ou `"passage"`. Embedar um
+   documento como se fosse consulta degrada a recuperação silenciosamente — não dá erro.
+
+**Qualidade medida em português e crosslingual** (consulta PT sobre custo/latência de inferência,
+contra passagem PT relevante, passagem EN relevante e passagem PT irrelevante):
+
+| Modelo | PT relevante | EN relevante | PT irrelevante | Leitura |
+|---|---|---|---|---|
+| `llama-nemotron-embed-1b-v2` | 0.3546 | 0.4280 | 0.0049 | separa 70x · crosslingual real |
+| `nemotron-3-embed-1b` | 0.5241 | 0.5460 | 0.1137 | separa bem, mas preso em 2048 dims |
+| `nv-embedqa-e5-v5` | 0.4648 | 0.3107 | 0.3096 | **crosslingual falha** — 0.3107 vs 0.3096 é ruído |
 
 > **Por que isso importa para o projeto:** substitui o Cohere Rerank (pago) que o TAPI recomenda,
 > resolve embedding de documentos em português, e entrega o argumento mais forte possível no
@@ -324,7 +344,7 @@ como pipeline de alta acurácia em BEIR+TechQA, com suporte multilíngue e cross
 
 ## 4. Mapa dor observável → tecnologia
 
-A tabela abaixo é o núcleo do motor de recomendação. As dores da coluna 1 são as sete que o
+A tabela abaixo é o núcleo do motor de recomendação. As dores da coluna 1 são as oito que o
 próprio TAPI lista na contextualização: custo, latência, escalabilidade, governança, privacidade,
 avaliação, observabilidade e dependência de fornecedor.
 
