@@ -2,13 +2,19 @@
 # Coletado em 2026-08-22. Todo `conteudo_texto` é o texto REAL da página em
 # `url_fonte`, extraído com `scripts/coletar.py` — não é paráfrase. `perfil_alvo` é
 # anotação de curadoria e NÃO é inserido no banco (ver o docstring de scripts/seed.py).
+#
+# PROCEDÊNCIA DOS CAMPOS ESTRUTURADOS (auditado em 22/08/2026)
+# Só ficam preenchidos os campos que aparecem LITERALMENTE nos documentos coletados. O que
+# veio de inferência ou de resumo automático foi zerado — `null` faz o Briefing reportar
+# "requisito não verificado", que é correto; um valor plausível e errado não reporta nada e
+# ainda corrompe o filtro de elegibilidade do Inception (que testa ano_fundacao < 10 anos).
 nome: Laura Networks
 site: https://lauranetworks.com/
 setor: saúde
 estagio: seed
 localizacao: Curitiba, PR
-ano_fundacao: 2016
-tamanho_time: 80
+ano_fundacao: null   # NÃO consta nos documentos: '2016' aparece como início de operação, não fundação
+tamanho_time: null   # NÃO consta: os '80' eram PLANO de contratação para 2021, não efetivo
 descricao_curta: Robô cognitivo que monitora prontuários hospitalares e alerta equipes médicas sobre risco
   de sepse e deterioração clínica.
 fonte_descoberta: busca por healthtechs brasileiras de IA (Exame, InfoMoney)

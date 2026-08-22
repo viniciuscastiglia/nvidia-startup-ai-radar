@@ -376,6 +376,30 @@ estruturada. O item 4 fica como está.
 
 ---
 
+## D-021 — Campo estruturado sem fonte literal vira `null`, não valor plausível
+**Data:** 22/08/2026
+**Decisão:** nos YAMLs do seed, só ficam preenchidos os campos que aparecem **literalmente** nos
+documentos coletados. Auditoria de 22/08 zerou 6 dos 12 campos estruturados das 3 empresas.
+**Alternativas descartadas:** manter os valores obtidos por inferência ou por resumo automático
+de página, marcando-os com um flag de confiança.
+**Motivo:** a auditoria começou por uma pergunta do Vinícius sobre risco de alucinação, e achou
+um caso concreto: `Laura.tamanho_time = 80` veio de *"pretendia expandir de 65 para 80 até o
+final de 2021"* — que é **plano**, não fato, e de 2021. `Axenya.ano_fundacao = 2020` não aparece
+em documento nenhum da base. Isso é grave porque `ano_fundacao` alimenta o filtro de
+elegibilidade do Inception, que testa "menos de 10 anos".
+O ponto decisivo é assimétrico: **`null` dispara comportamento correto, valor errado não dispara
+nada.** Com `null`, o Briefing reporta *"ano de fundação não consta na base — verificar"*, que é
+uma pendência acionável para quem vai abordar a empresa. Com um ano plausível e errado, o
+sistema afirma elegibilidade com confiança e ninguém revisa.
+É a mesma disciplina da regra 4 do Evidence Validator (`contexto/02` §6) aplicada aos campos
+estruturados: ausência de informação é um estado legítimo, e mentir sobre ela é pior que admiti-la.
+**Consequência de método, que vale mais que a correção:** `scripts/coletar.py` (texto bruto por
+`curl` + parser) é fonte confiável; resumo automático de página **não é** e não deve preencher
+campo do banco. Vale para a M3, quando a base for de 30 a 50 empresas — é lá que o atalho tentaria voltar.
+**Reversível?** Fácil — é só reabrir cada URL e conferir.
+
+---
+
 ## Decisões pendentes
 
 Levantadas em `contexto/05-achados-e-decisoes.md` §4, a serem fechadas na sessão 01:

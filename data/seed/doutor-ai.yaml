@@ -2,11 +2,17 @@
 # Coletado em 2026-08-22. Todo `conteudo_texto` é o texto REAL da página em
 # `url_fonte`, extraído com `scripts/coletar.py` — não é paráfrase. `perfil_alvo` é
 # anotação de curadoria e NÃO é inserido no banco (ver o docstring de scripts/seed.py).
+#
+# PROCEDÊNCIA DOS CAMPOS ESTRUTURADOS (auditado em 22/08/2026)
+# Só ficam preenchidos os campos que aparecem LITERALMENTE nos documentos coletados. O que
+# veio de inferência ou de resumo automático foi zerado — `null` faz o Briefing reportar
+# "requisito não verificado", que é correto; um valor plausível e errado não reporta nada e
+# ainda corrompe o filtro de elegibilidade do Inception (que testa ano_fundacao < 10 anos).
 nome: Doutor-AI
 site: https://doutor-ai.com/
 setor: saúde
 estagio: pre-seed
-localizacao: São Paulo, SP
+localizacao: null    # NÃO consta nos documentos coletados
 ano_fundacao: 2024
 tamanho_time: null
 descricao_curta: Plataforma multiagente que automatiza a jornada do paciente — agendamento, triagem, transcrição

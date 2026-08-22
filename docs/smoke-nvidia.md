@@ -1,12 +1,12 @@
 # Smoke test — build.nvidia.com
 
-Gerado por `scripts/smoke_nvidia.py` em 22/08/2026 16:32.
+Gerado por `scripts/smoke_nvidia.py` em 22/08/2026 16:48.
 
 | Capacidade | Resultado | Latência | Modelo |
 |---|---|---|---|
-| chat completion | passou | 755 ms | `meta/llama-3.1-8b-instruct` |
-| embedding | passou | 593 ms | `nvidia/llama-nemotron-embed-1b-v2` |
-| reranking | passou | 520 ms | `nvidia/llama-nemotron-rerank-1b-v2` |
+| chat completion | passou | 954 ms | `meta/llama-3.1-8b-instruct` |
+| embedding | passou | 496 ms | `nvidia/llama-nemotron-embed-1b-v2` |
+| reranking | passou | 550 ms | `nvidia/llama-nemotron-rerank-1b-v2` |
 
 ## Detalhes
 
@@ -14,8 +14,8 @@ Gerado por `scripts/smoke_nvidia.py` em 22/08/2026 16:32.
 
 ```
 modelo: meta/llama-3.1-8b-instruct
-tokens: 57 prompt + 38 completion
-resposta: O NVIDIA Inception é um programa de aceleração de startups que oferece recursos, suporte e conectividade para empresas inovadoras que utilizam tecnologias NVIDI
+tokens: 57 prompt + 37 completion
+resposta: O NVIDIA Inception é um programa de aceleração de startups que oferece recursos, apoio e conectividade para empresas inovadoras que utilizam tecnologia NVIDIA.
 ```
 
 ### embedding

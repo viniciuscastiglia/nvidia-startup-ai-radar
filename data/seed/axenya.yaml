@@ -2,12 +2,18 @@
 # Coletado em 2026-08-22. Todo `conteudo_texto` é o texto REAL da página em
 # `url_fonte`, extraído com `scripts/coletar.py` — não é paráfrase. `perfil_alvo` é
 # anotação de curadoria e NÃO é inserido no banco (ver o docstring de scripts/seed.py).
+#
+# PROCEDÊNCIA DOS CAMPOS ESTRUTURADOS (auditado em 22/08/2026)
+# Só ficam preenchidos os campos que aparecem LITERALMENTE nos documentos coletados. O que
+# veio de inferência ou de resumo automático foi zerado — `null` faz o Briefing reportar
+# "requisito não verificado", que é correto; um valor plausível e errado não reporta nada e
+# ainda corrompe o filtro de elegibilidade do Inception (que testa ano_fundacao < 10 anos).
 nome: Axenya
 site: https://www.axenya.com/
 setor: saúde corporativa
-estagio: série A
-localizacao: São Paulo, SP
-ano_fundacao: 2020
+estagio: null        # NÃO consta: os documentos dizem 'US$ 12 milhões', não o rótulo da rodada
+localizacao: null    # NÃO consta nos documentos coletados
+ano_fundacao: null   # NÃO consta nos documentos coletados
 tamanho_time: null
 descricao_curta: Plataforma de saúde corporativa que usa modelos preditivos para antecipar doenças crônicas
   e reduzir sinistralidade de planos empresariais.
