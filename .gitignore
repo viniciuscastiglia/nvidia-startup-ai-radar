@@ -1,0 +1,30 @@
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# Segredos — NUNCA commitar chaves de API
+.env
+.env.*
+!.env.example
+*.key
+secrets/
+
+# Dados locais e artefatos
+*.db
+*.sqlite3
+data/raw/
+data/cache/
+qdrant_storage/
+chroma/
+*.log
+
+# SO / editor
+.DS_Store
+.idea/
+.vscode/
