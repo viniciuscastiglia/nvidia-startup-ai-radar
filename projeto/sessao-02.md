@@ -1,14 +1,37 @@
 # Sessão 02 — RAG NVIDIA (M2)
 
-## Onde a sessão 01 parou
+## Sessão 01 — FECHADA em 23/08/2026
 
 **Concluído:** ambiente, stack validada por medição, estado do grafo, schema + seed
-reproduzível, grafo rodando ponta a ponta, 20 decisões registradas, 11 testes.
+reproduzível, grafo rodando ponta a ponta, **24 decisões** registradas, **15 testes**.
+
+Os 5 critérios de pronto da `sessao-01.md`: 4 cumpridos, 1 parcial (base de startups).
 
 **Critério de pronto que ficou parcial:** a sessão 01 pedia 5 startups × 3 documentos.
 Entregou **3 × 3 = 9 documentos**, todos com `url_fonte` verificada em HTTP 200 e
 `conteudo_texto` extraído da página real. Faltam os 2 slots de curadoria abaixo. Não bloqueia
 nada — o grafo já roda, e a base completa é a M3 (02/09).
+
+**Revisão de encerramento (23/08).** Uma passagem pela topologia achou três defeitos em
+caminhos que o "caminho feliz" nunca toca. Os três foram reproduzidos, corrigidos e viraram
+teste — ver D-022, D-023, D-024:
+
+| | O que estava errado | Como aparecia |
+|---|---|---|
+| D-022 | `thread_id` fixo + reducer `operator.add` | rodar o comando 2x duplicava as startups no briefing |
+| D-023 | fan-out vazio não alcançava o briefing | consulta sem resultado terminava em silêncio |
+| D-024 | `try/except` em volta do subgrafo descartava o trabalho parcial | falha no meio voltava com `perfil=None` |
+
+D-006 foi corrigida no lugar: ela declarava quatro recursos do LangGraph e o código tinha dois.
+Agora são três — `cache_policy` segue não implementado de propósito, entra com o primeiro nó
+que chamar LLM (M4).
+
+**Ainda em aberto da topologia (não bloqueia a M2):** o subgrafo é compilado sem checkpointer
+e invocado à mão, então o checkpoint tem granularidade de startup inteira e `interrupt()` não
+funciona lá dentro — e "intervenção humana" é uma das justificativas que o TAPI dá para exigir
+LangGraph. Decidir junto com o `PostgresSaver`. Também em aberto: `max_concurrency` não está
+configurado, e o teto de paralelismo hoje mora no planner (`MAX_STARTUPS`), não no executor —
+amarra com o risco nº 1 (créditos).
 
 ## Pendências herdadas
 

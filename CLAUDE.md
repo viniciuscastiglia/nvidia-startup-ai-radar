@@ -149,6 +149,7 @@ Para quem for avaliar sem Postgres local: `docker compose up -d` (porta 5433) e 
 | `projeto/plano.md` | no início de qualquer sessão — sequência dos 18 dias, marcos e riscos |
 | `projeto/sessao-NN.md` | pauta executável da sessão corrente |
 | `projeto/decisoes.md` | **sempre que uma decisão for tomada** — escrever na hora |
+| `projeto/conceitos.md` | antes de cada sessão: os 10 conceitos de IA que sustentam o núcleo e o vídeo, com o que estudar de cada um |
 | `projeto/guia-de-trabalho.md` | método de trabalho e manutenção desta documentação |
 
 `TAPI Processo Seletivo.md` é a fonte original — não editar.
