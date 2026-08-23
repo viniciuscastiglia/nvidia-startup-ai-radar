@@ -42,9 +42,35 @@ amarra com o risco nº 1 (créditos).
 | 3 | **Tractian** como caso "AI-native + stack madura" | ela já aparece no blog da própria NVIDIA — testa o sistema recusar recomendar NIM para quem já otimizou, e recomendar Inception |
 | 4 | Perguntar à liga: **canal de submissão** e **individual ou em grupo** | o TAPI não diz nem uma coisa nem outra; eliminatório nº 1 é entrega fora do prazo *sem alinhamento prévio* |
 
-## Pauta da sessão 02 — os 9 passos do pipeline RAG
+## M2 são três sessões, não uma
 
-Passos 1-5 (ingestão → embeddings → armazenamento):
+Os 9 passos do pipeline RAG não cabem numa sessão. O corte abaixo é por **acoplamento**: cada
+bloco termina num artefato testável, e o seguinte só depende do artefato, não do contexto de
+quem escreveu.
+
+| Sessão | Passos | Termina quando |
+|---|---|---|
+| **02** ← você está aqui | 1-5 · ingestão → embeddings → armazenamento | `chunks_nvidia` populada, índice HNSW criado, um `SELECT` por similaridade devolve chunk plausível |
+| **03** | 6-8 · busca híbrida → reranking → citação | `buscar_hibrido(query, k)` devolve `CitacaoRAG` com os **três** scores preenchidos |
+| **04** | 9 · avaliação | recall@k medido para denso puro vs híbrido vs híbrido+rerank |
+
+**Por que não juntar 02 e 03.** A ingestão sempre dá mais trabalho que o previsto — são 16
+páginas da NVIDIA com estrutura diferente, e cada erro de parsing só aparece depois de embedar.
+Se a busca híbrida estiver na mesma sessão, ela é a parte que é cortada às pressas — e ela é
+metade do critério 2.
+
+**Por que a 04 é separada.** O harness é o passo que mais separa nível 2 de nível 4, e ele exige
+escrever o conjunto de perguntas com resposta esperada — trabalho de curadoria, não de código.
+Feito com pressa no fim da 03, vira 5 perguntas fáceis que todo método acerta, e aí não mede nada.
+
+**O que NÃO fazer na 02:** busca lexical, fusão, reranking. Estão listados abaixo para você ver o
+destino, não para implementar agora.
+
+---
+
+## Pauta da sessão 02 — passos 1-5
+
+Ingestão → embeddings → armazenamento:
 - [ ] Coletar as 16 tecnologias de `contexto/03` §5 (URLs oficiais já verificadas)
 - [ ] **Chunking semântico** — decidir a estratégia e registrar a alternativa descartada
 - [ ] Tabela `chunks_nvidia` com `vector(1024)` + índice HNSW (o limite de 2000 dims já foi
@@ -52,14 +78,14 @@ Passos 1-5 (ingestão → embeddings → armazenamento):
 - [ ] Embedar com `input_type="passage"` — a assimetria do NeMo Retriever é silenciosa: embedar
       documento como consulta degrada a recuperação sem dar erro
 
-Passos 6-8 (busca híbrida → reranking → citação):
+### Sessão 03 — passos 6-8 (busca híbrida → reranking → citação)
 - [ ] `bm25s` em processo, com `k1`/`b` explícitos
 - [ ] Fusão denso + lexical atrás de `buscar_hibrido(query, k)` — **o peso entre os dois precisa
       ser configurável**, porque a base NVIDIA é em inglês e a consulta nasce de texto português:
       léxico não atravessa idioma (ver D-014)
 - [ ] Reranking com `llama-nemotron-rerank-1b-v2`, preenchendo os **três** scores de `CitacaoRAG`
 
-Passo 9 — **o que mais separa nível 2 de nível 4 no critério 2**:
+### Sessão 04 — passo 9, **o que mais separa nível 2 de nível 4 no critério 2**
 - [ ] Harness de avaliação: conjunto de perguntas com resposta esperada, recall@k, e comparação
       denso puro vs híbrido vs híbrido+rerank. É o que transforma D-014 ("1024 por causa do HNSW")
       em medição, e permite comparar 384 vs 768 vs 1024

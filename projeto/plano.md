@@ -70,6 +70,36 @@ Alvo é "funcional e limpa", não "impressionante".
 **M6 — 07/09 · O vídeo está gravado**
 Até 7 minutos: arquitetura dos agentes, sistema RAG, demonstração funcional pela interface.
 
+## Projeção de sessões (feita em 23/08, ao fechar a M1)
+
+**11 a 13 sessões** do calibre da 01 (4-5h). Restam 17 dias — cerca de 0,7 sessão por dia.
+
+| Marco | Sessões | Corte |
+|---|---|---|
+| **M2** RAG | **3** | ingestão+embed · híbrida+rerank · harness. Detalhado em `sessao-02.md` |
+| **M3** base 30-50 startups | **2-3** | ⚠️ o sumidouro |
+| **M4** agentes com LLM | **2-3** | inclui corrigir os 3 erros de D-020 |
+| **M5** interface | **1** | vale 5 pontos, não vale mais |
+| **M6** README + vídeo | **2** | uma para roteiro, uma para gravar |
+| buffer | **1** | |
+
+**Três coisas que a tabela esconde:**
+
+1. **A restrição não é sessão, é calendário.** O vídeo é 07/09, é eliminatório se faltar e tem
+   teto de 7 minutos. Tudo que ele precisa *mostrar* tem que existir em 06/09.
+2. **M3 pode virar 5 sessões sem avisar.** D-021 matou o atalho: resumo automático de página não
+   preenche campo do banco. Cada empresa é ~15-20 min feita direito. Se estourar, **corte o
+   número de empresas, não o rigor** — 25 bem curadas com a diversidade coberta valem mais que
+   50 rasas.
+3. **"Mais completo" tem teto.** O barema para em nível 4 por critério, e entregável fora dos 7
+   vale zero. A sessão marginal rende mais no **harness do passo 9** e no **vídeo** — nunca em
+   mais startups nem em mais interface.
+
+Uma sessão a mais, fora da conta: **os conceitos de domínio 11 e 12 de `conceitos.md`** (stack
+NVIDIA e rubrica AI-native). Não se aprendem implementando e são o que o vídeo mais cobra.
+
+**Estado em 23/08:** M1 fechada, dois dias adiantada (vencia 25/08). Gastar a folga na M2.
+
 ## Riscos identificados
 
 | Risco | Mitigação |
