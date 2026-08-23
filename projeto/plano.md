@@ -76,7 +76,7 @@ Até 7 minutos: arquitetura dos agentes, sistema RAG, demonstração funcional p
 
 | Marco | Sessões | Corte |
 |---|---|---|
-| **M2** RAG | **3** | ingestão+embed+**gabarito** · híbrida+rerank · otimização medida. O gabarito de avaliação é da 1ª sessão, não da última — ver `sessao-02.md` |
+| **M2** RAG | **3** | ~~ingestão+embed+**gabarito**~~ **feita 23/08** · híbrida+rerank · otimização medida. A 1ª sessão também levou busca densa e recall@k (D-031), então cada incremento das próximas tem linha de base |
 | **M3** base 30-50 startups | **2-3** | ⚠️ o sumidouro |
 | **M4** agentes com LLM | **2-3** | inclui corrigir os 3 erros de D-020 |
 | **M5** interface | **1** | vale 5 pontos, não vale mais |
@@ -98,7 +98,14 @@ Até 7 minutos: arquitetura dos agentes, sistema RAG, demonstração funcional p
 Uma sessão a mais, fora da conta: **os conceitos de domínio 11 e 12 de `conceitos.md`** (stack
 NVIDIA e rubrica AI-native). Não se aprendem implementando e são o que o vídeo mais cobra.
 
-**Estado em 23/08:** M1 fechada, dois dias adiantada (vencia 25/08). Gastar a folga na M2.
+**Estado em 23/08:** M1 fechada dois dias adiantada (vencia 25/08) e **a 1ª das 3 sessões da M2
+também**, no mesmo dia. A base NVIDIA está ingerida, indexada e com linha de base medida
+(recall@3 = 100% estrutural contra 84% do controle — D-032). Restam a híbrida+rerank e a
+otimização. M2 vence 30/08; a folga continua.
+
+**Um risco novo, que a medição revelou:** a abstenção não sai de limiar sobre score denso
+(D-033). Se o reranker também não resolver, "o sistema sabe dizer não sei" vira trabalho da
+geração — e isso encosta na M4, não na M2. Vale decidir na sessão 03 em vez de descobrir na 04.
 
 ## Riscos identificados
 
