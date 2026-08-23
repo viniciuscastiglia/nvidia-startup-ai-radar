@@ -23,11 +23,15 @@ USO
 from __future__ import annotations
 
 import argparse
-import re
 import sys
+from pathlib import Path
 
 import httpx
 from bs4 import BeautifulSoup
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
+from src.rag.limpeza import RUIDO_HTML, limpar_linhas
 
 CABECALHOS = {
     "User-Agent": (
@@ -37,27 +41,23 @@ CABECALHOS = {
     "Accept-Language": "pt-BR,pt;q=0.9,en;q=0.8",
 }
 
-# Boilerplate que não é conteúdo: some antes da extração.
-RUIDO = ["script", "style", "nav", "header", "footer", "aside", "form", "noscript", "svg"]
+# RUIDO_HTML e limpar_linhas vivem em src/rag/limpeza.py: são o passo 2 do pipeline RAG
+# (limpeza e normalização) e a ingestão da base NVIDIA usa exatamente os mesmos. Script
+# depende de src, nunca o contrário — e a curadoria enxerga o mesmo texto que o embedder.
 
 
 def extrair(html: str) -> tuple[str, str]:
     sopa = BeautifulSoup(html, "lxml")
     titulo = (sopa.title.get_text(strip=True) if sopa.title else "") or ""
 
-    for tag in sopa(RUIDO):
+    for tag in sopa(RUIDO_HTML):
         tag.decompose()
 
     # Prefere <main> ou <article> quando a página os declara; senão cai para o <body>.
     principal = sopa.find("main") or sopa.find("article") or sopa.body or sopa
     texto = principal.get_text(separator="\n", strip=True)
 
-    # Colapsa linhas vazias e descarta linhas de uma palavra só (menu residual).
-    linhas = [ln.strip() for ln in texto.split("\n")]
-    linhas = [ln for ln in linhas if len(ln.split()) > 2 or ln.endswith((".", "!", "?"))]
-    texto = "\n".join(linhas)
-    texto = re.sub(r"\n{3,}", "\n\n", texto)
-    return titulo, texto.strip()
+    return titulo, limpar_linhas(texto)
 
 
 def main() -> int:

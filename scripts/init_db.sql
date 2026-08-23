@@ -91,3 +91,73 @@ CREATE INDEX IF NOT EXISTS idx_documentos_startup    ON documentos (startup_id);
 CREATE INDEX IF NOT EXISTS idx_documentos_tipo       ON documentos (tipo);
 CREATE INDEX IF NOT EXISTS idx_startups_setor        ON startups (setor);
 CREATE INDEX IF NOT EXISTS idx_startups_nome_trgm    ON startups USING GIN (nome gin_trgm_ops);
+
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- BASE DE CONHECIMENTO NVIDIA — passos 3-5 do pipeline RAG (Entregável 2)
+--
+-- Corpus pequeno, estático e curado à mão: 16 tecnologias, 16 documentos, ~163k chars.
+-- O manifesto de fontes é `data/nvidia/fontes.yaml`; a ingestão é `scripts/ingerir_nvidia.py`.
+-- ─────────────────────────────────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS chunks_nvidia (
+    id                SERIAL PRIMARY KEY,
+
+    -- CURADORIA, NÃO INFERÊNCIA: vem do manifesto, não de heurística sobre o texto. É a chave
+    -- de CitacaoRAG.tecnologia, do motor de recomendação e do recall@k do gabarito.
+    tecnologia        TEXT NOT NULL,
+
+    -- A URL que um humano abre — 7º campo obrigatório do TAPI. Difere da URL de onde o texto
+    -- foi buscado nos casos de GitHub, onde o raw dá texto limpo e o repositório dá leitura
+    -- (ver D-028). Aqui fica SEMPRE a de leitura.
+    documento_url     TEXT NOT NULL,
+    titulo_documento  TEXT NOT NULL,
+
+    -- Breadcrumb: "NVIDIA NIM > Boost Throughput With NIM". O primeiro elemento é sempre o
+    -- nome da tecnologia, porque os headings do corpus não nomeiam produto — os h3 do NIM
+    -- incluem 'Benefits', 'Models', 'Features' (medido em 23/08). Ver D-025.
+    caminho_secao     TEXT NOT NULL,
+
+    -- DOIS TEXTOS, DE PROPÓSITO:
+    --   texto          = limpo, sem breadcrumb. É o que vira CitacaoRAG.trecho e o que um
+    --                    humano lê no briefing.
+    --   texto_indexado = breadcrumb + \n\n + texto. É o que é EMBEDADO e o que o BM25 vai
+    --                    indexar na sessão 03. Guardar os dois é o que permite a citação ser
+    --                    legível sem que a recuperação perca a atribuição.
+    texto             TEXT NOT NULL,
+    texto_indexado    TEXT NOT NULL,
+
+    ordinal           INTEGER NOT NULL,
+    n_tokens          INTEGER NOT NULL,
+
+    -- A ALTERNATIVA DESCARTADA VIRA BRAÇO DE CONTROLE (D-027). 'estrutural-v1' e 'fixo-800'
+    -- coexistem na mesma tabela; o harness compara recall@k entre as duas sem re-ingerir nada.
+    estrategia        TEXT NOT NULL DEFAULT 'estrutural-v1',
+
+    -- A busca usa esta. 1024 porque é o que cabe no HNSW nativo do pgvector (D-014).
+    embedding         vector(1024),
+
+    -- SEM ÍNDICE, de propósito. Só o harness da sessão 04 lê, para derivar 384/768/1024 por
+    -- truncagem local — medido em 23/08: cos(api, truncagem_local) = 0.99999996 (D-029).
+    -- Verificado em psql que vector(2048) armazena; é só o índice HNSW que recusa >2000.
+    embedding_bruto   vector(2048),
+
+    coletado_em       DATE NOT NULL DEFAULT CURRENT_DATE,
+    criado_em         TIMESTAMPTZ NOT NULL DEFAULT now(),
+
+    -- Chave do upsert idempotente da ingestão, e o que deixa as duas estratégias conviverem
+    UNIQUE (estrategia, documento_url, ordinal)
+);
+
+-- COSSENO e não produto interno: medido em 23/08 que os vetores do llama-nemotron-embed-1b-v2
+-- voltam normalizados (norma L2 = 1.000063), então as duas métricas são equivalentes aqui.
+-- Cosseno é a que o smoke test já usou para medir a separação crosslingual de D-014.
+--
+-- HONESTIDADE SOBRE ESTE ÍNDICE: a ~200 chunks ele não muda latência de forma mensurável —
+-- um scan sequencial é instantâneo nesse tamanho. Ele existe porque o desenho tem que estar
+-- certo uma ordem de grandeza acima. Vendê-lo como ganho de performance aqui seria a mesma
+-- imprecisão que D-016 recusou ao não chamar ts_rank_cd de BM25.
+CREATE INDEX IF NOT EXISTS idx_chunks_nvidia_hnsw
+    ON chunks_nvidia USING hnsw (embedding vector_cosine_ops);
+
+CREATE INDEX IF NOT EXISTS idx_chunks_nvidia_estrategia ON chunks_nvidia (estrategia);
+CREATE INDEX IF NOT EXISTS idx_chunks_nvidia_tecnologia ON chunks_nvidia (tecnologia);

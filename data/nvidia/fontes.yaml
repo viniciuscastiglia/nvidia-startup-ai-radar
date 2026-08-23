@@ -1,0 +1,174 @@
+# Manifesto de fontes da base de conhecimento NVIDIA — Entregável 2 (RAG), passo 1 do pipeline
+#
+# MANIFESTO, NÃO CRAWLER. O TAPI põe explicitamente fora de escopo "a construção de crawlers,
+# scrapers ou qualquer pipeline de coleta automatizada na web". Cada URL abaixo foi escolhida e
+# verificada por um humano; o script de ingestão busca exatamente estas e mais nenhuma — não
+# segue link, não descobre página. É o mesmo raciocínio já registrado no docstring de
+# `scripts/coletar.py`.
+#
+# AS 16 TECNOLOGIAS são as que o TAPI nomeia (ver contexto/01). A tabela de URLs de
+# contexto/03 §5 lista 18 entradas: as duas extras — "API Catalog" (build.nvidia.com) e
+# "Triton docs" — ficaram DE FORA, e o motivo está no rodapé deste arquivo.
+#
+# url_fetch  = de onde o TEXTO vem
+# url_citacao = o que aparece em CitacaoRAG.url_fonte e no gabarito de avaliação.
+#               É a URL que um humano abre. Só difere de url_fetch no GitHub, onde o texto
+#               limpo está no raw e a página legível está no repositório.
+#
+# PROCEDÊNCIA (medido em 23/08/2026 com scripts/coletar.py e httpx)
+# Todas as fontes passam o piso de qualidade da ingestão: >= 3.000 chars e >= 3 headings.
+# O número em `chars_medidos` é o que a extração rendeu no dia — serve para detectar, na
+# próxima ingestão, que uma página mudou de forma sem ninguém avisar.
+
+- tecnologia: NVIDIA Inception
+  url_fetch: https://www.nvidia.com/en-us/startups/
+  url_citacao: https://www.nvidia.com/en-us/startups/
+  formato: html
+  chars_medidos: 12903
+  nota: >-
+    O destino de todo briefing. Contém os critérios de elegibilidade que viram regra de
+    negócio no Briefing Agent (contexto/03 §2).
+
+- tecnologia: NVIDIA NIM
+  url_fetch: https://www.nvidia.com/en-us/ai-data-science/products/nim-microservices/
+  url_citacao: https://www.nvidia.com/en-us/ai-data-science/products/nim-microservices/
+  formato: html
+  chars_medidos: 9909
+  nota: >-
+    51 seções para 9.909 chars — média de ~194 chars por seção. É o documento que faz a
+    passagem de FUNDIR do chunker ser caminho principal, não caso de canto.
+
+- tecnologia: NVIDIA NeMo
+  url_fetch: https://www.nvidia.com/en-us/ai-data-science/products/nemo/
+  url_citacao: https://www.nvidia.com/en-us/ai-data-science/products/nemo/
+  formato: html
+  chars_medidos: 22160
+  nota: >-
+    102 seções. O documento mais fragmentado do corpus.
+
+- tecnologia: NeMo Guardrails
+  url_fetch: https://raw.githubusercontent.com/NVIDIA/NeMo-Guardrails/develop/README.md
+  url_citacao: https://github.com/NVIDIA/NeMo-Guardrails
+  formato: markdown
+  chars_medidos: 22312
+  nota: >-
+    O raw rende 22.312 contra 14.756 do HTML, e sem o chrome do GitHub. Branch `develop`
+    porque é a branch default do repositório — `main` não existe lá.
+
+- tecnologia: Triton Inference Server
+  url_fetch: https://developer.nvidia.com/triton-inference-server
+  url_citacao: https://developer.nvidia.com/triton-inference-server
+  formato: html
+  chars_medidos: 4870
+  nota: >-
+    Hoje chamado Dynamo-Triton. A segunda URL que contexto/03 §5 lista (docs.nvidia.com,
+    user-guide) rendeu 2.753 chars e 2 headings — reprovada no piso, ficou de fora.
+
+- tecnologia: TensorRT-LLM
+  url_fetch: https://raw.githubusercontent.com/NVIDIA/TensorRT-LLM/main/README.md
+  url_citacao: https://github.com/NVIDIA/TensorRT-LLM
+  formato: markdown
+  chars_medidos: 27060
+  nota: >-
+    27.060 chars em 8 seções — ~3.383 por seção. É o documento que faz a passagem de
+    DIVIDIR do chunker ser caminho principal. Usa heading setext (===) e <h4> embutido, então
+    o parser de markdown tem que aguentar os dois.
+
+- tecnologia: RAPIDS / CUDA-X Data Science
+  url_fetch: https://developer.nvidia.com/topics/ai/data-science/cuda-x-data-science-libraries
+  url_citacao: https://developer.nvidia.com/topics/ai/data-science/cuda-x-data-science-libraries
+  formato: html
+  chars_medidos: 4865
+  nota: >-
+    A marca RAPIDS passou a ser CUDA-X em 11/08/2026; rapids.ai redireciona para cá
+    (contexto/05). O nome antigo ainda é o que aparece em texto de startup — importa para o léxico.
+
+- tecnologia: cuDF
+  url_fetch: https://raw.githubusercontent.com/rapidsai/cudf/main/README.md
+  url_citacao: https://github.com/rapidsai/cudf
+  formato: markdown
+  chars_medidos: 5043
+  nota: >-
+    RE-CURADA. A URL de contexto/03 §5 (docs.rapids.ai/api/cudf/stable/) rendeu 558 chars e
+    zero headings — é índice de docs renderizado por JS. O user_guide dá 404 e o cudf_pandas
+    rende 832. O README do repositório é a única fonte com conteúdo estático real.
+
+- tecnologia: cuML
+  url_fetch: https://raw.githubusercontent.com/rapidsai/cuml/main/README.md
+  url_citacao: https://github.com/rapidsai/cuml
+  formato: markdown
+  chars_medidos: 5427
+  nota: >-
+    RE-CURADA, mesmo motivo do cuDF — a URL original rendeu 1.911 chars e zero headings.
+    Alternativa testada e descartada: docs.rapids.ai/api/cuml/stable/estimator_intro/ (4.248
+    chars, 8 headings) passaria no piso, mas é tutorial de uso de um estimador, não descrição
+    da biblioteca — não é o que o motor de recomendação precisa citar.
+
+- tecnologia: CUDA Toolkit
+  url_fetch: https://developer.nvidia.com/cuda-toolkit
+  url_citacao: https://developer.nvidia.com/cuda-toolkit
+  formato: html
+  chars_medidos: 4268
+  nota: >-
+    Raramente é primeira recomendação (contexto/03 §1). Está na base para o sistema poder
+    NÃO recomendá-la quando cuDF resolve — recomendar CUDA para quem só precisa de cuDF é o
+    sinal de motor de recomendação raso.
+
+- tecnologia: NVIDIA Riva
+  url_fetch: https://developer.nvidia.com/riva
+  url_citacao: https://developer.nvidia.com/riva
+  formato: html
+  chars_medidos: 3997
+  nota: >-
+    ASR com português é o argumento decisivo no mercado brasileiro; o TTS ainda não cobre
+    português. As duas coisas precisam estar recuperáveis para a justificativa ser honesta.
+
+- tecnologia: NVIDIA Omniverse
+  url_fetch: https://www.nvidia.com/en-us/omniverse/
+  url_citacao: https://www.nvidia.com/en-us/omniverse/
+  formato: html
+  chars_medidos: 11602
+
+- tecnologia: NVIDIA Isaac
+  url_fetch: https://developer.nvidia.com/isaac
+  url_citacao: https://developer.nvidia.com/isaac
+  formato: html
+  chars_medidos: 3650
+
+- tecnologia: NVIDIA Healthcare (ex-Clara)
+  url_fetch: https://www.nvidia.com/en-us/clara/
+  url_citacao: https://www.nvidia.com/en-us/clara/
+  formato: html
+  chars_medidos: 8773
+  nota: >-
+    O TAPI lista "Clara", que não existe mais como marca guarda-chuva (contexto/03 §1 e
+    contexto/05). A URL continua respondendo e serve o portfólio atual — BioNeMo, MONAI,
+    Parabricks, Holoscan. O nome da tecnologia registra o rebrand em vez de escondê-lo.
+
+- tecnologia: NVIDIA Morpheus
+  url_fetch: https://developer.nvidia.com/morpheus-cybersecurity
+  url_citacao: https://developer.nvidia.com/morpheus-cybersecurity
+  formato: html
+  chars_medidos: 6050
+
+- tecnologia: NVIDIA AI Enterprise
+  url_fetch: https://www.nvidia.com/en-us/data-center/products/ai-enterprise/
+  url_citacao: https://www.nvidia.com/en-us/data-center/products/ai-enterprise/
+  formato: html
+  chars_medidos: 10205
+  nota: >-
+    A camada comercial. Está na base para o sistema saber NÃO recomendá-la a pre-seed.
+
+# ─────────────────────────────────────────────────────────────────────────────
+# DUAS URLs DE contexto/03 §5 QUE FICARAM DE FORA, e por quê
+#
+# - build.nvidia.com ("API Catalog") — rende 28 caracteres: é uma SPA renderizada inteiramente
+#   por JavaScript, e o TAPI põe crawling e execução de JS fora de escopo. Não é uma das 16
+#   tecnologias nomeadas pelo TAPI, e o que ela representa (porta de entrada de baixo atrito
+#   para experimentar a stack) já está descrito na página do NIM. Perda: nenhuma.
+#
+# - docs.nvidia.com/.../triton-inference-server/user-guide — 2.753 chars e 2 headings,
+#   reprovada no piso. É a SEGUNDA fonte do Triton, que já entra pela página do
+#   developer.nvidia.com. Perda: profundidade técnica sobre Triton, que é real. Se a sessão 04
+#   mostrar recall fraco nas perguntas de Triton, esta é a primeira fonte a re-curar.
+# ─────────────────────────────────────────────────────────────────────────────
