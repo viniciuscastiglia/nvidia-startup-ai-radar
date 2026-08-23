@@ -26,8 +26,9 @@ chain não tem, e cada um resolve um problema concreto:
   defer=True      o Briefing só executa quando o run está terminando, ou seja, depois de
                   todas as branches. Sem isso seria preciso contar branches à mão.
   retry_policy    falha transitória de LLM não derruba a análise.
-  error_handler   uma startup com dado ruim vira análise incompleta com `erros` preenchido,
-                  não um run inteiro derrubado. O briefing reporta a falha em vez de sumir.
+  error_handler   por nó do subgrafo: a etapa que falhou registra o erro e salta para o END
+                  PRESERVANDO o que as etapas anteriores já produziram. Uma startup com dado
+                  ruim vira análise PARCIAL — não um buraco, e não um run derrubado.
 
 O `Send` mira um nó-WRAPPER que invoca o subgrafo compilado, em vez de mirar o subgrafo
 direto: isso evita descasamento entre o schema do estado pai e o do filho.
@@ -36,10 +37,12 @@ direto: isso evita descasamento entre o schema do estado pai e o do filho.
 from __future__ import annotations
 
 import sys
+from uuid import uuid4
 
 from langgraph.checkpoint.memory import MemorySaver
+from langgraph.errors import NodeError
 from langgraph.graph import END, START, StateGraph
-from langgraph.types import RetryPolicy, Send
+from langgraph.types import Command, RetryPolicy, Send
 
 from src.agents import (
     briefing,
@@ -58,6 +61,28 @@ from src.state import AnaliseStartup, EstadoAnalise, EstadoRadar
 RETENTAR = RetryPolicy(max_attempts=3, initial_interval=1.0, backoff_factor=2.0)
 
 
+def registrar_falha(state: EstadoAnalise, error: NodeError) -> Command:
+    """`error_handler` de nó do subgrafo (D-024).
+
+    POR QUE ISSO E NAO try/except DENTRO DE CADA NÓ
+    ------------------------------------------------
+    O ponto não é "não estourar" — é PRESERVAR O TRABALHO PARCIAL. Se o `nvidia_rag` falhar
+    depois que o Extractor e o Classifier já rodaram, envolver o subgrafo inteiro num
+    try/except perde perfil e diagnóstico junto: a startup volta vazia. Com `error_handler`,
+    as escritas dos super-steps anteriores já estão nos canais, o handler só acrescenta o
+    erro e manda para o END — e o briefing recebe uma análise parcial com a causa registrada.
+
+    Medido: falha no classifier devolve `{perfil: <preenchido>, erros: [...]}` em vez de `{}`.
+
+    `goto=END` e não seguir o fluxo: sem o diagnóstico, as etapas seguintes produziriam
+    recomendação sem base. Falha cedo é informação; falha propagada é ruído.
+    """
+    return Command(
+        update={"erros": [f"{error.node}: {type(error.error).__name__}: {error.error}"]},
+        goto=END,
+    )
+
+
 def construir_subgrafo():
     """As cinco etapas de análise de UMA startup.
 
@@ -65,12 +90,14 @@ def construir_subgrafo():
     à mão, sem subir o grafo pai nem tocar no banco.
     """
     g = StateGraph(EstadoAnalise)
-    g.add_node("extractor", extractor.node, retry_policy=RETENTAR)
-    g.add_node("classifier", classifier.node, retry_policy=RETENTAR)
-    g.add_node("evidence_validator", evidence_validator.node)   # lógica pura: não falha por rede
-    g.add_node("nvidia_rag", nvidia_rag.node, retry_policy=RETENTAR)
-    g.add_node("recommendation", recommendation.node, retry_policy=RETENTAR)
-    g.add_node("elegibilidade", briefing.node_analise)
+    g.add_node("extractor", extractor.node, retry_policy=RETENTAR, error_handler=registrar_falha)
+    g.add_node("classifier", classifier.node, retry_policy=RETENTAR, error_handler=registrar_falha)
+    # lógica pura: sem retry (repetir não muda o resultado), mas ainda pode levantar
+    g.add_node("evidence_validator", evidence_validator.node, error_handler=registrar_falha)
+    g.add_node("nvidia_rag", nvidia_rag.node, retry_policy=RETENTAR, error_handler=registrar_falha)
+    g.add_node("recommendation", recommendation.node, retry_policy=RETENTAR,
+               error_handler=registrar_falha)
+    g.add_node("elegibilidade", briefing.node_analise, error_handler=registrar_falha)
 
     g.add_edge(START, "extractor")
     g.add_edge("extractor", "classifier")
@@ -85,24 +112,40 @@ def construir_subgrafo():
 SUBGRAFO = construir_subgrafo()
 
 
-def distribuir(state: EstadoRadar) -> list[Send]:
+def distribuir(state: EstadoRadar) -> list[Send] | str:
     """Aresta condicional que faz o fan-out: um `Send` por startup recuperada.
 
     Cada `Send` carrega o estado INICIAL daquela branch — não o estado do pai inteiro. É o
     que garante que cada análise enxergue uma empresa só.
+
+    O CASO ZERO É EXPLÍCITO DE PROPÓSITO (D-023). Devolver `[]` aqui não agenda tarefa
+    nenhuma, e como o `briefing` só é alcançável pela aresta vinda de `analisar_startup`,
+    ele nunca executaria — `defer=True` não agenda nada, só ATRASA o que já foi agendado.
+    O resultado seria uma consulta sem resultado terminando em silêncio, sem relatório.
+    Roteando direto para o briefing, "não encontrei nada e aqui está o porquê" vira uma
+    saída do sistema em vez de um estado interno.
     """
+    startups = state.get("startups") or []
+    if not startups:
+        return "briefing"
     return [
         Send("analisar_startup", {"plano": state["plano"], "startup": s})
-        for s in (state.get("startups") or [])
+        for s in startups
     ]
 
 
 def analisar_startup(state: EstadoAnalise) -> dict:
     """Nó-wrapper: invoca o subgrafo e devolve UMA análise para o reducer do pai concatenar.
 
-    O try/except aqui é a rede de segurança de último nível: se o subgrafo inteiro estourar,
-    a startup vira uma `AnaliseStartup` com `erros` preenchido em vez de derrubar o run.
-    O briefing reporta a falha — que é informação útil — em vez de a empresa sumir em silêncio.
+    TRÊS NÍVEIS DE TRATAMENTO DE FALHA, cada um pegando uma coisa diferente:
+      1. `retry_policy` no nó  — falha TRANSITÓRIA (timeout, 5xx do provedor de LLM).
+      2. `error_handler` no nó — falha PERSISTENTE da etapa: registra e salta para o END
+                                 preservando o que as etapas anteriores produziram.
+      3. este try/except       — falha da PRÓPRIA MÁQUINA do subgrafo (schema incompatível,
+                                 estouro de recursão), que os dois de cima não alcançam.
+
+    O nível 3 quase nunca dispara agora que o 2 existe — e é por isso que ele continua aqui:
+    uma startup não pode derrubar as outras quatro por um modo de falha que não previmos.
     """
     startup = state["startup"]
     try:
@@ -137,7 +180,7 @@ def construir_grafo(checkpointer=None):
 
     g.add_edge(START, "query_planner")
     g.add_edge("query_planner", "retriever")
-    g.add_conditional_edges("retriever", distribuir, ["analisar_startup"])
+    g.add_conditional_edges("retriever", distribuir, ["analisar_startup", "briefing"])
     g.add_edge("analisar_startup", "briefing")
     g.add_edge("briefing", END)
     return g.compile(checkpointer=checkpointer or MemorySaver())
@@ -147,14 +190,33 @@ GRAFO = construir_grafo()
 
 
 def main() -> int:
-    consulta = " ".join(sys.argv[1:]) or "startups brasileiras de saúde usando IA"
-    # thread_id é o que o checkpointer usa para agrupar o run. Com PostgresSaver, é por ele
-    # que se retoma uma execução interrompida sem re-rodar o que já passou.
-    config = {"configurable": {"thread_id": "cli"}}
+    """CLI. `--thread <id>` retoma um run existente; sem ele, cada execução é um run novo.
+
+    POR QUE NÃO UM `thread_id` FIXO (D-022)
+    ----------------------------------------
+    `thread_id` é a identidade da CONVERSA, não do processo. Invocar duas vezes no mesmo
+    thread não recomeça: o checkpointer restaura os canais e o run continua de onde parou —
+    então `analises`, que tem reducer `operator.add`, SOMA em cima do run anterior.
+    Medido com o `thread_id: "cli"` fixo que estava aqui: a segunda execução devolvia a
+    mesma startup duas vezes no briefing.
+
+    Um comando novo é um run novo. Retomar é o caso especial, e agora é explícito.
+    """
+    args = sys.argv[1:]
+    thread: str | None = None
+    if "--thread" in args:
+        i = args.index("--thread")
+        thread = args[i + 1] if i + 1 < len(args) else None
+        args = args[:i] + args[i + 2:]
+    consulta = " ".join(args) or "startups brasileiras de saúde usando IA"
+
+    thread_id = thread or f"cli-{uuid4()}"
+    config = {"configurable": {"thread_id": thread_id}}
     final = GRAFO.invoke({"consulta": consulta}, config=config)
     print(final.get("briefing") or "(sem briefing)")
     if erros := final.get("erros"):
         print("\nerros do grafo pai:", erros)
+    print(f"\nthread_id: {thread_id}   (retomar: python -m src.graph --thread {thread_id})")
     return 0
 
 

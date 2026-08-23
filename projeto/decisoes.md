@@ -109,6 +109,16 @@ evita queimar crédito re-rodando o mesmo nó em desenvolvimento — que amarra 
 nº 1 do `plano.md`.
 **Reversível?** Fácil, um parâmetro por nó. Verificado na API do langgraph 1.2.11 instalado.
 
+**Correção de 23/08 — esta entrada estava adiantada em relação ao código.** Ela foi escrita
+como decisão de projeto, mas ficou lida como descrição do que existe. Na sessão 01 só dois dos
+quatro recursos chegaram ao código: `defer=True` e `retry_policy`. O isolamento de erro era um
+`try/except` manual no wrapper — que entrega a garantia prometida ("uma startup não derruba as
+outras") mas por mecanismo diferente do declarado, e com uma perda que eu não tinha visto:
+descarta o trabalho parcial. `error_handler` de verdade entrou em **D-024**. `cache_policy`
+continua **não implementado** — e de propósito: os nós de hoje são heurística em memória, não
+há o que cachear. Ele entra junto com o primeiro nó que chama LLM (M4), que é quando cachear
+passa a economizar crédito de verdade. Até lá, esta entrada declara intenção, não estado.
+
 ---
 
 ## D-007 — Topologia: subgrafo de análise + fan-out por `Send`
@@ -397,6 +407,74 @@ estruturados: ausência de informação é um estado legítimo, e mentir sobre e
 `curl` + parser) é fonte confiável; resumo automático de página **não é** e não deve preencher
 campo do banco. Vale para a M3, quando a base for de 30 a 50 empresas — é lá que o atalho tentaria voltar.
 **Reversível?** Fácil — é só reabrir cada URL e conferir.
+
+---
+
+## D-022 — `thread_id` novo por execução; retomar é opt-in
+**Data:** 23/08/2026
+**Decisão:** o CLI gera `cli-<uuid4>` a cada execução e imprime o id; `--thread <id>` retoma um
+run existente.
+**Alternativas descartadas:** manter `thread_id: "cli"` fixo · zerar os canais acumuladores no
+início de cada run · trocar o reducer de `analises` por sobrescrita.
+**Motivo:** era um bug, não uma preferência. Com o id fixo, a segunda execução do mesmo comando
+devolvia a mesma startup **duas vezes** no briefing — medido: `run 1 -> 1 análise`,
+`run 2 -> 2 análises, ['Acme', 'Acme']`. A causa não é o reducer: `thread_id` é a identidade da
+**conversa**, não do processo. Invocar de novo no mesmo thread não recomeça — o checkpointer
+restaura os canais e o run continua, então o `operator.add` de `analises` soma em cima do
+anterior. Isso é o comportamento **correto** de retomada; o erro foi usar retomada como default.
+As outras duas alternativas "consertariam" o sintoma quebrando a semântica: zerar canais no
+início impede retomar de verdade (que é justamente o que o `PostgresSaver` vai habilitar na M2),
+e tirar o reducer quebraria o fan-in.
+**Onde isso aparecia:** rodar o comando duas vezes gravando o vídeo.
+**Reversível?** Fácil.
+
+---
+
+## D-023 — Fan-out vazio roteia para o Briefing, não para o silêncio
+**Data:** 23/08/2026
+**Decisão:** `distribuir()` devolve `"briefing"` quando o Retriever não casa nenhuma startup, e
+o `path_map` da aresta condicional passa a listar `["analisar_startup", "briefing"]`. O Briefing
+ganhou um caso zero que reporta o motivo e sugere como alargar a busca.
+**Alternativas descartadas:** o Retriever levantar exceção quando não acha nada · o CLI checar
+`startups == []` antes de imprimir · deixar como estava, tratando "sem resultado" como erro.
+**Motivo:** com `[]`, nenhuma tarefa é agendada; e como o `briefing` só era alcançável pela
+aresta vinda de `analisar_startup`, ele **nunca executava**. `defer=True` não cobre isso —
+ele ATRASA uma tarefa já agendada, não agenda uma que não foi. O run terminava sem a chave
+`briefing`, o erro ficava preso em `erros`, e o CLI imprimia `(sem briefing)`.
+O ponto de produto: "não encontrei nada, e aqui está por quê" **é uma resposta do sistema**.
+Levantar exceção transformaria um resultado legítimo em falha; checar no CLI colocaria regra de
+apresentação fora do grafo, e a interface web da M5 teria que repetir a mesma checagem.
+**É a mesma disciplina de D-010 e D-021:** ausência de resultado é um estado que merece ser
+reportado, não um buraco.
+**Reversível?** Fácil.
+
+---
+
+## D-024 — `error_handler` por nó em vez de `try/except` em volta do subgrafo
+**Data:** 23/08/2026
+**Decisão:** cada um dos 6 nós do subgrafo recebe `error_handler=registrar_falha`, que registra
+`nó: Tipo: mensagem` em `erros` e devolve `Command(goto=END)`. O `try/except` do wrapper
+permanece, rebaixado a terceiro nível.
+**Alternativas descartadas:** manter só o `try/except` do wrapper · `try/except` dentro de cada
+nó · deixar o handler seguir o fluxo normal em vez de saltar para o END.
+**Motivo:** o `try/except` em volta de `SUBGRAFO.invoke()` entrega a garantia que D-006 prometeu
+— uma startup ruim não derruba as outras — mas **descarta tudo que já tinha sido computado**:
+o invoke levanta, `final` nunca é atribuído, e a startup volta com `perfil=None` e
+`diagnostico=None`. Com `error_handler`, as escritas dos super-steps anteriores já estão nos
+canais; o handler só acrescenta o erro. Medido num grafo de teste: falha no classifier devolve
+`{'perfil': 'perfil-2', 'erros': ['classifier: ValueError: dado ruim']}` em vez de `{}`.
+Isso muda o que o gerente do Inception recebe: "extraímos o perfil, a classificação falhou" é
+acionável; "esta empresa falhou" não é.
+`goto=END` e não seguir o fluxo porque sem diagnóstico as etapas seguintes produziriam
+recomendação sem base — e recomendação sem base é exatamente o que D-009 existe para impedir.
+**Os três níveis, cada um pegando uma coisa diferente:** `retry_policy` cobre falha transitória
+(timeout, 5xx); `error_handler` cobre falha persistente da etapa; o `try/except` cobre falha da
+própria máquina do subgrafo. O terceiro quase nunca dispara agora — e continua lá por isso.
+**Nota sobre retry e erro de validação:** retry **não** resolve `ValidationError` do Pydantic.
+A chamada é determinística: repetir o mesmo prompt tende a dar o mesmo erro. O que resolve é
+reprompt com a mensagem de validação de volta ao modelo — fica para a M4, quando os nós virarem
+LLM de verdade.
+**Reversível?** Fácil — é um parâmetro por nó.
 
 ---
 

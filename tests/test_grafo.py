@@ -16,8 +16,15 @@ from datetime import date
 import pytest
 
 from src.agents.evidence_validator import avaliar
-from src.graph import GRAFO, SUBGRAFO
-from src.state import Afirmacao, DocumentoRef, Evidencia, PlanoDeBusca, derivar_quadrante
+from src.graph import GRAFO, SUBGRAFO, construir_grafo
+from src.state import (
+    Afirmacao,
+    DocumentoRef,
+    Evidencia,
+    PlanoDeBusca,
+    StartupRef,
+    derivar_quadrante,
+)
 
 CONSULTA = "startups brasileiras de saúde usando IA"
 
@@ -120,3 +127,76 @@ def test_validator_regra_4_nunca_deleta():
     conf, validada, _ = avaliar(a)
     assert a.texto == "x", "a afirmação não pode ser destruída pelo validator"
     assert conf == "baixa"
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Regressões da revisão de 23/08 — três defeitos achados executando o grafo, não lendo.
+# Cada um vira teste porque os três só aparecem em caminhos que o "caminho feliz" não toca:
+# consulta sem resultado, execução repetida, e etapa que levanta exceção.
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+def _startup_de_teste(nome="Acme", startup_id=1):
+    doc = DocumentoRef(documento_id=1, tipo="site", titulo="t", url_fonte="http://exemplo.test",
+                       conteudo_texto="Plataforma de IA para saúde. Reduzimos custo de inferência.")
+    return StartupRef(startup_id=startup_id, nome=nome, site="http://exemplo.test",
+                      setor="saude", documentos=[doc])
+
+
+def test_consulta_sem_resultado_ainda_produz_briefing(monkeypatch):
+    """D-023. Fan-out vazio não agenda tarefa nenhuma, e o briefing só era alcançável pela
+    aresta vinda de `analisar_startup` — então o run terminava SEM relatório. `defer=True`
+    não salva: ele atrasa o que foi agendado, não agenda o que não foi."""
+    import src.agents.retriever as r
+    monkeypatch.setattr(r, "buscar_startups", lambda plano: [])
+    final = construir_grafo().invoke({"consulta": "consulta que não casa nada"},
+                                     config={"configurable": {"thread_id": "vazio"}})
+    assert final.get("briefing"), "consulta sem resultado terminou sem briefing"
+    assert "NENHUMA STARTUP CASOU" in final["briefing"]
+    assert final["erros"], "o motivo de não ter casado nada precisa chegar ao relatório"
+
+
+def test_runs_distintos_nao_acumulam_analises(monkeypatch):
+    """D-022. `thread_id` fixo + reducer operator.add = a segunda execução SOMA na primeira.
+    Cada run é um thread novo; retomar é opt-in via --thread."""
+    import src.agents.retriever as r
+    monkeypatch.setattr(r, "buscar_startups", lambda plano: [_startup_de_teste()])
+    g = construir_grafo()
+    r1 = g.invoke({"consulta": "saúde"}, config={"configurable": {"thread_id": "run-a"}})
+    r2 = g.invoke({"consulta": "saúde"}, config={"configurable": {"thread_id": "run-b"}})
+    assert len(r1["analises"]) == 1
+    assert len(r2["analises"]) == 1, "run novo herdou as análises do run anterior"
+
+
+def test_retomar_o_mesmo_thread_continua_de_onde_parou(monkeypatch):
+    """A contraprova do teste acima: a acumulação não é bug do reducer, é a semântica de
+    thread. Com o MESMO thread_id, continuar é o comportamento CORRETO — e por isso o
+    default do CLI precisa ser um thread novo."""
+    import src.agents.retriever as r
+    monkeypatch.setattr(r, "buscar_startups", lambda plano: [_startup_de_teste()])
+    g = construir_grafo()
+    cfg = {"configurable": {"thread_id": "mesmo-thread"}}
+    g.invoke({"consulta": "saúde"}, config=cfg)
+    segundo = g.invoke({"consulta": "saúde"}, config=cfg)
+    assert len(segundo["analises"]) == 2
+
+
+def test_falha_no_meio_da_analise_preserva_o_trabalho_parcial(monkeypatch):
+    """D-024. É o teste que separa `error_handler` de um try/except em volta do subgrafo:
+    o Extractor já rodou, então o perfil TEM que sobreviver à falha do Classifier.
+    Com try/except envolvendo o subgrafo inteiro, esta asserção falha — volta tudo vazio."""
+    import src.agents.classifier as c
+
+    def explode(state):
+        raise ValueError("dado ruim nesta startup")
+
+    monkeypatch.setattr(c, "node", explode)
+    from src.graph import construir_subgrafo
+    final = construir_subgrafo().invoke(
+        {"plano": PlanoDeBusca(consulta_original="x"), "startup": _startup_de_teste()}
+    )
+    assert final.get("erros"), "a falha não foi registrada"
+    assert "classifier" in final["erros"][0] and "dado ruim" in final["erros"][0]
+    assert final.get("perfil") is not None, \
+        "o perfil extraído ANTES da falha foi descartado — é isso que o error_handler evita"
+    assert final.get("diagnostico") is None, "não pode haver diagnóstico se o classifier caiu"

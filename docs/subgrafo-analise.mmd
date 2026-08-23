@@ -4,14 +4,20 @@ config:
     curve: linear
 ---
 graph TD;
-	__start__([<p>__start__</p>]):::first
+	__start__(<p>__start__</p>)
+	__error_handler__extractor(__error_handler__extractor)
 	extractor(extractor)
+	__error_handler__classifier(__error_handler__classifier)
 	classifier(classifier)
+	__error_handler__evidence_validator(__error_handler__evidence_validator)
 	evidence_validator(evidence_validator)
+	__error_handler__nvidia_rag(__error_handler__nvidia_rag)
 	nvidia_rag(nvidia_rag)
+	__error_handler__recommendation(__error_handler__recommendation)
 	recommendation(recommendation)
+	__error_handler__elegibilidade(__error_handler__elegibilidade)
 	elegibilidade(elegibilidade)
-	__end__([<p>__end__</p>]):::last
+	__end__(<p>__end__</p>)
 	__start__ --> extractor;
 	classifier --> evidence_validator;
 	evidence_validator --> nvidia_rag;

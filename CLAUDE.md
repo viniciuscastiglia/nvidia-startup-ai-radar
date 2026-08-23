@@ -115,8 +115,10 @@ python scripts/smoke_nvidia.py             # valida as 3 capacidades da stack NV
 psql -d case_nvidia -f scripts/init_db.sql # schema (idempotente)
 python scripts/seed.py --verificar-urls    # semeia e confere que toda url_fonte resolve
 python scripts/seed.py --so-validar        # valida as fixtures sem tocar no banco
-python -m src.graph "sua consulta aqui"    # roda o pipeline ponta a ponta
-pytest -q                                  # 11 testes
+python -m src.graph "sua consulta aqui"    # roda o pipeline ponta a ponta (thread novo por run)
+python -m src.graph --thread <id> "..."    # retoma um run pelo thread_id que o CLI imprime
+python scripts/diagramas.py                # regenera os .mmd a partir do grafo compilado
+pytest -q                                  # 15 testes
 python scripts/coletar.py <url>            # auxiliar de curadoria: texto real de uma página
 ```
 

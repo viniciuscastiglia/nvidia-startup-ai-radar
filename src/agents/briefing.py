@@ -143,6 +143,15 @@ def node(state: EstadoRadar) -> dict:
     if plano := state.get("plano"):
         L.append(f"  Critérios: setores={plano.setores or '—'} · "
                  f"palavras-chave={plano.palavras_chave[:6]}")
+
+    # Caso zero: o briefing é alcançado mesmo sem nenhum fan-out (D-023). Um relatório que
+    # diz POR QUE não encontrou é resposta; terminar sem relatório é o sistema não responder.
+    if not analises:
+        L += ["", "  NENHUMA STARTUP CASOU OS CRITÉRIOS DESTA CONSULTA.", ""]
+        for e in state.get("erros") or []:
+            L.append(f"    - {e}")
+        L.append("    Sugestão: alargar setor, remover filtro de estágio, ou revisar as "
+                 "palavras-chave acima.")
     for a in sorted(analises, key=chave):
         L += _secao(a)
     L += ["", "=" * 78,

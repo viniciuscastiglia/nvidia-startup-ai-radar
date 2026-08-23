@@ -288,8 +288,10 @@ class AnaliseStartup(BaseModel):
     """O resultado completo de UMA startup — o que o subgrafo devolve ao grafo pai.
 
     Todos os campos de análise são opcionais para que uma falha parcial ainda devolva
-    algo útil: com `error_handler` por nó, uma startup com dado ruim vira uma análise
-    incompleta com `erros` preenchido, não um run derrubado.
+    algo útil: com `error_handler` por nó do subgrafo (ver `graph.registrar_falha`), a
+    etapa que falha registra o erro e salta para o END — o que as etapas ANTERIORES já
+    produziram continua no estado. Uma startup com dado ruim vira análise parcial com
+    `erros` preenchido, não um buraco no briefing nem um run derrubado.
     """
 
     startup_id: int
