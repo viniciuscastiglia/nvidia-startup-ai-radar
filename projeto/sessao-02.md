@@ -1,5 +1,14 @@
 # Sessão 02 — RAG NVIDIA (M2)
 
+> **FECHADA em 23/08/2026.** O relatório de encerramento, com a tabela de recall@k e as três
+> suposições que a medição corrigiu, está no topo de `projeto/sessao-03.md` — é a convenção
+> deste projeto: cada arquivo de sessão abre com o fechamento da anterior.
+>
+> **Uma correção de escopo aconteceu no início da sessão** e a pauta abaixo não a reflete:
+> busca densa pura e `recall@k` foram trazidos da 03/04 para cá, porque o critério de pronto
+> da 03 dependia de um harness agendado para a 04, e porque a 02 decidia chunking sem
+> instrumento para medir a própria decisão. Ver **D-031**.
+
 ## Sessão 01 — FECHADA em 23/08/2026
 
 **Concluído:** ambiente, stack validada por medição, estado do grafo, schema + seed

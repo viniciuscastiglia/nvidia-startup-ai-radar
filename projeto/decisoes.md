@@ -651,6 +651,77 @@ previsto, exatamente como `sessao-02.md` antecipou. Fundir faria da busca híbri
 
 ---
 
+## D-032 — D-025 confirmada por medição, e `recall@3` é a métrica que discrimina
+**Data:** 23/08/2026 · **é o resultado, não a intenção**
+**Decisão:** manter `estrutural-v1` como estratégia de produção. A comparação com o braço de
+controle, no gabarito de 20 perguntas, recuperação densa pura, 1024 dimensões:
+
+| k | estrutural frouxo | fixo-800 frouxo | estrutural estrito | fixo-800 estrito |
+|---|---|---|---|---|
+| 1 | 89% | 84% | 68% | 58% |
+| **3** | **100%** | **84%** | **79%** | **68%** |
+| 5 | 100% | 100% | 84% | 74% |
+
+**O que os números dizem, incluindo o que eles não dizem:**
+
+1. **`recall@5` satura e não serve para decidir.** 100% nos dois braços. Com 16 documentos e
+   k=5, a pergunta é fácil demais. Reportar só o k=5 esconderia a diferença inteira — é o tipo
+   de métrica que parece boa e não informa nada.
+2. **k=3 é o ponto de discriminação: 100% contra 84%**, 16 pontos de diferença.
+3. **O estrito separa mais que o frouxo em todo k** (79% vs 68% em k=3). Faz sentido: o frouxo
+   só pergunta se o documento certo apareceu, e a página do TensorRT-LLM tem 27 mil caracteres
+   — recuperar qualquer pedaço dela não prova que o pedaço responde.
+4. **A q19 fez exatamente o que foi desenhada para fazer.** Ela pergunta por um trecho que está
+   na página do NIM mas cujo texto destaca "TensorRT-LLM" e nunca repete "NIM". Em k=1 os
+   **dois** braços erram — o breadcrumb não põe o chunk em primeiro. Em k=3 o estrutural
+   acerta e o fixo continua errando. É a validação medida do argumento central de D-025, e
+   também o limite dele: o breadcrumb leva o chunk certo para a zona onde o reranker pode
+   promovê-lo, não para o topo sozinho.
+5. **A q14 (cuDF vs cuML) erra em k=1 nos dois braços**, recuperando cuML. Os dois READMEs têm
+   estrutura e vocabulário quase idênticos. É honestamente um caso para o léxico: `cudf.pandas`
+   é literal e o BM25 deveria resolver — fica como previsão registrada para a sessão 03.
+
+**Alternativa descartada, agora com número:** `fixo-800` perde em todas as seis células.
+**Reversível?** A tabela é reprodutível com `python scripts/avaliar_rag.py`. Se a sessão 04
+mudar a banda ou a dimensão, esta tabela é refeita — e é para isso que ela existe.
+
+---
+
+## D-033 — Abstenção não sai de limiar sobre o score denso
+**Data:** 23/08/2026 · **achado que muda a sessão 03**
+**Decisão:** o sistema **não** vai decidir "não sei" comparando `score_denso` com um limiar.
+A decisão de abstenção passa a ser requisito do reranker (sessão 03) e, se ele não bastar, da
+geração.
+**Alternativas descartadas:** limiar sobre a similaridade densa — que era o caminho óbvio e
+o que eu teria implementado sem medir.
+**Motivo — medido, e o resultado é o contrário do esperado:** a pergunta q20 do gabarito não
+tem resposta na base (pede o preço da licença do AI Enterprise, que a página não publica).
+Ela recuperou:
+
+```
+0.4813  NVIDIA AI Enterprise  "Try it for free... Download and prototype... before deploying"
+0.4607  NVIDIA AI Enterprise  "Getting Started With NVIDIA AI Enterprise on AWS Marketplace"
+0.4553  NVIDIA AI Enterprise  "Activate Your License / The Reliable and Secure Path for AI..."
+```
+
+Os três são **topicamente perfeitos** — AI Enterprise, licenciamento, como começar — e nenhum
+contém um preço. E o score de 0.4813 é **mais alto que o pior acerto verdadeiro** (0.2934 no
+estrutural, 0.3302 no fixo). A margem é **negativa nos dois braços**: −0.1879 e −0.1200. As
+distribuições se sobrepõem, então **não existe limiar** que abstenha na q20 sem descartar
+respostas corretas.
+
+**A razão é conceitual, não um defeito do modelo:** similaridade de embedding mede
+**pertinência de tópico**, não **existência de resposta**. Uma pergunta bem formulada sobre um
+assunto que a base cobre casa bem com a base — exatamente por ser bem formulada.
+
+**Consequência prática para a sessão 03:** o cross-encoder do reranker pontua o par
+(consulta, passagem) julgando se aquela passagem **responde** aquela pergunta, o que é uma
+pergunta diferente da que o bi-encoder responde. É a hipótese a testar, com este mesmo gabarito
+e esta mesma margem como medida do antes.
+**Reversível?** N/A — é um achado. O que é reversível é o mecanismo que se escolher no lugar.
+
+---
+
 ## Decisões pendentes
 
 Levantadas em `contexto/05-achados-e-decisoes.md` §4, a serem fechadas na sessão 01:

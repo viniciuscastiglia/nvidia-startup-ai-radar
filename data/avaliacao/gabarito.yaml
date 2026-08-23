@@ -1,0 +1,221 @@
+# Gabarito de avaliação do RAG NVIDIA — passo 9 do pipeline do TAPI. Ver D-030.
+#
+# POR QUE ELE É DESTA SESSÃO E NÃO DA ÚLTIMA
+# A sessão 02 decide chunking e dimensão. Sem régua, decide por argumento e descobre por
+# medição depois. Escrever as perguntas durante a leitura das 16 páginas custa quase nada;
+# relê-las na sessão 04 custaria a sessão inteira.
+#
+# A ÂNCORA É O DOCUMENTO, NÃO O CHUNK (D-030)
+# `recall@k` = "algum dos k primeiros chunks veio de `url_esperada`". Assim a métrica
+# SOBREVIVE a mudança de chunking — que é exatamente o que permite comparar estratégias.
+# Um gabarito preso a id de chunk teria que ser reescrito a cada mudança de banda, o que na
+# prática significa nunca mudar a banda.
+# `frase_ancora` habilita a variante ESTRITA: além do documento certo, o chunk contém a frase.
+#
+# PROCEDÊNCIA — como cada pergunta foi validada (23/08/2026)
+# Toda `frase_ancora` foi verificada por consulta SQL contra `chunks_nvidia`: ela ocorre no
+# corpus e ocorre em UMA só tecnologia. A verificação é `scripts/avaliar_rag.py --validar`.
+#
+# O que a verificação já derrubou: "1.201 tokens/s", "paged KV cache" e "Isaac GR00T" estão
+# em `contexto/03` mas NÃO estão nas páginas vivas — o contexto foi escrito de uma versão
+# anterior. Perguntas ancoradas neles seriam impossíveis de acertar, e o erro pareceria do
+# recuperador. Verificar que a resposta EXISTE na fonte é diferente de verificar que o
+# recuperador a encontra; a segunda coisa é o que se está medindo e nunca pode entrar aqui.
+#
+# tipo: geral | lexical | crosslingual | atribuicao | sem_resposta
+
+- id: q01
+  pergunta: Qual tecnologia NVIDIA oferece speculative decoding para aumentar throughput de inferência?
+  idioma: pt
+  tipo: geral
+  tecnologia_esperada: TensorRT-LLM
+  url_esperada: https://github.com/NVIDIA/TensorRT-LLM
+  frase_ancora: speculative decoding
+
+- id: q02
+  pergunta: O que é Colang?
+  idioma: pt
+  tipo: lexical
+  tecnologia_esperada: NeMo Guardrails
+  url_esperada: https://github.com/NVIDIA/NeMo-Guardrails
+  frase_ancora: Colang
+  nota_curadoria: >-
+    CASO DIFÍCIL DE PROPÓSITO — nome de produto raro, sem sinônimo e sem contexto na consulta.
+    O denso puro achou o documento certo mas com score 0.2972, contra 0.42 de uma consulta
+    semanticamente rica. É a pergunta que mede se a busca lexical da sessão 03 vale o que
+    custa: se o BM25 não subir esta, ele não está pagando.
+
+- id: q03
+  pergunta: Qual biblioteca da NVIDIA faz visualização interativa com filtragem multidimensional em GPU?
+  idioma: pt
+  tipo: lexical
+  tecnologia_esperada: RAPIDS / CUDA-X Data Science
+  url_esperada: https://developer.nvidia.com/topics/ai/data-science/cuda-x-data-science-libraries
+  frase_ancora: cuxfilter
+
+- id: q04
+  pergunta: Que servidor de inferência da NVIDIA faz dynamic batching e executa vários modelos ao mesmo tempo?
+  idioma: pt
+  tipo: geral
+  tecnologia_esperada: Triton Inference Server
+  url_esperada: https://developer.nvidia.com/triton-inference-server
+  frase_ancora: dynamic batching
+
+- id: q05
+  pergunta: A NVIDIA tem reconhecimento de fala que funcione em português?
+  idioma: pt
+  tipo: crosslingual
+  tecnologia_esperada: NVIDIA Riva
+  url_esperada: https://developer.nvidia.com/riva
+  frase_ancora: Portuguese
+  nota_curadoria: >-
+    CROSSLINGUAL DE PROPÓSITO — a pergunta é em português e a palavra que a responde é
+    "Portuguese", em inglês, numa página inteiramente em inglês. Léxico não atravessa idioma
+    (D-014): o BM25 não tem como casar "português" com "Portuguese". É a pergunta que mede se
+    o peso da fusão da sessão 03 está bem calibrado, porque aqui o denso tem que vencer.
+
+- id: q06
+  pergunta: Quais formatos de quantização são suportados para reduzir o custo de servir um LLM?
+  idioma: pt
+  tipo: geral
+  tecnologia_esperada: TensorRT-LLM
+  url_esperada: https://github.com/NVIDIA/TensorRT-LLM
+  frase_ancora: AWQ
+
+- id: q07
+  pergunta: Como filtrar os trechos recuperados por um RAG antes de eles chegarem ao LLM?
+  idioma: pt
+  tipo: geral
+  tecnologia_esperada: NeMo Guardrails
+  url_esperada: https://github.com/NVIDIA/NeMo-Guardrails
+  frase_ancora: retrieval rail
+  nota_curadoria: >-
+    A pergunta descreve o retrieval rail sem nomeá-lo — é o formato em que a dor chega do
+    Extractor, que observa sintoma e não produto.
+
+- id: q08
+  pergunta: Que produto da NVIDIA oferece containers com hardening de segurança e patching de vulnerabilidade para produção?
+  idioma: pt
+  tipo: geral
+  tecnologia_esperada: NVIDIA AI Enterprise
+  url_esperada: https://www.nvidia.com/en-us/data-center/products/ai-enterprise/
+  frase_ancora: STIG
+
+- id: q09
+  pergunta: Como detectar comportamento anômalo de usuários numa rede corporativa usando GPU?
+  idioma: pt
+  tipo: geral
+  tecnologia_esperada: NVIDIA Morpheus
+  url_esperada: https://developer.nvidia.com/morpheus-cybersecurity
+  frase_ancora: fingerprint
+
+- id: q10
+  pergunta: Quantos anos de existência uma empresa pode ter para ainda ser elegível ao programa de startups da NVIDIA?
+  idioma: pt
+  tipo: geral
+  tecnologia_esperada: NVIDIA Inception
+  url_esperada: https://www.nvidia.com/en-us/startups/
+  frase_ancora: 10 years
+  nota_curadoria: >-
+    Vira regra de negócio no filtro de elegibilidade do Briefing Agent (M4). Se o RAG não
+    recuperar isto, o filtro passa a depender de conhecimento hardcoded — que é exatamente o
+    que a base de conhecimento existe para evitar.
+
+- id: q11
+  pergunta: O programa Inception cobra mensalidade ou pede participação societária?
+  idioma: pt
+  tipo: geral
+  tecnologia_esperada: NVIDIA Inception
+  url_esperada: https://www.nvidia.com/en-us/startups/
+  frase_ancora: equity
+
+- id: q12
+  pergunta: Existe alguma solução NVIDIA para acelerar análise genômica?
+  idioma: pt
+  tipo: geral
+  tecnologia_esperada: NVIDIA Healthcare (ex-Clara)
+  url_esperada: https://www.nvidia.com/en-us/clara/
+  frase_ancora: Parabricks
+
+- id: q13
+  pergunta: Qual framework aberto da NVIDIA serve para segmentação de imagem médica sobre PyTorch?
+  idioma: pt
+  tipo: geral
+  tecnologia_esperada: NVIDIA Healthcare (ex-Clara)
+  url_esperada: https://www.nvidia.com/en-us/clara/
+  frase_ancora: MONAI
+  nota_curadoria: >-
+    O TAPI cita "Clara", marca que não existe mais como guarda-chuva. Esta pergunta verifica
+    que o rebrand não quebrou a recuperação: quem procura o portfólio de saúde tem que achar.
+
+- id: q14
+  pergunta: Dá para acelerar um pipeline de pandas em GPU sem reescrever o código?
+  idioma: pt
+  tipo: geral
+  tecnologia_esperada: cuDF
+  url_esperada: https://github.com/rapidsai/cudf
+  frase_ancora: cudf.pandas
+  nota_curadoria: >-
+    Concorre com a página do RAPIDS/CUDA-X, que também fala de pandas. A âncora `cudf.pandas`
+    ocorre só no cuDF — é a diferença entre recuperar a biblioteca certa e a coleção que a
+    contém.
+
+- id: q15
+  pergunta: Como acelerar código existente de scikit-learn em GPU?
+  idioma: pt
+  tipo: geral
+  tecnologia_esperada: cuML
+  url_esperada: https://github.com/rapidsai/cuml
+  frase_ancora: cuml.accel
+
+- id: q16
+  pergunta: Que ferramenta da NVIDIA simula robôs e gera dado sintético antes de existir hardware?
+  idioma: pt
+  tipo: geral
+  tecnologia_esperada: NVIDIA Isaac
+  url_esperada: https://developer.nvidia.com/isaac
+  frase_ancora: Isaac Sim
+
+- id: q17
+  pergunta: Minha startup não tem processo nenhum para medir a qualidade do agente que entrega. O que a NVIDIA oferece?
+  idioma: pt
+  tipo: geral
+  tecnologia_esperada: NVIDIA NeMo
+  url_esperada: https://www.nvidia.com/en-us/ai-data-science/products/nemo/
+  frase_ancora: Evaluator
+
+- id: q18
+  pergunta: Como monitorar métricas de um servidor de inferência em produção?
+  idioma: pt
+  tipo: geral
+  tecnologia_esperada: Triton Inference Server
+  url_esperada: https://developer.nvidia.com/triton-inference-server
+  frase_ancora: Prometheus
+
+- id: q19
+  pergunta: Qual produto empacota o modelo com uma engine de inferência otimizada — TensorRT-LLM, vLLM ou SGLang — e expõe API padrão?
+  idioma: pt
+  tipo: atribuicao
+  tecnologia_esperada: NVIDIA NIM
+  url_esperada: https://www.nvidia.com/en-us/ai-data-science/products/nim-microservices/
+  frase_ancora: vLLM
+  nota_curadoria: >-
+    A PERGUNTA QUE SEPARA D-025 DA JANELA FIXA. O trecho que a responde está na página do NIM,
+    mas o texto dele cita "TensorRT-LLM" com destaque e não repete a palavra "NIM". Num chunk
+    de janela fixa, sem breadcrumb, esse trecho PARECE ser sobre TensorRT-LLM. O chunk
+    estrutural carrega "NVIDIA NIM > ..." prefixado. Se o breadcrumb serve para alguma coisa,
+    é aqui que aparece.
+
+- id: q20
+  pergunta: Qual o preço da licença do NVIDIA AI Enterprise por GPU por ano em reais?
+  idioma: pt
+  tipo: sem_resposta
+  tecnologia_esperada: null
+  url_esperada: null
+  frase_ancora: null
+  nota_curadoria: >-
+    SEM RESPOSTA NA BASE, de propósito. A página do AI Enterprise diz que a licença é por GPU
+    por ano, mas não publica valor — e muito menos em reais. É plausível o bastante para o
+    denso recuperar a página do AI Enterprise com score razoável, que é justamente o que
+    torna a pergunta útil: mede se o sistema sabe dizer "não sei" em vez de citar um trecho
+    adjacente e deixar o LLM inventar o número. Aqui o acerto é ABSTER-SE.

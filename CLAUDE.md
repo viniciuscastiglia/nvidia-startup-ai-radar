@@ -96,12 +96,18 @@ Frontend livre.
 | Vetores | pgvector no mesmo Postgres | D-016 |
 | Busca lexical | `bm25s` em processo para o RAG · `tsvector` para documentos de startup | D-016 |
 | Topologia | subgrafo de análise + fan-out por `Send` | D-007 |
+| Chunking | estrutural por seção + breadcrumb prefixado · janela fixa como controle | D-025, D-027 |
 
 > **Atenção — os modelos que o TAPI cita estão mortos.** `llama-3.2-nv-embedqa-1b-v2` e
 > `llama-3.2-nv-rerankqa-1b-v2` respondem **HTTP 410 Gone** desde 18/05/2026. Nunca usar esses
 > nomes. Ver D-013 e `contexto/03` §3.
 
 **Em aberto:** framework de frontend (P-06) e quantas startups entram na base final.
+
+**Base de conhecimento NVIDIA (M2, sessão 02):** 16 tecnologias em `data/nvidia/fontes.yaml`,
+177 chunks estruturais + 204 de controle em `chunks_nvidia`, gabarito de 20 perguntas em
+`data/avaliacao/gabarito.yaml`. Linha de base medida: **recall@3 = 100% estrutural contra 84%
+da janela fixa** (D-032). A abstenção **não** sai de limiar sobre score denso (D-033).
 
 **Diferencial:** o RAG roda inteiro na própria stack NVIDIA — embedding e reranking do NeMo
 Retriever no lugar do Cohere (pago). Dá o argumento "usei a stack que o sistema recomenda".
@@ -115,10 +121,15 @@ python scripts/smoke_nvidia.py             # valida as 3 capacidades da stack NV
 psql -d case_nvidia -f scripts/init_db.sql # schema (idempotente)
 python scripts/seed.py --verificar-urls    # semeia e confere que toda url_fonte resolve
 python scripts/seed.py --so-validar        # valida as fixtures sem tocar no banco
+python scripts/verificar_embedder.py       # Matryoshka e limite de entrada do embedder
+python scripts/ingerir_nvidia.py --so-validar  # chunking sem tocar banco nem API
+python scripts/ingerir_nvidia.py           # ingere as 16 tecnologias (upsert idempotente)
+python scripts/avaliar_rag.py --validar    # confere o gabarito CONTRA o corpus
+python scripts/avaliar_rag.py -k 3         # recall@k: estrutural vs braço de controle
 python -m src.graph "sua consulta aqui"    # roda o pipeline ponta a ponta (thread novo por run)
 python -m src.graph --thread <id> "..."    # retoma um run pelo thread_id que o CLI imprime
 python scripts/diagramas.py                # regenera os .mmd a partir do grafo compilado
-pytest -q                                  # 15 testes
+pytest -q                                  # 29 testes
 python scripts/coletar.py <url>            # auxiliar de curadoria: texto real de uma página
 ```
 
@@ -130,6 +141,7 @@ Para quem for avaliar sem Postgres local: `docker compose up -d` (porta 5433) e 
 - **Um agente por módulo** em `src/agents/`, cada um exportando `node(state) -> dict`
 - **Dois estados**: `EstadoRadar` (grafo pai) e `EstadoAnalise` (subgrafo). Ver `src/state.py`
 - **Nada é afirmado sem `list[Evidencia]`** — `Afirmacao` é a unidade que os agentes produzem
+- **Passo do pipeline RAG = módulo em `src/rag/`**: `limpeza` (passo 2), `chunking` (3), `busca` (6)
 - **Fixtures do seed em `data/seed/*.yaml`**, uma startup por arquivo. `perfil_alvo` é anotação
   de curadoria e **não entra no banco**
 - **Provedor de LLM/embedding/rerank só via `src/config.py`** — nenhum agente conhece a NVIDIA
@@ -147,7 +159,9 @@ Para quem for avaliar sem Postgres local: `docker compose up -d` (porta 5433) e 
 | `contexto/04-ecossistema-br.md` | for popular a base de startups ou precisar de `url_fonte` legítimo |
 | `contexto/05-achados-e-decisoes.md` | antes de decidir stack, ou se algo do TAPI parecer desatualizado |
 | `projeto/plano.md` | no início de qualquer sessão — sequência dos 18 dias, marcos e riscos |
-| `projeto/sessao-NN.md` | pauta executável da sessão corrente |
+| `projeto/sessao-NN.md` | pauta executável da sessão corrente; abre com o fechamento da anterior |
+| `data/nvidia/fontes.yaml` | manifesto curado das 16 fontes do RAG — de onde busca vs. o que cita |
+| `data/avaliacao/gabarito.yaml` | as 20 perguntas com documento-fonte esperado; é a régua do RAG |
 | `projeto/decisoes.md` | **sempre que uma decisão for tomada** — escrever na hora |
 | `projeto/conceitos.md` | antes de cada sessão: os 10 conceitos de IA que sustentam o núcleo e o vídeo, com o que estudar de cada um |
 | `projeto/guia-de-trabalho.md` | método de trabalho e manutenção desta documentação |
