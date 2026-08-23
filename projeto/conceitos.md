@@ -32,12 +32,15 @@ Camada 2 você **já tem escrita**. Não é estudo novo — é saber contar sem 
 
 ---
 
-# Camada 1 — os 10 conceitos
+# Camada 1 — os 13 conceitos
 
 Formato de cada um: o que é · por que o *seu* projeto precisa · a pergunta que vem ·
 o que estudar · como saber que você entendeu.
 
-Os quatro marcados **[ESSENCIAL]** são inegociáveis. Se só houver 3 horas, são esses.
+Os seis marcados **[ESSENCIAL]** são inegociáveis. Se só houver 3 horas, são esses.
+
+Os conceitos 11 e 12 foram acrescentados depois: eles são **domínio**, não técnica, e por isso
+quase escaparam. São também as duas perguntas mais prováveis do processo inteiro.
 
 ---
 
@@ -299,6 +302,172 @@ conceito é o mesmo) e o `with_structured_output` do LangChain. Depois, procure 
 
 ---
 
+## 11. A stack NVIDIA — as tecnologias que você vai recomendar **[ESSENCIAL]**
+
+**O que é.** As 16 tecnologias de `contexto/03` §1 e o programa Inception. É o "lado direito" do
+motor de recomendação: o mapa dor → tecnologia de `contexto/03` §4 casa o que foi observado na
+startup com o que a NVIDIA tem.
+
+**Por que isto quase escapou desta lista.** Eu tratei `contexto/03` como documento de consulta.
+Errado: **isto é um case da NVIDIA.** *"O que é o NIM e por que você recomendou ele para essa
+startup, e não o Triton?"* é provavelmente a pergunta mais provável do processo inteiro, e é
+constrangedora de errar. Consultar não serve — tem que estar na cabeça.
+
+### A distinção que mais gera confusão
+
+As três se sobrepõem e é fácil trocar uma pela outra:
+
+| | O que é | A frase de uma linha |
+|---|---|---|
+| **TensorRT-LLM** | biblioteca de **otimização** de inferência | quantização FP8/FP4, speculative decoding (~3x), paged KV cache |
+| **NIM** | **empacotamento**: container com modelo + engine otimizada + API padrão | "self-host sem reescrever código" — API OpenAI-compatible |
+| **Triton** | camada de **serving** em produção | dynamic batching, vários modelos concorrentes, métricas Prometheus |
+
+O NIM **embute** o TensorRT-LLM. Não são alternativas — são camadas. E a resposta de "qual
+recomendar" vem da dor: custo/privacidade de quem depende de API externa → NIM; latência de quem
+já roda modelo próprio → TensorRT-LLM; GPU subutilizada servindo vários modelos → Triton.
+
+### O que saber de cor (5 + 1)
+
+**NIM · TensorRT-LLM · Triton · NeMo (Guardrails e Evaluator) · RAPIDS (cuDF/cuML)** cobrem a
+maioria das recomendações que o seu sistema vai emitir. Mais o **Inception**, que é o destino de
+todo briefing.
+
+As verticais — **MONAI**, **Parabricks**, **BioNeMo** (saúde), **Riva** (voz, e faz ASR em
+português), **Morpheus** (fraude), **Isaac/Omniverse** (robótica) — são consulta por setor.
+Saiba que existem e para que servem; não decore números.
+
+**Inception**: grátis, sem equity, sem cohort. Requisitos: ≥1 developer empregado, incorporada,
+site ativo, <10 anos, **não exige receita**. Exclui consultoria, cripto, cloud provider, revenda
+e capital aberto. Isso já é código em `src/agents/briefing.py`.
+
+### O detalhe que vira momento de vídeo
+
+O NIM expõe **API OpenAI-compatible** — trocar o `base_url` basta. É exatamente o que a sua
+**D-003** explora para falar com o build.nvidia.com por `langchain-openai` em vez do SDK da
+NVIDIA. Ou seja: **o seu projeto é, ele mesmo, uma demonstração da tese do NIM.** Você não
+precisa argumentar que migrar não exige mudar código — o seu `config.py` prova.
+
+**As 5 regras do Recommendation Agent** (`contexto/03` §4) valem decorar, porque são a diferença
+entre motor e template:
+1. prioridade vem do **gap** entre os dois eixos, não do rótulo
+2. complexidade tem que ser honesta — `cudf.pandas` é zero-code-change; migrar para Triton +
+   TensorRT-LLM é projeto de semanas
+3. sem evidência, não recomenda
+4. não empilhar — 2 ou 3 tecnologias com próxima ação clara, não 8
+5. o **estágio** muda a recomendação: pre-seed → Inception e créditos; Série A com carga real →
+   NIM e TensorRT-LLM; Série B com cliente corporativo → AI Enterprise
+
+**O que estudar.** `contexto/03` inteiro, uma vez, com atenção. Depois volte só na §4 (o mapa) e
+na §2 (Inception) até conseguir recitar. Cada tecnologia tem URL oficial verificada na §5 — se
+alguma ficar abstrata, abra a página.
+
+**Como saber que entendeu.** Você pega uma das suas 3 startups da base, diz qual tecnologia
+recomendaria, por qual dor observada, com que complexidade e qual a próxima ação — sem abrir o
+arquivo.
+
+---
+
+## 12. A rubrica AI-native — a pergunta norteadora do case **[ESSENCIAL]**
+
+**O que é.** A régua de `contexto/02` que separa `AI-native`, `AI-enabled` e `non-AI`. O TAPI
+**não fornece** essa rubrica — você a construiu a partir de Sequoia, Emergence Capital e do
+5-layer cake da NVIDIA. Isso é bom e ruim: é diferencial, e é 100% seu para defender.
+
+**Por que o seu projeto precisa.** É a pergunta norteadora inteira: *"como a NVIDIA identifica
+startups AI-native num contexto em que os grandes labs ameaçam quem só faz wrapper de LLM?"*
+Se você hesitar em "o que é AI-native", o case inteiro balança.
+
+### O eixo central: copilot vs autopilot
+
+- **AI-enabled** fala como **copilot**: *"nossa plataforma permite que você..."* — IA é feature
+  dentro de um produto que existiria sem ela. Depende de API externa, sem dado proprietário,
+  delivery ainda humano escalando linearmente. É a categoria de risco do TAPI: substituível por
+  funcionalidade nativa dos grandes labs.
+- **AI-native** fala como **autopilot**: vende o **resultado**, não a ferramenta. Tem dado
+  proprietário gerado pelo próprio trabalho (flywheel), otimização técnica própria
+  (self-hosting, quantização, avaliação, guardrails), e margem que **melhora** com escala.
+- **non-AI**: sem IA no caminho crítico da entrega de valor. Usar ChatGPT internamente não conta.
+
+### A parte que quase ninguém faz: classificar ≠ qualificar
+
+Ser AI-native **não** faz alguém bom prospect. A intensidade da recomendação vem do **gap** entre
+dois eixos — classe × maturidade de stack:
+
+- **AI-native + stack imatura = SWEET SPOT.** Carga de IA real e a dor prestes a bater.
+- **AI-enabled + stack imatura** = prospect de evolução; a conversa é sair do wrapper.
+- **AI-native + stack madura** = provavelmente já é membro do Inception.
+- **non-AI** = fora do funil.
+
+Isso está executável em `derivar_quadrante()` no `state.py`. É decisão de arquitetura, não
+enfeite — e empurra o critério 3.
+
+### A hierarquia de sinal por tipo de documento
+
+A **vaga de emprego é o documento mais honesto da base** — sinal altíssimo. "ML Engineer",
+"inference optimization", "CUDA", "TensorRT", "vLLM", "MLOps", "avaliação de modelos" = 
+profundidade técnica real. Só "integrar a API da OpenAI" = wrapper. Blog é alto, site é
+médio-alto (é onde o copilot/autopilot aparece na linguagem), notícia é média e serve para
+**datar** a evidência, release é baixo.
+
+Marketing mente; vaga técnica não mente, porque a empresa precisa que a pessoa certa se
+candidate. **Essa frase é vídeo.**
+
+**O que estudar.** `contexto/02` inteiro. Preste atenção especial na §4 (as três classes e o
+modelo de dois eixos) e na §5 (sinais por tipo de documento). O conceito de **Mirage PMF** da
+Emergence (§2) é o mais útil do arquivo e vale entender: crescimento que parece PMF mas é
+curiosidade sobre IA.
+
+**Como saber que entendeu.** Você classifica a **Axenya** em voz alta, com evidência, e explica
+por que a heurística da sessão 01 a reprovou por engano (D-020: o site diz *"Integramos
+consultoria, dados e operação clínica em uma única plataforma"* — ela não **é** consultoria, ela
+**absorve** a função de consultoria num produto, que é justamente o wedge da Sequoia).
+
+---
+
+## 13. Prompt engineering para extração com evidência
+
+**O que é.** A técnica de escrever a instrução que faz o LLM produzir exatamente a estrutura que
+você precisa. Não é "pedir com jeitinho" — é decidir o que vai no prompt, em que ordem, com
+quantos exemplos, e o que fazer quando a saída não valida.
+
+**Por que o seu projeto precisa.** É o que separa a sessão 01 da M4. Hoje os nós são heurística
+de palavra-chave; quando virarem LLM, o prompt é o agente. E os **três erros registrados em
+D-020 são exatamente o que os prompts têm que resolver**:
+1. a Axenya reprovada por casamento de substring ("consultoria")
+2. todas as empresas acusando quase todas as 8 dores
+3. a Doutor-AI classificada AI-enabled apesar de linguagem de autopilot pura
+
+Note que D-020 diz que esses erros são o melhor material de "antes e depois" do vídeo. Para isso
+funcionar, o "depois" precisa realmente ser melhor — e é o prompt que faz.
+
+### O que importa aqui, especificamente
+
+- **Extração pede literalidade, recomendação pede inferência.** São prompts de natureza oposta e
+  é por isso que são agentes separados (conceito 8). No Extractor, o modelo tem que devolver o
+  **trecho exato** junto da conclusão — a `Evidencia` de D-009 exige `trecho`, não paráfrase.
+  Peça o span literal e valide que ele **existe** no documento de origem.
+- **Few-shot vale mais que instrução longa** em classificação com rubrica. Dois ou três exemplos
+  de AI-native vs AI-enabled tirados da sua própria base ensinam a régua melhor que um parágrafo
+  descrevendo-a.
+- **Saída estruturada não é opcional aqui** — ver conceito 10.
+- **Reprompt com o erro de validação.** Quando o Pydantic rejeitar, retry cego não resolve
+  (a chamada é determinística demais). O que resolve é devolver a mensagem de validação ao
+  modelo e pedir correção. Está registrado na nota de D-024.
+- **Peça o "não sei".** Um prompt que só oferece caminhos de resposta positiva produz a dor
+  inventada do erro nº 2 de D-020. Dê saída explícita: *"se o documento não sustenta nenhuma das
+  oito dores, devolva lista vazia"*. É a mesma disciplina de D-021 aplicada ao prompt — **`null`
+  precisa ser uma resposta permitida.**
+
+**O que estudar.** O guia de *prompt engineering* da documentação da Anthropic (as páginas de
+*be clear and direct*, *multishot prompting* e *chain of thought* cobrem 90% do que você
+precisa). Depois, a página de *structured outputs*. Estude **na M4**, não antes — sem os nós
+reais na frente, não gruda.
+
+**Como saber que entendeu.** Você escreve o prompt do Extractor e consegue dizer, para cada
+pedaço dele, qual erro de D-020 aquele pedaço existe para evitar.
+
+
 # Camada 3 — o LangGraph, quando sobrar tempo
 
 Não estude antes de gravar o vídeo. Vale como seguro contra pergunta de aprofundamento.
@@ -333,11 +502,17 @@ de um run. Ver o histórico com os próprios olhos vale mais que qualquer texto.
 
 | Antes de | Leia |
 |---|---|
-| sessão 02 (RAG, passos 1-5) | 1, 5, 7 |
+| sessão 02 (RAG, passos 1-5) | 1, 5, 7 — **e 11**, porque a ingestão é da documentação NVIDIA: você vai ler as 16 tecnologias de qualquer jeito, então leia entendendo |
 | sessão 03 (busca híbrida + rerank) | 2, 3, 4 |
 | sessão 04 (harness) | 6 |
-| sessões dos agentes (M4) | 8, 10 |
-| gravar o vídeo | 9 + reler `decisoes.md` inteiro |
+| M3, montar a base de startups | **12** — é a régua que decide quais empresas entram e por quê |
+| sessões dos agentes (M4) | 8, 10, 13 |
+| gravar o vídeo | 9, 11, 12 + reler `decisoes.md` inteiro |
 
-**Implementar já é estudar.** Os conceitos 1-6 *são* a sessão 02. Você não precisa estudá-los
+**Os dois de domínio são diferentes dos outros onze.** 11 e 12 não se aprendem
+implementando — o código não te ensina o que é o NIM nem o que é AI-native. São os únicos que
+exigem sentar e ler `contexto/02` e `contexto/03` de propósito. São também os dois que o vídeo
+mais cobra. Reserve uma sessão inteira para eles, ou eles não acontecem.
+
+**Implementar já é estudar** — para os outros. Os conceitos 1-6 *são* a sessão 02. Você não precisa estudá-los
 antes e depois — precisa ler 30 minutos antes de cada bloco e implementar com o conceito fresco.
