@@ -76,7 +76,7 @@ Até 7 minutos: arquitetura dos agentes, sistema RAG, demonstração funcional p
 
 | Marco | Sessões | Corte |
 |---|---|---|
-| **M2** RAG | **3** | ingestão+embed · híbrida+rerank · harness. Detalhado em `sessao-02.md` |
+| **M2** RAG | **3** | ingestão+embed+**gabarito** · híbrida+rerank · otimização medida. O gabarito de avaliação é da 1ª sessão, não da última — ver `sessao-02.md` |
 | **M3** base 30-50 startups | **2-3** | ⚠️ o sumidouro |
 | **M4** agentes com LLM | **2-3** | inclui corrigir os 3 erros de D-020 |
 | **M5** interface | **1** | vale 5 pontos, não vale mais |

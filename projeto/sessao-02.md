@@ -48,20 +48,39 @@ Os 9 passos do pipeline RAG não cabem numa sessão. O corte abaixo é por **aco
 bloco termina num artefato testável, e o seguinte só depende do artefato, não do contexto de
 quem escreveu.
 
-| Sessão | Passos | Termina quando |
+| Sessão | Entrega | Termina quando |
 |---|---|---|
-| **02** ← você está aqui | 1-5 · ingestão → embeddings → armazenamento | `chunks_nvidia` populada, índice HNSW criado, um `SELECT` por similaridade devolve chunk plausível |
-| **03** | 6-8 · busca híbrida → reranking → citação | `buscar_hibrido(query, k)` devolve `CitacaoRAG` com os **três** scores preenchidos |
-| **04** | 9 · avaliação | recall@k medido para denso puro vs híbrido vs híbrido+rerank |
+| **02** ← você está aqui | passos 1-5 **+ o gabarito de avaliação** | `chunks_nvidia` populada e indexada, **e** um conjunto de perguntas com fonte esperada capaz de pontuá-la |
+| **03** | passos 6-8 · busca híbrida → reranking → citação | `buscar_hibrido(query, k)` devolve `CitacaoRAG` com os **três** scores, e cada incremento foi medido contra o gabarito |
+| **04** | passo 9 · otimização guiada por medida | recall@k comparando denso vs híbrido vs +rerank, 384 vs 768 vs 1024, e duas estratégias de chunking |
 
-**Por que não juntar 02 e 03.** A ingestão sempre dá mais trabalho que o previsto — são 16
-páginas da NVIDIA com estrutura diferente, e cada erro de parsing só aparece depois de embedar.
-Se a busca híbrida estiver na mesma sessão, ela é a parte que é cortada às pressas — e ela é
-metade do critério 2.
+### O gabarito é da sessão 02, não da 04 — isto é a parte não óbvia
 
-**Por que a 04 é separada.** O harness é o passo que mais separa nível 2 de nível 4, e ele exige
-escrever o conjunto de perguntas com resposta esperada — trabalho de curadoria, não de código.
-Feito com pressa no fim da 03, vira 5 perguntas fáceis que todo método acerta, e aí não mede nada.
+A primeira versão deste plano deixava a avaliação inteira para a sessão 04. Está errado, e o
+motivo é específico: **a sessão 02 decide chunking e dimensão, e o harness é o instrumento que
+mede essas duas decisões.** Deixá-lo para depois significa decidir por argumento e descobrir por
+medição — quando D-014 já registra que mudar a dimensão exige re-embedar o corpus inteiro.
+
+Duas razões para escrever o gabarito aqui:
+
+1. **Ele não depende de chunking.** Ancore a resposta esperada no **documento-fonte** ("qual
+   tecnologia dá speculative decoding?" → página do TensorRT-LLM), não num id de chunk. Assim
+   `recall@k` = "apareceu algum chunk do documento certo entre os k primeiros", e a métrica
+   sobrevive a qualquer mudança de chunking — que é justamente o que permite **comparar**
+   estratégias. Variante mais estrita: anotar a frase que responde e checar se o chunk a contém.
+2. **É quase de graça agora e caro depois.** Você vai ler as 16 páginas para coletar. Esse é o
+   momento de escrever a pergunta e anotar a fonte. Na sessão 04, custa reler as 16 páginas.
+
+Mire em **15 a 20 perguntas**, incluindo casos difíceis de propósito: uma que exija o léxico
+(nome de produto raro), uma que exija o denso (pergunta em português sobre página em inglês), e
+uma **sem resposta na base** — para medir se o sistema sabe dizer "não sei".
+
+**Por que 02 e 03 são separadas.** A ingestão sempre dá mais trabalho que o previsto — 16 páginas
+com estruturas diferentes, e erro de parsing só aparece depois de embedar. Se a busca híbrida
+estiver na mesma sessão, ela é a parte cortada às pressas — e é metade do critério 2.
+
+> **É teto, não piso.** Se a coleta correr lisa, 02 e 03 podem virar uma sessão só. O que não se
+> deve fazer é *planejar* assim. E o número é estimativa pela forma do trabalho, não medição.
 
 **O que NÃO fazer na 02:** busca lexical, fusão, reranking. Estão listados abaixo para você ver o
 destino, não para implementar agora.
@@ -77,6 +96,9 @@ Ingestão → embeddings → armazenamento:
       verificado; 1024 cabe)
 - [ ] Embedar com `input_type="passage"` — a assimetria do NeMo Retriever é silenciosa: embedar
       documento como consulta degrada a recuperação sem dar erro
+- [ ] **Gabarito de avaliação: 15-20 perguntas com o documento-fonte esperado**, escritas
+      DURANTE a coleta. Versionar em `data/avaliacao/`. É o que transforma as decisões de
+      chunking e dimensão em medição na sessão 04 — e é quase de graça agora
 
 ### Sessão 03 — passos 6-8 (busca híbrida → reranking → citação)
 - [ ] `bm25s` em processo, com `k1`/`b` explícitos
@@ -85,7 +107,10 @@ Ingestão → embeddings → armazenamento:
       léxico não atravessa idioma (ver D-014)
 - [ ] Reranking com `llama-nemotron-rerank-1b-v2`, preenchendo os **três** scores de `CitacaoRAG`
 
-### Sessão 04 — passo 9, **o que mais separa nível 2 de nível 4 no critério 2**
+### Sessão 04 — passo 9: otimizar com o gabarito que a 02 escreveu
+
+**O que mais separa nível 2 de nível 4 no critério 2.** A sessão 04 não constrói a régua — ela
+já existe desde a 02. Aqui ela é usada para decidir:
 - [ ] Harness de avaliação: conjunto de perguntas com resposta esperada, recall@k, e comparação
       denso puro vs híbrido vs híbrido+rerank. É o que transforma D-014 ("1024 por causa do HNSW")
       em medição, e permite comparar 384 vs 768 vs 1024
