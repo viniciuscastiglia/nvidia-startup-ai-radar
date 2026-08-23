@@ -478,6 +478,179 @@ LLM de verdade.
 
 ---
 
+# Sessão 02 — RAG NVIDIA (M2), passos 1-5 do pipeline
+
+## D-025 — Chunking estrutural por seção, com banda de tamanho e breadcrumb prefixado
+**Data:** 23/08/2026
+**Decisão:** a unidade de chunk é a **seção do documento** (`h1/h2/h3` no HTML, `#` ATX e setext
+no markdown), passada por duas normalizações — **fundir** seções irmãs abaixo de um piso e
+**dividir** seções acima de um teto — e indexada com o **breadcrumb prefixado**:
+`NVIDIA NIM > Boost Throughput With NIM\n\n<texto>`. Guarda-se `texto` (limpo, é o que vira
+`CitacaoRAG.trecho`) separado de `texto_indexado` (com breadcrumb, é o que é embedado).
+O primeiro elemento do breadcrumb é **sempre o nome da tecnologia**, vindo do metadado de
+curadoria — nunca do heading.
+
+**Alternativas descartadas:**
+- **Janela fixa 800 chars / 15% overlap.** Não some: vira o braço de controle medido (ver D-027).
+- **Semântico por similaridade de embeddings** (embedar frase a frase e cortar onde a cosseno cai).
+- **Um chunk por tecnologia** — 18 chunks, sem chunking real.
+- **Proposições atômicas extraídas por LLM.**
+
+**Motivo:** medi o corpus antes de decidir, buscando as 18 URLs de `contexto/03` §5 com
+`scripts/coletar.py`. Três números mandaram na escolha:
+
+1. **As páginas têm formas opostas.** NIM: 51 seções em 9.909 chars = **~194 chars por seção**.
+   NeMo: 102 em 22.160 = ~217. README do TensorRT-LLM: 8 seções em 27.060 = **~3.383**.
+   Um chunk por heading daria fragmento inútil num extremo e bloco grande demais no outro —
+   por isso **as duas normalizações são caminho principal**, cada uma em um tipo de documento,
+   e não tratamento de caso de canto.
+2. **Os headings não nomeiam o produto.** Os `h3` do NIM incluem `Benefits`, `Models`,
+   `Features`, `Technology`. Uma janela fixa corta a bullet `- Quantização: FP8, FP4, INT4-AWQ`
+   e a separa para sempre de "TensorRT-LLM": o denso ainda recupera por "quantização", mas o
+   **BM25 por "TensorRT-LLM" não recupera**, e o LLM que ler o chunk não tem como atribuir.
+   Isso é perda de **atribuição**, não só de contexto — e atribuição é o 7º campo obrigatório
+   do TAPI. Prefixar o breadcrumb resolve para os dois motores ao mesmo tempo.
+3. **O semântico por embeddings custaria ~1.500 chamadas de embedding só para decidir
+   fronteiras** — o risco nº 1 do `plano.md` é crédito. E é uma técnica desenhada para prosa
+   corrida: este corpus é bullet e tabela, onde a similaridade entre frases consecutivas é
+   ruído, não sinal de fronteira. O termo "chunking semântico" do TAPI **não obriga** a essa
+   técnica; respeitar a estrutura que o autor do documento escreveu é semântico no sentido que
+   importa.
+
+As proposições por LLM foram descartadas por **risco, não por custo**: o LLM reescreveria o
+corpus, e "rastreabilidade é requisito duro" aparece duas vezes no TAPI. Alucinação na ingestão
+envenena a base de evidências inteira.
+
+**O que ainda não está decidido:** os valores do piso e do teto. O Bloco 0 mediu que o embedder
+aceita **entre 6.144 e 8.192 tokens** — ou seja, **o teto não é restrição técnica**, é escolha de
+precisão de recuperação. Sai da distribuição real de chunks no Bloco 4 e é medido na sessão 04.
+**Reversível?** Fácil por construção — é exatamente o que D-027 existe para garantir.
+
+---
+
+## D-026 — Chunker escrito à mão, sem `langchain-text-splitters`
+**Data:** 23/08/2026
+**Decisão:** ~80 linhas próprias em `src/rag/chunking.py`.
+**Alternativas descartadas:** `RecursiveCharacterTextSplitter` / `MarkdownHeaderTextSplitter`
+do `langchain-text-splitters`.
+**Motivo:** é decisão de **defensabilidade**, não de "não inventado aqui". O eliminatório nº 4 é
+*"código integralmente gerado sem compreensão"* — e a diferença entre "escolhi fundir irmãs sob
+o pai comum porque medi 194 chars por seção nas páginas de produto" e "o splitter fez isso" é
+exatamente o que a banca vai cobrar. Some a isso que `langchain-text-splitters` **não está
+instalado** hoje: a alternativa custaria uma dependência nova para entregar menos controle.
+A regra de fundir-com-breadcrumb-do-pai-comum não existe pronta em nenhum dos dois splitters.
+**Reversível?** Fácil — mesma assinatura, é trocar a implementação.
+
+---
+
+## D-027 — `estrategia` como coluna, não como constante: a alternativa descartada vira controle
+**Data:** 23/08/2026
+**Decisão:** `chunks_nvidia` tem coluna `estrategia` e `UNIQUE (estrategia, documento_url,
+ordinal)`. As duas estratégias coexistem na mesma tabela; a busca filtra por `estrategia`.
+`chunk_fixo()` (~15 linhas, mesma assinatura de `chunk_estrutural()`) é gravado como `fixo-800`.
+**Alternativas descartadas:** uma estratégia por vez, escolhida por constante no código —
+re-ingerindo o corpus quando quisesse comparar.
+**Motivo:** sem isso, D-025 é uma afirmação. Com isso, é um número. É a diferença entre dizer ao
+avaliador *"escolhi chunking estrutural"* e mostrar *"estrutural dá recall@10 = X, janela fixa dá
+Y, no mesmo gabarito"* — que é literalmente a descrição do nível 4 do barema, "decisões técnicas
+conscientes". O custo é uma coluna e ~15 linhas; o corpus é pequeno o bastante para caber duas
+vezes sem que ninguém note.
+**Efeito colateral aceito:** o índice HNSW cobre as duas estratégias, então filtrar por
+`estrategia` é pós-filtro. Irrelevante a algumas centenas de linhas; viraria problema num corpus
+uma ordem de grandeza maior.
+**Reversível?** Fácil — `DELETE WHERE estrategia = '...'`.
+
+---
+
+## D-028 — Fonte por tecnologia: markdown bruto no GitHub, HTML nas páginas de produto
+**Data:** 23/08/2026
+**Decisão:** o manifesto `data/nvidia/fontes.yaml` declara o `formato` de cada fonte. GitHub é
+lido em `raw.githubusercontent.com/.../README.md`; páginas de produto em HTML via `extrair()`.
+A ingestão tem **piso de qualidade** — mínimo de caracteres e de headings — que **falha alto**,
+com o nome da tecnologia na mensagem.
+**Alternativas descartadas:** HTML uniforme para tudo · deixar a ingestão aceitar o que vier.
+**Motivo:** medido, não deduzido. O texto extraído de `github.com/NVIDIA/TensorRT-LLM` começa com
+*"Uh oh! There was an error while loading… Go to file… Last commit message"* — é o chrome do
+GitHub, que renderiza o README por JS. O `raw.githubusercontent.com` devolve **27.060 chars de
+markdown limpo**, com a estrutura de headings intacta. Mesma fonte, qualidade incomparável.
+O piso existe porque a mesma varredura achou **4 URLs das 18 sem conteúdo utilizável**: API
+Catalog (28 chars, é SPA), cuDF (558), cuML (1.911, zero headings), Triton docs (2.753, 2
+headings). Sem o piso, essas quatro entrariam na base como chunks vazios e o RAG responderia
+"não sei" sobre cuDF sem ninguém entender por quê. Falhar alto transforma isso em tarefa de
+curadoria, que é onde o problema pertence.
+**Reversível?** Fácil — é uma linha no manifesto por fonte.
+
+---
+
+## D-029 — Guardar `embedding_bruto vector(2048)` sem índice ao lado do `vector(1024)` indexado
+**Data:** 23/08/2026 · **verificado por medição no mesmo dia**
+**Decisão:** duas colunas. `embedding vector(1024)` com índice HNSW é a que a busca usa;
+`embedding_bruto vector(2048)` fica **sem índice**, só para o harness derivar 384/768/1024 por
+truncagem local.
+**Alternativas descartadas:** só `vector(1024)`, re-embedando o corpus quando a sessão 04 quisesse
+comparar dimensões.
+**Motivo, agora com número:** D-014 registrou que trocar de dimensão exige re-embedar o corpus, e
+tratou isso como custo aceito. **Testei se dá para evitar** (`scripts/verificar_embedder.py`):
+embedei o mesmo texto pedindo 2048 e pedindo 1024/768/384, truncei o de 2048 localmente e
+renormalizei. `cos(api, truncagem_local)` = **0.99999996 · 0.99999996 · 0.99999995**. A promessa
+Matryoshka se confirma nas três dimensões — o sweep da sessão 04 passa a custar **zero chamada de
+API**, é fatiar a coluna.
+Dois achados de brinde, do mesmo teste:
+- **os vetores voltam já normalizados** (norma L2 = 1.000063), então cosseno e produto interno
+  são equivalentes aqui. Isso deixa de ser dúvida e vira frase no README;
+- **o embedder aceita entre 6.144 e 8.192 tokens** de entrada (aprox. `tiktoken`). Muito acima de
+  qualquer chunk desejável — o limite do modelo **não** é o que fixa o teto de D-025.
+**Custo:** ~8 KB por chunk, alguns MB no corpus inteiro. Verifiquei em psql que `vector(2048)`
+armazena normalmente e que só o **índice** HNSW recusa acima de 2000 dimensões.
+**Reversível?** Fácil — `DROP COLUMN` quando a sessão 04 terminar o sweep.
+
+> **Nota de atualização em D-014** (o log é append-only, D-014 não é reescrita): a
+> reversibilidade que ela registrou como "média — mudar a dimensão exige re-embedar o corpus"
+> passa a ser **fácil**, pela equivalência medida acima. A escolha de 1024 continua valendo pelo
+> motivo original: é o que cabe no HNSW nativo do pgvector.
+
+---
+
+## D-030 — Gabarito ancorado no documento-fonte, não no chunk
+**Data:** 23/08/2026
+**Decisão:** cada pergunta de `data/avaliacao/gabarito.yaml` aponta para a **URL do documento** que
+a responde. `recall@k` = "algum dos k primeiros chunks veio do documento certo". A `frase_ancora`
+é opcional e habilita uma variante estrita: "e o chunk contém a frase".
+**Alternativas descartadas:** ancorar em `id` de chunk · ancorar só na frase exata.
+**Motivo:** ancorar no chunk amarraria a métrica a uma estratégia de chunking — e a comparação
+entre estratégias é justamente o que D-027 existe para permitir. Um gabarito preso a ids de chunk
+teria que ser reescrito a cada mudança de banda, o que na prática significa nunca mudar a banda.
+Ancorar na URL faz a régua sobreviver a qualquer re-chunking.
+**Por que o gabarito é escrito agora e não na sessão 04:** é preciso ler as 18 páginas para
+curar as fontes de qualquer jeito. Escrever a pergunta durante essa leitura é quase de graça;
+na sessão 04 custaria reler tudo.
+**Reversível?** Fácil — é dado versionado, não código.
+
+---
+
+## D-031 — Busca densa e `recall@k` entram na sessão 02, não na 03/04
+**Data:** 23/08/2026
+**Decisão:** a sessão 02 entrega também `buscar_denso(query, k, estrategia)` (~20 linhas de SQL) e
+`scripts/avaliar_rag.py` com `recall@k`. Sai da sessão com a tabela estrutural-vs-fixo preenchida.
+BM25, fusão e reranking continuam intocados na sessão 03.
+**Alternativas descartadas:** manter o corte de `sessao-02.md` (02 termina com a tabela populada) ·
+fundir 02 e 03 numa sessão só.
+**Motivo:** duas razões, uma de coerência e uma de método.
+(1) `sessao-02.md` define o critério de pronto da **03** como *"cada incremento foi medido contra o
+gabarito"*, mas agenda o harness que calcula recall@k para a **04**. Como estava, o critério da 03
+dependia de um artefato que ainda não existia.
+(2) A 02 decide chunking e dimensão. Sem instrumento, ela decide por argumento e descobre por
+medição depois — que é exatamente o que o próprio arquivo diz querer evitar quando moveu o
+gabarito para cá. Mover o *dado* (gabarito) sem mover a *função que o consome* fazia metade do
+movimento.
+**Por que não fundir 02 e 03:** a medição do corpus é argumento contra. 4 das 18 URLs precisam de
+re-curadoria e o GitHub precisa de outro caminho de fetch — a coleta vai consumir mais que o
+previsto, exatamente como `sessao-02.md` antecipou. Fundir faria da busca híbrida a parte cortada
+às pressas, e ela é metade do critério 2.
+**Reversível?** N/A — é decisão de sequenciamento.
+
+---
+
 ## Decisões pendentes
 
 Levantadas em `contexto/05-achados-e-decisoes.md` §4, a serem fechadas na sessão 01:
