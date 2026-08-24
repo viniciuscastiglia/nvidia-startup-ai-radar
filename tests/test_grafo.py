@@ -38,6 +38,13 @@ def resultado():
 def test_grafo_roda_ponta_a_ponta(resultado):
     assert resultado.get("briefing"), "o Briefing Agent não produziu saída"
     assert resultado["analises"], "nenhuma análise chegou ao fan-in"
+    # ESTA LINHA É O QUE FAZ O TESTE VALER DEPOIS DE 24/08. `analisar_startup` afunila qualquer
+    # falha de nó do subgrafo em `AnaliseStartup(erros=[...])` — por desenho, D-024 —, e desde
+    # que `nvidia_rag` passou a chamar o pipeline real, o nó faz I/O de banco e de API. Sem
+    # assertar `erros`, um RAG COMPLETAMENTE QUEBRADO produzia `len(analises) == 1` e o teste
+    # passava verde. Achado do code review da revisão da sessão 03.
+    for analise in resultado["analises"]:
+        assert not analise.erros, f"{analise.nome}: o subgrafo registrou {analise.erros}"
 
 
 def test_fan_in_preserva_todas_as_branches(resultado):
@@ -64,6 +71,25 @@ def test_recomendacao_tem_os_sete_campos_do_tapi(resultado):
         for rec in analise.recomendacoes:
             for campo in obrigatorios:
                 assert getattr(rec, campo), f"{analise.nome}: campo obrigatório {campo!r} vazio"
+
+
+def test_justificativa_negocio_fala_da_tecnologia_recomendada(resultado):
+    """O teste acima só checa verdade booleana — um fallback CONSTANTE o satisfaz por construção.
+
+    Este aqui é o que impede um campo obrigatório do TAPI de virar texto de enfeite: se duas
+    recomendações de TECNOLOGIAS diferentes trazem a mesma justificativa de negócio, o campo não
+    está falando da tecnologia, está preenchendo espaço. Ver a revisão da sessão 03, §4 — foi
+    exatamente uma falha detectável que um fallback tornou indetectável.
+    """
+    for analise in resultado["analises"]:
+        por_texto: dict[str, set[str]] = {}
+        for rec in analise.recomendacoes:
+            por_texto.setdefault(rec.justificativa_negocio, set()).update(rec.tecnologias)
+        for texto, tecnologias in por_texto.items():
+            assert len(tecnologias) == 1, (
+                f"{analise.nome}: a MESMA justificativa_negocio serve a {sorted(tecnologias)} — "
+                f"{texto[:80]!r}"
+            )
 
 
 def test_subgrafo_roda_isolado():
