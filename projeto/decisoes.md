@@ -1057,6 +1057,50 @@ gabarito, não como falha do recuperador.
 
 ---
 
+## D-039 — O gabarito ganha 4 perguntas sem resposta, de regimes diferentes, com prova executável
+**Data:** 24/08/2026
+**Decisão:** o gabarito passa de 20 para **24 perguntas — 19 com resposta e 5 sem**. Cada
+`sem_resposta` carrega `regime`, `justificativa_ausencia` (prosa, obrigatória) e `termos_ausentes`
+(opcional, verificado por `--validar`).
+**Alternativa descartada:** manter a q20 sozinha e registrar a ressalva de n=1 na decisão.
+
+**Motivo:** a conclusão mais consequente da sessão — *"nenhum limiar separa abstenção"* — é uma
+afirmação sobre **sobreposição de duas distribuições**, e com n=1 de um lado não há distribuição,
+há um ponto. Pior: a q20 foi escrita para ser o caso difícil ("plausível o bastante para o denso
+recuperar com score razoável"), então ela podia estar **exagerando** a sobreposição e condenando
+um mecanismo que funcionaria. Sem amostra, não havia como saber. E é uma frase que vai para o
+README e para o vídeo, sob o eliminatório nº 4.
+
+**Dois regimes, de propósito, porque cinco variações de preço mediriam só o pior caso:**
+
+| regime | o que é | perguntas |
+|---|---|---|
+| `topicamente_perfeita` | a base fala do assunto com autoridade e só não tem o fato pedido | q20 preço · q21 Brasil · q23 comparação · q24 contagem |
+| `topicamente_ausente` | o assunto não está na base | q22 litografia computacional |
+
+A `topicamente_ausente` existe para provar que **a fronteira entre os dois é observável**. Um
+sistema que abstém só nela não aprendeu a abster-se — aprendeu a reconhecer assunto estranho, que
+é outra coisa e muito mais fácil.
+
+**`termos_ausentes` é a prova executável, o espelho de `frase_ancora`.** Se qualquer termo
+declarado ocorrer no corpus, a pergunta não é `sem_resposta` e `--validar` falha. Verificado com
+**fronteira de palavra e não substring** — e essa distinção nasceu de um erro real: `ILIKE '%SLA%'`
+reportava `SLA` como presente porque casa dentro de "tran**sla**tion", e por pouco não deixei uma
+pergunta errada entrar no gabarito.
+
+**A prosa é obrigatória e o termo não, e isso é decisão.** Há ausências que nenhuma string prova:
+a da q20 é a de um **número**, e não existe termo cuja falta demonstre que um preço não está
+publicado. Onde o termo serve, ele é prova; onde não serve, a curadoria escreve o argumento e
+assina embaixo. Fingir que toda ausência é verificável por `grep` seria a mentira confortável.
+
+**A pergunta que mais importa é a q21** — *"a NVIDIA tem algum programa específico para startups no
+Brasil?"*. É a pergunta que o **usuário real deste sistema** faria: o gerente de Startups & VCs da
+NVIDIA Brasil, que é para quem o briefing é escrito. Se o sistema inventar um benefício regional,
+inventa para a única pessoa que saberia na hora que é falso.
+**Reversível?** Fácil — é dado versionado, não código.
+
+---
+
 ## D-035 — A hipótese de D-033 está REFUTADA: o reranker também não abstém
 **Data:** 24/08/2026 · **é o resultado, e ele contraria o que a sessão apostava**
 **Decisão:** o sistema **não** decide "não sei" por limiar sobre score algum — nem sobre a cosseno

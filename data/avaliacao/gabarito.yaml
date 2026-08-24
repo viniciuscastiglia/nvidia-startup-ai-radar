@@ -23,6 +23,23 @@
 # recuperador a encontra; a segunda coisa é o que se está medindo e nunca pode entrar aqui.
 #
 # tipo: geral | lexical | crosslingual | atribuicao | sem_resposta
+#
+# AS PERGUNTAS SEM RESPOSTA SÃO CINCO, E DE REGIMES DIFERENTES DE PROPÓSITO (D-039)
+# Até 24/08 havia UMA (q20), e toda conclusão sobre abstenção — D-033 e a refutação do reranker
+# em D-035 — repousava nela. Uma afirmação sobre SOBREPOSIÇÃO DE DISTRIBUIÇÕES com n=1 não é
+# medição: de um lado não há distribuição, há um ponto.
+#
+# Cinco variações de "preço" mediriam só o pior caso. O campo `regime` separa dois:
+#   topicamente_perfeita — a base fala do assunto com autoridade e só não tem o fato pedido.
+#                          É o caso difícil, e é onde a fronteira está.
+#   topicamente_ausente  — o assunto não está na base. É o caso fácil, e ele existe para provar
+#                          que a fronteira EXISTE: um sistema que só abstém aqui aprendeu "não sei
+#                          falar disso", não "a base não tem a resposta".
+#
+# `termos_ausentes` é a PROVA EXECUTÁVEL da ausência, o espelho de `frase_ancora`: se qualquer um
+# deles ocorrer no corpus, a pergunta não é sem_resposta e `--validar` falha. A verificação usa
+# FRONTEIRA DE PALAVRA e não substring — `ILIKE '%SLA%'` casa dentro de "tran(sla)tion", e foi
+# esse erro que quase deixou uma pergunta errada entrar aqui.
 
 - id: q01
   pergunta: Qual tecnologia NVIDIA oferece speculative decoding para aumentar throughput de inferência?
@@ -210,12 +227,95 @@
   pergunta: Qual o preço da licença do NVIDIA AI Enterprise por GPU por ano em reais?
   idioma: pt
   tipo: sem_resposta
+  regime: topicamente_perfeita
   tecnologia_esperada: null
   url_esperada: null
   frase_ancora: null
+  termos_ausentes: [list price, price per GPU, per GPU per year, MSRP, cost per GPU]
+  justificativa_ausencia: >-
+    A página do AI Enterprise descreve o modelo de licenciamento e fala de suporte e de assinatura,
+    mas não publica valor algum — e muito menos em reais. Nenhuma expressão de preço ocorre no
+    corpus: `list price`, `price per GPU`, `per GPU per year`, `MSRP` e `cost per GPU` estão todas
+    ausentes, verificadas com fronteira de palavra.
   nota_curadoria: >-
     SEM RESPOSTA NA BASE, de propósito. A página do AI Enterprise diz que a licença é por GPU
     por ano, mas não publica valor — e muito menos em reais. É plausível o bastante para o
     denso recuperar a página do AI Enterprise com score razoável, que é justamente o que
     torna a pergunta útil: mede se o sistema sabe dizer "não sei" em vez de citar um trecho
     adjacente e deixar o LLM inventar o número. Aqui o acerto é ABSTER-SE.
+
+- id: q21
+  pergunta: A NVIDIA tem algum programa ou benefício específico para startups no Brasil?
+  idioma: pt
+  tipo: sem_resposta
+  regime: topicamente_perfeita
+  tecnologia_esperada: null
+  url_esperada: null
+  frase_ancora: null
+  termos_ausentes: [Brazil, Brasil, Latin America, LATAM, South America]
+  justificativa_ausencia: >-
+    A página do Inception descreve o programa em detalhe — elegibilidade, benefícios, DLI,
+    créditos, VC Alliance — mas é global. Nenhum recorte regional aparece em nenhuma das 16
+    fontes: `Brazil`, `Brasil`, `Latin America`, `LATAM` e `South America` estão todos ausentes
+    do corpus, verificados com fronteira de palavra.
+  nota_curadoria: >-
+    É A PERGUNTA QUE O USUÁRIO REAL DESTE SISTEMA FARIA — o gerente de Startups & VCs da NVIDIA
+    Brasil, que é para quem o briefing é escrito. Topicamente perfeita: o Inception é exatamente
+    sobre programas para startups, então a recuperação vai devolver a página certa com score
+    alto. Se o sistema inventar um benefício regional, ele inventa justamente para a pessoa que
+    saberia na hora que é falso.
+
+- id: q22
+  pergunta: Existe alguma solução NVIDIA para litografia computacional na fabricação de semicondutores?
+  idioma: pt
+  tipo: sem_resposta
+  regime: topicamente_ausente
+  tecnologia_esperada: null
+  url_esperada: null
+  frase_ancora: null
+  termos_ausentes: [cuLitho, lithography, photomask, litografia]
+  justificativa_ausencia: >-
+    O cuLitho existe como produto NVIDIA, mas não está entre as 16 tecnologias do escopo do TAPI
+    e nenhuma das 16 páginas o menciona. Ausência de assunto, não de fato.
+  nota_curadoria: >-
+    O REGIME FÁCIL, DE PROPÓSITO. Ela existe para provar que a fronteira entre "não sei falar
+    disso" e "a base não tem a resposta" é observável. Um sistema que abstém aqui e falha na q21
+    e na q23 não aprendeu a abster-se: aprendeu a reconhecer assunto estranho, que é outra coisa
+    e muito mais fácil.
+
+- id: q23
+  pergunta: O TensorRT-LLM é mais rápido que o vLLM? Em quantos por cento?
+  idioma: pt
+  tipo: sem_resposta
+  regime: topicamente_perfeita
+  tecnologia_esperada: null
+  url_esperada: null
+  frase_ancora: null
+  termos_ausentes: [outperforms, faster than vLLM, versus vLLM, benchmark against]
+  justificativa_ausencia: >-
+    As duas tecnologias ocorrem no corpus, e o chunk 38 da página do NIM cita as duas JUNTAS
+    ("TensorRT-LLM, vLLM ou SGLang"). Mas nenhuma fonte faz a comparação nem publica número:
+    `outperforms`, `faster than vLLM`, `versus vLLM` e `benchmark against` estão todos ausentes.
+  nota_curadoria: >-
+    O CASO MAIS PERIGOSO DO GABARITO. `vllm` e `sglang` têm idf 5,2 e ocorrem juntos em um único
+    chunk do corpus inteiro — o mesmo chunk que a q19 usa como resposta certa. Então a
+    recuperação vai devolver, com altíssima confiança, um trecho que fala dos dois e não os
+    compara. É a receita exata da alucinação com citação de aparência legítima: fonte real,
+    trecho real, número inventado.
+
+- id: q24
+  pergunta: Quantas startups já participaram do NVIDIA Inception desde a criação do programa?
+  idioma: pt
+  tipo: sem_resposta
+  regime: topicamente_perfeita
+  tecnologia_esperada: null
+  url_esperada: null
+  frase_ancora: null
+  termos_ausentes: ["20,000", "10,000", member companies, startups have joined]
+  justificativa_ausencia: >-
+    A página do Inception fala da comunidade e usa a palavra `members`, mas não publica contagem
+    alguma. Nenhum dos números ou expressões de contagem ocorre no corpus.
+  nota_curadoria: >-
+    Mesmo regime da q20 (fato numérico ausente em página que fala do assunto), mas com uma
+    diferença que importa: aqui a palavra `members` ESTÁ no corpus, então o trecho recuperado vai
+    parecer ainda mais próximo da resposta do que na q20.
