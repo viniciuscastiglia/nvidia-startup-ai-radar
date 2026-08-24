@@ -685,6 +685,21 @@ controle, no gabarito de 20 perguntas, recuperação densa pura, 1024 dimensões
 **Reversível?** A tabela é reprodutível com `python scripts/avaliar_rag.py`. Se a sessão 04
 mudar a banda ou a dimensão, esta tabela é refeita — e é para isso que ela existe.
 
+> **Nota de atualização em 24/08** (o log é append-only, o texto acima não é reescrito): a
+> **previsão do item 5 sobre a q14 acerta o resultado e erra o mecanismo.** Ela diz *"a âncora
+> `cudf.pandas` é literal e o BM25 deveria resolver"* — mas **`cudf.pandas` não está na
+> consulta**, que é *"dá para acelerar um pipeline de pandas em GPU sem reescrever o código?"*.
+> O BM25 casa termos da CONSULTA contra o documento; a âncora ser literal é irrelevante se ela
+> não for consultada. O que de fato resolve é a frequência de `pandas`: 15 ocorrências em 2
+> chunks do cuDF, 3 em 1 do RAPIDS, **zero no cuML** — que é quem ganhava em k=1. O braço
+> lexical isolado de fato põe o cuDF em 1º (D-037).
+>
+> E há um segundo erro embutido, maior: a q14 **não é falha de recuperação**. O chunk que o
+> reranker escolhe (RAPIDS/CUDA-X) diz literalmente *"zero-code-change APIs that accelerate
+> popular PyData tools like pandas and scikit-learn"*, e responde a pergunta como ela está
+> escrita melhor que qualquer chunk do cuDF. **A pergunta é que está subespecificada.** Ver
+> D-038, incluindo a decisão de não reescrevê-la depois de ver o resultado.
+
 ---
 
 ## D-033 — Abstenção não sai de limiar sobre o score denso
@@ -721,6 +736,73 @@ e esta mesma margem como medida do antes.
 **Reversível?** N/A — é um achado. O que é reversível é o mecanismo que se escolher no lugar.
 
 ---
+
+## D-034 — A janela do reranker é 8192 conjuntos, e `TETO_TOKENS = 450` fica por outro motivo
+**Data:** 24/08/2026 · **Bloco 0 da sessão 03, bloqueante** · é o resultado, não a intenção
+**Decisão:** manter `TETO_TOKENS = 450` e **reescrever a justificativa dele**. O comentário antigo
+em `src/rag/chunking.py` dizia *"450 cabe com folga na janela típica de um cross-encoder (512)"* —
+essa janela **não existe** neste modelo.
+
+**O que foi medido:** `llama-nemotron-rerank-1b-v2` aceita **8.192 tokens somando query e
+passagem**. Dois métodos, resultados coerentes:
+
+1. **A API entrega o número de graça se o payload omitir `truncate`.** Com `truncate` ela corta em
+   silêncio; sem ele, recusa: `HTTP 422 — Input length 19886 exceeds maximum allowed token size
+   8192`. Isso não estava em documentação nenhuma que consultei.
+2. **A janela é conjunta, confirmado por bissecção.** Query de 6 tokens aceita passagem de
+   ~8.212; query de 78 tokens aceita ~8.137. O que prova a conjunção não é o corte andar — é
+   **a soma ser invariante**: 8.218 e 8.215, com queries que diferem em 72 tokens. E a contagem
+   da própria API no limite (8.223-8.226) bate com 8.192 mais tokens especiais.
+   Consequência prática: o orçamento real de um chunk é `8.192 − a maior consulta plausível`.
+   Com as perguntas do gabarito em 24-45 tokens, isso é irrelevante aqui — mas deixa de ser se
+   o Recommendation Agent passar a mandar o perfil inteiro da startup como consulta.
+
+O diferencial ao estilo do `verificar_embedder.py` — `logit(A)` idêntico a `logit(A + marcador)`
+significa que os dois foram cortados no mesmo ponto — também rodou e não achou corte até 4.096,
+consistente com os 8.192.
+
+**O achado que de fato importa, e que não era o objetivo do bloco — a diluição.** A mesma
+frase-resposta afogada em enchimento crescente, mesma query:
+
+| passagem | só enchimento | com a frase-resposta (2 execuções) |
+|---|---|---|
+| 25 tok (a frase sozinha) | — | **−0,36** |
+| 63 | −25,03 | −7,96 · −7,96 |
+| 199 | −25,03 | −9,10 · −4,55 |
+| 449 | −25,03 | −10,24 · −6,83 |
+| 599 | −22,75/−25,03 | −5,69 · −4,55 |
+| 799 | −22,75 | −9,10 · −9,10 |
+| 1199 | −20,48/−22,75 | −10,24 · −11,38 |
+| 1999 | −20,48/−22,75 | −12,52 · −10,24 |
+
+**Uma ressalva antes da leitura, porque ela muda o que se pode afirmar:** rodei duas vezes e os
+logits **não reproduzem dígito a dígito** — 449 tokens deu −10,24 numa execução e −6,83 na outra.
+A forma se manteve; os valores não. Então isto **não é uma curva**, é uma faixa. Qualquer
+afirmação sobre diferença de 2-3 logits entre dois tamanhos seria ruído vendido como sinal.
+
+O que sobrevive à variância, e é o suficiente para decidir: **caber na janela não é o mesmo que
+pontuar bem nela.** De 63 a ~600 tokens os valores ficam entre −4,5 e −10 sem tendência; de ~800
+em diante ficam entre −9 e −12,5 nas duas execuções. O reranker **não impõe** o teto do chunk —
+ele **cobra** por chunk grande, e a cobrança começa a aparecer em algum ponto entre 600 e 800. Somado ao Bloco 0 da sessão 02 — o embedder
+aceita 6.144 a 8.192 — os **dois motores** confirmam que o teto de D-025 é escolha de precisão de
+recuperação, e nenhum dos dois o restringe. O sweep de `TETO` da sessão 04 ganha uma faixa de busca
+fechada em vez de aberta.
+
+**Consequência operacional registrada aqui porque ela vai morder depois:** os logits voltam
+**quantizados** — `−25,0312`, `−22,7500`, `−10,2422` se repetem exatamente entre chamadas
+independentes, o que é assinatura de bf16. Somando isso à variância entre execuções acima,
+**nenhuma lógica do sistema pode depender de margem abaixo de ~2 logits**: abaixo disso não há
+diferença, há o passo da grade mais o ruído do serving. Isso vale especialmente para qualquer
+limiar de abstenção que se queira construir sobre o logit.
+
+**Alternativa descartada:** manter o comentário como estava e seguir. Descartada porque o
+eliminatório nº 4 é sobre defender decisões: um número certo (450) sustentado por um fato falso
+(janela de 512) é pior que um número errado, porque a banca pergunta pelo raciocínio e não pelo
+valor.
+**Risco que o bloco existia para matar, e que não existia:** se a janela fosse menor que 450, todo
+chunk acima dela teria o final truncado no rerank. Não é o caso — nenhum chunk do corpus chega
+perto (máximo medido: 446 tokens contra 8.192 disponíveis).
+**Reversível?** N/A — é medição.
 
 ## Decisões pendentes
 

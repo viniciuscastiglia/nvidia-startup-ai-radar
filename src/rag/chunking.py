@@ -67,10 +67,21 @@ _TOKENIZADOR = tiktoken.get_encoding("cl100k_base")
 # fragmento "- Quantização: FP8, FP4" sem o que o cerca.
 PISO_TOKENS = 120
 
-# TETO: 450 tokens cabe com folga na janela típica de um cross-encoder (512), que é o que o
-# reranker da sessão 03 vai ler. NÃO MEDI a janela do llama-nemotron-rerank-1b-v2 — está
-# anotado como verificação obrigatória na sessão 03. Se ela for maior, o teto pode subir; se
-# for menor, chunk acima dela é truncado no rerank e o final do trecho não pontua.
+# TETO: NENHUM DOS DOIS MOTORES IMPÕE ESTE NÚMERO — medi os dois (D-029 e D-034). O embedder
+# aceita 6.144-8.192 tokens; o reranker aceita 8.192 somando query e passagem. 450 é 5% da
+# janela do reranker, não 88% dela como o comentário anterior supunha ao falar em "512 de
+# cross-encoder". Aquela janela não existe neste modelo.
+#
+# O que o reranker de fato diz sobre o teto é outra coisa, e é DILUIÇÃO: a mesma frase-resposta
+# pontua -0,36 sozinha e cai à medida que é afogada em enchimento. Em duas execuções, de 63 a
+# ~600 tokens os valores ficam entre -4,5 e -10 SEM TENDÊNCIA; de ~800 em diante, entre -9 e
+# -12,5. Os logits não reproduzem dígito a dígito entre execuções, então isto é uma faixa e não
+# uma curva — o que sobrevive à variância é que o motor não PROÍBE chunk grande, ele COBRA por
+# chunk grande, em algum ponto entre 600 e 800. O teto é escolha de PRECISÃO DE RECUPERAÇÃO,
+# e 450 fica dentro da faixa plana.
+#
+# O valor exato continua sendo inspeção, não medição: vira sweep na sessão 04, agora com uma
+# faixa de busca fechada (~120 a ~800) em vez de aberta.
 TETO_TOKENS = 450
 
 # Tags que forçam quebra de linha ao achatar HTML. Sem isto, `get_text()` cola o fim de um
