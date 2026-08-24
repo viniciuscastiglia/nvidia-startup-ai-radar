@@ -1250,6 +1250,56 @@ medido em vez de alegado.
   exatamente onde ele inventaria.
 **Reversível?** Fácil — é um módulo e um prompt.
 
+## D-044 — O harness de avaliação mede a configuração que a produção roda
+
+**Data:** 24/08/2026 · **Sessão 04, Bloco 0** · era a decisão que a revisão deixou em aberto
+
+**O problema, em uma frase:** `scripts/avaliar_rag.py` declarava os PRÓPRIOS defaults de fusão e
+truncava o pool antes do rerank, e `src/rag/pipeline.py` fazia diferente nos dois pontos.
+
+Custo já pago por essa divergência, e não é hipotético:
+
+1. O comando que o `CLAUDE.md` documenta como a ablação (`python scripts/avaliar_rag.py`) **não
+   reproduzia a tabela que o `CLAUDE.md` publica.** Os defaults do CLI eram K=20 / peso 0,5 e
+   davam 68/89/100 · 53/68/84; a tabela publicada é a de K=10 / 0,3. Quem fosse reproduzir o
+   repositório encontrava outros números — num projeto cujo argumento inteiro é "está medido".
+2. O `--geracao` truncava a fusão em 20 e a produção não trunca. Resultado: a q17 foi medida num
+   pipeline **em que a passagem-âncora não existia**, e D-040 registrou o diagnóstico errado
+   ("a recuperação entrega o documento certo e não o chunk que responde") quando o real era
+   "entrega em 6º e o gerador lê 5".
+
+**Decisão:** `POOL_PADRAO`, `K_RRF_PADRAO`, `PESO_DENSO_PADRAO` e `PESO_LEXICAL_PADRAO` são
+**importados de `src.rag.pipeline`**, não redeclarados; e o pool **não é truncado** antes do
+rerank, como em `pipeline.buscar_com_rerank`.
+
+**A alternativa era defensável e por isso isto é decisão, não correção.** Manter o harness
+truncando DE PROPÓSITO o preservava como braço de controle da pergunta "vale a pena mandar a
+união inteira ao reranker?" — que é hoje a única evidência de que não truncar custa 37,5% mais
+chamadas de rerank e compra zero. Os dois lados:
+
+| | harness = produção | harness truncando de propósito |
+|---|---|---|
+| o número publicado reproduz? | sim | não, e já enganou uma vez (q17) |
+| o braço de controle sobrevive? | só se virar opção explícita | sim, de graça |
+| custo por execução | ~37,5% mais chamadas de rerank | menor |
+| risco | a comparação "truncar vs não" tem que ser pedida | **medir um sistema que ninguém roda** |
+
+O que decidiu foi o risco da última linha: um controle que é o default silencioso não é controle,
+é divergência. **`--truncar-pool` restaura a truncagem e se pede pelo nome.** Verificado em 24/08:
+com a flag, `rerank_denso` e `rerank_hibrido` dão 95/100/100 · 79/84/95 — **os seis números
+idênticos** aos de sem a flag. O controle continua medível e continua dizendo a mesma coisa.
+
+**Verificação do resultado:** `python scripts/avaliar_rag.py` sem argumento nenhum agora imprime
+denso 89/100/100 · 68/79/84, híbrida 84/100/100 · 74/79/84, rerank 95/100/100 · 79/84/95 e as
+margens −0,2810 e −17,6328 — que é, linha por linha, a tabela do `CLAUDE.md`.
+
+**Efeito colateral bom:** os imports tardios de `fusao`, `lexical`, `rerank` e `geracao` saíram.
+Eles existiam para "`--motor denso` rodar antes de a fusão existir", uma razão de ordem de
+sessão que expirou — e depois que o `pipeline` entra no topo do arquivo eles não isolavam mais
+nada. Um comentário que descreve uma proteção que não protege é pior que nenhum comentário.
+
+---
+
 ## D-045 — O modelo recebe um schema estreito; `RespostaRAG` é montado em código
 
 **Data:** 24/08/2026 · **Sessão 04, Bloco 0** · achado do code review
