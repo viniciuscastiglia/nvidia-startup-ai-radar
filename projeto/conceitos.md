@@ -25,7 +25,7 @@ Então a ordem é: **conceito de IA primeiro, decisão própria segundo, framewo
 | Camada | O que é | Vale o quê | Onde já está |
 |---|---|---|---|
 | **1. Conceitos de IA** | embedding, busca híbrida, reranking, agente, alucinação | critérios 1-3 (60) + vídeo (20) | **este arquivo** |
-| **2. Suas decisões** | por que *você* escolheu cada coisa | eliminatório nº 4 | `decisoes.md`, 24 entradas |
+| **2. Suas decisões** | por que *você* escolheu cada coisa | eliminatório nº 4 | `decisoes.md`, 33 entradas |
 | **3. Internals do framework** | super-steps, checkpointer, Send | nada direto; seguro + nível 4 | fim deste arquivo |
 
 Camada 2 você **já tem escrita**. Não é estudo novo — é saber contar sem ler.
@@ -157,21 +157,27 @@ cross-encoder como buscador e pular o embedding.
 certa de recuperação. Estratégias: tamanho fixo, fixo com sobreposição, por estrutura
 (título/seção), ou semântico (quebra onde o assunto muda).
 
-**Por que o seu projeto precisa.** É o passo 2 da `sessao-02.md` e a decisão ainda está aberta.
-O trade-off é direto: chunk grande traz contexto mas dilui o embedding (o vetor vira a média de
+**Por que o seu projeto precisa.** É o passo 3 do pipeline, e a decisão está **fechada em D-025**:
+estrutural por seção, com fundir-pequenas e dividir-grandes, e o caminho da seção prefixado no
+texto que é embedado. O trade-off é direto: chunk grande traz contexto mas dilui o embedding (o vetor vira a média de
 vários assuntos); chunk pequeno é preciso mas chega no LLM sem contexto suficiente para citar.
 
 **A pergunta que vem.** *"Como você escolheu o tamanho do chunk?"* — e a única resposta ruim é
 "512 porque é o padrão".
 
-**O que estudar.** Menos teoria, mais medição: o harness do passo 9 permite comparar duas
-estratégias por recall@k. **Essa é a resposta forte** — "medi as duas". Para vocabulário, procure
+**O que estudar.** Menos teoria, mais medição — e neste ponto **você já tem o número**: D-032
+compara estrutural contra janela fixa no gabarito de 20 perguntas (`recall@3` de 100% contra 84%).
+**Essa é a resposta forte** — "medi as duas". Leia D-025 e D-032 antes de qualquer teoria. Depois,
+para vocabulário, procure
 por *chunking strategies for RAG*; para a variante semântica, por *semantic chunking* (quebra por
 queda de similaridade entre sentenças vizinhas).
 
-**Como saber que entendeu.** Você consegue nomear o que se perde nos dois extremos, e dizer qual
-estratégia a **documentação NVIDIA** pede especificamente (dica: ela é fortemente estruturada em
-títulos e seções — isso é uma informação, não um detalhe).
+**Como saber que entendeu.** Você consegue nomear o que se perde nos dois extremos, e explicar por
+que a documentação NVIDIA **pede** a estratégia estrutural: medi que a página do NIM tem 51 seções
+em 9.909 chars (~194 por seção) e o README do TensorRT-LLM tem 8 em 27.060 (~3.383). São formas
+opostas, e é por isso que fundir e dividir são os dois caminhos principais — não casos de canto.
+
+**Onde a banca aperta:** pergunta 1 da arguição, no fim deste arquivo.
 
 ---
 
@@ -185,6 +191,11 @@ opinião.
 `sessao-02.md` identifica como *"o que mais separa nível 2 de nível 4 no critério 2"*. E é o que
 converte D-014 de argumento ("1024 por causa do HNSW") em medição ("comparei 384, 768 e 1024").
 
+**Ele já existe** desde a sessão 02, não da 04 — ver D-031 e `scripts/avaliar_rag.py`. Duas coisas
+do desenho dele valem estudo próprio: a âncora é o **documento-fonte** e não o chunk (D-030), que é
+o que faz a régua sobreviver a mudança de chunking; e o modo `--validar`, que confere a resposta
+**contra o corpus** antes de medir qualquer coisa.
+
 **A pergunta que vem.** *"Como você sabe que o reranking melhorou alguma coisa?"* Sem harness, a
 resposta é "parece melhor". Com harness, é um número e um gráfico — e isso vai para o vídeo.
 
@@ -196,6 +207,10 @@ avaliação de RAG) mesmo sem usar a biblioteca — ele nomeia bem as métricas 
 
 **Como saber que entendeu.** Você consegue montar 15 perguntas sobre a base NVIDIA com a resposta
 certa anotada, e explicar por que 15 perguntas suas valem mais que um benchmark público aqui.
+E o passo seguinte, mais difícil: explicar em que condições o seu próprio `recall@3 = 100%`
+**não** é evidência de qualidade.
+
+**Onde a banca aperta:** perguntas 2 e 3 da arguição, no fim deste arquivo.
 
 ---
 
@@ -496,6 +511,149 @@ de um run. Ver o histórico com os próprios olhos vale mais que qualquer texto.
 
 ---
 
+# Arguição — rodada 1: o RAG (após a sessão 02)
+
+O `guia-de-trabalho.md` chama isto de *"o uso mais valioso da ferramenta neste projeto"*: depois
+de fechar cada parte, pedir as perguntas difíceis. **Se eu travar em alguma, achei o buraco antes
+do avaliador achar.**
+
+**Como usar.** Não responda agora, de memória. Cada pergunta abaixo diz qual conceito ela cobra e
+o que ler antes. Estude, feche os arquivos, e só então responda — em voz alta, cronometrado, como
+no vídeo. Resposta que só funciona com o repositório aberto não é resposta.
+
+**Duas delas têm resposta factual no código.** Vá conferir em vez de chutar: na banca, o chute é
+que vira o problema, não o defeito que ele tentava esconder.
+
+---
+
+### 1. O experimento está confundido — estrutura ou breadcrumb?
+
+> Você abre D-032 dizendo que a medição confirma o chunking estrutural. Mas o seu braço de
+> controle, `fixo-800`, não tem breadcrumb nenhum, e o `estrutural-v1` tem o caminho da seção
+> prefixado em todo chunk. Você está comparando duas coisas que diferem em **duas** variáveis ao
+> mesmo tempo.
+>
+> Como você sabe que os 16 pontos de diferença em `recall@3` vêm da **estrutura das seções**, e
+> não simplesmente de ter colado o nome da tecnologia em cada chunk? E se vierem inteiramente do
+> breadcrumb — o que sobra de D-025?
+
+**O que ela cobra:** conceito 5 (chunking) e 6 (avaliação). No fundo é desenho de experimento:
+variável de tratamento, variável de confusão, braço de controle.
+
+**O que ler antes:** D-025, D-027 e D-032 · o docstring de `src/rag/chunking.py`, seção "O QUE
+`estrategia='fixo-800'` É, E O QUE ELA NÃO É" · a dívida nº 2 no topo de `sessao-03.md`.
+
+**Onde a resposta fica forte:** o terceiro braço já está a um parâmetro de distância
+(`chunk_fixo(..., com_caminho=True)`). Saber dizer **qual número ele produziria e o que cada
+resultado possível significaria** vale mais que ter rodado.
+
+---
+
+### 2. `recall@3 = 100%` mede recuperação ou mede um corpus pequeno?
+
+> O seu corpus tem exatamente 16 documentos, um por tecnologia, e o `recall@k` do gabarito ancora
+> no `documento_url`. Então *"recuperei o documento certo"* e *"acertei a tecnologia"* são **a mesma
+> proposição** no seu sistema: a métrica é um classificador de 16 classes.
+>
+> Nessas condições, o que `recall@3 = 100%` mede de fato? Defenda o número como evidência de
+> qualidade de recuperação, e não como sintoma de um corpus pequeno demais para a régua que você
+> escolheu.
+
+**O que ela cobra:** conceito 6 (avaliação de RAG), na parte que quase ninguém pensa — a **validade**
+da métrica, não o cálculo dela.
+
+**O que ler antes:** D-030 (por que a âncora é o documento) · a variante estrita no docstring de
+`scripts/avaliar_rag.py` · a tabela de D-032, prestando atenção em qual coluna satura e qual não.
+
+**Onde a resposta fica forte:** a saída não é defender o 100%. É saber **qual das suas métricas não
+satura e por quê**, e o que você mudaria no gabarito para que ela voltasse a discriminar quando o
+corpus crescer.
+
+---
+
+### 3. Uma decisão de arquitetura com n = 1
+
+> D-033 declara um princípio geral — *"similaridade mede pertinência de tópico, não existência de
+> resposta"* — e com base nele tira a abstenção do limiar de score e joga a responsabilidade para
+> o reranker.
+>
+> Quantas perguntas sem resposta na base você mediu para chegar nesse princípio? Qual é o `n`?
+> E o que precisaria acontecer na sessão 03 para você concluir que D-033 estava errada?
+
+**O que ela cobra:** conceito 6 (avaliação) e 9 (alucinação e grounding) — abstenção é o mecanismo
+que impede o LLM de inventar quando a base não tem a resposta.
+
+**O que ler antes:** D-033 inteira, incluindo os três trechos que a q20 recuperou · a q20 em
+`data/avaliacao/gabarito.yaml` e a nota de curadoria dela · conceito 4, sobre por que um
+cross-encoder responde uma pergunta diferente da do bi-encoder.
+
+**Onde a resposta fica forte:** separar as duas coisas que D-033 afirma — o **fato medido** (a
+margem deu negativa naquela pergunta) e a **explicação proposta** (similaridade mede tópico). A
+primeira tem n = 1; a segunda é um argumento conceitual que não depende do n. Saber dizer qual é
+qual, e qual das duas o reranker vai testar, é a resposta.
+
+---
+
+### 4. A sobreposição que às vezes não existe
+
+> O docstring do `_dividir` promete *"um parágrafo de sobreposição entre partes consecutivas, para
+> que uma frase partida ao meio ainda apareça inteira em algum chunk"*. Abra `src/rag/chunking.py`
+> e leia esta linha:
+>
+> ```python
+> atual = [atual[-1], p] if len(atual) > 1 else [p]    # sobreposição de 1 parágrafo
+> ```
+>
+> O que acontece com a sobreposição quando um parágrafo sozinho já ocupa quase todo o teto? Em que
+> fração do seu corpus real isso ocorre? E o `test_dividir_sobrepoe_um_paragrafo_entre_partes`
+> cobre esse caminho ou o outro?
+
+**O que ela cobra:** conceito 5 (chunking) no nível de implementação — e a disciplina de o
+docstring dizer o que o código faz, não o que você quis que ele fizesse.
+
+**O que ler antes:** `_dividir` inteira em `src/rag/chunking.py` · o teste citado, em
+`tests/test_chunking.py` · **e rode a medição**: quantos chunks do corpus vêm de seções que foram
+divididas, e em quantas a sobreposição de fato ocorreu.
+
+**Onde a resposta fica forte:** três saídas são defensáveis — corrigir, documentar o limite, ou
+argumentar que a sobreposição não importa neste corpus. **Escolher uma delas conscientemente** é o
+que separa nível 3 de nível 2. Não saber que o caso existe é o que derruba.
+
+---
+
+### 5. A frase que você repete em três arquivos e nunca mediu
+
+> *"Embedar documento como consulta degrada a recuperação silenciosamente"* aparece em três lugares
+> do seu repositório e justifica o `input_type="passage"` na ingestão e o `"query"` na busca.
+>
+> Você mediu essa degradação? Hoje você tem corpus embedado, gabarito de 20 perguntas e um harness
+> que roda em segundos — quanto custaria produzir o número? E enquanto ele não existe, o que
+> exatamente aquela frase é dentro do seu projeto?
+
+**O que ela cobra:** conceito 1 (embedding), na parte específica dos modelos **assimétricos** de
+recuperação — por que query e passage são treinados em espaços diferentes e o que isso implica.
+
+**O que ler antes:** `contexto/03` §3, os "dois detalhes que só aparecem chamando" · a decisão 2 no
+docstring de `scripts/ingerir_nvidia.py` · o conceito 1 deste arquivo.
+
+**Onde a resposta fica forte:** distinguir **o que você verificou** (o parâmetro existe, é exigido,
+e o smoke test da sessão 01 mediu separação semântica) de **o que você herdou da documentação** (o
+tamanho da degradação). Dizer "isso eu li, não medi" é resposta de nível 4. Dizer "degrada muito"
+sem número, quando o número custa cinco minutos, é onde o avaliador puxa o fio.
+
+---
+
+**Duas observações sobre o conjunto.** A 1 e a 2 são as mais difíceis de defender, e as duas são
+consequência de escolhas registradas e aprovadas — não de descuido. A 1 tem saída barata, já
+anotada como dívida na `sessao-03.md`. A 2 não tem saída barata, e a resposta honesta
+provavelmente não é *"o número está certo"*.
+
+**Rodadas seguintes:** depois da sessão 03 (fusão e reranking), da M4 (agentes e recomendação) e
+antes de gravar o vídeo. Pedir com: *"me faça 5 perguntas difíceis sobre X que eu acabei de
+construir"*.
+
+---
+
 # Como usar este arquivo
 
 **Não leia tudo agora.** Leia o conceito antes da sessão que o implementa — é aí que ele gruda.
@@ -504,10 +662,11 @@ de um run. Ver o histórico com os próprios olhos vale mais que qualquer texto.
 |---|---|
 | sessão 02 (RAG, passos 1-5) | 1, 5, 7 — **e 11**, porque a ingestão é da documentação NVIDIA: você vai ler as 16 tecnologias de qualquer jeito, então leia entendendo |
 | sessão 03 (busca híbrida + rerank) | 2, 3, 4 |
-| sessão 04 (harness) | 6 |
+| sessão 04 (otimização medida) | 6 — mas o harness já existe desde a 02 (D-031) |
 | M3, montar a base de startups | **12** — é a régua que decide quais empresas entram e por quê |
 | sessões dos agentes (M4) | 8, 10, 13 |
 | gravar o vídeo | 9, 11, 12 + reler `decisoes.md` inteiro |
+| **responder a arguição** | o conceito que cada pergunta cobra, indicado nela — depois responda sem consultar |
 
 **Os dois de domínio são diferentes dos outros onze.** 11 e 12 não se aprendem
 implementando — o código não te ensina o que é o NIM nem o que é AI-native. São os únicos que
