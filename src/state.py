@@ -266,6 +266,30 @@ class CitacaoRAG(BaseModel):
     score_rerank: float | None = None
 
 
+class RespostaRAG(BaseModel):
+    """Passo 8 do pipeline do TAPI: a resposta gerada, com citação e com abstenção explícita.
+
+    A ABSTENÇÃO É CAMPO ESTRUTURADO, NÃO PROSA A INTERPRETAR — e isso é decisão (D-040).
+    Depois de D-033 e D-035, sabe-se por medição que nenhum limiar sobre score decide "não sei":
+    nem a cosseno densa (margem −0,2810) nem o logit do cross-encoder (−17,6328). O único
+    componente que consegue distinguir "fala do assunto" de "contém o fato pedido" é o que LÊ a
+    passagem. Então a decisão é dele — e ele a declara num booleano, não numa frase que alguém
+    depois teria que classificar com regex.
+
+    Mesmo princípio de D-021: campo sem fonte literal vira valor explícito, não valor plausível.
+
+    `indices_citados` aponta para posições de `citacoes`. Fazer o modelo devolver ÍNDICES em vez
+    de escrever a fonte no texto é o que torna a citação verificável por código: um índice fora
+    da faixa é erro detectável, uma URL escrita na prosa não é.
+    """
+
+    texto: str
+    citacoes: list[CitacaoRAG] = Field(default_factory=list)
+    abstencao: bool = False
+    motivo_abstencao: str | None = None
+    indices_citados: list[int] = Field(default_factory=list)
+
+
 class Recomendacao(BaseModel):
     """OS 7 CAMPOS OBRIGATÓRIOS DO TAPI, um por atributo (contexto/01, §5.5).
 

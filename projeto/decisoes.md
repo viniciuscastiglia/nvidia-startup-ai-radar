@@ -1111,6 +1111,136 @@ sobreajuste declarado. Fica para quando o gabarito crescer.
 
 ---
 
+## D-040 — O passo 8 entra na M2: geração com citação e abstenção estruturada
+**Data:** 24/08/2026 · fecha os 9 passos do pipeline do TAPI dentro da M2
+**Decisão:** `src/rag/geracao.py` implementa o passo 8 — o LLM lê os top-k reranqueados e devolve
+`RespostaRAG` com `texto`, `abstencao: bool`, `motivo_abstencao` e `indices_citados`. Todo acesso
+a LLM passa por `src/llm.py`, sempre com `with_structured_output(..., method="json_schema")`.
+**Alternativas descartadas:** deixar o Bloco 4 só com citação estruturada e adiar a geração para a
+M4 · `method="function_calling"` · `method="json_mode"` · abstenção como prosa a interpretar.
+
+### Por que o passo 8 entrou aqui e não na M4
+
+Depois de D-035 a abstenção ficou **sem outro lugar para morar**: nenhum limiar sobre score
+funciona, e o único componente que lê a passagem é o gerador. Adiar o passo 8 adiaria junto a
+única afirmação de qualidade que este RAG tem para fazer. E a regra da sessão — *todo incremento é
+medido* — deixou de ser obstáculo no momento em que D-039 ampliou o gabarito: **acurácia de
+abstenção sobre 24 perguntas é contagem pura**, sem LLM-as-judge e sem rubrica de fidelidade.
+
+### `json_schema` e não `function_calling` — medido na armadilha
+
+Mesmo modelo, mesmo prompt, `temperature=0`, na q23 (*"o TensorRT-LLM é mais rápido que o vLLM?
+Em quantos por cento?"*, cuja resposta não existe na base):
+
+| método | resultado |
+|---|---|
+| `function_calling` | `abstencao=False` · **"o TensorRT-LLM é mais rápido que o vLLM em 30%"** |
+| `json_mode` | não faz parse — o modelo devolve JSON com outro shape |
+| **`json_schema`** | **`abstencao=True`** · "a passagem não fornece informação sobre..." |
+
+A diferença entre alucinar um número e abster-se, decidida pelo método de saída estruturada. A
+leitura provável é que `function_calling` adiciona pressão para PREENCHER os campos da ferramenta.
+Seja qual for a causa, o comportamento é medido e é ele que manda.
+
+### O resultado, em TRÊS execuções — porque uma teria mentido
+
+| execução | acurácia | erros | fonte certa | fonte errada | sem citação |
+|---|---|---|---|---|---|
+| 1 (sem a instrução de idioma) | 23/24 | q05 | 16 | 1 | 1 |
+| 2 | **24/24** | — | 13 | 1 | 5 |
+| 3 | 22/24 | q09, q17 | 13 | 1 | 3 |
+
+**A métrica é 22–24 de 24, não 100%.** Rodei três vezes justamente porque a primeira deu 23 e a
+segunda 24; parar na segunda teria produzido um número bonito e falso. A fonte da variação é o
+serving: `temperature=0` não torna o endpoint determinístico.
+
+**A assimetria é o resultado que importa.** Em três execuções foram **15 oportunidades de alucinar**
+(3 × 5 perguntas sem resposta) e **zero alucinações**. Todos os erros das três execuções são
+**abstenções falsas** — o sistema erra sempre para o lado de não responder. Num briefing escrito
+para o gerente de Startups & VCs da NVIDIA Brasil, uma recomendação a menos custa uma
+oportunidade; um número inventado custa a credibilidade do sistema inteiro.
+
+### Uma das três "falhas" não é falha, e o diagnóstico importa
+
+Cruzei as abstenções falsas com "a âncora está entre os 5 trechos que o gerador leu":
+
+- **q17 — a âncora NÃO está no top-5, nem no top-10.** A recuperação entrega o documento certo e
+  não o chunk que responde. **O gerador abster-se ali é comportamento correto**, e é a minha
+  métrica que conta errado: ela pergunta "a base tem a resposta?" quando deveria perguntar "a
+  recuperação entregou a resposta?". Com isso, o **teto real desta métrica é 23/24** enquanto a
+  recuperação não melhorar — e melhorar isso é banda de chunk, que é sessão 04.
+- **q05 e q09 — a âncora estava lá e o modelo não viu.** Falha genuína de geração.
+
+### A instrução de idioma, e por que ela não é ajustar a régua ao resultado
+
+A q05 falhou na primeira execução: o gerador leu *"high transcription accuracy for Arabic,
+English, ..., **Portuguese**, Russian, and Spanish"* e respondeu *"não há menção explícita à língua
+portuguesa nos trechos"*. Acrescentei ao prompt que **os trechos estão em inglês e a pergunta vem
+em português, e que traduzir para comparar faz parte do trabalho**.
+
+Isso é declarar um fato de arquitetura do sistema (D-014: corpus EN, consulta PT), não plantar uma
+resposta. A versão inaceitável seria *"se perguntarem sobre português, diga que o Riva suporta"*.
+E a mudança foi **verificada contra regressão**: as 5 abstenções continuaram corretas nas duas
+execuções seguintes, incluindo a armadilha da q23.
+
+### A citação é o ponto fraco, e fica registrado como tal
+
+`indices_citados` erra com frequência não desprezível: a **q07 aponta a fonte errada nas três
+execuções** (é sistemático, não ruído), e entre 1 e 5 respostas por execução não apontam nada.
+A resposta continua acompanhada de todas as passagens lidas em `RespostaRAG.citacoes` — então
+nada sai sem fonte anexada —, mas *qual* trecho sustenta *qual* afirmação ainda não é confiável.
+**A abstenção está resolvida; o "de onde veio" não.** Como rastreabilidade é requisito duro do
+TAPI, citado duas vezes, isso é trabalho explícito da M4: modelo maior só neste nó, ou verificação
+por código de que a afirmação ocorre no trecho citado.
+**O que NÃO foi medido:** fidelidade da prosa ao contexto. Exigiria LLM-as-judge ou anotação
+humana, e as duas trazem uma régua que também precisaria ser validada. Fica declarado como não
+medido em vez de alegado.
+
+### Detalhes de desenho
+
+- **Citação por ÍNDICE, não por URL escrita na prosa.** Índice fora da faixa é erro detectável por
+  código; URL no meio de um parágrafo não é. Rastreabilidade precisa ser verificável.
+- **Abstenção é campo booleano**, não frase que alguém depois classificaria com regex — mesmo
+  princípio de D-021.
+- **Zero passagens não chama o LLM.** Não há o que ler; pedir ao modelo que decida sobre o vazio é
+  exatamente onde ele inventaria.
+**Reversível?** Fácil — é um módulo e um prompt.
+
+## D-045 — O modelo recebe um schema estreito; `RespostaRAG` é montado em código
+
+**Data:** 24/08/2026 · **Sessão 04, Bloco 0** · achado do code review
+
+**O que estava acontecendo.** `geracao.gerar()` chamava `estruturado(RespostaRAG, ...)`, mandando
+ao modelo o schema inteiro do contrato — incluindo `citacoes: list[CitacaoRAG]` com todo o
+`$defs.CitacaoRAG`, um campo que a linha seguinte do código **descarta** para montar a lista a
+partir das citações que já estavam em mãos.
+
+E arrastava junto uma coisa que a sessão 03 não tinha percebido: **o docstring de uma classe
+Pydantic vira o `description` do JSON Schema, ou seja, vira PROMPT.** O de `RespostaRAG` é prosa
+de decisão — cita "margem −0,2810", "Mesmo princípio de D-021", "D-033 e D-035". Isso é
+documentação para quem lê o repositório, e é ruído quando endereçado ao modelo.
+
+**Medido:** 2.690 chars de schema por chamada, contra 524 do tipo estreito — **80% menor**, sem
+`$defs`, com o mesmo `required` (`['texto']`, então não há mudança de obrigatoriedade de campo).
+
+**Decisão:** `SaidaGerador`, local a `src/rag/geracao.py`, com os quatro campos que o MODELO
+decide (`texto`, `abstencao`, `motivo_abstencao`, `indices_citados`) e docstring curto escrito
+PARA O MODELO. `RespostaRAG` continua sendo o contrato e continua montado em código.
+
+**Alternativa descartada:** manter `RespostaRAG` na chamada e só encurtar o docstring. Resolvia
+metade — deixava de pé um campo cujo valor é descartado, que o modelo pode gastar tokens
+preenchendo e que, com uma passagem longa, é um caminho para estourar `max_tokens` e devolver
+JSON truncado.
+
+**A regra que fica:** todo schema que vai para `with_structured_output` é interface com o modelo,
+não com o repositório. Docstring de schema é prompt. Vale para os oito agentes da M4.
+
+**Re-medido depois da mudança** (junto com D-044, que também mexe no que chega ao gerador): duas
+execuções do `--geracao`, **24/24 nas duas**. Ver a Atualização 2 de D-040 para por que isso NÃO
+é "subiu de 23 para 24".
+
+---
+
 ## Decisões pendentes
 
 Levantadas em `contexto/05-achados-e-decisoes.md` §4, a serem fechadas na sessão 01:
