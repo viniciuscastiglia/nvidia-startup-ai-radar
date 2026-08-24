@@ -1014,6 +1014,49 @@ não são "dá pena jogar fora":
 gabarito. As duas coisas seriam ajustar a régua ao resultado.
 **Reversível?** Fácil — `peso_lexical=0.0` reduz a híbrida ao denso puro exatamente.
 
+## D-038 — O reranker lê `texto_indexado`, com o breadcrumb
+**Data:** 24/08/2026
+**Decisão:** o cross-encoder recebe `texto_indexado` (breadcrumb prefixado), não `texto`.
+**Alternativa descartada:** `texto` puro — o mesmo campo que vira `CitacaoRAG.trecho`, o que
+teria a vantagem de "o reranker lê exatamente o que é citado", uma coisa a menos para explicar.
+**Motivo:** reranquear o texto puro **descartaria no passo 7 a correção feita no passo 3**. O
+chunk que responde a q19 cita "TensorRT-LLM" com destaque e nunca repete "NIM"; é o breadcrumb
+`NVIDIA NIM > ...` que diz ao cross-encoder de que produto aquilo fala — e atribuição é o 7º
+campo obrigatório do output do TAPI.
+
+Medido nas duas variantes, k=10, critério estrito (logit do chunk que contém a `frase_ancora`):
+empatam em recall@1 (18/19), e o breadcrumb **sobe o logit da âncora em 9 das 17** perguntas —
+q03 +3,70→+7,39 · q13 +3,98→+9,10 · q05 −4,55→−1,71 · q10, q11, q15, q16 também.
+**Efeito colateral medido e aceito:** o breadcrumb também sobe o score da q20, que não tem
+resposta (−6,83 → −2,84), piorando a margem de abstenção. Irrelevante, porque **nenhuma das duas
+variantes separa** (ver D-035).
+
+### O que o reranking entregou, medido contra a linha de base
+
+| | recall@1 | estrito@1 | estrito@5 |
+|---|---|---|---|
+| denso puro (D-032) | 89% | 68% | 84% |
+| **+ rerank** | **95%** | **79%** | **95%** |
+
+**A q19 subiu de 2º para 1º** — que era exatamente o pedido da pauta e a validação de que o
+breadcrumb de D-025 leva o chunk certo até onde o reranker consegue promovê-lo.
+
+**A única falha restante em recall@1 é a q14 — e inspecionando, o recuperador está certo e o
+gabarito está subespecificado.** A pergunta é *"dá para acelerar um pipeline de pandas em GPU sem
+reescrever o código?"*, e o chunk que o reranker escolhe (RAPIDS/CUDA-X) diz literalmente
+*"zero-code-change APIs that accelerate popular PyData tools like pandas and scikit-learn"*. Os
+chunks do cuDF que estão no pool falam de Polars, requisitos de sistema e instalação por conda. A
+âncora `cudf.pandas` existe (chunks 223 e 226), está no pool, e é reranqueada abaixo — **com
+razão**, porque a pergunta como escrita não pede "qual biblioteca específica".
+
+**Não corrigi a pergunta depois de ver o resultado.** Reescrevê-la agora seria ajustar a régua ao
+resultado, e o número que interessa a um avaliador é justamente este: 95% com a falha restante
+explicada, em vez de 100% com a régua movida. Fica registrado como limitação conhecida do
+gabarito, não como falha do recuperador.
+**Reversível?** Fácil — é qual campo entra no payload.
+
+---
+
 ## Decisões pendentes
 
 Levantadas em `contexto/05-achados-e-decisoes.md` §4, a serem fechadas na sessão 01:
