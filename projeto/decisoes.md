@@ -1155,6 +1155,52 @@ sobreajuste declarado. Fica para quando o gabarito crescer.
 
 ---
 
+## D-042 — A consulta do NVIDIA RAG Agent sai da dor observada + da stack declarada
+**Data:** 24/08/2026 · fecha a dívida nº 1 da sessão 02
+**Decisão:** `src/agents/nvidia_rag.py` perde a `BASE_PROVISORIA` de 8 dores e passa a chamar
+`pipeline.buscar_com_rerank()` **uma vez por dor observada**, com a consulta montada como
+`"{texto da dor} (stack atual: {stack declarada})"`. Dedupe por `url_fonte`, 3 trechos por dor.
+**Alternativas descartadas:** manter o dicionário dor → tecnologia · consultar uma vez só,
+concatenando todas as dores numa consulta.
+
+**Motivo — o dicionário não é simples demais, é DESLIGADO.** `contexto/03` §4 diz que a dor é a
+chave de junção com a tabela de tecnologias, e o stub implementava isso ao pé da letra. O problema
+não é o tamanho da tabela: é que com ela as 16 páginas ingeridas, chunkadas, embedadas e indexadas
+**não mudariam uma vírgula da recomendação**. O critério 2 do barema vale 20 pontos e viraria
+decoração.
+
+**Por que uma consulta POR DOR e não uma consulta só:** dores diferentes recuperam tecnologias
+diferentes — é o comportamento que a regra 5 de `contexto/03` §4 descreve (o estágio muda a
+recomendação). Concatenar produziria uma consulta média que não é a de ninguém, e o reranker
+receberia um pool sem foco. O custo é linear no número de dores, e o teto de 8 dores da rubrica
+o limita naturalmente.
+
+**Por que a stack declarada entra na consulta — e é aqui que D-037 se paga.** A medição do braço
+lexical mostrou que ele é **mudo em consulta conceitual em português** e **forte em nome literal
+de produto** (`colang`, `vllm`, `pytorch`, `scikit`). O gabarito é quase todo do primeiro tipo, e
+por isso o BM25 não moveu a métrica lá. Mas a `stack_declarada` que o Extractor produz ("usa
+LangChain, Pinecone, GPT-4") é **a única fonte de nome literal deste sistema** — é exatamente o
+tipo de consulta em que o léxico ganha.
+
+Isso continua sendo **hipótese declarada, não medida**: para medi-la seria preciso um gabarito de
+consultas no formato que o Extractor produz, e ele não existe. Fica registrado como o teste que
+justificaria ou condenaria D-037 de vez.
+
+**Por que este nó NÃO gera texto**, mesmo com `pipeline.responder()` pronto: quem o consome é o
+Recommendation Agent, que precisa dos **trechos com scores** para cruzar com o perfil, não de um
+parágrafo já redigido. Redigir aqui e reinterpretar lá perderia a evidência no meio do caminho.
+A geração com citação é para quando um **humano** faz a pergunta — ela entra pela interface.
+
+**Efeito colateral que apareceu na hora e foi corrigido:** o stub do Recommendation Agent derivava
+`justificativa_negocio` de uma tabela com 5 tecnologias. Com tecnologias reais chegando da base, o
+campo vinha vazio — e ele é um dos **7 campos obrigatórios do TAPI**. O teste
+`test_recomendacao_tem_os_sete_campos_do_tapi` pegou na primeira execução. O fallback agora deriva
+das dores observadas: formulaico e visivelmente de stub, mas nunca vazio. Campo obrigatório vazio
+é nível 0 no critério, não "quase lá".
+**Reversível?** Fácil — é o corpo de um nó.
+
+---
+
 ## D-040 — O passo 8 entra na M2: geração com citação e abstenção estruturada
 **Data:** 24/08/2026 · fecha os 9 passos do pipeline do TAPI dentro da M2
 **Decisão:** `src/rag/geracao.py` implementa o passo 8 — o LLM lê os top-k reranqueados e devolve
@@ -1249,6 +1295,62 @@ medido em vez de alegado.
 - **Zero passagens não chama o LLM.** Não há o que ler; pedir ao modelo que decida sobre o vazio é
   exatamente onde ele inventaria.
 **Reversível?** Fácil — é um módulo e um prompt.
+
+## D-043 — A consulta do RAG sai do RÓTULO da dor + das EVIDÊNCIAS, não do `texto` da dor
+
+**Data:** 24/08/2026 · **Sessão 04, Bloco 0** · corrige D-042 sem revogá-la
+
+**O que a medição achou.** D-042 trocou o `BASE_PROVISORIA` (um `dict` de 8 dores para 8
+tecnologias) por uma consulta ao RAG real, montada de `DorObservada.texto` mais a
+`stack_declarada`. As duas metades estavam quebradas, e o code review da revisão mediu as duas:
+
+1. `DorObservada.texto` **não é a linguagem da startup** — `extractor.py:91` o preenche com um
+   template fixo, `f"Sinal de dor em {dor} encontrado nos documentos"`. Existem OITO consultas
+   possíveis no sistema inteiro.
+2. `perfil.stack_declarada` **não é preenchida por nenhum produtor**. `grep` no `src/` devolve a
+   declaração do campo e esta única leitura. O ramo `if not stack` é o único que executa.
+
+**Medido em 24/08 sobre três startups reais da base** (Axenya, Doutor-AI, Laura Networks):
+
+| | antes (D-042) | depois (D-043) |
+|---|---|---|
+| as 3 tecnologias que chegam ao Recommendation | **idênticas nas três startups** — `Inception, Morpheus, CUDA Toolkit` | uma lista diferente por startup |
+| braço lexical nas consultas do grafo | **0 resultados** nas 8 consultas possíveis | vota em 6 das 7 dores (4 a 20 resultados) |
+
+Ou seja: D-042 tinha reintroduzido o `BASE_PROVISORIA` como constante disfarçada, agora pagando
+embedding e rerank por dor por startup. A startup não entrava na conta.
+
+**Decisão:** a consulta passa a ser `rótulo da dor + trechos de `dor.evidencias` + stack`.
+
+- **o rótulo** (`custo`, `latencia`) é a âncora tópica — era o único sinal dentro do template;
+- **os trechos** são a frase LITERAL do documento da startup, que `Evidencia.trecho` guarda desde
+  D-018. É o que faz duas startups com a mesma dor recuperarem coisas diferentes;
+- **a stack** continua no código e continua inalcançável, agora dito em voz alta no docstring.
+
+**O que isso faz pela hipótese de D-037** ("o léxico paga na consulta com stack literal"): ela
+continua **não medida numa régua**, mas deixou de ser inverificável. O gatilho
+`dependencia_fornecedor` casa em `"gpt-4"`, `"api da openai"`, `"chatgpt"` — os trechos trazem
+nome literal. Antes o braço lexical não votava; agora vota. Depois da revisão da sessão 03, que
+derrubou o argumento de IDF de D-036 e mostrou o léxico irrelevante depois do reranker, este é o
+**único argumento vivo** para manter o BM25 — e ele agora pode ser medido em vez de alegado.
+
+**Alternativa descartada:** fazer o Extractor preencher `stack_declarada`. É a correção "certa"
+e ela vem na M4 — mas é reescrever o Extractor, e as evidências já entregam nome literal hoje
+sem tocar naquele agente. Trocar uma constante por outra teria custado uma sessão.
+
+**Segunda decisão, no mesmo nó — a lista sai INTERCALADA por dor, não concatenada.** O
+Recommendation corta em `TETO_RECOMENDACOES = 3`. Concatenada dor a dor, esse corte é POR DOR:
+as três recomendações saem todas da primeira dor e as outras somem em silêncio. Intercalando com
+`zip_longest`, o corte pega o 1º colocado das três primeiras dores, que é o que a regra 4 de
+`contexto/03` §4 ("não empilhar tecnologia") quer dizer. Sem isso, o efeito da tabela acima ficava
+escondido: as três startups recebiam as mesmas três tecnologias mesmo com a consulta corrigida.
+
+**Terceira, pequena:** `CitacaoRAG` ganha `dor_origem`. É carimbado por `nvidia_rag`, não pelo
+pipeline — `src/rag/` continua sem conhecer o conceito de dor, que é o que mantém D-041 de pé.
+Serve à `justificativa_negocio` (ver D-045) e é a informação que faltava para a dívida do filtro
+de dores do `recommendation.py`, hoje anotada e não paga.
+
+---
 
 ## D-044 — O harness de avaliação mede a configuração que a produção roda
 

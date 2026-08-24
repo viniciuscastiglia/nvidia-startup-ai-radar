@@ -265,6 +265,12 @@ class CitacaoRAG(BaseModel):
     score_lexical: float | None = None
     score_rerank: float | None = None
 
+    # QUAL DOR PUXOU ESTA CITAÇÃO. `None` = "não veio de uma consulta por dor" (o caminho da
+    # interface, onde quem pergunta é um humano). O pipeline de RAG NÃO preenche este campo e
+    # nem conhece o conceito de dor — quem o preenche é `nvidia_rag`, que é o nó que sabe por
+    # qual consulta pediu. É o que mantém D-041 de pé: `src/rag/` continua ignorando o domínio.
+    dor_origem: str | None = None
+
 
 class RespostaRAG(BaseModel):
     """Passo 8 do pipeline do TAPI: a resposta gerada, com citação e com abstenção explícita.
