@@ -827,6 +827,92 @@ sessão por causa de recuperação.
 
 ---
 
+## D-036 — BM25 variante `lucene`, e a tokenização que dobra acento
+**Data:** 24/08/2026 · três decisões medidas dentro de uma
+**Decisão:** `bm25s` com `method="lucene"`, `k1=1.2`, `b=0.75`, sobre `texto_indexado`, com
+tokenizador próprio que **dobra acento**, **preserva o ponto entre alfanuméricos** e **não usa
+stemmer**.
+
+### 1. Variante: `lucene`, não o Okapi original (`robertson`)
+
+**Alternativa descartada:** `method="robertson"` — o BM25 do artigo original, que é o que "Okapi de
+verdade" sugere e o que eu teria escolhido por fidelidade histórica.
+
+**Motivo, medido neste corpus:** a palavra **"nvidia" ocorre em 163 dos 177 chunks (92%)**. O IDF
+de Robertson, `ln((N−df+0.5)/(df+0.5))`, dá **−2,4227** para ela. Negativo. Num corpus que é
+inteiramente documentação da NVIDIA, e com consultas que quase sempre dizem "NVIDIA", o Okapi
+original **puniria o chunk por conter a marca**. O IDF do Lucene, `ln(1 + (N−df+0.5)/(df+0.5))`,
+é sempre positivo — 0,0850 no mesmo caso.
+
+| termo | df | df/N | idf robertson | idf lucene |
+|---|---|---|---|---|
+| `and` | 173 | 98% | **−3,6521** | 0,0256 |
+| `nvidia` | 163 | 92% | **−2,4227** | 0,0850 |
+| `ai` | 123 | 69% | **−0,8180** | 0,3655 |
+| `colang` | 5 | 3% | 3,4456 | 3,4770 |
+
+IDF negativo é um problema conhecido do BM25 original e some em corpus grande e heterogêneo, onde
+nenhum termo de conteúdo chega a 90% de df. **Corpus pequeno e temático é exatamente onde ele
+morde** — e o nosso tem 177 chunks sobre um assunto só.
+
+### 2. `k1 = 1.2` e `b = 0.75`, explícitos
+
+D-016 justifica `bm25s` por `k1` e `b` serem ajustáveis. Deixá-los no default da biblioteca
+entregaria o argumento sem entregar a coisa. Os valores são os clássicos do Okapi, e o motivo de
+cada um é concreto aqui:
+- **`k1` (saturação de tf)** decide a q14: "pandas" ocorre 15 vezes em 2 chunks do cuDF contra 3
+  vezes em 1 do RAPIDS, e é a repetição que separa os dois.
+- **`b` (normalização por comprimento)** pesa menos que o normal neste sistema, porque o chunker
+  estrutural **já normaliza comprimento** numa banda de 120 a 450 tokens (D-025). A variação que
+  `b` existe para corrigir foi em boa parte corrigida antes, no passo 3.
+
+O sweep de `k1 × b` custa **zero chamada de API** (o BM25 é local) e fica para a sessão 04, junto
+do sweep de dimensão e de teto.
+
+### 3. Tokenização — a dobra de acento não é higiene, é requisito
+
+**Sem `NFD` + remoção de diacrítico, a regex parte a palavra no acento:** `genômica` → `gen` +
+`mica`, `inferência` → `infer` + `ncia`, `português` → `portugu` + `s`. **Metade do vocabulário
+das consultas viraria lixo.** Isso não é hipótese: na primeira medição do sinal lexical do
+gabarito, a q12 apareceu classificada como ATRAPALHA por causa do termo espúrio `gen`.
+
+**O ponto sobrevive entre alfanuméricos e morre no fim da frase** (`[a-z0-9]+(?:\.[a-z0-9]+)*`):
+`cudf.pandas` é identificador e é a âncora da q14; `containers.` é pontuação.
+*Efeito colateral aceito:* uma ocorrência de `cudf.pandas` não conta como ocorrência de `pandas`.
+A alternativa — emitir o token inteiro **e** as partes — inflaria tf e comprimento do documento,
+mexendo em `k1` e `b` por via indireta.
+
+**Sem stemmer.** `PyStemmer` seria dependência nova, e stemming de inglês não ajuda consulta em
+português. O valor do léxico aqui é nome literal de produto, que stemmer nenhum melhora.
+
+### 4. Score zero é ausência, não evidência fraca
+
+`buscar_lexical_bruto` **descarta resultados com score 0**. Um chunk com score zero não contém
+nenhum termo da consulta — é ausência de evidência lexical. Deixá-lo entrar poluiria o pool da
+fusão com ruído ranqueado. **É o que faz a q18 devolver lista vazia** (a consulta é inteiramente
+em português: `monitorar`, `metricas`, `servidor`, `inferencia`, `producao`, e nenhum desses
+termos existe no corpus em inglês). O braço lexical dizer "não tenho nada" é resposta correta.
+
+### O braço lexical sozinho, medido
+
+| motor | r@1 | r@3 | r@5 | e@1 | e@3 | e@5 |
+|---|---|---|---|---|---|---|
+| denso (linha de base, D-032) | 89% | 100% | 100% | 68% | 79% | 84% |
+| **lexical** | **58%** | **63%** | **74%** | 42% | 47% | 63% |
+
+**Ele é pior que o denso em tudo — e isso era o esperado.** O que importa é *onde* ele erra:
+q05, q09, q12, q16, q18. Antes de escrever uma linha eu medi o sinal lexical de cada pergunta
+(soma de idf dos termos da consulta que casam no corpus) e marquei 6 como MUDO ou ATRAPALHA.
+**5 dessas 6 são exatamente as 5 falhas.** A complementaridade com o denso é medida, e é ela que
+justifica **fundir** os dois em vez de trocar um pelo outro.
+
+**Dívida conhecida, deixada de propósito:** `&nbsp;` vaza para o `caminho_secao` de 7 chunks (bug
+de limpeza da sessão 02). Nenhuma consulta contém o termo, então o efeito em recuperação é nulo;
+o efeito é cosmético no breadcrumb. Consertar exige re-ingerir → re-embedar → **invalidar a linha
+de base de D-032 no meio da sessão**. Vai junto do re-ingest que a sessão 04 já fará pelo sweep de
+teto.
+**Reversível?** Fácil — `METODO`, `K1`, `B` e o tokenizador são constantes de um módulo só.
+
 ## Decisões pendentes
 
 Levantadas em `contexto/05-achados-e-decisoes.md` §4, a serem fechadas na sessão 01:
