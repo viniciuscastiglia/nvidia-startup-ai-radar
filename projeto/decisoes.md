@@ -804,6 +804,27 @@ chunk acima dela teria o final truncado no rerank. Não é o caso — nenhum chu
 perto (máximo medido: 446 tokens contra 8.192 disponíveis).
 **Reversível?** N/A — é medição.
 
+**Atualização — 24/08/2026, sessão de revisão.** Três correções, todas medidas
+(`scripts/auditoria/auditoria_diluicao.py` e `auditoria_lote.py`):
+
+1. **"Os logits não reproduzem dígito a dígito" não se confirmou.** Quatro execuções novas dos
+   nove tamanhos deram 36 de 36 logits IDÊNTICOS. A hipótese de que a variação vinha da
+   composição do lote foi testada e DERRUBADA: 18 chamadas em 6 composições (1, 2, 10 e 30
+   passagens, ordens trocadas) devolveram sempre −6,8281. A variação registrada aqui é rara e
+   intermitente, não sistemática. A regra operacional — nada depende de margem abaixo de ~2
+   logits — continua valendo; o mecanismo descrito acima não descreve o que se observa.
+2. **O teste de diluição tem um problema de VALIDADE que a ressalva de variância não cobre.** O
+   enchimento fala de cuDF enquanto a query pergunta de NIM: o que ele mede é "o chunk ficou mais
+   off-topic", não "o chunk ficou maior". Um chunk real de 800 tokens é 800 tokens sobre o mesmo
+   produto.
+3. **Refeito com texto REAL** (chunks vizinhos concatenados do documento do NIM, que é o que um
+   TETO maior produziria): 176→−2,56 · 380→−2,56 · 564→−6,83 · 712→−9,10 · e depois PLATÔ entre
+   −6,26 e −9,10 até 2.181. Duas execuções idênticas. A cobrança começa entre 380 e 564, não
+   entre 600 e 800, e SATURA. Isso reforça TETO_TOKENS=450 e fecha a faixa de busca do sweep em
+   ~120–560, não ~800. Limite: um documento, uma consulta.
+
+---
+
 ## D-041 — `Passagem` interna, `CitacaoRAG` de contrato: dois tipos, não um
 **Data:** 24/08/2026
 **Decisão:** o pipeline de recuperação (`src/rag/`) trabalha com `Passagem` — um dataclass com
@@ -913,6 +934,28 @@ de base de D-032 no meio da sessão**. Vai junto do re-ingest que a sessão 04 j
 teto.
 **Reversível?** Fácil — `METODO`, `K1`, `B` e o tokenizador são constantes de um módulo só.
 
+**Atualização — 24/08/2026, sessão de revisão.** A tabela de IDF acima foi calculada num script
+solto com tokenizador inline, não com `src.rag.lexical.tokenizar`. Recalculada com o tokenizador
+real (`scripts/auditoria/idf_lucene_vs_robertson.py`):
+
+1. **A linha `and` não existe.** `and` está na STOPWORDS e nunca vira token: não tem df, não tem
+   IDF e não participa de ranking. As outras três linhas reproduzem exatas sobre `texto_indexado`.
+2. **O ARGUMENTO CENTRAL ESTÁ ERRADO PARA A BIBLIOTECA EM USO.** `bm25s/scoring.py:178` trava o
+   IDF de Robertson em zero (`if inner < 1: inner = 1`), e `allow_negative` não é passado de lugar
+   nenhum. Medido no índice real: com `robertson`, `nvidia` e `ai` pontuam exatamente +0,0000. O
+   Okapi original NEUTRALIZA o termo, não o pune. A fórmula citada acima é a do artigo, não a do
+   `bm25s`.
+3. **O recall é idêntico nas duas variantes:** 58/63/74 e 42/47/63, os seis números. A escolha não
+   tem consequência medida neste corpus — um termo com df de 92% é quase um deslocamento
+   constante em qualquer das duas fórmulas.
+
+A decisão (`lucene`) FICA, e o argumento passa a ser este: só 2 de 3.063 termos do vocabulário
+teriam IDF negativo pela fórmula do papel, mas são `nvidia` e `ai`, e 14 das 24 consultas contêm
+um dos dois — sob `robertson` esses tokens ficariam inertes; sob `lucene` contribuem pouco e
+positivo. É um argumento mais estreito que o escrito, e sem efeito na régua.
+
+---
+
 ## D-037 — Fusão por RRF, soma ponderada como controle — e o léxico não paga o que custa
 **Data:** 24/08/2026 · **o resultado contraria a expectativa da pauta**
 **Decisão:** `fundir_rrf` é o motor de produção, com `K`, `peso_denso` e `peso_lexical`
@@ -1013,6 +1056,23 @@ não são "dá pena jogar fora":
 **O que eu NÃO fiz, e é decisão:** não subi o peso lexical até a métrica melhorar, nem troquei de
 gabarito. As duas coisas seriam ajustar a régua ao resultado.
 **Reversível?** Fácil — `peso_lexical=0.0` reduz a híbrida ao denso puro exatamente.
+
+**Atualização — 24/08/2026, sessão de revisão.**
+
+1. **A tabela de ablação acima vale em K=10 / peso_lexical=0,3, e isso não estava escrito.** Os
+   defaults do `avaliar_rag.py` eram K=20 / 0,5, e nessa configuração a híbrida dá 68/89/100 ·
+   53/68/84 — que é a tabela publicada no `sessao-04.md`. Os dois números estão certos; o erro é
+   três documentos apresentarem tabelas diferentes como se fossem a mesma régua. O corolário
+   "antes do rerank a híbrida é melhor no estrito, e@1 74% vs 68%" só vale em K=10/0,3: no default
+   antigo do CLI a híbrida era PIOR (53% vs 68%). **Resolvido em D-044**, que faz o harness
+   importar os defaults de produção em vez de redeclarar os seus.
+2. **"`K=60` é uniformemente pior que `K=10`" é falso num ponto:** em peso 1,0 os dois dão 63%.
+   Pior ou igual, estritamente pior em 3 dos 4 pesos.
+3. **A identidade `rerank_denso ≡ rerank_hibrido` foi reconfirmada e é mais forte que o escrito:**
+   vale também sobre a UNIÃO INTEIRA, com os mesmos logits, mesma falha única (q14). Corolário
+   incômodo: não truncar a união custa 37,5% mais chamadas de rerank e compra zero nesta régua.
+
+---
 
 ## D-038 — O reranker lê `texto_indexado`, com o breadcrumb
 **Data:** 24/08/2026
@@ -1295,6 +1355,36 @@ medido em vez de alegado.
 - **Zero passagens não chama o LLM.** Não há o que ler; pedir ao modelo que decida sobre o vazio é
   exatamente onde ele inventaria.
 **Reversível?** Fácil — é um módulo e um prompt.
+
+**Atualização — 24/08/2026, sessão de revisão.** A afirmação "a âncora da q17 NÃO está no top-5,
+nem no top-10" não reproduz sob o pipeline final (`scripts/auditoria/auditoria_q17.py`):
+
+- pela `pipeline.responder()`, a âncora (chunk 81) está na união e o reranker a põe em **6º**;
+- pelo `--geracao`, ela **não está no pool** — o harness trunca a fusão em 20 e o chunk 81 entra
+  só pelo braço lexical, além dessa posição.
+
+O teto de 23/24 sobrevive por acidente aritmético (6 > 5 = k do gerador), mas o diagnóstico está
+trocado: não é "a recuperação entrega o documento certo e não o chunk que responde", é **entrega
+em 6º e o gerador lê 5**. `k=6` resolveria a q17 hoje, sem tocar em chunking — o que remove a
+justificativa de atacar este caso com um modelo de 70b antes de testar o parâmetro.
+
+**Atualização 2 — 24/08/2026, sessão 04, Bloco 0.** A ressalva acima dizia que o `--geracao` não
+tinha sido re-rodado. Foi, depois de duas mudanças desta sessão: D-044 (o harness parou de
+truncar o pool) e o schema estreito de saída registrado em D-045.
+
+**Duas execuções, 24/24 nas duas** — 19/19 respondidas e 5/5 abstidas, e a q17 respondendo com a
+fonte certa. **Isto NÃO é "subiu de 23 para 24".** D-040 já registra este passo como
+não-determinístico, com 22, 23 e 24 de 24 observados no mesmo código; duas execuções são dois
+pontos, não uma distribuição, e o mesmo argumento que D-039 usa contra o n=1 se aplica aqui
+contra o n=2. O que se pode afirmar: o teto aritmético de 23/24 descrito acima **deixou de
+existir**, porque a âncora da q17 passou a estar dentro do que o gerador lê.
+
+**Continua não medida** a escolha `json_schema` vs `function_calling` — a tabela que a decide é
+uma pergunta com uma execução por método, contra um passo que a própria decisão declara
+não-determinístico. É o risco mais carregado que a revisão levantou (§5) e ele segue aberto,
+agora dentro de `METODO_ESTRUTURADO` em `src/llm.py`, o portão único dos oito agentes da M4.
+
+---
 
 ## D-043 — A consulta do RAG sai do RÓTULO da dor + das EVIDÊNCIAS, não do `texto` da dor
 
