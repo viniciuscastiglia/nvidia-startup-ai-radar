@@ -1057,6 +1057,60 @@ gabarito, não como falha do recuperador.
 
 ---
 
+## D-035 — A hipótese de D-033 está REFUTADA: o reranker também não abstém
+**Data:** 24/08/2026 · **é o resultado, e ele contraria o que a sessão apostava**
+**Decisão:** o sistema **não** decide "não sei" por limiar sobre score algum — nem sobre a cosseno
+densa (já descartado em D-033), nem sobre o logit do cross-encoder. A abstenção sobe para o
+**passo 8, a geração** (D-040).
+
+**A hipótese que D-033 registrou para esta sessão:** *"o cross-encoder pontua o par (consulta,
+passagem) julgando se aquela passagem **responde** aquela pergunta, o que é uma pergunta diferente
+da que o bi-encoder responde."* Era o caminho óbvio e eu apostava nele.
+
+### O que a medição diz, com o gabarito ampliado para 5 perguntas sem resposta
+
+| motor | pior acerto | pior sem-resposta | margem |
+|---|---|---|---|
+| denso, n=1 (D-033) | 0,2934 | 0,4813 (q20) | −0,1879 |
+| **denso, n=5** | 0,2934 | **0,5744 (q24)** | **−0,2810** |
+| **rerank, n=5** | −9,1016 | **+8,5312 (q23)** | **−17,6328** |
+
+**Ampliar a amostra piorou a margem em 4x — o n=1 estava SUBESTIMANDO o problema, não
+exagerando.** É o contrário do que eu temia ao propor a ampliação, e é a razão de ela ter valido a
+pena: com uma pergunta só, eu teria registrado um número quatro vezes mais gentil que a realidade.
+
+**A q23 é a demonstração.** Ela pergunta *"o TensorRT-LLM é mais rápido que o vLLM? Em quantos por
+cento?"* e recebe logit **+8,53**, um dos mais altos do gabarito inteiro — mais alto que o de
+quase todas as perguntas que TÊM resposta. O cross-encoder está certo no que ele mede: o chunk 38
+do NIM cita "TensorRT-LLM, vLLM ou SGLang" na mesma frase, e é a passagem mais relevante do corpus
+para aquela pergunta. Ela só não contém a comparação.
+
+### A razão é conceitual, e agora está confirmada em duas camadas
+
+**Relevância não é responsibilidade.** O bi-encoder mede pertinência de tópico; o cross-encoder
+mede relevância do par, que é mais fino e ainda é relevância. Distinguir "fala do assunto" de
+"contém o fato pedido" exige **ler a passagem procurando a coisa específica** — e o único
+componente do pipeline que lê é o gerador.
+
+D-033 chegou a essa conclusão por argumento e a marcou como hipótese. Agora ela tem dois números.
+
+**Um limiar global também é impedido por um segundo motivo, medido em D-034:** os logits são
+quantizados em bf16 e variam entre execuções — a mesma passagem pontuou −10,24 e −6,83 em
+chamadas diferentes. Mesmo que existisse uma margem positiva, ela precisaria ser maior que ~2
+logits para ser sinal e não ruído do serving.
+
+**O que sobra, e vai para o passo 8:** a decisão de abstenção passa a ser um **campo estruturado
+produzido pela geração** (`RespostaRAG.abstencao`), com o LLM lendo as passagens e declarando se o
+fato pedido está lá — não interpretando prosa depois. Mesmo princípio de D-021: campo sem fonte
+literal vira `null`, não valor plausível.
+**Alternativa que fica registrada como não testada:** um critério **relativo** dentro da consulta
+(gap entre 1º e 2º, ou o topo contra a própria distribuição daquela consulta) em vez de limiar
+global. Não testei porque, com 5 perguntas sem resposta, calibrar um segundo hiperparâmetro seria
+sobreajuste declarado. Fica para quando o gabarito crescer.
+**Reversível?** N/A — é um achado. O que é reversível é o mecanismo escolhido no lugar.
+
+---
+
 ## Decisões pendentes
 
 Levantadas em `contexto/05-achados-e-decisoes.md` §4, a serem fechadas na sessão 01:
