@@ -76,7 +76,7 @@ Até 7 minutos: arquitetura dos agentes, sistema RAG, demonstração funcional p
 
 | Marco | Sessões | Corte |
 |---|---|---|
-| **M2** RAG | **3** | ~~ingestão+embed+**gabarito**~~ **feita 23/08** · híbrida+rerank · otimização medida. A 1ª sessão também levou busca densa e recall@k (D-031), então cada incremento das próximas tem linha de base |
+| **M2** RAG | **3** | ~~ingestão+embed+gabarito~~ 23/08 · ~~híbrida+rerank+**geração**~~ 24/08 · resta só otimização medida. A sessão 03 puxou o passo 8 para dentro da M2 (D-040), então **os 9 passos do TAPI estão fechados** e a 3ª sessão vira sweep, não entrega |
 | **M3** base 30-50 startups | **2-3** | ⚠️ o sumidouro |
 | **M4** agentes com LLM | **2-3** | inclui corrigir os 3 erros de D-020 |
 | **M5** interface | **1** | vale 5 pontos, não vale mais |
@@ -98,14 +98,24 @@ Até 7 minutos: arquitetura dos agentes, sistema RAG, demonstração funcional p
 Uma sessão a mais, fora da conta: **os conceitos de domínio 11 e 12 de `conceitos.md`** (stack
 NVIDIA e rubrica AI-native). Não se aprendem implementando e são o que o vídeo mais cobra.
 
-**Estado em 23/08:** M1 fechada dois dias adiantada (vencia 25/08) e **a 1ª das 3 sessões da M2
-também**, no mesmo dia. A base NVIDIA está ingerida, indexada e com linha de base medida
-(recall@3 = 100% estrutural contra 84% do controle — D-032). Restam a híbrida+rerank e a
-otimização. M2 vence 30/08; a folga continua.
+**Estado em 24/08:** M1 fechada dois dias adiantada (vencia 25/08), e **2 das 3 sessões da M2**
+em dois dias. **Os 9 passos do pipeline RAG do TAPI estão fechados** — busca híbrida, reranking e
+geração com citação entraram na sessão 03. `recall@1` foi de 89% para **95%** com o reranking
+(D-038) e a acurácia de abstenção sobre 24 perguntas é **24/24** (D-040). M2 vence 30/08 e a
+terceira sessão dela agora é só otimização medida — sweep de dimensão, de banda de chunk e de
+`k1`/`b`, todos já com harness pronto e a maioria custando zero chamada de API.
 
-**Um risco novo, que a medição revelou:** a abstenção não sai de limiar sobre score denso
-(D-033). Se o reranker também não resolver, "o sistema sabe dizer não sei" vira trabalho da
-geração — e isso encosta na M4, não na M2. Vale decidir na sessão 03 em vez de descobrir na 04.
+**O risco de abstenção que a sessão 02 abriu está FECHADO, e não como se esperava.** D-033 supôs
+que o cross-encoder resolveria. Não resolveu: a margem piorou de −0,19 para **−17,63** com o
+gabarito ampliado (D-035). A abstenção desceu para a geração e **funciona lá** — 5/5, incluindo
+uma pergunta desenhada para induzir alucinação com citação de fonte real. Isso NÃO encostou na
+M4: fechou dentro da M2.
+
+**Um risco novo, menor, que a sessão 03 revelou:** o `llama-3.1-8b` erra a **citação** com
+frequência não desprezível (aponta índice errado, ou responde sem apontar nada) mesmo quando a
+resposta está certa. A abstenção é confiável; o "de onde veio" ainda não é. Como rastreabilidade é
+requisito duro do TAPI, isso é trabalho da M4 — modelo maior só neste nó, ou uma verificação por
+código de que a afirmação ocorre no trecho citado.
 
 ## Riscos identificados
 

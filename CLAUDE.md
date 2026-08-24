@@ -97,6 +97,13 @@ Frontend livre.
 | Busca lexical | `bm25s` em processo para o RAG · `tsvector` para documentos de startup | D-016 |
 | Topologia | subgrafo de análise + fan-out por `Send` | D-007 |
 | Chunking | estrutural por seção + breadcrumb prefixado · janela fixa como controle | D-025, D-027 |
+| BM25 | `bm25s` método **`lucene`**, `k1=1.2`, `b=0.75`, tokenizador que dobra acento | D-036 |
+| Fusão | **RRF** (`K=10`) de produção · soma ponderada como braço de controle medido | D-037 |
+| Rerank | lê `texto_indexado` (com breadcrumb); janela real de **8192 tokens conjuntos** | D-034, D-038 |
+| Saída estruturada | `with_structured_output(..., method="json_schema")` via `src/llm.py` | D-040 |
+| Schema que vai ao LLM | tipo **estreito** por chamada — docstring de schema é **prompt** | D-045 |
+| Consulta do RAG | rótulo da dor + `dor.evidencias[*].trecho` (a fala da startup) | D-043 |
+| Harness | importa os defaults de `src.rag.pipeline`; **não trunca** o pool | D-044 |
 
 > **Atenção — os modelos que o TAPI cita estão mortos.** `llama-3.2-nv-embedqa-1b-v2` e
 > `llama-3.2-nv-rerankqa-1b-v2` respondem **HTTP 410 Gone** desde 18/05/2026. Nunca usar esses
@@ -104,10 +111,30 @@ Frontend livre.
 
 **Em aberto:** framework de frontend (P-06) e quantas startups entram na base final.
 
-**Base de conhecimento NVIDIA (M2, sessão 02):** 16 tecnologias em `data/nvidia/fontes.yaml`,
-177 chunks estruturais + 204 de controle em `chunks_nvidia`, gabarito de 20 perguntas em
-`data/avaliacao/gabarito.yaml`. Linha de base medida: **recall@3 = 100% estrutural contra 84%
-da janela fixa** (D-032). A abstenção **não** sai de limiar sobre score denso (D-033).
+**Base de conhecimento NVIDIA (M2):** 16 tecnologias em `data/nvidia/fontes.yaml`, 177 chunks
+estruturais + 204 de controle em `chunks_nvidia`, gabarito de **24 perguntas (19 com resposta,
+5 sem)** em `data/avaliacao/gabarito.yaml`. **Os 9 passos do pipeline do TAPI estão fechados.**
+
+Medido, ao longo das sessões 02 e 03:
+
+| motor | recall@1 | recall@3 | estrito@1 |
+|---|---|---|---|
+| denso puro — linha de base (D-032) | 89% | 100% | 68% |
+| + BM25 e fusão RRF (D-037) | 84% | 100% | 74% |
+| **+ reranking (D-038)** | **95%** | **100%** | **79%** |
+
+**O braço lexical não melhora a métrica depois do reranker** — `rerank` sobre denso puro e sobre
+a híbrida dão resultados idênticos. Está mantido com o número escrito ao lado, não escondido
+(D-037). A única falha restante em recall@1 é a q14, e inspecionando, **o recuperador está certo
+e o gabarito é que está subespecificado** (D-038).
+
+**Abstenção: nenhum limiar sobre score funciona** — nem a cosseno densa (margem −0,2810) nem o
+logit do cross-encoder (**−17,6328**). Ela vive no passo 8, como campo estruturado da geração
+(D-033, D-035, D-040). Acurácia medida: **24/24**, mas o passo é **não-determinístico** — 22, 23
+e 24 já saíram do mesmo código, então nenhuma execução isolada é o número (D-040).
+
+**O `nvidia_rag` consulta o pipeline real**, com a linguagem literal da startup e não com um
+rótulo de dor (D-043).
 
 **Diferencial:** o RAG roda inteiro na própria stack NVIDIA — embedding e reranking do NeMo
 Retriever no lugar do Cohere (pago). Dá o argumento "usei a stack que o sistema recomenda".
@@ -124,12 +151,17 @@ python scripts/seed.py --so-validar        # valida as fixtures sem tocar no ban
 python scripts/verificar_embedder.py       # Matryoshka e limite de entrada do embedder
 python scripts/ingerir_nvidia.py --so-validar  # chunking sem tocar banco nem API
 python scripts/ingerir_nvidia.py           # ingere as 16 tecnologias (upsert idempotente)
-python scripts/avaliar_rag.py --validar    # confere o gabarito CONTRA o corpus
-python scripts/avaliar_rag.py -k 3         # recall@k: estrutural vs braço de controle
+python scripts/verificar_reranker.py       # janela do reranker e curva de diluição (D-034)
+python scripts/avaliar_rag.py --validar    # gabarito vs corpus, incl. PROVA de ausência
+python scripts/avaliar_rag.py              # ablação nos defaults de PRODUÇÃO (D-044)
+python scripts/avaliar_rag.py --truncar-pool   # braço de controle: trunca a união antes do rerank
+python scripts/avaliar_rag.py --por-pergunta   # onde cada motor põe o documento esperado
+python scripts/avaliar_rag.py --varredura      # grade de fusão — zero chamada de API
+python scripts/avaliar_rag.py --geracao        # passo 8: acurácia de abstenção sobre as 24
 python -m src.graph "sua consulta aqui"    # roda o pipeline ponta a ponta (thread novo por run)
 python -m src.graph --thread <id> "..."    # retoma um run pelo thread_id que o CLI imprime
 python scripts/diagramas.py                # regenera os .mmd a partir do grafo compilado
-pytest -q                                  # 29 testes
+pytest -q                                  # 40 testes — exigem Postgres e a API (o grafo roda de verdade)
 python scripts/coletar.py <url>            # auxiliar de curadoria: texto real de uma página
 ```
 
@@ -141,7 +173,13 @@ Para quem for avaliar sem Postgres local: `docker compose up -d` (porta 5433) e 
 - **Um agente por módulo** em `src/agents/`, cada um exportando `node(state) -> dict`
 - **Dois estados**: `EstadoRadar` (grafo pai) e `EstadoAnalise` (subgrafo). Ver `src/state.py`
 - **Nada é afirmado sem `list[Evidencia]`** — `Afirmacao` é a unidade que os agentes produzem
-- **Passo do pipeline RAG = módulo em `src/rag/`**: `limpeza` (passo 2), `chunking` (3), `busca` (6)
+- **Passo do pipeline RAG = módulo em `src/rag/`**: `limpeza` (2), `chunking` (3), `busca` (6a
+  denso), `lexical` (6a léxico), `fusao` (6b), `rerank` (7), `geracao` (8). `pipeline.py` **não é
+  um passo** — é a composição, e existe para evitar ciclo de import. `responder()` é a porta de
+  entrada do RAG para o resto do sistema
+- **`Passagem` é interno ao RAG, `CitacaoRAG` é o contrato com os agentes** (D-041). A conversão
+  acontece em `para_citacao`, na borda
+- **Todo acesso a LLM passa por `src/llm.py`** — e sempre com `method="json_schema"` (D-040)
 - **Fixtures do seed em `data/seed/*.yaml`**, uma startup por arquivo. `perfil_alvo` é anotação
   de curadoria e **não entra no banco**
 - **Provedor de LLM/embedding/rerank só via `src/config.py`** — nenhum agente conhece a NVIDIA
