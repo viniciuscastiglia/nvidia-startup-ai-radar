@@ -804,6 +804,29 @@ chunk acima dela teria o final truncado no rerank. Não é o caso — nenhum chu
 perto (máximo medido: 446 tokens contra 8.192 disponíveis).
 **Reversível?** N/A — é medição.
 
+## D-041 — `Passagem` interna, `CitacaoRAG` de contrato: dois tipos, não um
+**Data:** 24/08/2026
+**Decisão:** o pipeline de recuperação (`src/rag/`) trabalha com `Passagem` — um dataclass com
+`chunk_id`, `texto`, `texto_indexado`, `caminho_secao`, `documento_url`. A conversão para
+`CitacaoRAG` acontece **só na borda**, em `para_citacao()`.
+**Alternativas descartadas:** acrescentar `chunk_id` e `texto_indexado` ao próprio `CitacaoRAG`
+(seria um campo a mais e nenhum arquivo novo) · casar os rankings pelo texto do trecho.
+**Motivo:** a fusão precisa reconhecer que o item no ranking denso e o item no ranking lexical são
+o **mesmo chunk**. Casar por texto é frágil (qualquer normalização quebra) e caro (comparação de
+strings longas em O(n·m)); o id vem do banco de graça.
+
+O que decidiu contra colocar os campos em `CitacaoRAG` foi **onde ela mora**: em `src/state.py`,
+dentro do estado do grafo, e ela vai para `Recomendacao.citacoes_rag`. `chunk_id` e
+`texto_indexado` são detalhes de implementação da recuperação — o breadcrumb prefixado existe para
+o embedder e para o reranker lerem (D-025, D-038), não para o agente. Mantendo a fronteira,
+trocar a fusão ou o reranker **não propaga para o estado do grafo**, que é a peça mais cara de
+mexer depois (o risco "estado mal modelado, exigindo refatorar os 8 nós" está no `plano.md`).
+**Custo aceito:** uma conversão explícita e ~25 linhas. Em troca, `src/state.py` não muda nesta
+sessão por causa de recuperação.
+**Reversível?** Fácil — é tipo interno, nada fora de `src/rag/` o conhece.
+
+---
+
 ## Decisões pendentes
 
 Levantadas em `contexto/05-achados-e-decisoes.md` §4, a serem fechadas na sessão 01:
