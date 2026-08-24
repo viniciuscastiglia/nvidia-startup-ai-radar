@@ -913,6 +913,107 @@ de base de D-032 no meio da sessão**. Vai junto do re-ingest que a sessão 04 j
 teto.
 **Reversível?** Fácil — `METODO`, `K1`, `B` e o tokenizador são constantes de um módulo só.
 
+## D-037 — Fusão por RRF, soma ponderada como controle — e o léxico não paga o que custa
+**Data:** 24/08/2026 · **o resultado contraria a expectativa da pauta**
+**Decisão:** `fundir_rrf` é o motor de produção, com `K`, `peso_denso` e `peso_lexical`
+explícitos; `fundir_soma` existe implementada e medida como **braço de controle** (padrão de
+D-027). Default de produção: **RRF, `K=10`, denso 1.0, lexical 0.3**.
+**Alternativas descartadas:** só soma ponderada · só RRF · não implementar o braço lexical.
+
+### Por que RRF e não soma ponderada — o argumento é medido, não citado
+
+RRF é o default do Elastic, Qdrant, Weaviate e OpenSearch, e vem de Cormack, Clarke & Buettcher
+(2009). Isso resolve a pergunta na banca em uma frase, mas não é a razão. A razão é **D-033**: a
+magnitude do score denso **não é calibrada** — a q20, que não tem resposta na base, recupera com
+0,4813, mais alto que o pior acerto verdadeiro (0,2934). Uma fusão que consome magnitude consome
+um sinal que já medimos ser não confiável. RRF só olha posição.
+
+A soma ponderada foi implementada e medida assim mesmo, e a normalização é **parâmetro** porque
+ela é a decisão escondida dentro da decisão: `minmax` faz o 1º colocado valer 1,0 *por
+construção*, então na q20 os 0,4813 viram 1,0 igual a um acerto perfeito — ela **fabrica**
+confiança exatamente onde o sistema precisa abster-se.
+
+### `K` é parâmetro e não a constante 60 da literatura — e a medição confirma
+
+Com `K=60` e listas de 20, as contribuições vão de 1/61 a 1/80: **31% de amplitude**, e o RRF
+degenera em "aparece nas duas listas?". A varredura confirma: `K=60` é **uniformemente pior** que
+`K=10` em toda a grade de pesos. Corpus pequeno e pool curto é onde esse defeito morde.
+
+### A varredura completa, que custou zero chamada de API
+
+As listas densa e lexical são recuperadas uma vez por consulta e reaproveitadas; RRF e soma são
+funções puras delas. Grade inteira em 13 segundos, sem gastar crédito — mesmo truque de D-029.
+
+| fusão | K/norm | peso lex | r@1 | r@3 | q05 |
+|---|---|---|---|---|---|
+| — (denso puro) | — | — | **89%** | **100%** | #1 |
+| rrf | 10 | 0.3 | 84% | 100% | #1 |
+| rrf | 10 | 1.0 | 63% | 89% | #2 |
+| rrf | 60 | 0.3 | 68% | 89% | #2 |
+| soma | minmax | 0.3 | **89%** | **100%** | #1 |
+| soma | soma | 1.0 | 68% | 79% | #2 |
+
+**Nenhuma configuração bate a linha de base.** A melhor apenas empata.
+
+### O achado que importa: o léxico não paga o que custa NESTE gabarito
+
+| motor | r@1 | r@3 | r@5 | e@1 | e@3 | e@5 |
+|---|---|---|---|---|---|---|
+| denso | 89% | 100% | 100% | 68% | 79% | 84% |
+| lexical | 58% | 63% | 74% | 42% | 47% | 63% |
+| híbrido | 84% | 100% | 100% | **74%** | 79% | 84% |
+| **rerank sobre denso** | **95%** | 100% | 100% | 79% | 84% | 95% |
+| **rerank sobre híbrido** | **95%** | 100% | 100% | 79% | 84% | 95% |
+
+**As duas últimas linhas são idênticas.** Depois do reranker, o braço lexical contribui **zero**.
+E no tamanho do pool (k=20) o denso sozinho já dá r@20 = 100% e e@20 = 95% — o léxico também não
+acrescenta candidato novo que importe.
+
+Um detalhe que sobrevive: **antes** do rerank a híbrida é melhor no critério estrito (e@1 74% vs
+68%) e pior no frouxo (84% vs 89%). Faz sentido — o BM25 casa a âncora literal, que mora no chunk
+da resposta, então ele acha o *chunk* certo mais vezes e o *documento* certo menos. O reranker
+chega ao mesmo chunk sozinho.
+
+### Por que a fusão não propaga as duas vitórias do léxico — dois mecanismos diferentes
+
+O denso acerta 17 de 19 em 1º lugar; suas únicas falhas são q14 e q19. **O léxico acerta
+exatamente essas duas em 1º.** Complementaridade perfeita, e mesmo assim a fusão não a colhe:
+
+- **q19 — ranks espelhados, e o RRF só obedece à ordem dos PESOS.** O chunk 38 (NIM, certo) é
+  denso #2 e lexical #1; o chunk 181 (TensorRT-LLM, errado) é denso #1 e lexical #2. Como as
+  posições são simétricas e o RRF só soma posições, **o resultado não depende de evidência
+  nenhuma — depende só de qual peso é maior**: com `denso > lexical` vence o 181 (errado), com os
+  pesos iguais empatam exatamente, com `lexical > denso` vence o 38 (certo).
+  **Não existe ajuste intermediário que decida o caso pelo mérito.** E o lado que consertaria a
+  q19 é precisamente o que quebra a garantia crosslingual da q05, onde o braço lexical é mudo.
+  É um trade-off sem solução interior, e é o custo estrutural de descartar magnitude.
+  *(Este parágrafo está mais preciso do que eu o escrevi da primeira vez: eu havia registrado
+  "empatam sempre, nenhum peso quebra". O teste `test_rrf_em_ranks_espelhados_so_obedece_a_ordem_dos_PESOS`
+  derrubou a afirmação — o empate só ocorre em `w_denso == w_lexical`.)*
+- **q14 — crédito dividido entre chunks.** O léxico põe o chunk 226 do cuDF em 1º; o denso põe o
+  227. Documento certo forte nos dois braços, espalhado por chunks diferentes, nenhum acumula. E o
+  chunk 209 (RAPIDS) é denso #2 **e** lexical #3, ganha crédito duplo e sobe na frente.
+
+### A decisão: manter, com o número escrito em vez de escondido
+
+A regra da sessão manda remover incremento que não move a métrica. Mantive, por três razões que
+não são "dá pena jogar fora":
+
+1. **O passo 6 do TAPI é literalmente "busca híbrida: vetorial + lexical".** Entregar 8 dos 9
+   passos com a justificativa "medi e não ajudou" é pior que entregar 9 com o número honesto ao
+   lado — e o número honesto é uma resposta de nível 4, não uma desculpa.
+2. **O gabarito sub-representa o tipo de consulta em que o léxico ganha.** Ele tem 20 perguntas em
+   português conceitual; o sistema real vai consultar com a **stack literal** extraída da startup
+   ("usa LangChain, Pinecone, GPT-4"), que é exatamente onde o BM25 venceu aqui (q02 `colang`,
+   q03 `cuxfilter`, q19 `vllm`+`sglang`). Isto é hipótese declarada, **não** medida — e o jeito de
+   medi-la é ampliar o gabarito com consultas desse tipo, não argumentar.
+3. **Custa uma chamada de API a mais igual a zero:** o BM25 roda em processo e a união dos dois
+   braços cabe num lote só do reranker.
+
+**O que eu NÃO fiz, e é decisão:** não subi o peso lexical até a métrica melhorar, nem troquei de
+gabarito. As duas coisas seriam ajustar a régua ao resultado.
+**Reversível?** Fácil — `peso_lexical=0.0` reduz a híbrida ao denso puro exatamente.
+
 ## Decisões pendentes
 
 Levantadas em `contexto/05-achados-e-decisoes.md` §4, a serem fechadas na sessão 01:
