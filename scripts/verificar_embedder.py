@@ -15,7 +15,7 @@ estiverem erradas depois que o corpus já foi embedado:
    k valores do vetor já sejam, sozinhos, uma representação boa. Promessa lida na
    documentação não é promessa verificada — daí este teste.
 
-2. **Qual o limite de entrada do `llama-nemotron-embed-1b-v2`.** Nenhuma documentação que
+2. **Qual o limite de entrada do embedder configurado.** Nenhuma documentação que
    consultei diz. Esse número é o TETO da banda de tamanho do chunker: chunk maior que o
    limite é chunk cujo final não entra no vetor.
 

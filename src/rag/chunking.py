@@ -67,21 +67,23 @@ _TOKENIZADOR = tiktoken.get_encoding("cl100k_base")
 # fragmento "- Quantização: FP8, FP4" sem o que o cerca.
 PISO_TOKENS = 120
 
-# TETO: NENHUM DOS DOIS MOTORES IMPÕE ESTE NÚMERO — medi os dois (D-029 e D-034). O embedder
-# aceita 6.144-8.192 tokens; o reranker aceita 8.192 somando query e passagem. 450 é 5% da
-# janela do reranker, não 88% dela como o comentário anterior supunha ao falar em "512 de
-# cross-encoder". Aquela janela não existe neste modelo.
+# TETO: NENHUM DOS DOIS MOTORES IMPÕE ESTE NÚMERO — medi os dois (D-029, D-034, D-046). O
+# embedder aceita 6.144-8.192 tokens; o reranker atual (`rerank-qa-mistral-4b`) aceita ~6.958
+# somando query e passagem, re-medido em 25/08 depois de o 1B de D-034 morrer com HTTP 410.
+# 450 é ~6% da janela do reranker, não 88% dela como o comentário de antes de D-034 supunha ao
+# falar em "512 de cross-encoder". Aquela janela nunca existiu em nenhum dos dois modelos.
 #
-# O que o reranker de fato diz sobre o teto é outra coisa, e é DILUIÇÃO: a mesma frase-resposta
-# pontua -0,36 sozinha e cai à medida que é afogada em enchimento. Em duas execuções, de 63 a
-# ~600 tokens os valores ficam entre -4,5 e -10 SEM TENDÊNCIA; de ~800 em diante, entre -9 e
-# -12,5. Os logits não reproduzem dígito a dígito entre execuções, então isto é uma faixa e não
-# uma curva — o que sobrevive à variância é que o motor não PROÍBE chunk grande, ele COBRA por
-# chunk grande, em algum ponto entre 600 e 800. O teto é escolha de PRECISÃO DE RECUPERAÇÃO,
-# e 450 fica dentro da faixa plana.
+# A janela encolheu 15% na troca de stack e continua sendo 15x o teto: o argumento não depende
+# do valor exato, que é o ponto de tê-lo medido em vez de citado.
 #
-# O valor exato continua sendo inspeção, não medição: vira sweep na sessão 04, agora com uma
-# faixa de busca fechada (~120 a ~800) em vez de aberta.
+# O que o reranker de fato diz sobre o teto é outra coisa, e é DILUIÇÃO — o motor não PROÍBE
+# chunk grande, ele COBRA por chunk grande. ATENÇÃO: a curva de diluição foi medida no 1B e
+# **não foi re-medida** no 4B (D-046). Ela dizia que a cobrança começa entre 380 e 564 tokens
+# com texto real e depois satura (revisão da sessão 03, §2.3), o que punha 450 confortavelmente
+# dentro da região barata. Enquanto não for re-medida, o teto é INSPEÇÃO e não medição.
+#
+# Consequência prática: qualquer sweep de banda de chunk precisa re-medir a diluição ANTES de
+# escolher a faixa de busca — a de ~120 a ~560 é do modelo antigo.
 TETO_TOKENS = 450
 
 # Tags que forçam quebra de linha ao achatar HTML. Sem isto, `get_text()` cola o fim de um

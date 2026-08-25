@@ -15,14 +15,21 @@ Reranquear o texto puro descartaria no passo 7 exatamente a correção feita no 
 responde a q19 cita "TensorRT-LLM" com destaque e nunca repete "NIM", e é o breadcrumb
 `NVIDIA NIM > ...` que diz ao cross-encoder de que produto aquilo fala.
 
-DOIS FATOS MEDIDOS QUE LIMITAM O QUE SE PODE CONSTRUIR SOBRE O LOGIT (D-034)
------------------------------------------------------------------------------
-1. **A janela é de 8.192 tokens somando query e passagem.** Não os 512 que o comentário do
-   chunker supunha. Nenhum chunk do corpus chega perto (máximo medido: 446 tokens), então
-   `truncate="END"` no payload é rede de segurança e não caminho normal.
-2. **Os logits são quantizados (bf16) e variam entre execuções.** `−25,0312`, `−22,7500`,
-   `−10,2422` se repetem exatamente; e a mesma passagem pontuou −10,24 numa execução e −6,83 em
-   outra. **Nenhuma lógica pode depender de margem abaixo de ~2 logits** — e isso vale
+DOIS FATOS MEDIDOS QUE LIMITAM O QUE SE PODE CONSTRUIR SOBRE O LOGIT (D-034, D-046)
+------------------------------------------------------------------------------------
+Os dois números abaixo são do `rerank-qa-mistral-4b`, medidos em 25/08 depois de o
+`llama-nemotron-rerank-1b-v2` morrer com HTTP 410. Os valores de D-034 eram do 1B e não
+transferem — a escala de logit de um 4B é outra.
+
+1. **A janela é de ~6.958 tokens somando query e passagem** (contagem `tiktoken`, aproximada;
+   era 8.192 no 1B). A conjunção é exata: duas queries que diferem em 72 tokens deram somas que
+   diferem em ZERO. Nenhum chunk do corpus chega perto (máximo medido: 446 tokens contra ~6.958),
+   então `truncate="END"` no payload é rede de segurança e não caminho normal — e é omitindo
+   `truncate` que a API denuncia o limite, com HTTP 400, em vez de cortar em silêncio.
+2. **Os logits são quantizados e NÃO variam entre execuções.** `11,9375` é `11 + 15/16`,
+   assinatura da grade; três chamadas independentes deram o mesmo valor, espalhamento 0,000000.
+   D-034 supunha variação entre execuções e a revisão da sessão 03 já a tinha refutado no 1B.
+   **Nenhuma lógica pode depender de margem abaixo do passo da grade** — e isso vale
    especialmente para qualquer limiar de abstenção (ver D-035).
 """
 

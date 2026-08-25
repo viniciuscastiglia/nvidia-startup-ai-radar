@@ -148,7 +148,8 @@ CREATE TABLE IF NOT EXISTS chunks_nvidia (
     UNIQUE (estrategia, documento_url, ordinal)
 );
 
--- COSSENO e não produto interno: medido em 23/08 que os vetores do llama-nemotron-embed-1b-v2
+-- COSSENO e não produto interno: medido em 23/08 que os vetores do embedder (então o
+-- llama-nemotron-embed-1b-v2, hoje o -vl- depois do EOL de 25/08 — ver D-046)
 -- voltam normalizados (norma L2 = 1.000063), então as duas métricas são equivalentes aqui.
 -- Cosseno é a que o smoke test já usou para medir a separação crosslingual de D-014.
 --

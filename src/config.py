@@ -9,6 +9,16 @@ rodando dezenas de vezes por dia em desenvolvimento.
 
 Se isso acontecer, trocar de provedor é editar duas linhas do `.env`, não refatorar 8 agentes.
 
+O RISCO QUE ESTA COSTURA **NÃO** COBRE, E QUE JÁ ACONTECEU DUAS VEZES (D-013, D-046)
+------------------------------------------------------------------------------------
+O catálogo de preview do build.nvidia.com aposenta modelos com HTTP 410 em cadência de meses:
+18/05/2026 matou os dois que o TAPI cita, 25/08/2026 matou os dois que os substituíram.
+
+Para o LLM a costura funciona — o endpoint é OpenAI-compatible e o modelo é intercambiável.
+Para o EMBEDDER ela não funciona: trocar o modelo muda o espaço vetorial e invalida o corpus
+já indexado. Env var não é pin de dependência; um modelo é um serviço remoto, não um pacote
+do `requirements.txt`.
+
 Isso só é possível porque os endpoints NIM da NVIDIA são OpenAI-compatible: mesmo payload,
 mesmo formato de resposta, só muda o `base_url`. Ver contexto/03-stack-nvidia.md §1.
 É também a razão de usarmos `langchain-openai` em vez de `langchain-nvidia-ai-endpoints`:
@@ -46,9 +56,13 @@ class ConfigLLM:
 class ConfigEmbedding:
     """Embeddings via NeMo Retriever.
 
-    `dimensao` existe porque o llama-3.2-nv-embedqa-1b-v2 usa Matryoshka: o mesmo modelo
-    devolve 384/512/768/1024/2048 dimensões conforme o parâmetro. A escolha da dimensão é
-    uma decisão medível — o harness de avaliação da M2 compara recall@k entre elas.
+    `dimensao` existe porque o embedder usa Matryoshka: o mesmo modelo devolve
+    384/512/768/1024/2048 dimensões conforme o parâmetro. A escolha da dimensão é uma decisão
+    medível — o harness de avaliação compara recall@k entre elas.
+
+    ATENÇÃO: trocar `modelo` aqui NÃO é como trocar o LLM. O espaço vetorial é outro, então os
+    381 vetores de `chunks_nvidia` viram lixo e o corpus precisa ser re-embedado
+    (`scripts/reembedar.py`) e a régua re-medida. Ver D-046.
     """
 
     base_url: str
@@ -84,14 +98,14 @@ LLM = ConfigLLM(
 EMBEDDING = ConfigEmbedding(
     base_url=_env("EMBEDDING_BASE_URL", "https://integrate.api.nvidia.com/v1"),
     api_key=_API_KEY,
-    modelo=_env("EMBEDDING_MODEL", "nvidia/llama-nemotron-embed-1b-v2"),
+    modelo=_env("EMBEDDING_MODEL", "nvidia/llama-nemotron-embed-vl-1b-v2"),
     dimensao=int(_env("EMBEDDING_DIM", "1024")),
 )
 
 RERANK = ConfigRerank(
-    url=_env("RERANK_URL", "https://ai.api.nvidia.com/v1/retrieval/nvidia/llama-nemotron-rerank-1b-v2/reranking"),
+    url=_env("RERANK_URL", "https://ai.api.nvidia.com/v1/retrieval/nvidia/reranking"),
     api_key=_API_KEY,
-    modelo=_env("RERANK_MODEL", "nvidia/llama-nemotron-rerank-1b-v2"),
+    modelo=_env("RERANK_MODEL", "nvidia/rerank-qa-mistral-4b"),
 )
 
 DATABASE_URL = _env("DATABASE_URL", "postgresql://localhost:5432/case_nvidia")

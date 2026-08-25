@@ -147,11 +147,25 @@ def teste_janela_conjunta() -> None:
         _, _, err = _ranquear(query, [encher(tam)], truncate=None)
         return err
 
+    # BRACKET EXPONENCIAL ANTES DA BISSECAO. A versao anterior fixava [7000, 8600], faixa
+    # herdada do llama-nemotron-rerank-1b-v2 (janela 8.192). Quando esse modelo morreu e o
+    # rerank-qa-mistral-4b entrou (janela ~6.958), o guard passou a disparar e o teste
+    # IMPRIMIA "faixa invalida" sem dizer por que — um teste que nao testa nada, em silencio.
+    # Sondar antes de bissecar tira a ordem de grandeza do chute. Ver D-046.
+    def bracket(q: str) -> tuple[int, int] | None:
+        anterior = 0
+        for tam in (256, 1024, 4096, 16384, 65536):
+            if recusa(q, tam):
+                return (anterior, tam) if anterior else (0, tam)
+            anterior = tam
+        return None
+
     for nome, q in (("curta", QUERY_CURTA), ("longa", QUERY_LONGA)):
-        lo, hi = 7000, 8600
-        if recusa(q, lo) or not recusa(q, hi):
-            print(f"   query {nome}: faixa de bissecao invalida, pulando")
+        faixa = bracket(q)
+        if not faixa:
+            print(f"   query {nome}: nenhuma recusa ate 65.536 tokens — janela acima da faixa sondada")
             continue
+        lo, hi = faixa
         while hi - lo > 4:
             meio = (lo + hi) // 2
             if recusa(q, meio):
@@ -201,10 +215,18 @@ def main() -> int:
     teste_diluicao()
 
     print("\n" + "=" * 78)
-    print("Leitura (D-034): a janela e 8.192 tokens CONJUNTOS. TETO_TOKENS=450 nao e' imposto")
-    print("por ela — e' 5% dela. O que o reranker diz sobre o teto e' a curva de diluicao:")
-    print("plana entre ~63 e ~800, cai depois de ~1.200. E os logits vem QUANTIZADOS (bf16):")
-    print("nenhuma logica pode depender de margem abaixo de ~1,0 logit.")
+    print(f"Leitura: os numeros ACIMA sao deste modelo ({RERANK.modelo}) e de hoje.")
+    print("NAO ha conclusao fixa impressa aqui de proposito. A versao anterior deste script")
+    print("afirmava 'a janela e 8.192 CONJUNTOS' como texto codificado — e continuou afirmando")
+    print("isso depois de o modelo que a media morrer (D-046). Um script de medicao que imprime")
+    print("a conclusao da medicao PASSADA e' pior que nenhum script.")
+    print("\nO que se decide com o que saiu acima:")
+    print("  · TETO_TOKENS (chunking.py) e' imposto pela janela? Compare com o maior chunk do")
+    print("    corpus — 446 tokens em 25/08. Se a janela for muito maior, o teto e' escolha de")
+    print("    PRECISAO DE RECUPERACAO e nao restricao do motor.")
+    print("  · Alguma logica pode depender de margem pequena? Logits quantizados tem passo de")
+    print("    grade, e a repetibilidade e' medida em")
+    print("    scripts/auditoria/janela_rerank_qa_mistral_4b.py (3 chamadas, espalhamento 0 em 25/08).")
     return 0
 
 
