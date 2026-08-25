@@ -99,7 +99,31 @@ grátis.
 
 ## Pauta da próxima sessão
 
-**Bloco 0 — o fallback local** (Opção B do plano da 05). Embedder e cross-encoder em processo,
+> **Revisto em 25/08, depois de reler o `prompts-de-abertura.md`.** A primeira versão desta pauta
+> abria com o fallback local. **Retirado do primeiro lugar**, e o motivo é que o custo de um
+> terceiro EOL mudou: o playbook de recuperação agora existe e está provado — `reembedar.py`, a
+> sonda de desempate e a janela re-medida fizeram a reconstrução caber em **uma sessão**. O
+> fallback transforma "uma sessão de recuperação" em "zero", o que só importa se o EOL cair entre
+> 05 e 09/09; e para essa janela o seguro mais barato é **capturar o material de demonstração do
+> vídeo antes dela**, porque o eliminatório nº 3 exige *"não executa **E** o vídeo não demonstra
+> funcionamento real"* — o **e** é o que protege. O prompt pronto está em
+> `prompts-de-abertura.md`, Chat B.
+
+**Aquecimento (~5 min) — o `"token"` de `briefing.py:25`**, em red-green. Uma linha, diagnóstico
+fechado, e ele reprova hoje qualquer startup que fale em "custo por token" — inclusive a Axenya,
+que a curadoria marcou como prospect de prioridade máxima.
+
+**Bloco 0 — a RÉGUA dos agentes, e ela é bloqueante.** A base tem 3 startups e as 3 são
+`perfil_alvo: AI-native`: um classificador que devolvesse "AI-native" incondicionalmente passaria
+em 3 de 3. Não há como medir que um Extractor com LLM bate o casador de substring. **O RAG chegou
+a nível 4 porque teve régua desde o primeiro dia; os agentes não têm nenhuma** — e escrever o
+agente antes da régua é exatamente o erro que a revisão da sessão 03 achou em dois lugares.
+Alvo: 6 a 8 fixtures, uma por quadrante de `contexto/02`, com resultado esperado escrito. Não é a
+M3 inteira.
+
+**Bloco 1 — o Extractor**, que agora tem contra o que ser medido.
+
+**Bloco 2 — o fallback local** (Opção B do plano da 05). Embedder e cross-encoder em processo,
 atrás da costura de `src/config.py`, NVIDIA como primário. É a defesa contra o terceiro EOL, e o
 argumento do Diferencial fica mais forte: *"medi que o catálogo morre a cada três meses e projetei
 para isso"*. D-015 descartou o cross-encoder local com um motivo **narrativo** ("perde o argumento
