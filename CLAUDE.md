@@ -63,6 +63,9 @@ O eliminatório nº 4 define o modo de trabalho aqui. Ao implementar qualquer co
   quando o avaliador perguntar "por que não X?".
 - **Nada de código mágico.** Se uma escolha só se justifica por conveniência, diga isso.
 - Português nas explicações e na documentação.
+- **Subagentes: evitar neste projeto.** Eles começam sem contexto e devolvem resultado pronto,
+  que é o oposto do eliminatório nº 4 — o candidato precisa ter acompanhado a decisão para
+  defendê-la. Detalhe em `projeto/guia-de-trabalho.md`.
 
 ## Arquitetura alvo (LangGraph — obrigatório, é o único nome citado no barema)
 
