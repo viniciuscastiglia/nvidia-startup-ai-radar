@@ -305,33 +305,47 @@ para usar a própria stack no projeto.
 
 ### NeMo Retriever — embedding e reranking
 
-> **Verificado por chamada real em 22/08/2026.** Os modelos que o TAPI e a documentação de
-> junho citavam **não existem mais**: os endpoints `llama-3.2-nv-embedqa-1b-v2` e
-> `llama-3.2-nv-rerankqa-1b-v2` respondem **HTTP 410 Gone**, com a mensagem
-> *"This endpoint has reached its end of life on 2026-05-18"*. A tabela abaixo é o que
-> responde hoje, medido com `scripts/smoke_nvidia.py`.
+> **ATUALIZADO EM 25/08/2026 — a stack morreu pela SEGUNDA vez.** Este catálogo aposenta
+> modelos com **HTTP 410** em cadência de meses, e isso é um fato sobre o fornecedor, não um
+> acidente:
+>
+> | data do EOL | o que morreu | quem os tinha escolhido |
+> |---|---|---|
+> | 18/05/2026 | `llama-3.2-nv-embedqa-1b-v2`, `llama-3.2-nv-rerankqa-1b-v2` | o TAPI e a doc de junho |
+> | **25/08/2026 09:00Z** | `llama-nemotron-embed-1b-v2`, `llama-nemotron-rerank-1b-v2` | D-013, os substitutos |
+>
+> A tabela abaixo é o que responde **hoje**, medido com `scripts/smoke_nvidia.py`. Trate-a como
+> perecível: antes de qualquer decisão que dependa dela, rode o smoke test.
 
-| Papel | Modelo atual | Endpoint | Medido em 22/08 |
+| Papel | Modelo atual | Endpoint | Medido em 25/08 |
 |---|---|---|---|
-| Embedding | **`nvidia/llama-nemotron-embed-1b-v2`** | `https://integrate.api.nvidia.com/v1/embeddings` | 593 ms · 2048 dims nativas, **aceita `dimensions`** (Matryoshka) |
-| Embedding | `nvidia/nemotron-3-embed-1b` | idem | 679 ms · 2048 dims, **não trunca** (HTTP 400 em `dimensions`) |
-| Embedding | `nvidia/nv-embedqa-e5-v5` | idem | 494 ms · 1024 dims nativas |
-| Reranking | **`nvidia/llama-nemotron-rerank-1b-v2`** | `https://ai.api.nvidia.com/v1/retrieval/nvidia/llama-nemotron-rerank-1b-v2/reranking` | 520 ms · margem topo→2º de **12.94** |
-| Reranking | `nvidia/llama-nemotron-rerank-vl-1b-v2` | idem, com o nome do modelo no path | 535 ms · margem **3.24** (multimodal, separa menos em texto puro) |
+| Embedding | **`nvidia/llama-nemotron-embed-vl-1b-v2`** | `https://integrate.api.nvidia.com/v1/embeddings` | 599 ms · 2048 dims nativas, **aceita `dimensions`** 1024 e 2048 (Matryoshka) |
+| Embedding | `nvidia/nemotron-3-embed-1b` | idem | 2048 dims, **não trunca** (HTTP 400 em `dimensions`) |
+| Reranking | **`nvidia/rerank-qa-mistral-4b`** | `https://ai.api.nvidia.com/v1/retrieval/nvidia/reranking` | 630 ms · margem topo→2º de **10.90** · janela ~6.958 conjuntos |
 
-**Dois detalhes que só aparecem chamando:**
+Sobreviventes na listagem, não adotados: `nvidia/embed-qa-4`, `nvidia/nv-embedqa-mistral-7b-v2`
+e `nvidia/llama-3.2-nv-embedqa-1b-v1` (os dois últimos dão 404 na chamada, apesar de listados),
+`snowflake/arctic-embed-l`. **O `/v1/models` não lista mais nenhum reranker** — o endpoint
+sobrevivente só apareceu porque um 404 devolveu no corpo a lista de modelos aceitos.
 
-1. **A URL de reranking embute o nome do modelo no path.** Trocar de reranker exige trocar a
-   URL junto — por isso `src/config.py` guarda a URL completa em vez de `base_url` + sufixo.
+**Três detalhes que só aparecem chamando:**
+
+1. **A URL de reranking MUDOU de forma.** A anterior embutia o nome do modelo no path
+   (`.../nvidia/llama-nemotron-rerank-1b-v2/reranking`); a atual é genérica
+   (`.../nvidia/reranking`) e o modelo vai só no corpo. `src/config.py` guarda a URL completa,
+   o que continua sendo a escolha certa justamente porque a forma dela não é estável.
 2. **Os embedders são assimétricos:** exigem `input_type="query"` ou `"passage"`. Embedar um
    documento como se fosse consulta degrada a recuperação silenciosamente — não dá erro.
+3. **Omitir `truncate` faz as duas APIs denunciarem o limite** em vez de cortar em silêncio —
+   HTTP 422 no embedder, HTTP 400 no reranker atual. É assim que a janela foi medida (D-046).
 
 **Qualidade medida em português e crosslingual** (consulta PT sobre custo/latência de inferência,
 contra passagem PT relevante, passagem EN relevante e passagem PT irrelevante):
 
 | Modelo | PT relevante | EN relevante | PT irrelevante | Leitura |
 |---|---|---|---|---|
-| `llama-nemotron-embed-1b-v2` | 0.3546 | 0.4280 | 0.0049 | separa 70x · crosslingual real |
+| ~~`llama-nemotron-embed-1b-v2`~~ | 0.3546 | 0.4280 | 0.0049 | **MORTO em 25/08** — era o adotado |
+| `llama-nemotron-embed-vl-1b-v2` | 0.3459 | 0.3860 | 0.0059 | **o adotado hoje** · separa ~58x · crosslingual real (D-046) |
 | `nemotron-3-embed-1b` | 0.5241 | 0.5460 | 0.1137 | separa bem, mas preso em 2048 dims |
 | `nv-embedqa-e5-v5` | 0.4648 | 0.3107 | 0.3096 | **crosslingual falha** — 0.3107 vs 0.3096 é ruído |
 

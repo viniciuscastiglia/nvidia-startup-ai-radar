@@ -247,6 +247,16 @@ em vez de copiada da documentação. Vale citar no vídeo — o TAPI foi escrito
 endpoints morreram em maio, e um projeto que só copiasse os nomes do enunciado **não executaria**.
 **Reversível?** N/A — é constatação de fato, não escolha.
 
+**Atualização — 25/08/2026 (D-046). Aconteceu de novo, e a lição que faltava é esta.** Os dois
+substitutos escolhidos AQUI — `llama-nemotron-embed-1b-v2` e `llama-nemotron-rerank-1b-v2` —
+morreram com o mesmo HTTP 410 em **25/08/2026 09:00Z**, três dias depois de adotados.
+
+Esta decisão tirou a conclusão de que *o TAPI está desatualizado* e marcou o episódio como
+material de vídeo. Havia uma segunda conclusão disponível, mais cara e mais útil: **o catálogo de
+preview do build.nvidia.com aposenta modelos em cadência de MESES, e o projeto inteiro está
+montado nele.** Um EOL é anedota; dois é a taxa de falha do fornecedor. A tabela de riscos do
+`plano.md` só ganhou essa linha em 25/08.
+
 ---
 
 ## D-014 — Embedding com `dimensions=1024` via Matryoshka
@@ -270,6 +280,20 @@ tem crosslingual real (0.4280 contra 0.0049 de irrelevante — separação de ~7
 recall@k entre as dimensões — aí a escolha vira medição em vez de argumento.
 **Reversível?** Média: mudar a dimensão exige re-embedar o corpus e recriar a coluna.
 
+**Atualização — 25/08/2026 (D-046).** O `llama-nemotron-embed-1b-v2` morreu (HTTP 410). Adotado
+`nvidia/llama-nemotron-embed-vl-1b-v2`, que aceita `dimensions` 1024 e 2048 — schema, HNSW e
+D-029 ficam intactos.
+
+**Dois números desta decisão foram re-testados três dias depois, em outro processo, e
+reproduziram:** o `nemotron-3-embed-1b` deu **0,5241 vs 0,1137**, os mesmos dígitos registrados
+aqui, e continua recusando `dimensions=1024` com HTTP 400 exatamente como escrito. A alternativa
+descartada segue descartada — mas por pouco: na sonda de 25/08 ela separa **melhor** que o VL
+(margem crosslingual +0,4323 vs +0,3801), e só não foi adotada porque 1,14x não paga o custo de
+preencher a coluna indexada por truncagem local não verificável naquele modelo.
+
+**A frase "a decidir depois, com medida: 1024 vs 768 vs 384" continua não resolvida** — e agora
+tem um custo a mais, porque qualquer sweep de dimensão precisa rodar na stack nova.
+
 ---
 
 ## D-015 — Reranker text-only, não o multimodal
@@ -287,6 +311,23 @@ recall@k entre as dimensões — aí a escolha vira medição em vez de argument
 imagem, o que não se aplica aqui — e ele paga esse ganho em precisão no texto. Escolher o VL
 porque "é o mais novo" seria decidir por recência em vez de por adequação.
 **Reversível?** Fácil — duas linhas do `.env` (modelo e URL, que embute o modelo no path).
+
+**Atualização — 25/08/2026 (D-046). Esta decisão é a que envelheceu pior, e vale dizer por quê.**
+O `llama-nemotron-rerank-1b-v2` morreu com HTTP 410, e o VL descartado aqui morreu junto. Sobrou
+**um** reranker no catálogo, o `nvidia/rerank-qa-mistral-4b` — não houve escolha a fazer.
+
+Duas correções ao que está escrito acima:
+
+1. **"Duas linhas do `.env`" subestimou.** A URL nova é genérica (`.../nvidia/reranking`) e NÃO
+   embute o modelo no path, então a forma da URL também mudou; e trocar o reranker obriga a
+   re-medir janela, escala de logit e a régua inteira, porque um 4B não pontua como um 1B.
+2. **O cross-encoder local foi descartado aqui com o motivo *"perde o argumento do Diferencial"*
+   — um motivo narrativo, não de engenharia.** É a única linha deste log onde uma história venceu
+   uma propriedade técnica, e é exatamente por causa dela que em 25/08 não havia caminho de
+   contingência: o projeto ficou parado até um substituto ser achado, sondado e o corpus
+   re-embedado. O Diferencial não é usar a stack NVIDIA; é ter medido a propriedade do fornecedor
+   que ninguém mediu. Um fallback local documentado **fortalece** esse argumento.
+   Fica como Bloco 0 da próxima sessão.
 
 ---
 
@@ -1072,6 +1113,54 @@ gabarito. As duas coisas seriam ajustar a régua ao resultado.
    vale também sobre a UNIÃO INTEIRA, com os mesmos logits, mesma falha única (q14). Corolário
    incômodo: não truncar a união custa 37,5% mais chamadas de rerank e compra zero nesta régua.
 
+**Atualização 2 — 25/08/2026, sessão 05, depois da troca de stack (D-046).** A identidade
+**QUEBROU**, e o braço lexical tem, pela primeira vez, um argumento medido.
+
+Na stack nova (`llama-nemotron-embed-vl-1b-v2` + `rerank-qa-mistral-4b`):
+
+| motor | r@1 | r@3 | r@5 | e@1 | e@3 | e@5 |
+|---|---|---|---|---|---|---|
+| rerank sobre denso | 95% | 100% | 100% | 84% | 95% | 95% |
+| **rerank sobre híbrida** | 95% | 100% | 100% | 84% | 95% | **100%** |
+
+**Onde nasce a vantagem, isolado pelo braço de controle:** com `--truncar-pool` os dois voltam a
+95% em e@5. Ou seja, ela vem do **pool maior** — dos candidatos que só o braço lexical traz, além
+do top-20 da fusão — e **não** da reordenação da fusão. É exatamente a separação que D-044
+preservou o controle para poder fazer.
+
+**Qual pergunta, e por quê** (`scripts/auditoria/quem_o_lexico_compra.py`, 22 chamadas): a
+**q17** — *"Minha startup não tem processo nenhum para medir a qualidade do agente que entrega.
+O que a NVIDIA oferece?"*, âncora `Evaluator`.
+
+| | pool | posição da âncora |
+|---|---|---|
+| `rerank_denso` | 20 | **AUSENTE** — o chunk nem é candidato |
+| `rerank_hibrido` | 35 | **4º** — dentro do top-5 |
+
+Das 19 perguntas com resposta, a q17 é **a única** cuja âncora está na cauda da união e fora do
+pool denso. O braço denso não recupera aquele chunk de jeito nenhum; o BM25 é a razão inteira de
+ele existir como candidato.
+
+**E o mecanismo é o que D-037 §2 previu e não conseguiu medir.** A hipótese registrada era *"o
+gabarito sub-representa o tipo de consulta em que o léxico ganha — nome literal de produto"*. A
+q17 é pergunta conversacional em português cuja âncora é **uma palavra em inglês, `Evaluator`,
+nome de produto**. O léxico casa a string; o denso, não. Isto não valida a hipótese inteira — ela
+falava da consulta com stack literal que o Extractor produz, e isso continua não medido (ver
+D-043) —, mas é a primeira evidência do mecanismo dentro da régua.
+
+**A honestidade sobre o tamanho, porque ela decide o quanto isto vale:** é **uma pergunta em 19**.
+e@5 de 100% contra 95% é uma unidade. O argumento de D-039 contra n=1 se aplica aqui contra mim:
+com um caso não há distribuição, há um ponto. E a vantagem aparece **só em e@5** — não em e@1,
+não em e@3, não em nenhum r@k. O léxico compra um chunk que aterrissa em 4º, não em 1º.
+
+**O que isso faz com a proposta que a sessão 04 deixou em aberto** — tirar o léxico do default de
+produção e transformá-lo em flag: **está retirada.** Ela se apoiava em "o léxico compra zero
+depois do reranker", que era verdade na stack antiga e deixou de ser. O custo continua sendo os
+37,5% de chamadas de rerank a mais; agora há um número do outro lado da conta.
+**O que continua NÃO medido:** se a vantagem sobrevive a outra pergunta. O jeito de saber é
+ampliar o gabarito com consultas de nome literal — o mesmo teste que D-037 §2 já apontava e que
+ninguém fez.
+
 ---
 
 ## D-038 — O reranker lê `texto_indexado`, com o breadcrumb
@@ -1114,6 +1203,27 @@ resultado, e o número que interessa a um avaliador é justamente este: 95% com 
 explicada, em vez de 100% com a régua movida. Fica registrado como limitação conhecida do
 gabarito, não como falha do recuperador.
 **Reversível?** Fácil — é qual campo entra no payload.
+
+**Atualização — 25/08/2026 (D-046), na stack nova.** Os números desta decisão foram medidos com
+o embedder e o reranker que morreram em 25/08 e **não são reproduzíveis**. A tabela nova:
+
+| | recall@1 | estrito@1 | estrito@3 | estrito@5 |
+|---|---|---|---|---|
+| denso puro (stack antiga) | 89% | 68% | 79% | 84% |
+| + rerank (stack antiga) | 95% | 79% | 84% | 95% |
+| **denso puro (stack nova)** | **95%** | **79%** | 79% | 84% |
+| **+ rerank (stack nova)** | **95%** | **84%** | **95%** | **95–100%** |
+
+**O que mudou de qualitativo:** o embedder novo sozinho já entrega os 95% de recall@1 que antes
+exigiam o reranker. O ganho do passo 7 **migrou do frouxo para o estrito** — não move mais r@1,
+e move e@3 de 79% para 95%. O argumento de D-038 fica mais limpo, não mais fraco: o reranker
+existe para achar o CHUNK que responde, não o documento, e agora é isso que os números mostram.
+
+**A decisão em si (ler `texto_indexado`) não foi re-testada contra `texto` puro na stack nova** —
+seria mais uma ablação, e o mecanismo que a justifica (o breadcrumb diz de que produto o chunk
+fala) não depende do modelo. Fica declarado como não re-medido.
+**A falha da q14 em recall@1 não existe mais** nesta stack; a análise de gabarito subespecificado
+acima continua registrada como o que se sabia então.
 
 ---
 
@@ -1212,6 +1322,23 @@ literal vira `null`, não valor plausível.
 global. Não testei porque, com 5 perguntas sem resposta, calibrar um segundo hiperparâmetro seria
 sobreajuste declarado. Fica para quando o gabarito crescer.
 **Reversível?** N/A — é um achado. O que é reversível é o mecanismo escolhido no lugar.
+
+**Atualização — 25/08/2026 (D-046), na stack nova.** O achado se mantém e os números mudaram:
+
+| motor | pior acerto | pior sem-resposta | margem |
+|---|---|---|---|
+| denso, n=5 (stack antiga) | 0,2934 | 0,5744 (q24) | −0,2810 |
+| **denso, n=5 (stack nova)** | 0,2640 | 0,4891 (q23) | **−0,2251** |
+| rerank, n=5 (stack antiga) | −9,1016 | +8,5312 (q23) | −17,6328 |
+| **rerank, n=5 (stack nova)** | −7,1641 | +3,8398 (q23) | **−11,0039** |
+
+A margem continua **negativa nas quatro linhas** — as distribuições se sobrepõem em qualquer dos
+dois motores, em qualquer das duas stacks. A conclusão "nenhum limiar separa" sobreviveu à troca
+dos dois modelos, o que é a evidência mais forte que ela tem: **não era artefato de um modelo.**
+
+A regra desta sessão dizia que, se a margem virasse positiva, NÃO se reabriria a hipótese de
+limiar — derivar um sobre 5 negativos seria o sobreajuste que esta própria decisão declinou.
+Não foi preciso: ela não virou.
 
 ---
 
@@ -1384,6 +1511,54 @@ uma pergunta com uma execução por método, contra um passo que a própria deci
 não-determinístico. É o risco mais carregado que a revisão levantou (§5) e ele segue aberto,
 agora dentro de `METODO_ESTRUTURADO` em `src/llm.py`, o portão único dos oito agentes da M4.
 
+**Atualização 3 — 25/08/2026, sessão 05, na stack pós-EOL (D-046). A afirmação central desta
+decisão levou um golpe direto, e ele fica escrito aqui e não numa nota de rodapé.**
+
+Três execuções na stack nova, com a recuperação MELHOR que antes (r@1 95%, e@1 84%, e@3 95%):
+
+| execução | acurácia | respondeu | absteve | erros |
+|---|---|---|---|---|
+| 1 | **22/24** | 17/19 | 5/5 | q05, q11 |
+| 2 | **21/24** | 16/19 | 5/5 | q05, q07, q11 |
+| 3 | **20/24** | 16/19 | **4/5** | q05, q07, q11, **q23** |
+
+**Faixa: 20–22 de 24.** Na stack antiga era 22–24, e a Atualização 2 registrou 24/24 duas vezes.
+**A métrica caiu, e não se mexe em nada para recuperá-la** — a regra desta sessão foi fixada
+antes de medir, e ajustar prompt, `k` ou pesos depois de ver o resultado é exatamente o que D-037
+e D-038 recusaram fazer.
+
+**O que mais importa não é a queda de 2 pontos — é O QUE quebrou.** Esta decisão afirma:
+
+> Em três execuções foram **15 oportunidades de alucinar** e **zero alucinações**. Todos os erros
+> das três execuções são abstenções falsas — o sistema erra sempre para o lado de não responder.
+
+Na execução 3, a **q23** — a pergunta-armadilha, a mesma que esta decisão usa como prova de que
+`json_schema` é o método certo — recebeu:
+
+```
+q23  topicamente_perfeita  abster  responder  ERRO  [3] FONTE ERRADA (!)
+     "O TensorRT-LLM é mais rápido que o vLLM em 60%"
+```
+
+**Um número inventado, com citação de fonte errada, sob `json_schema`.** É o mesmo formato de
+alucinação que a tabela desta decisão atribui ao `function_calling` (*"...em 30%"*) e que serviu
+para descartá-lo. **A assimetria "erra sempre para o lado de não responder" está refutada:** 15
+oportunidades, 1 alucinação.
+
+**Honestidade sobre o que isso prova e o que não prova.** 1 em 15 contra 0 em 15 não distingue
+"a stack nova alucina mais" de "sempre alucinou nessa taxa e as três execuções antigas não
+pegaram". O que está estabelecido é o mais forte dos dois: **`json_schema` não impede a alucinação
+da q23** — basta um contraexemplo para derrubar uma afirmação de impossibilidade, e ele apareceu.
+A defesa de D-040 precisa mudar de *"o método impede"* para *"o método reduz a frequência"* — e
+isso exige o n que a revisão §5 pediu, medido a seguir em D-047.
+
+**Três abstenções falsas viraram sistemáticas**, o que é diferente do ruído que esta decisão
+descreve: **q05 falha nas 3**, **q11 nas 3**, **q07 em 2 de 3**. A q05 é o caso crosslingual que
+a instrução de idioma existia para resolver — a instrução está no prompt e ela falha assim mesmo,
+agora com a âncora bem posicionada pela recuperação nova. Isso desloca o diagnóstico do
+recuperador para o gerador, e é dívida declarada da M4, não coisa para consertar aqui com o
+resultado à vista.
+
 ---
 
 ## D-043 — A consulta do RAG sai do RÓTULO da dor + das EVIDÊNCIAS, não do `texto` da dor
@@ -1524,6 +1699,214 @@ não com o repositório. Docstring de schema é prompt. Vale para os oito agente
 **Re-medido depois da mudança** (junto com D-044, que também mexe no que chega ao gerador): duas
 execuções do `--geracao`, **24/24 nas duas**. Ver a Atualização 2 de D-040 para por que isso NÃO
 é "subiu de 23 para 24".
+
+---
+
+# Sessão 05 — o segundo EOL, e o chão medido de novo
+
+## D-046 — A stack de recuperação morreu pela SEGUNDA vez; o embedder é o VL, e o empate é o motivo
+
+**Data:** 25/08/2026 · **Sessão 05, Bloco 0-1** · é o resultado, não a intenção
+
+**O fato.** Em **25/08/2026 às 09:00Z** a NVIDIA aposentou os dois motores do RAG deste projeto:
+
+```
+POST /v1/embeddings  (nvidia/llama-nemotron-embed-1b-v2)   -> 410
+  "The model ... has reached its end of life on 2026-08-25T09:00:00Z"
+POST .../llama-nemotron-rerank-1b-v2/reranking             -> 410
+  "This endpoint has reached its end of life on 2026-08-25T09:00:00Z"
+POST /v1/chat/completions (meta/llama-3.1-8b-instruct)     -> 200
+```
+
+O LLM sobreviveu; a recuperação inteira, não. Medido na hora: `pytest -q` caiu para **39 passed,
+1 failed** (o e2e que `ea720f1` criou justamente para pegar RAG quebrado), e dos seis comandos de
+avaliação que o `CLAUDE.md` documenta **só `--validar` continua rodando** — porque ele não toca a
+API. Nenhum número publicado saía de comando nenhum: nem 89/95/100, nem −0,2810, nem −17,6328,
+nem 24/24.
+
+**A leitura que D-013 não fez, e que é o achado desta decisão.** D-013 registrou este mesmo 410
+em 18/05/2026 e concluiu que *o TAPI está desatualizado*, marcando o episódio como material de
+vídeo. Havia uma segunda conclusão disponível e ela não foi tirada: **o catálogo de preview do
+build.nvidia.com aposenta modelos em cadência de meses, e este projeto inteiro está montado nele.**
+A tabela de riscos do `plano.md` não tinha essa linha — a mais próxima era "créditos
+insuficientes", mitigada por *"provedor configurável por env var"*. Essa mitigação protege a
+camada que não precisava de proteção: o LLM é intercambiável por env var, mas trocar o **embedder**
+invalida os 381 vetores de `chunks_nvidia`, porque o espaço vetorial é outro. A configurabilidade
+de `src/config.py` nunca cobriu este caso.
+
+Com o vídeo em 07/09 e o eliminatório nº 3 sendo *"projeto que não executa **e** cujo vídeo não
+demonstra funcionamento real"*, um terceiro EOL na semana da gravação custa o case. A linha entra
+no `plano.md` nesta sessão.
+
+### O que restou vivo, sondado em 25/08
+
+| papel | modelo | situação |
+|---|---|---|
+| embedding | `nvidia/llama-nemotron-embed-vl-1b-v2` | aceita `dimensions` **1024 e 2048**, nos dois `input_type` |
+| embedding | `nvidia/nemotron-3-embed-1b` | **só 2048**; recusa 1024 com HTTP 400 |
+| rerank | `nvidia/rerank-qa-mistral-4b` | **o único vivo**; mesmo shape (`rankings`/`logit`) |
+
+O `/v1/models` não lista mais nenhum rerank, e os quatro paths de reranking que testei deram 404.
+O endpoint sobrevivente só apareceu porque um 404 devolveu a lista de modelos aceitos no corpo:
+`['nvidia/rerank-qa-mistral-4b', 'nv-rerank-qa-mistral-4b:1']`. **No reranker não houve escolha** —
+há um modelo, e ele é 4B contra o 1B que morreu.
+
+### A decisão do embedder, e por que ela é um empate resolvido por regra
+
+**Decisão:** `nvidia/llama-nemotron-embed-vl-1b-v2` com `dimensions=1024`.
+**Alternativa descartada:** `nvidia/nemotron-3-embed-1b` a 2048 nativas.
+
+A regra de desempate foi **escrita antes de medir** (`scripts/auditoria/sonda_embedder_pos_eol.py`,
+docstring): adotar o `nemotron-3` só se (a) a margem crosslingual dele batesse a do VL por
+**≥1,5x** e (b) a truncagem local 2048→1024 preservasse a separação — porque ele recusa
+`dimensions=1024` e a coluna indexada é `vector(1024)`.
+
+Medido, com os mesmos textos de `smoke_nvidia.teste_embedding` para ser comparável a D-014:
+
+| | PT rel. vs irrel. | margem PT | crosslingual EN | margem cross | q19 real PT→EN |
+|---|---|---|---|---|---|
+| **VL @1024** | 0,3459 vs 0,0059 | **+0,3400** | 0,3860 | **+0,3801** | 0,5157 |
+| nemotron-3 @2048 | 0,5241 vs 0,1137 | +0,4105 | 0,5460 | +0,4323 | 0,5923 |
+| nemotron-3 truncado @1024 | 0,5305 vs 0,0851 | +0,4454 | 0,5900 | +0,5049 | 0,6137 |
+
+- **(a) falhou:** 0,4323 / 0,3801 = **1,14x**, contra o 1,5x exigido.
+- **(b) passou:** truncar o `nemotron-3` para 1024 não só preserva como **melhora** a margem
+  (+0,4323 → +0,5049). Registro isso porque é contra-intuitivo e porque é a metade da regra que o
+  candidato descartado venceu.
+
+**Então o `nemotron-3` é melhor nesta sonda, e mesmo assim não foi escolhido — isso é o ponto,
+não um detalhe.** Ele ganha em margem absoluta nos dois regimes. O que a regra diz é que ganhar
+por 1,14x não paga o custo arquitetural: adotá-lo significa preencher `vector(1024)` por truncagem
+local, e a coluna indexada passaria a conter um vetor cuja equivalência com o pedido à API **não
+é verificável neste modelo**, porque ele recusa o parâmetro. Trocar uma propriedade medida (D-029)
+por uma suposição, para ganhar 14%, é o negócio que a regra existia para recusar.
+
+**Dois números que reproduziram de sessões anteriores, e valem como controle:**
+1. O `nemotron-3` deu **0,5241 vs 0,1137** — os mesmos dois dígitos que **D-014 registrou em
+   22/08**, em outro processo e três dias depois. O ponto de comparação não derivou.
+2. A propriedade Matryoshka do VL: `cos(api_1024, trunc_local_1024) = **0,99999996**` — o mesmo
+   valor que D-029 mediu no modelo morto. **D-029 sobrevive intacta** e a coluna
+   `embedding_bruto vector(2048)` continua fazendo o que foi construída para fazer.
+
+**Consequência de schema: nenhuma.** `vector(1024)` + HNSW e `vector(2048)` sem índice ficam como
+estão. Foi o desempate.
+
+**O que fica registrado como NÃO medido:** esta sonda tem 4 passagens e 2 consultas. Ela mede
+separação semântica, não `recall@k` — o número que decide de verdade sai da ablação sobre as 24
+perguntas, adiante nesta mesma sessão. Se o recall cair com o VL, o `nemotron-3` volta à mesa com
+o custo de schema explícito.
+**Reversível?** Média — trocar de embedder exige re-embedar os 381 chunks (25 chamadas), o que é
+barato; o que não é barato é a régua, que precisa ser re-medida junto.
+
+### O reranker: sem escolha, e a janela precisou ser re-medida
+
+`nvidia/rerank-qa-mistral-4b`, em `https://ai.api.nvidia.com/v1/retrieval/nvidia/reranking`.
+**Não houve alternativa a descartar** — é o único que responde.
+
+D-034 mediu **8.192 tokens conjuntos** no 1B que morreu, e esse número é o que sustenta
+`TETO_TOKENS = 450`. Deixá-lo apoiado num fato sobre um modelo extinto recriaria exatamente o bug
+que D-034 foi escrita para matar: *"um número certo (450) sustentado por um fato falso (janela de
+512) é pior que um número errado"*. Re-medido em
+`scripts/auditoria/janela_rerank_qa_mistral_4b.py`:
+
+| | 1B (D-034, morto) | **4B (25/08)** |
+|---|---|---|
+| a API recusa sem `truncate`? | sim, HTTP 422 | **sim, HTTP 400** (mensagem do Triton) |
+| maior passagem, query de 6 tok | ~8.212 | **~6.952** |
+| maior passagem, query de 78 tok | ~8.137 | **~6.880** |
+| **soma passagem + query** | 8.218 / 8.215 (Δ 3) | **6.958 / 6.958 (Δ 0)** |
+| repetibilidade do logit | "variam" (refutado na revisão) | **3/3 idênticos, espalhamento 0,000000** |
+
+**A janela é conjunta, e a demonstração aqui é mais forte que a de D-034.** Duas queries que
+diferem em 72 tokens produzem somas que diferem em **zero**. D-034 argumentava a conjunção com
+uma diferença de 3 tokens entre 8.218 e 8.215 e chamava isso de invariante; aqui é identidade
+exata. O bracket foi por sondagem exponencial (256 → 65.536) em vez de bissecar numa faixa
+chutada — o `verificar_reranker.py` bisseca em [7000, 8600], herdado do 1B, e teria devolvido
+"faixa inválida" sem explicar por quê.
+
+*Ressalva de unidade, a mesma que `verificar_embedder.py` carrega:* a contagem é do `tiktoken`,
+que é o tokenizador da OpenAI e não o deste modelo. O número serve como ordem de grandeza — e
+para a decisão em jogo a margem é tão grande que a imprecisão não morde.
+
+**Consequência para `TETO_TOKENS = 450`: nenhuma, e agora por um fato vivo.** O maior chunk do
+corpus tem 446 tokens contra ~6.958 disponíveis. A janela encolheu 15% e continua sendo **15x** o
+teto. Como em D-034, o reranker não impõe o teto do chunk — o teto continua sendo escolha de
+precisão de recuperação (D-025).
+
+**O que NÃO foi re-medido, e fica declarado:** a **curva de diluição**. A versão corrigida dela
+(revisão da sessão 03, §2.3 — chunks vizinhos reais, platô entre −6,26 e −9,10) é sobre o 1B, e
+a faixa de sweep que ela fechou em ~120–560 não se transfere. Como esta sessão não faz sweep de
+banda de chunk, nada depende disso hoje; fica como dívida explícita para quando o sweep entrar.
+
+**A regra operacional de D-034 muda de status, não de valor.** *"Nenhuma lógica pode depender de
+margem abaixo de ~2 logits"* nasceu de variação entre execuções que a revisão da sessão 03 depois
+refutou (36/36 idênticos). No 4B, 3 chamadas independentes deram `11.937500` exato — e `11,9375`
+é `11 + 15/16`, assinatura de quantização, a mesma leitura que D-034 fez. **A quantização é real;
+a variação entre execuções não se observa.** A regra fica valendo por causa da grade quantizada,
+não por causa de ruído de serving.
+
+---
+
+## D-047 — `json_schema` fica, com n=5: a decisão estava certa e o argumento estava errado
+
+**Data:** 25/08/2026 · **Sessão 05, Bloco 6** · fecha a §5 da revisão da sessão 03
+
+**O que estava aberto.** D-040 escolheu `method="json_schema"` com uma tabela de três linhas —
+**uma pergunta, uma execução por método** — contra um passo que a mesma decisão declara
+não-determinístico. A revisão chamou isso de *"o risco mais carregado"* porque a escolha virou
+`METODO_ESTRUTURADO` em `src/llm.py`, o portão único dos oito agentes da M4. Em 25/08 deixou de
+ser teórico: o `json_schema` alucinou na q23 numa das três execuções do `--geracao` (D-040,
+Atualização 3).
+
+**Medido** (`scripts/auditoria/metodo_estruturado_n5.py`): a q23 recuperada **uma vez**, os mesmos
+top-5 alimentando as 15 gerações, `temperature=0`, `max_retries=0` — para que uma execução seja
+exatamente uma chamada e um método que falha e é re-tentado não pareça mais confiável do que é.
+
+| método | absteve | respondeu (= alucinou) | erro | acurácia |
+|---|---|---|---|---|
+| **`json_schema`** | **4** | 1 | 0 | **4/5** |
+| `function_calling` | 0 | 3 | 2 (timeout) | **0/5** |
+| `json_mode` | 0 | 0 | 5 (parse) | **0/5** |
+
+**Decisão: `json_schema` fica.** A margem é grande e agora tem amostra: 4/5 contra 0/5 e 0/5.
+**Alternativas descartadas:** `function_calling` e `json_mode`, as mesmas de D-040, agora com n=5
+em vez de n=1.
+
+**O que muda é o ARGUMENTO, e é por isso que isto é decisão nova e não uma nota.** D-040 afirma
+que o método *impede* a alucinação. Não impede: 1 em 5. A defesa correta na banca passa a ser
+**"reduz de 3/3 para 1/5 na pergunta desenhada para induzi-la"** — que é uma afirmação sobre
+frequência, e é a que os números sustentam. Bastou um contraexemplo para derrubar a afirmação de
+impossibilidade, e ele apareceu na primeira vez que se olhou com n>1.
+
+**Três achados que só aparecem com n=5:**
+
+1. **O `function_calling` não erra "escolhendo responder" — ele degenera.** Duas das três
+   respostas têm `texto` igual ao **eco da própria pergunta** (*"O TensorRT-LLM é mais rápido que
+   o vLLM? Em quantos por cento?"*) e uma devolveu *"O que é TensorRT-LLM?"*. Isso é mais coerente
+   com a leitura de D-040 — *"adiciona pressão para PREENCHER os campos da ferramenta"* — do que
+   com "o modelo decidiu responder". O campo é preenchido com o que estiver à mão.
+2. **O `json_mode` acerta o julgamento e falha no encanamento.** As cinco falhas de parse trazem
+   `{"abstencao": true, "motivo_abstenc...` no corpo — **o modelo estava abstendo corretamente**,
+   e o que quebra é o shape. D-040 registrou "devolve JSON com outro shape" com n=1; com n=5 dá
+   para separar melhor: o `json_mode` não é pior a julgar, é inutilizável a serializar.
+3. **A alucinação da q23 hoje é pior que a de 24/08, e o motivo é a recuperação nova.** Os top-5
+   desta stack são **cinco chunks de TensorRT-LLM e nenhum menciona vLLM** — o chunk 38 do NIM,
+   que citava "TensorRT-LLM, vLLM ou SGLang" na mesma frase e era o topo com +8,53 (D-035), não
+   está mais lá. Uma das abstenções corretas diz exatamente isso: *"Não há menção ao vLLM em
+   nenhum dos trechos fornecidos"*. Ou seja, o "60%" foi inventado **sem nem a âncora parcial**
+   que existia antes. Menos gancho no contexto não produziu menos alucinação.
+
+**O que continua não medido:** os outros dois regimes de `sem_resposta` e as 19 perguntas com
+resposta, sob `function_calling` e `json_mode`. Esta medição é sobre **a q23** — a mesma limitação
+que D-040 tinha, só que agora com n=5 no eixo que importava. Ampliar para as 24 × 3 métodos ×
+5 execuções custaria ~360 chamadas e mediria sobretudo o que já se sabe.
+**Reversível?** Fácil — é uma constante em `src/llm.py`.
+
+**Consequência para a M4, que é o motivo de isto ter sido feito agora:** os oito agentes vão
+passar por `METODO_ESTRUTURADO`, e o número que eles herdam é **4/5, não 5/5**. Nenhum agente pode
+tratar a saída estruturada como garantida; a checagem de sanidade por código continua obrigatória.
+Vale especialmente para o Evidence Validator, cujo trabalho é justamente não deixar passar
+afirmação sem lastro.
 
 ---
 

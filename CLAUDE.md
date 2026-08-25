@@ -91,8 +91,8 @@ Frontend livre.
 | Camada | Escolha | Decisão |
 |---|---|---|
 | LLM dos agentes | `meta/llama-3.1-8b-instruct` via build.nvidia.com | D-012 |
-| Embeddings | `nvidia/llama-nemotron-embed-1b-v2`, **`dimensions=1024`** | D-014 |
-| Reranking | `nvidia/llama-nemotron-rerank-1b-v2` (text-only, não o VL) | D-015 |
+| Embeddings | `nvidia/llama-nemotron-embed-vl-1b-v2`, **`dimensions=1024`** | D-014, **D-046** |
+| Reranking | `nvidia/rerank-qa-mistral-4b` (o único vivo) | D-015, **D-046** |
 | Vetores | pgvector no mesmo Postgres | D-016 |
 | Busca lexical | `bm25s` em processo para o RAG · `tsvector` para documentos de startup | D-016 |
 | Topologia | subgrafo de análise + fan-out por `Send` | D-007 |
@@ -105,9 +105,18 @@ Frontend livre.
 | Consulta do RAG | rótulo da dor + `dor.evidencias[*].trecho` (a fala da startup) | D-043 |
 | Harness | importa os defaults de `src.rag.pipeline`; **não trunca** o pool | D-044 |
 
-> **Atenção — os modelos que o TAPI cita estão mortos.** `llama-3.2-nv-embedqa-1b-v2` e
-> `llama-3.2-nv-rerankqa-1b-v2` respondem **HTTP 410 Gone** desde 18/05/2026. Nunca usar esses
-> nomes. Ver D-013 e `contexto/03` §3.
+> **Atenção — a stack de recuperação já morreu DUAS vezes, e isso é um risco de projeto, não uma
+> anedota.** O catálogo de preview do build.nvidia.com aposenta modelos com **HTTP 410** em
+> cadência de meses:
+>
+> | data | o que morreu |
+> |---|---|
+> | 18/05/2026 | `llama-3.2-nv-embedqa-1b-v2` e `llama-3.2-nv-rerankqa-1b-v2` — os que o TAPI cita (D-013) |
+> | **25/08/2026 09:00Z** | `llama-nemotron-embed-1b-v2` e `llama-nemotron-rerank-1b-v2` — os substitutos (D-046) |
+>
+> Nunca usar esses quatro nomes. **Env var não protege contra isto:** trocar o embedder muda o
+> espaço vetorial e invalida os 381 vetores — é `scripts/reembedar.py` mais re-medir a régua
+> inteira. Ver D-046 e `contexto/03` §3.
 
 **Em aberto:** framework de frontend (P-06) e quantas startups entram na base final.
 
@@ -115,23 +124,35 @@ Frontend livre.
 estruturais + 204 de controle em `chunks_nvidia`, gabarito de **24 perguntas (19 com resposta,
 5 sem)** em `data/avaliacao/gabarito.yaml`. **Os 9 passos do pipeline do TAPI estão fechados.**
 
-Medido, ao longo das sessões 02 e 03:
+Medido em **25/08, na stack pós-EOL** (D-046). Os números das sessões 02/03 foram produzidos por
+dois modelos que não existem mais e **não são reproduzíveis** — estão preservados no `decisoes.md`
+com a data, não aqui:
 
-| motor | recall@1 | recall@3 | estrito@1 |
-|---|---|---|---|
-| denso puro — linha de base (D-032) | 89% | 100% | 68% |
-| + BM25 e fusão RRF (D-037) | 84% | 100% | 74% |
-| **+ reranking (D-038)** | **95%** | **100%** | **79%** |
+| motor | r@1 | r@3 | r@5 | e@1 | e@3 | e@5 |
+|---|---|---|---|---|---|---|
+| denso puro — linha de base | 95% | 100% | 100% | 79% | 79% | 84% |
+| lexical (BM25) | 58% | 63% | 74% | 42% | 47% | 63% |
+| híbrido (RRF K=10) | 95% | 100% | 100% | 79% | 79% | 79% |
+| rerank sobre denso | 95% | 100% | 100% | 84% | 95% | 95% |
+| **rerank sobre híbrida — produção** | **95%** | **100%** | **100%** | **84%** | **95%** | **100%** |
 
-**O braço lexical não melhora a métrica depois do reranker** — `rerank` sobre denso puro e sobre
-a híbrida dão resultados idênticos. Está mantido com o número escrito ao lado, não escondido
-(D-037). A única falha restante em recall@1 é a q14, e inspecionando, **o recuperador está certo
-e o gabarito é que está subespecificado** (D-038).
+A troca de stack **melhorou** a recuperação (o denso puro sozinho já faz os 95% de r@1 que antes
+exigiam o reranker), e o reranking continua pagando no critério estrito: e@3 de 79% → 95%.
 
-**Abstenção: nenhum limiar sobre score funciona** — nem a cosseno densa (margem −0,2810) nem o
-logit do cross-encoder (**−17,6328**). Ela vive no passo 8, como campo estruturado da geração
-(D-033, D-035, D-040). Acurácia medida: **24/24**, mas o passo é **não-determinístico** — 22, 23
-e 24 já saíram do mesmo código, então nenhuma execução isolada é o número (D-040).
+**O braço lexical passou a pagar, e por uma pergunta só.** Na stack antiga `rerank_denso` e
+`rerank_hibrido` davam números idênticos; agora diferem em **e@5, 95% vs 100%**. O braço de
+controle (`--truncar-pool`) mostra que o ganho vem do **pool maior**, não da fusão, e o
+diagnóstico é a **q17**: a âncora (`Evaluator`) não é recuperada pelo braço denso de jeito nenhum
+e entra só pelo BM25. É **1 pergunta em 19** e só em e@5 — o tamanho honesto está em D-037,
+Atualização 2.
+
+**Abstenção: nenhum limiar sobre score funciona** — nem a cosseno densa (margem −0,2251) nem o
+logit do cross-encoder (**−11,0039**). Ela vive no passo 8, como campo estruturado da geração
+(D-033, D-035, D-040). Acurácia medida em 3 execuções: **20–22 de 24** — é faixa, não número, e
+**a assimetria "nunca alucina" está refutada**: a q23 inventou "60%" em 1 das 3 (D-040, Atualização 3).
+
+**`json_schema` vs `function_calling`, agora com n=5** (D-047): 4/5 · 0/5 · 0/5. A decisão fica; o
+argumento muda de *"o método impede a alucinação"* para *"reduz de 3/3 para 1/5"*.
 
 **O `nvidia_rag` consulta o pipeline real**, com a linguagem literal da startup e não com um
 rótulo de dor (D-043).
@@ -151,6 +172,8 @@ python scripts/seed.py --so-validar        # valida as fixtures sem tocar no ban
 python scripts/verificar_embedder.py       # Matryoshka e limite de entrada do embedder
 python scripts/ingerir_nvidia.py --so-validar  # chunking sem tocar banco nem API
 python scripts/ingerir_nvidia.py           # ingere as 16 tecnologias (upsert idempotente)
+python scripts/reembedar.py --so-validar   # conta chunks e lotes sem tocar API nem banco
+python scripts/reembedar.py                # re-embeda do BANCO quando o embedder mudar (D-046)
 python scripts/verificar_reranker.py       # janela do reranker e curva de diluição (D-034)
 python scripts/avaliar_rag.py --validar    # gabarito vs corpus, incl. PROVA de ausência
 python scripts/avaliar_rag.py              # ablação nos defaults de PRODUÇÃO (D-044)
@@ -198,6 +221,7 @@ Para quem for avaliar sem Postgres local: `docker compose up -d` (porta 5433) e 
 | `contexto/05-achados-e-decisoes.md` | antes de decidir stack, ou se algo do TAPI parecer desatualizado |
 | `projeto/plano.md` | no início de qualquer sessão — sequência dos 18 dias, marcos e riscos |
 | `projeto/sessao-NN.md` | pauta executável da sessão corrente; abre com o fechamento da anterior |
+| `projeto/sessao-05.md` | o EOL de 25/08, o code review e os 3 achados de agente **não pagos** — abrir antes de tocar na M4 |
 | `data/nvidia/fontes.yaml` | manifesto curado das 16 fontes do RAG — de onde busca vs. o que cita |
 | `data/avaliacao/gabarito.yaml` | as 20 perguntas com documento-fonte esperado; é a régua do RAG |
 | `projeto/decisoes.md` | **sempre que uma decisão for tomada** — escrever na hora |

@@ -98,12 +98,19 @@ Até 7 minutos: arquitetura dos agentes, sistema RAG, demonstração funcional p
 Uma sessão a mais, fora da conta: **os conceitos de domínio 11 e 12 de `conceitos.md`** (stack
 NVIDIA e rubrica AI-native). Não se aprendem implementando e são o que o vídeo mais cobra.
 
-**Estado em 24/08:** M1 fechada dois dias adiantada (vencia 25/08), e **2 das 3 sessões da M2**
-em dois dias. **Os 9 passos do pipeline RAG do TAPI estão fechados** — busca híbrida, reranking e
-geração com citação entraram na sessão 03. `recall@1` foi de 89% para **95%** com o reranking
-(D-038) e a acurácia de abstenção sobre 24 perguntas é **24/24** (D-040). M2 vence 30/08 e a
-terceira sessão dela agora é só otimização medida — sweep de dimensão, de banda de chunk e de
-`k1`/`b`, todos já com harness pronto e a maioria custando zero chamada de API.
+**Estado em 25/08, depois do segundo EOL:** M1 fechada dois dias adiantada, **os 9 passos do
+pipeline RAG do TAPI fechados**, e a stack de recuperação **trocada inteira** (D-046) porque
+embedder e reranker morreram às 09:00Z. Reconstruído no mesmo dia: 381 chunks re-embedados,
+régua re-medida, `pytest` de volta a 40, grafo rodando ponta a ponta.
+
+`recall@1` está em **95%** já no denso puro, e@3 em **95%** com reranking. A acurácia de abstenção
+caiu para uma faixa de **20–22 de 24** e a assimetria "nunca alucina" foi **refutada** (D-040,
+Atualização 3). `json_schema` fechado com n=5 (D-047).
+
+**O sweep que esta terceira sessão da M2 tinha reservado — dimensão, banda de chunk, `k1`/`b` —
+está CORTADO.** O critério 2 vale 20 pontos e para em nível 4; ele já está lá. A sessão marginal
+rende mais na M4, onde 40 pontos ainda estão em nível de stub: `src/rag/geracao.py` é o único
+arquivo do projeto que chama um LLM, e os 8 agentes são determinísticos.
 
 **O risco de abstenção que a sessão 02 abriu está FECHADO, e não como se esperava.** D-033 supôs
 que o cross-encoder resolveria. Não resolveu: a margem piorou de −0,19 para **−17,63** com o
@@ -121,6 +128,7 @@ código de que a afirmação ocorre no trecho citado.
 
 | Risco | Mitigação |
 |---|---|
+| **A NVIDIA aposentar o embedder ou o reranker antes de 09/09 (HTTP 410).** Já aconteceu DUAS vezes: 18/05 (D-013) e 25/08 (D-046). A cadência do catálogo de preview é de meses, e o vídeo é 07/09 | **hoje: nenhuma.** Env var não cobre — trocar o embedder invalida os 381 vetores. `scripts/reembedar.py` reduz a recuperação a ~25 chamadas e 20 min, mas a régua inteira precisa ser re-medida junto. **Um caminho local de fallback é o Bloco 0 da próxima sessão** |
 | Créditos do build.nvidia.com insuficientes para 8 agentes em desenvolvimento | validar no Bloco 1 da sessão 01, antes de qualquer decisão depender disso; provedor configurável por env var |
 | Montar a base consumir dias demais (é o maior sumidouro do projeto) | timebox rígido; base pequena e bem curada vale mais que grande e rasa — o barema avalia o raciocínio sobre os dados, não o tamanho do dataset |
 | Estado do grafo mal modelado, exigindo refatorar os 8 nós | resolver no Bloco 3 da sessão 01, com plan mode, antes de escrever lógica |
