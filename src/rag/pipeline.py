@@ -100,10 +100,18 @@ def buscar_com_rerank(
     é descartada pelo passo 7 de qualquer jeito — o que ela decidiria, se truncássemos antes, é
     QUEM chega ao cross-encoder, e essa é uma decisão que a fusão mede pior que ele (D-037).
     Custo, contado e não estimado: uma união acima de `LOTE` (32) gasta duas chamadas de rerank,
-    e isso acontece em **9 das 24** consultas do gabarito. Não truncar custa ~37,5% mais chamadas
-    de rerank e, nesta régua, compra ZERO: `rerank` sobre a união inteira e sobre o top-20 da
-    fusão dão os seis números idênticos (95/100/100 · 79/84/95). O preço está escrito aqui em vez
-    de escondido — e `avaliar_rag.py --truncar-pool` é o braço de controle que o mantém medível.
+    e isso acontece em **9 das 24** consultas do gabarito — ~37,5% mais chamadas que truncar.
+
+    O QUE ESSE PREÇO COMPRA MUDOU COM A TROCA DE STACK DE 25/08 (D-046)
+    - stack antiga (1B): comprava ZERO. União inteira e top-20 davam os seis números idênticos.
+    - stack atual (`rerank-qa-mistral-4b`): compra **e@5 de 95% -> 100%**. Medido em 25/08 com
+      `--truncar-pool` como braço de controle: truncando, os dois motores voltam a empatar em 95%.
+      A diferença é UMA pergunta, a q17, cuja âncora (`Evaluator`) o braço denso não recupera de
+      jeito nenhum — ela entra só pelo BM25 e o cross-encoder a promove a 4º. Ver D-037,
+      Atualização 2, para o tamanho honesto disso: uma pergunta em 19, e só em e@5.
+
+    `avaliar_rag.py --truncar-pool` é o braço de controle que mantém isso medível — foi ele que
+    separou "ganho do pool maior" de "ganho da fusão".
     """
     fundido, sd, sl = recuperar(consulta, estrategia=estrategia, **kwargs)
     if not fundido:
