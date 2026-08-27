@@ -1910,6 +1910,482 @@ afirmação sem lastro.
 
 ---
 
+## D-048 — `"token"` sai da lista de cripto, e a exclusão passa a casar por fronteira de palavra
+
+**Data:** 25/08/2026 · **Sessão 06, passo 0** · paga o achado nº 1 do code review de 25/08
+
+**O defeito, e ele produzia saída errada em produção.** `EXCLUSOES["cripto"]` continha `"token"`
+e `elegibilidade()` casava com `if termo in texto` — substring. `SINAIS_TECNICOS` do Extractor
+inclui `"tokens por segundo"`, então uma frase sobre custo de inferência virava evidência técnica
+e disparava *"exclusão por 'cripto'"*. **Qualquer startup que falasse em "custo por token" era
+reportada NÃO ELEGÍVEL ao NVIDIA Inception, pelo motivo errado** — no filtro que o projeto declara
+como Diferencial.
+
+**O gatilho já estava dentro do repositório e ninguém via:** `tests/test_grafo.py:102` monta um
+documento com *"reduzindo latência e custo por token em produção"*. Aquela startup de teste era
+reprovada em toda execução do `pytest` desde a sessão 01, e nenhuma asserção olhava para
+`elegibilidade` — o filtro do Diferencial não tinha um único teste.
+
+**Decisão, em duas partes independentes:**
+
+1. **`"token"` sai.** O termo é ambíguo entre dois domínios — cripto e inferência de LLM — e o
+   contexto que os separa não cabe numa lista de termos. Entram no lugar `"tokenização de
+   ativos"`, `"security token"`, `"utility token"`, `"token não fungível"` e `"nft"`, que só
+   existem em contexto cripto. **Medido:** o caso de teste de tokenização em blockchain continua
+   excluído — por `blockchain`, não por `token`. Remover não abriu buraco.
+2. **O casamento exige fronteira de palavra** (`re.search(rf"\b{re.escape(termo)}\b")`). É a
+   correção estrutural: a mesma mecânica casaria `"ipo"` dentro de "equipo"/"princípio". É
+   também a mesma correção que D-039 já exigiu no gabarito do RAG, onde `ILIKE '%SLA%'` casava
+   dentro de "tran(**sla**)tion" e quase deixou entrar uma pergunta errada.
+
+**Alternativa descartada — só a fronteira de palavra, mantendo `"token"`:** não resolve. `\btoken\b`
+casa `"custo por token"` igualzinho. A fronteira conserta a *classe* do defeito; o termo ambíguo
+precisava sair de qualquer jeito, e confundir as duas coisas teria deixado o bug de pé com a
+aparência de consertado.
+
+**Alternativa descartada — janela de coocorrência** ("`token` só exclui perto de outro termo de
+cripto"): mais poderosa e mais cara de defender, e desnecessária depois que se mediu que
+`blockchain` já pega o caso. Regra que não muda nenhum resultado medido é complexidade sem preço.
+
+**Escrito em red-green.** `tests/test_elegibilidade.py` — o teste do falso positivo falhou antes
+da correção, e vem **em par** com `test_tokenizacao_em_blockchain_continua_excluindo`, que existe
+para impedir que a correção seja "apagar a regra de cripto". Um teste sozinho aqui é satisfeito
+pela pior correção possível.
+
+**Nota de risco, não paga:** a mesma classe de defeito vive em `SINAIS_TECNICOS` do Extractor —
+`"rag"` casa dentro de "fragmento", `"eval"` dentro de "evaluation", `"lora"` dentro de "flora".
+Não foi corrigida aqui porque o Extractor será reescrito no bloco 2 desta sessão, e a régua do
+bloco 1 é que vai dizer se isso custa precisão de verdade ou se é preocupação teórica.
+
+---
+
+## D-049 — `Elegibilidade.evidencias` deixa de nascer vazia: a exclusão aponta para o trecho
+
+**Data:** 25/08/2026 · **Sessão 06, passo 0** · paga o achado nº 2 do code review de 25/08
+
+**O defeito.** `Elegibilidade.evidencias` nascia `[]` e nunca era preenchida, enquanto
+`motivos_exclusao` afirmava *"o termo X aparece nos documentos"* e o Briefing imprimia tudo sob o
+rodapé *"Toda conclusão acima aponta para o documento que a sustenta"*. **Era a única conclusão do
+sistema sem `list[Evidencia]`** — contra a convenção que `src/state.py` chama de decisão nº 1
+("evidência é o átomo, não um campo opcional") — e sem teste.
+
+**A causa era de desenho, não distração:** a função concatenava os trechos de todas as afirmações
+numa string só antes de procurar os termos. Depois do `in`, a informação de *qual* trecho
+continha o termo já tinha sido destruída. Um campo `evidencias` era impossível de preencher sem
+mudar o laço.
+
+**Decisão:** o laço percorre **evidência a evidência**, e o primeiro par (termo, evidência) que
+casa produz o motivo **e** anexa a `Evidencia` que o sustenta. Custo: um `next()` sobre um
+gerador. O teste novo é a invariante executável — `motivos_exclusao` não vazio ⇒ `evidencias` não
+vazia, e o `trecho` anexado é aquele onde o termo ocorre.
+
+**Alternativa descartada — anexar todas as evidências do perfil:** faria o teste passar e seria
+falso. "Evidência que sustenta esta exclusão" e "tudo que a base tem sobre a empresa" são coisas
+diferentes; a segunda dá aparência de lastro sem apontar nada, que é exatamente o defeito que
+D-021 nomeou (campo sem fonte literal vira valor explícito, não valor plausível).
+
+**Correção de comportamento que veio junto, e ela é visível no briefing:** a pendência *"ano de
+fundação não consta na base"* estava num `else` do teste de idade, o que fazia a startup COM ano
+de fundação recente não receber pendência nenhuma sobre isso — correto — mas também acoplava duas
+regras num ramo só. Agora a exclusão por idade e a pendência por ausência de idade são dois testes
+independentes sobre o mesmo campo, que é a disciplina que o docstring do módulo já declarava:
+*"a base não prova"* é diferente de *"a base prova que não"*.
+
+---
+
+## D-050 — A régua dos agentes: 8 fixtures, e uma só entra se flipar uma decisão que nenhuma outra flipa
+
+**Data:** 25/08/2026 · **Sessão 06, Bloco 1**
+
+**O problema.** A base tinha 3 startups e as 3 eram `perfil_alvo: AI-native`. Um classificador que
+devolvesse `"AI-native"` incondicionalmente passava em **3 de 3**. Não existia número capaz de
+distinguir um Extractor com LLM do casador de substring da sessão 01. O critério 2 chegou a nível
+4 porque teve régua desde o primeiro dia; os critérios 1 e 3 — **40 pontos** — não tinham nenhuma.
+
+**Critério de seleção, e ele é o argumento:** *uma fixture só entra se flipar pelo menos uma
+decisão que nenhuma fixture existente flipa.* Fixture que não flipa nada é custo de curadoria com
+zero valor de medição. Sob essa regra, 3 + **5 novas = 8**:
+
+| fixture | o que ela flipa, e que nada flipava |
+|---|---|
+| **RD Station** | `AI-enabled`. Cada produto carimbado "Com Inteligência Artificial", recurso chamado "Copiloto de IA", preço por plano. Copilot puro — sem ela o eixo 1 não tinha contraste |
+| **SunnyHUB** | `non-AI`. Cleantech que instala painel solar; zero termo técnico nos três documentos. A regra "non-AI está fora do funil" só era testada em unidade sobre `derivar_quadrante` |
+| **Freedom AI** | **Mirage PMF.** "Vendo mão de obra digital", 900% de receita, o fundador chama a empresa de "agência" — e alega "LLM própria" sem uma linha que sustente |
+| **Deal** | `elegivel: false` por `consultoria`. `contexto/03` §2 pede este caso por escrito, e ele é o Diferencial declarado |
+| **Maritaca AI** | `maturidade_stack: alta` → quadrante **`ja-otimizada`**, que existia só no papel. Quantização QAT, MoE, prefill/decode separados, MFU em B200, GPU-hora |
+
+**Ficaram FORA de propósito, e o corte é decisão:**
+- **Exclusão por idade** — `ano_fundacao` é campo estruturado e determinístico. Coletar 3 páginas
+  reais para exercitar um `if` aritmético não compra medição. Virou teste unitário.
+- **Regras 2 e 4 do Evidence Validator** — já têm teste unitário, e pior: uma fixture "documento de
+  um tipo só" **violaria a validação do próprio `seed.py`** (`len(tipos) < 2` é erro). Criar
+  fixture que quebra o validador para exercitar o validador é dívida, não cobertura.
+
+**Regra de curadoria, porque estas fixtures rotulam empresas reais.** Toda `url_fonte` é real e
+resolve — `seed.py --verificar-urls` confirmou as 24. O rótulo é afirmação sobre **o que a base
+pública prova**, não sobre a empresa: para non-AI e consultoria, a coleta buscou empresas que *se
+descrevem* assim (classificar uma consultoria como consultoria é ler o documento); para a Freedom,
+o esperado é ambíguo justamente porque a base não decide.
+
+---
+
+## D-051 — O gabarito mora na fixture, e "não decide" é resultado com coluna própria
+
+**Data:** 25/08/2026 · **Sessão 06, Bloco 1**
+
+**Onde mora:** bloco `gabarito:` em `data/seed/*.yaml`, ao lado do `perfil_alvo` que já existia.
+**Alternativa descartada:** arquivo separado `data/avaliacao/gabarito-agentes.yaml`, espelhando o
+gabarito do RAG. Perdeu por dois motivos: o `seed.py` já documenta e já garante que este material
+não vai para o banco (se fosse, o Classifier enxergaria a resposta), e uma empresa nova passaria a
+exigir edição em dois arquivos, com risco de dessincronia por nome.
+
+**Cada campo aceita três formas, e a terceira é a que faltava:**
+
+    classe: AI-native                valor  -> DECIDE      · entra em acertos/decididos
+    classe: [AI-native, AI-enabled]  lista  -> AMBÍGUO     · bater um não é acerto limpo
+    maturidade_stack: null           null   -> NÃO MEDIDO  · sai do denominador
+
+A saída publica sempre `acertos / decididos (+A ambíguos, +N não medidos)`. Duas fixtures usam as
+formas novas por razão substantiva: a **Laura** tem `maturidade_stack: null` (o site diz
+"computação cognitiva" e nada mais — ausência de sinal não é prova de stack imatura, pela regra 4)
+e `confianca: [baixa, media]`; a **Freedom** tem `classe: [AI-native, AI-enabled]`.
+
+**O que se conta:**
+
+| métrica | critério |
+|---|---|
+| classe · maturidade · confiança | igualdade exata com o gabarito |
+| elegibilidade | bool exato **E** o RÓTULO do motivo. Recusar pelo motivo errado é erro nomeado, não acerto — é o defeito que D-048 pagou |
+| **dor — precisão** | **manchete.** O modo de falha do stub é emitir demais, não de menos |
+| dor — recall | secundário: um extrator que emite as 8 dores faz 100% por construção |
+| dor — proibida | falha **nomeada**, com startup e dor. "Errou 0,3" não é acionável |
+| **discriminação** | conjuntos DISTINTOS de dores / 8 |
+| evidência literal | todo `trecho` ocorre **verbatim** no documento citado. Zero API |
+
+**`dores_ambiguas` sai dos dois lados** — emitir uma não conta a favor nem contra. **Quadrante não
+é contado:** é `derivar_quadrante(classe, maturidade)`, função pura já testada; contá-lo inflaria
+o número contando os dois eixos duas vezes.
+
+**A linha de base trivial é obrigatória na tabela** (`--baseline`): sempre `AI-native`, stack
+`baixa`, todas as 8 dores, sempre elegível. É o `denso puro` deste critério, e nenhum número de
+agente vai para o `CLAUDE.md` sem ela ao lado.
+
+**`--validar` já se pagou antes de medir qualquer coisa:** apontou que o gabarito da Freedom não
+dava veredito para `latencia`. A regra "toda dor precisa de veredito explícito, inclusive
+'ambígua'" existe para que omissão não vire silenciosamente um zero.
+
+---
+
+## D-052 — O que a régua mediu no primeiro dia: três achados, e um deles corrige o `CLAUDE.md`
+
+**Data:** 25/08/2026 · **Sessão 06, Bloco 1** · zero chamada de API
+
+| | linha de base TRIVIAL | stub atual |
+|---|---|---|
+| classe | **4/7** | **3/7** |
+| maturidade_stack | 6/7 | 6/7 |
+| confiança | 3/8 | 0/6 (+2 ambíguos) |
+| elegível | 6/7 | 5/7 |
+| motivo_exclusão | 0/1 | **1/1** |
+| **dor — precisão** | 32% | **49%** |
+| dor — recall | 100% | 100% |
+| **discriminação** | 1/8 | **8/8** |
+| dor proibida emitida | 28 | 10 |
+
+**Achado 1 — o stub é PIOR que o classificador trivial no rótulo do TAPI: 3/7 contra 4/7.** É o
+número que justifica a sessão inteira. Ele não era observável com 3 fixtures todas AI-native, e é
+exatamente a situação que a régua existia para tornar visível.
+
+**Achado 2 — a discriminação REFUTA metade do diagnóstico da dívida nº 6.** O `CLAUDE.md` e a
+sessão 04 afirmam que o Extractor *"produz o mesmo conjunto de dores para toda startup"*. Sobre
+8 fixtures diversas, ele produz **8 conjuntos distintos de 8**. A afirmação era verdadeira sobre a
+base que existia — 3 startups, todas de saúde — e generalizava um artefato da amostra. O
+diagnóstico que **sobrevive** é o outro lado: a precisão é de 49%, e são as dores ERRADAS que
+poluem a consulta, não a falta de variação. É a segunda vez no projeto que ampliar a amostra
+derruba uma conclusão tirada com n pequeno; a primeira foi D-039.
+
+**Achado 3 — o filtro do Inception exclui por MENÇÃO, não por identidade, e derruba o prospect
+prioritário.** Com as evidências que D-049 passou a anexar, o motivo é legível:
+
+- **Axenya** (prioridade máxima da curadoria) é recusada por *"Integramos **consultoria**, dados e
+  operação clínica"* — ela **usa** consultoria, não **é** uma consultoria;
+- **Freedom AI** é recusada porque um **parceiro** (Grant Thornton) é *"auditoria, **consultoria** e
+  tributos"* — a palavra não se refere à startup;
+- **Deal** é recusada corretamente: *"A Deal **é a consultoria** de IA"*.
+
+**Fronteira de palavra NÃO resolve este caso** — e é isso que o separa de D-048. Lá o termo era
+ambíguo entre domínios; aqui o termo é o certo e o **sujeito** é outro. Separar "a empresa é X" de
+"a empresa menciona X" é julgamento semântico.
+
+**Decisão: não consertar agora com heurística nova, e o motivo não é preguiça.** Um padrão de
+identidade (`"é uma consultoria"` casa, `"integramos consultoria"` não) resolveria os três casos
+medidos e introduziria um risco pior — **falso negativo silencioso**: se a frase que afirma a
+identidade não estiver entre as evidências recortadas, a Deal deixa de ser excluída e o
+Diferencial para de funcionar sem ninguém notar. Falso positivo aparece no briefing; falso
+negativo não aparece em lugar nenhum. O julgamento de sujeito é precisamente o que o Extractor com
+LLM entra para fazer, e agora existe régua para dizer se ele o fez: `motivo_exclusao` é 1/1 hoje e
+`elegivel` é 5/7, e os dois números têm que subir juntos.
+
+**Achado 4, menor e da mesma família de D-048 — substring no Extractor.** `'rag'` casa dentro de
+"co(rag)em" na Freedom, e `'sla'` (que está em `SINAIS_AUTOPILOT` para pegar SLA) casa dentro de
+"legi(sla)ção" na Maritaca. O segundo é literalmente o erro que D-039 achou no gabarito do RAG
+(`ILIKE '%SLA%'` em "tran(sla)tion"). Está anotado nas fixtures.
+
+---
+
+## D-053 — Extractor: heurística gera CANDIDATO, LLM julga — e o teto do casador é 100%
+
+**Data:** 25/08/2026 · **Sessão 06, Bloco 2** · portão escrito ANTES de medir
+
+**Três desenhos avaliados:**
+
+**A — uma chamada por startup, schema largo (`PerfilStartup` inteiro). DESCARTADA.** Viola D-045
+(*"tipo estreito por chamada — docstring de schema é prompt"*): seis campos heterogêneos num
+schema só diluem a instrução. O motivo real, porém, é a citação: pedir ao modelo que devolva o
+`trecho` **junto com** a conclusão convida paráfrase, e todo o projeto repousa em
+`Evidencia.trecho` ser literal. Três documentos inteiros num modelo de 8b também é o regime em que
+D-034 mediu o julgamento cair por diluição.
+
+**B — fan-out interno, uma chamada por dimensão, schema estreito.** Cumpre D-045; custa 4 × 8 = 32
+chamadas por medição. **Fica como plano B, promovível por medida.**
+
+**C — candidato por heurística, julgamento por LLM. ESCOLHIDA.** `SINAIS_*` e `GATILHOS_DOR`
+continuam existindo, rebaixados de *decisor* a *gerador de candidatos*: produzem frases literais,
+como já produzem. O LLM recebe **só as frases candidatas** — nunca as páginas — e decide se a
+frase sustenta a dor. Quatro razões, em ordem de peso:
+
+1. **É impossível o LLM inventar citação.** `Evidencia.trecho` continua vindo do recorte por
+   `str`. Mesma disciplina de `indices_citados` em D-040 — o modelo devolve referência, não fonte.
+2. **Contexto pequeno por chamada**, que é o regime em que um 8b funciona.
+3. **Ataca a métrica que está quebrada.** A régua mediu precisão de 49% e recall de 100%: o
+   problema é emitir demais. C aumenta precisão sem mexer no recall.
+4. **Degrada com graça** — com a API fora do ar, volta ao comportamento de hoje em vez de parar.
+
+**O custo honesto de C foi MEDIDO, e ele não existe.** A objeção legítima é que o recall fica
+preso ao vocabulário de `contexto/02` §5: dor com palavra fora da lista nunca vira candidata e o
+LLM nunca a vê. `avaliar_agentes.py --validar` mede esse teto sem gastar uma chamada — quantas
+`dores_esperadas` do gabarito têm ao menos um candidato hoje. Resultado: **12/12 = 100%**. Não há
+recall a comprar ampliando gatilhos, e a decisão de pôr o LLM como juiz e não como buscador está
+medida em vez de argumentada.
+
+**Alternativas descartadas, com o motivo pronto para banca:**
+
+| pergunta | resposta |
+|---|---|
+| *"Por que não fine-tuning?"* | 8 fixtures rotuladas é few-shot, não treino. E o TAPI pede sistema multi-agente, não modelo treinado |
+| *"Por que não NER/spaCy para a stack?"* | O que falta não é entidade, é julgamento sobre a entidade: *"usamos GPT-4"* e *"self-hospedamos um modelo em GPU"* têm as mesmas entidades e significados opostos |
+| *"Por que não um 70b?"* | Mesmo portão de D-039: medir com o 8b na régua primeiro. Um 70b de preview carrega a mesma classe de risco de EOL que já matou a stack duas vezes |
+| *"Por que não o LLM lendo os 3 documentos inteiros?"* | Contexto num 8b, mais paráfrase de citação. D-034 já mediu julgamento caindo com passagem longa |
+
+---
+
+## D-054 — A dívida nº 6 ataca o Extractor primeiro, e a ordem sai do CUSTO DA RÉGUA
+
+**Data:** 25/08/2026 · **Sessão 06, Bloco 3**
+
+A dívida nº 6 da sessão 04 deixou duas linhas de ataque *"a decidir com medição"*: **Extractor
+real** ou **filtro de recomendabilidade no chunk**. Ordem: **Extractor primeiro**, por três
+motivos, e o primeiro é o que vale na banca.
+
+1. **A ordem é decidida pelo custo da RÉGUA, não pela força da hipótese.** O filtro de chunk
+   exigiria um gabarito de *recomendação* — para 8 startups × N dores, qual das 16 tecnologias é a
+   certa —, que não existe e é curadoria de especialista. O Extractor tem régua barata: quem lê o
+   documento anota `dores_esperadas` e `dores_proibidas` em minutos, e foi o que esta sessão fez.
+   Extractor primeiro porque é o único dos dois que dá para medir esta semana.
+2. **O argumento causal é assimétrico.** O filtro de chunk age DEPOIS da consulta: consulta
+   genérica com filtro remove os chunks de navegação e devolve outros chunks genéricos — melhora a
+   aparência sem tocar a causa. O contrário vale: consulta específica melhora tudo que vem depois,
+   **inclusive** a taxa de chunk de navegação no topo, porque *"Resources / Developer Forums"*
+   vence consulta vaga, não consulta com stack literal.
+3. O recuperador faz r@1 de 95% quando a consulta é boa (D-046). O suspeito não é ele.
+
+---
+
+## D-055 — O critério de empate do Extractor, fixado ANTES da medição
+
+**Data:** 25/08/2026 · **Sessão 06, Bloco 3** · escrito antes de rodar
+
+Mesmo procedimento que fez D-046 dar certo: a regra do desempate do embedder foi fixada antes da
+sonda, e por isso o empate virou argumento em vez de racionalização. **Empate** = o Extractor com
+LLM, contra a linha de base medida em D-052:
+
+- não bate a **precisão de dor** (49%) por margem ≥ **0,15**, **e**
+- não leva a **discriminação** a ≥ **6 conjuntos distintos de 8** (o stub já faz 8/8, então este
+  braço está satisfeito por construção — o que significa que **a decisão fica inteira na
+  precisão**, e isso é consequência do achado 2 de D-052, não uma facilidade concedida).
+
+**Se empatar:** o Extractor com LLM **não entra em produção**. O stub fica, a régua fica, e o
+esforço migra para o filtro de recomendabilidade, que passa a ser a hipótese sobrevivente. A frase
+de defesa é a mesma que D-046 escreveu sobre o `nemotron-3-embed`: *"medi que o LLM não bate o
+casador de substring nesta base, com este modelo; o gargalo é outro"*.
+
+**Se piorar:** reverter e registrar qual métrica caiu. O `git` guarda o código; a régua diz qual.
+
+---
+
+## D-056 — O Extractor com LLM foi medido, EMPATOU pela regra de D-055, e não entra em produção
+
+**Data:** 25/08/2026 · **Sessão 06, Bloco 2** · ~104 chamadas em duas medições
+
+**O resultado, na régua de D-051 (já com as correções de D-057), sobre as 8 fixtures.**
+
+**O juiz é reportado em FAIXA, com três execuções, e isso não é excesso de zelo** — é a regra que
+a sessão 03 aprendeu e a 04 escreveu: *"a geração varia entre execuções; número de geração se
+reporta em três execuções ou não se reporta"*. A primeira redação desta decisão publicou 58% como
+se fosse **o** número, com n=1, no mesmo projeto que criou D-039 para resolver exatamente isso do
+outro lado. As colunas determinísticas não variam e são reportadas como valor.
+
+| | trivial | casador (produção) | **juiz com LLM (n=3)** |
+|---|---|---|---|
+| classe | 4/7 | 3/7 | **2–3 / 7** |
+| maturidade_stack | 6/7 | 6/7 | 6/7 |
+| confiança | 3/8 | 0/6 | 0/6 |
+| elegível | 6/7 | 5/7 | **5–6 / 7** |
+| motivo_exclusão | 6/7 | 5/7 | **5–6 / 7** |
+| **dor — precisão** | 32% | **49%** | **50–62%** |
+| dor — recall | 100% | 100% | 79–96% |
+| discriminação | 1/8 | 8/8 | 8/8 |
+| dor proibida emitida | 28 | 10 | 6–9 |
+
+**A regra de D-055, escrita antes de medir, exigia margem de precisão ≥ 0,15 sobre os 49% do
+casador — ou seja, 64%. A faixa do juiz é 50–62%: NEM O MELHOR CASO DAS TRÊS EXECUÇÕES ALCANÇA.**
+D-055 também já havia registrado que a discriminação estaria satisfeita por construção (o casador
+já faz 8/8), *"o que significa que a decisão fica inteira na precisão"*. Fica — e com n=3 a
+conclusão é mais forte do que era com n=1, não mais fraca.
+
+**Decisão: `USAR_JUIZ_LLM = False`.** O juiz existe, está medido, é ligável por `--juiz` no
+harness, e **não roda por default**. A justificativa não é que ele seja ruim — ele reduz emissões
+proibidas de 10 para 6–9 e sobe a precisão —, é que a margem foi fixada para exigir ganho que pagasse o custo: **52 chamadas
+de API por execução, seis minutos de parede, e uma dependência a mais de um catálogo que aposentou
+modelo duas vezes em três meses**. Nove pontos de precisão não compram isso.
+
+É a mesma frase que D-046 escreveu sobre o `nemotron-3-embed`, que separava melhor e perdeu:
+o empate está registrado como o motivo, não escondido.
+
+**O que a medição comprou mesmo empatando, e é bastante:**
+
+1. **A opção C está validada como desenho** — o teto de recall do casador é 100% (D-053), a
+   evidência continua literal em 100% dos trechos, e o juiz reduz emissões proibidas e conserta o
+   falso positivo de elegibilidade da Freedom AI em 2 das 3 execuções. O que falta não é a
+   arquitetura; é margem estável, e a instabilidade entre execuções é ela mesma um argumento
+   contra pôr o juiz no caminho crítico de uma demonstração ao vivo.
+2. **O gargalo mudou de lugar e agora tem nome.** Depois do juiz, `confianca` continua 0/6 e
+   `classe` continua 3/7 — ou seja, **o problema não está mais no Extractor**. `classe` é aritmética
+   de pontos no Classifier e `confianca` é o `min()` do Evidence Validator, e nenhum dos dois é
+   afetado por melhorar a evidência de entrada. A próxima sessão sabe onde mexer porque esta mediu.
+
+**O ACHADO TÉCNICO DA MEDIÇÃO, e ele vale mais que o número: enumerar modos de falha no prompt
+ensinou o modelo a recitá-los.**
+
+A primeira versão da instrução listava os três erros da busca por palavra-chave e fechava com
+*"na dúvida, reprove"*. Resultado: precisão **22%**, recall **20%**, e **cinco das oito** startups
+classificadas como `non-AI` porque o juiz reprovava toda evidência. Duas amostras diagnosticaram:
+
+- **Maritaca AI** — o modelo escreveu que a frase *"pode ser interpretado como uma preocupação com
+  a otimização de inferência e self-hosting"* e concluiu, na mesma resposta, que *"não há nenhuma
+  frase que sustente"*. O raciocínio contradiz a conclusão.
+- **Doutor-AI** — sobre a frase *"Com mais de 700 multiagentes e tecnologia própria…"*, o motivo
+  devolvido foi, palavra por palavra, a **regra nº 2 do próprio prompt**: *"A frase fala do cliente
+  da empresa, de um parceiro, de um concorrente ou do mercado"*. Ele não aplicou a regra — copiou.
+
+**Um ajuste, declarado como único e aceito qualquer que fosse o resultado:** critério POSITIVO
+primeiro ("aprove quando a frase afirma isso sobre a própria empresa, mesmo parcialmente"), o
+viés `"na dúvida, reprove"` removido, e a exigência de que o motivo CITE a frase julgada — que é o
+que ataca diretamente a recitação. Precisão foi de 22% para 58%, recall de 20% para 89%.
+
+**A lição é generalizável e vai para o vídeo:** num modelo de 8b, uma lista de erros a evitar
+funciona como um menu de desculpas prontas. O prompt precisa dizer o que APROVAR; o que reprovar
+vem depois e curto. Vale para os outros sete agentes, e é o oposto do que a intuição sugere.
+
+**Alternativa não exercida, e o motivo:** ajustar o prompt uma terceira, quarta e quinta vez até
+passar de 64%. Isso não é medir, é ajustar ao gabarito — e destruiria a régua que a sessão acabou
+de construir. Um ajuste, com o diagnóstico escrito antes, é correção; três é sobreajuste com
+outro nome.
+
+**Nota de comportamento alterada junto, e ela é do casador:** o desempate copilot/autopilot passou
+de `len(ev_auto) >= len(ev_copi)` para `>`. Com `>=`, empate 1×1 resolvia para AUTOPILOT — e foi
+por isso que a RD Station, que é copilot puro ("Copiloto de IA", preço por plano), era lida como
+quem vende o trabalho executado. Empate não é evidência de autopilot; é ausência de evidência.
+
+---
+
+## D-057 — O code review derrubou três afirmações desta sessão, e uma delas era a régua medindo errado
+
+**Data:** 25/08/2026 · **Sessão 06, code review `high`** · 8 achados, 6 pagos
+
+**Achado 1 — a fronteira de palavra de D-048 estava ancorada dos DOIS lados, e isso desligou o
+plural.** `\bconsultoria\b` **não casa** "consultorias"; nem `\brevenda\b` em "revendas", nem
+`\bcriptomoeda\b` em "criptomoedas". Plural é a forma comum em texto institucional, então uma
+empresa que se descrevesse como *"consultorias de IA"* passava pelo filtro do Inception. **D-048
+trocou um falso positivo visível por um falso negativo silencioso**, que é a troca ruim — e o
+comentário que a decisão escreveu afirmava o contrário ("`revenda` casava dentro de `revendas`
+(aceitável)"), implicando um comportamento que a própria mudança tinha removido.
+
+**Correção:** âncora **só no início** — `rf"\b{re.escape(termo)}"`. Mantém o alvo real (`"ipo"` não
+casa "equ(ipo)") e devolve o plural. Dois testes novos, um para cada lado. Ressalva registrada:
+a comparação é sensível a acento — `"ipo concluído"` não casa "ipo concluido".
+
+**Achado 3 — a justificativa do desempate copilot/autopilot citava uma medição que não existe.**
+D-056 e o comentário do código afirmavam que a RD Station *"empatava 1×1"* e por isso era lida
+como autopilot. **Ela é 3×1** e sai autopilot com os dois operadores. O erro de origem: eu li a
+lista de TERMOS distintos que casaram (`AUTOPILOT ['resultado']`, `COPILOT ['ferramenta']`) como se
+fosse a contagem de EVIDÊNCIAS.
+
+**Medido depois, com os dois operadores sobre as 8 fixtures: `>=` e `>` dão o MESMO placar** —
+classe 3/7, precisão 49%. A mudança fica, mas por argumento **conceitual** e declarado como tal:
+empate não é evidência de autopilot, é ausência de evidência, e o default de um empate não deveria
+ser o rótulo mais favorável. Ela não compra métrica, e dizer que compra seria inventar um ganho no
+arquivo que existe para defender decisões diante de uma banca.
+
+**Achado 6 — a régua estava medindo `motivo_exclusao` errado, e o número publicado era enganoso.**
+`motivo_exclusao: null` era tratado como "não medido" mesmo quando o gabarito já dizia
+`elegivel: true` — ou seja, quando o motivo esperado é **nenhum**. Consequência: Axenya e Freedom
+AI, recusadas pelo rótulo errado (achado 3 de D-052), apareciam numa coluna limpa de **1/1**, e era
+esse 1/1 que o `CLAUDE.md` publicava.
+
+Com a correção, `null` + `elegivel: true` passa a exigir que nenhum motivo seja emitido:
+
+| | trivial | casador (produção) |
+|---|---|---|
+| motivo_exclusão | **6/7** | **5/7** |
+
+**E isso muda a leitura da sessão.** O achado 1 de D-052 dizia que o stub perde do classificador
+trivial no rótulo do TAPI. Com a régua corrigida, ele perde em **quatro dos cinco campos**:
+classe 3/7 × 4/7, confiança 0/6 × 3/8, elegível 5/7 × 6/7, motivo 5/7 × 6/7. Empata em
+maturidade (6/7) e só ganha em dor — precisão 49% × 32%, discriminação 8/8 × 1/8.
+
+A leitura honesta: **o valor do casador está inteiro na extração de dores; a camada de
+classificação em cima dele é pior que constante.** É uma afirmação mais forte e mais útil que a
+anterior, e ela só apareceu porque a régua foi auditada.
+
+**Achado 5 — D-049 guardava a evidência da exclusão e o briefing não a imprimia.** `_secao`
+imprimia `x exclusão por 'consultoria': o termo aparece nos documentos` sem URL e sem trecho, sob o
+rodapé *"Toda conclusão acima aponta para o documento que a sustenta"* — exatamente o defeito que
+D-049 foi escrita para fechar, sobrevivendo na única saída que o sistema produz. Corrigido e
+testado: `test_briefing_imprime_a_evidencia_da_exclusao`.
+
+**Achado 7 — precisão indefinida estava sendo contada como zero.** Uma fixture que emite só dores
+ambíguas tem `contaveis` vazio; com `dores_esperadas` não vazias, o cálculo devolvia `0.0` e isso
+entrava na média que é a métrica de manchete. "Não previu" não é "previu tudo errado", e o recall
+já pune esse caso. Agora é pulado, simétrico com o recall — que já pulava fixtures sem esperadas.
+Nenhuma fixture atinge o caso hoje; o braço `--juiz`, que reduz emissões, atinge.
+
+**Achado 8 — `--validar` prometia "ZERO API" e não cumpria com `--juiz`.** As duas verificações
+chamam `extractor.node` nas 8 fixtures. Pior que o custo: com o juiz ligado, o número medido deixa
+de ser o **teto do casador** e vira o recall do juiz, que é outra grandeza com o mesmo nome. A
+combinação agora é recusada com aviso, em vez de produzir um número errado em silêncio.
+
+**Achados 2 e 4 NÃO pagos, e continuam registrados:** a exclusão por menção (D-052, achado 3) e o
+`min()` do Evidence Validator sobre TODAS as afirmações. O review acrescentou ao segundo o
+diagnóstico que faltava e que vira pauta: `alta` é **estruturalmente inalcançável**, porque
+`perfil.afirmacoes` inclui toda `DorObservada` e `_casar` emite uma frase por documento — a maioria
+tem um tipo só e devolve `baixa`. Consequência perversa: **um extrator que acha MAIS dores reais
+BAIXA a confiança do diagnóstico**. O mínimo deveria ser sobre as afirmações que sustentam a
+classificação — as que já estão em `diagnostico.evidencias` —, não sobre sinais de dor não
+relacionados. É isso que o 0/6 da régua está medindo, e não a qualidade do classificador.
+
+---
+
 ## Decisões pendentes
 
 Levantadas em `contexto/05-achados-e-decisoes.md` §4, a serem fechadas na sessão 01:

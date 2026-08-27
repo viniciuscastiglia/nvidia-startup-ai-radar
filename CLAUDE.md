@@ -123,6 +123,48 @@ Frontend livre.
 
 **Em aberto:** framework de frontend (P-06) e quantas startups entram na base final.
 
+**Régua dos agentes (M4, sessão 06):** 8 fixtures em `data/seed/*.yaml`, uma por decisão que ela
+flipa, com bloco `gabarito:` estruturado que **não vai para o banco**. É o que faltava para os
+critérios 1 e 3 (40 pontos) — antes eram 3 startups e as 3 `AI-native`, então um classificador
+que devolvesse "AI-native" incondicionalmente passava em 3 de 3 (D-050, D-051).
+
+| | trivial | **casador — produção** | juiz com LLM (n=3, D-056) |
+|---|---|---|---|
+| classe | 4/7 | **3/7** | 2–3 / 7 |
+| maturidade_stack | 6/7 | **6/7** | 6/7 |
+| confiança | 3/8 | **0/6** (+2 ambíguos) | 0/6 |
+| elegível | 6/7 | **5/7** | 5–6 / 7 |
+| motivo_exclusão | 6/7 | **5/7** | 5–6 / 7 |
+| **dor — precisão** | 32% | **49%** | 50–62% |
+| dor — recall | 100% | **100%** | 79–96% |
+| discriminação | 1/8 | **8/8** | 8/8 |
+| dor proibida emitida | 28 | **10** | 6–9 |
+
+**A linha trivial é obrigatória na tabela** — é o `denso puro` deste critério. E ela expõe o
+achado que justificou a sessão: **o casador perde do classificador trivial em 4 dos 5 campos** e
+só ganha em dor (precisão 49% × 32%, discriminação 8/8 × 1/8). O valor dele está inteiro na
+EXTRAÇÃO; a camada de classificação em cima é pior que constante (D-052, D-057).
+
+**O Extractor com LLM (opção C: heurística gera candidato, LLM julga) foi medido e EMPATOU.**
+D-055 exigia precisão ≥ 64% (49% + 0,15); a faixa em 3 execuções é **50–62%** — nem o melhor caso
+alcança. O juiz varia entre execuções, e isso é argumento a mais contra pô-lo numa demo ao vivo. `USAR_JUIZ_LLM = False` é resultado de medição,
+não esquecimento — liga com `--juiz`. O achado que vale mais que o número: **enumerar modos de
+falha no prompt ensinou o 8b a recitá-los** — a primeira versão fez 22% de precisão e devolvia a
+regra do prompt como justificativa (D-056).
+
+**Correção do diagnóstico da dívida nº 6:** a afirmação *"o Extractor produz o mesmo conjunto de
+dores para toda startup"* está **refutada** — sobre 8 fixtures diversas ele produz 8 conjuntos
+distintos. Era artefato de uma base com 3 startups, todas de saúde. O que sobrevive é o outro
+lado: precisão de 49%, e são as dores ERRADAS que poluem a consulta (D-052).
+
+**Achado aberto, não pago:** o filtro do Inception exclui por **menção**, não por identidade. A
+Axenya (prospect prioritário) é recusada por *"Integramos consultoria, dados e operação clínica"*
+e a Freedom por um **parceiro** ser *"auditoria, consultoria e tributos"*. Fronteira de palavra não
+resolve — é julgamento de sujeito. Ver D-052, achado 3.
+
+**Base de startups (M3, parcial):** **8 startups** em `data/seed/*.yaml`, 24 documentos, todas as
+`url_fonte` verificadas. Não é a M3 (30-50) — é o subconjunto que serve de gabarito aos agentes.
+
 **Base de conhecimento NVIDIA (M2):** 16 tecnologias em `data/nvidia/fontes.yaml`, 177 chunks
 estruturais + 204 de controle em `chunks_nvidia`, gabarito de **24 perguntas (19 com resposta,
 5 sem)** em `data/avaliacao/gabarito.yaml`. **Os 9 passos do pipeline do TAPI estão fechados.**
@@ -184,10 +226,15 @@ python scripts/avaliar_rag.py --truncar-pool   # braço de controle: trunca a un
 python scripts/avaliar_rag.py --por-pergunta   # onde cada motor põe o documento esperado
 python scripts/avaliar_rag.py --varredura      # grade de fusão — zero chamada de API
 python scripts/avaliar_rag.py --geracao        # passo 8: acurácia de abstenção sobre as 24
+python scripts/avaliar_agentes.py --validar    # régua dos agentes: gabarito, evidência literal, teto do casador
+python scripts/avaliar_agentes.py --baseline   # a linha de base trivial, obrigatória na tabela
+python scripts/avaliar_agentes.py              # extrator + classificador + validador (zero API)
+python scripts/avaliar_agentes.py --juiz       # LIGA o juiz com LLM do Extractor — ~52 chamadas
+python scripts/avaliar_agentes.py --motor ponta-a-ponta   # inclui nvidia_rag: CUSTA API
 python -m src.graph "sua consulta aqui"    # roda o pipeline ponta a ponta (thread novo por run)
 python -m src.graph --thread <id> "..."    # retoma um run pelo thread_id que o CLI imprime
 python scripts/diagramas.py                # regenera os .mmd a partir do grafo compilado
-pytest -q                                  # 40 testes — exigem Postgres e a API (o grafo roda de verdade)
+pytest -q                                  # 46 testes — exigem Postgres e a API (o grafo roda de verdade)
 python scripts/coletar.py <url>            # auxiliar de curadoria: texto real de uma página
 ```
 
@@ -225,6 +272,8 @@ Para quem for avaliar sem Postgres local: `docker compose up -d` (porta 5433) e 
 | `projeto/plano.md` | no início de qualquer sessão — sequência dos 18 dias, marcos e riscos |
 | `projeto/sessao-NN.md` | pauta executável da sessão corrente; abre com o fechamento da anterior |
 | `projeto/sessao-05.md` | o EOL de 25/08, o code review e os 3 achados de agente **não pagos** — abrir antes de tocar na M4 |
+| `projeto/sessao-06.md` | a régua dos agentes, o Extractor medido e o empate de D-055 — abrir antes de mexer no Classifier |
+| `scripts/avaliar_agentes.py` | a régua dos agentes: o que se conta, como o ambíguo é registrado, e por que a linha trivial existe |
 | `data/nvidia/fontes.yaml` | manifesto curado das 16 fontes do RAG — de onde busca vs. o que cita |
 | `data/avaliacao/gabarito.yaml` | as 20 perguntas com documento-fonte esperado; é a régua do RAG |
 | `projeto/decisoes.md` | **sempre que uma decisão for tomada** — escrever na hora |
