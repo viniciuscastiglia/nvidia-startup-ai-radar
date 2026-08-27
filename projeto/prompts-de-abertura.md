@@ -1,127 +1,133 @@
-# Mensagem de abertura — sessão 07
+# Mensagem de abertura — sessão 08
 
 > Copiar e colar num chat novo. Este arquivo guarda **só a próxima sessão**: prompt de abertura
 > velho é armadilha, porque carrega diagnóstico que já mudou. Os anteriores estão no git.
 >
 > **Aperte `Shift+Tab` duas vezes ANTES de enviar**, para entrar em plan mode.
 
-## Por que o alvo mudou de agente
+## Por que esta sessão não é sobre agente
 
-O prompt da 06 pedia a régua antes do Extractor, e estava certo: a régua nasceu e no primeiro dia
-derrubou um diagnóstico do próprio projeto. Mas ela também disse onde **não** mexer. Depois do
-juiz com LLM medido em três execuções, `classe` continua 3/7 e `confianca` continua 0/6 — os dois
-são **insensíveis a melhorar a evidência de entrada**. Não adianta extrair melhor para alimentar
-uma camada que decide mal.
+A 07 fez o que tinha que fazer e o resultado foi negativo: as duas mudanças de agente foram
+medidas contra o critério fixado antes do código e **as duas foram reprovadas**. A produção voltou
+byte a byte à linha de base. Isso está fechado e não precisa ser revisitado.
 
-O achado que reorganiza a pauta: **o casador perde do classificador trivial em quatro dos cinco
-campos.** O valor dele está inteiro na extração; a camada de classificação em cima é pior que
-constante (D-052, D-057).
+O que mudou a prioridade foi outra coisa: **no meio da sessão 07 a stack NVIDIA caiu pela terceira
+vez em três meses.** O LLM dos agentes devolve 410 e o reranker devolve 404 — e desta vez **não há
+substituto no catálogo**. O sistema não roda ponta a ponta hoje.
+
+A contingência para exatamente isto foi escrita em 25/08, agendada como "Bloco 0 da próxima
+sessão", e escorregou duas vezes. Ela vem primeiro agora.
 
 ---
 
 ```
-Sessão 07. Estou em plan mode de propósito — não escreva código de agente nesta
-conversa.
+Sessão 08. Estou em plan mode de propósito — não escreva código nesta conversa
+antes de o plano ser aprovado.
 
-Leia, nesta ordem: projeto/sessao-06.md (a pauta que ela deixou e os achados NÃO
-pagos), contexto/02-rubrica-ai-native.md (a rubrica que o TAPI não fornece) e
-scripts/avaliar_agentes.py (o que se conta e por que a linha trivial existe).
+Leia, nesta ordem: projeto/sessao-07.md (o fechamento, com o EOL e as duas
+reprovações), depois em projeto/decisoes.md as decisões D-064 (o terceiro EOL,
+medido) e D-065 (por que "Cohere é pago" era falso, e o que isso revela sobre
+como as alternativas foram descartadas).
 
-ANTES DE PROPOR QUALQUER COISA, rode a régua — ela custa ZERO chamada de API:
+ANTES DE PROPOR QUALQUER COISA, confirme o estado da stack com os próprios olhos:
 
-    python scripts/avaliar_agentes.py --baseline
+    python scripts/smoke_nvidia.py
+
+Em 27/08 dava 1/3: chat 410, reranking 404, embedding OK. Se algo voltou a
+responder, o plano muda — então meça, não assuma. E rode a régua dos agentes,
+que custa ZERO chamada e não depende da stack:
+
+    python scripts/avaliar_agentes.py --validar
     python scripts/avaliar_agentes.py
+    python scripts/avaliar_agentes.py --exclusoes
 
-Quero os números na sua frente, não os do CLAUDE.md. Eles batem, conferi em 27/08,
-mas um plano sobre agente medido por tabela lida é o erro que a revisão da sessão
-03 puniu.
+BLOCO 0 — a stack. É bloqueante: nada roda ponta a ponta sem isto, e o vídeo é
+07/09.
 
-O CRITÉRIO DE SUCESSO É FIXADO AGORA, ANTES DO CÓDIGO — é a disciplina de D-055,
-que é a única razão pela qual a conclusão sobre o juiz é defensável hoje. E ele
-NÃO é "melhorou": nos dois campos que vamos mexer, o sistema atual PERDE do
-classificador trivial.
+São DUAS decisões independentes. Não as trate como uma.
 
-    classe:     casador 3/7  x  trivial 4/7
-    confianca:  casador 0/6  x  trivial 3/8
+  · LLM — o grafo NUNCA chama LLM. Ele é usado em dois lugares: o passo 8
+    (src/rag/geracao.py) e o juiz do Extractor, que está desligado desde D-056.
+    Trocar NÃO encosta no Diferencial. Opções: substituto no catálogo NVIDIA
+    (nvidia/mistral-nemo-minitron-8b-8k-instruct), Grok (a liga sugeriu, o que o
+    pré-autoriza), ou os dois com fallback.
+    O custo real não é código — é UMA ENV VAR. É a RE-MEDIÇÃO: abstenção
+    (20-22/24), json_schema (n=5) e o juiz (50-62%) foram produzidos por um
+    modelo que não existe mais. Trocar não conserta esses números, INVALIDA.
+    Me diga, antes de trocar, quais serão re-medidos com n=3 e quais serão
+    declarados históricos com modelo e data — que é o que D-046 fez.
 
-Passar do trivial é o piso. Me diga qual é o alvo e o que fazer se empatar,
-escrito antes de medir.
+  · RERANKING — é ele que quebra a demo: o nvidia_rag chama reranker DENTRO do
+    grafo. Sondei 18 combinações de path x modelo em 27/08, todas 404/410, e o
+    catálogo vivo (84 modelos) não lista nenhum reranker.
+    A hipótese de D-065, que é filha do método deste projeto: cross-encoder
+    local como DEFAULT (o repositório roda sempre, sem chave, sem quota, sem
+    EOL) E Cohere com trial key atrás de env var, com AS DUAS LINHAS na tabela
+    de ablação ao lado de "sem rerank". É --truncar-pool aplicado ao fornecedor,
+    e responde "por que não Cohere?" com número em vez de narrativa.
+    Avalie essa hipótese de verdade, incluindo contra ela. Não a assuma.
 
-BLOCO 1 — Classifier e Evidence Validator, os gargalos nomeados.
+O ARGUMENTO QUE DEVE DECIDIR NÃO É DE PONTOS, é o eliminatório nº 3: "projeto que
+não executa E cujo vídeo não demonstra funcionamento real". Um avaliador que
+clonar este repositório em outubro bate no mesmo 404 que eu bati em 27/08.
+Componente hospedado em catálogo de preview é passivo do ENTREGÁVEL, não só um
+problema de hoje.
 
-  · confianca: evidence_validator.py:76 toma min() sobre perfil.afirmacoes, e
-    essa property (state.py:200) inclui TODAS as dores_observadas. Com ~7 dores
-    por startup, "alta" é estruturalmente inalcançável e um extrator que acha
-    MAIS dores reais BAIXA a confiança do diagnóstico. É defeito de desenho, não
-    de dado — o 0/6 mede isso, não o classificador.
+VERIFICAR antes de o roteiro do vídeo depender disso: a trial do Cohere limita
+Rerank a 10 req/min, e um run do grafo faz ~20 chamadas sequenciais — ~2 minutos
+parado de throttle, num vídeo com teto de 7 minutos.
 
-  · classe: classifier.py:52 decide com pontos >= 4 sobre três booleanos, onde
-    otimização técnica vale 1. Por isso a Maritaca — quantização QAT, MoE,
-    prefill/decode, MFU em B200 — sai AI-enabled: profundidade de infraestrutura
-    sozinha não alcança o limiar.
+BLOCO 1 — os 4 achados do code review da 07 que NÃO foram pagos (D-066):
+  · a dedup do nvidia_rag faz dores_enderecadas SUB-declarar — uma página puxada
+    por duas dores guarda só o dor_origem da primeira. Pagar exige dor_origem
+    virar lista, o que muda o contrato de CitacaoRAG.
+  · profundidade_tecnica lê documentos crus e contorna o juiz de D-053. Só
+    importa se a rubrica for promovida — ela está reprovada e desligada.
+  · _perfil_de_um_trecho duplica o helper de tests/test_elegibilidade.py. A hora
+    de unificar é quando elegibilidade() mudar de corpus, que é a decisão que
+    D-061 deixou aberta.
+Avalie se algum deles vale a sessão 08 ou se todos esperam. ORCE A RE-MEDIÇÃO
+PÓS-REVIEW como bloco: as sessões 05 e 06 estouraram o orçamento exatamente por
+não orçá-la, e na 06 foram 156 chamadas não previstas.
 
-  · maturidade_stack é 6/7. Não encoste.
+BLOCO 2 — a M3: 30 empresas, decidido em D-062, em duas camadas (8 com gabarito,
+22 como dado, 3-4 adversariais para a régua de exclusão). Timebox 3h, piso 20.
+Só depois do Bloco 0.
 
-  Quero as opções de desenho de cada um, com recomendação, e para cada uma a
-  alternativa descartada e o motivo — é isso que vira resposta pronta quando
-  perguntarem "por que não X?".
-
-BLOCO 2 — o filtro de identidade do Inception. Ele exclui por MENÇÃO, não por
-identidade: a Axenya (prospect de prioridade máxima) é recusada por "Integramos
-consultoria, dados e operação clínica" e a Freedom porque um PARCEIRO é
-"auditoria, consultoria e tributos". Fronteira de palavra não resolve — o termo é
-o certo, o sujeito é outro. D-052 achado 3 não pagou isto por assimetria de
-risco: um padrão de identidade introduz falso negativo SILENCIOSO. Então o
-entregável aqui é a régua que mede falso negativo, antes da correção.
-
-BLOCO 3 — a M3, que vence em 02/09 e hoje tem 8 de 30-50. A sessão 06 mediu o
-custo pela primeira vez: ~1h para 5 empresas com 3 documentos. O plano.md
-autoriza o corte ("corte o número de empresas, não o rigor"). Preciso decidir o
-NÚMERO nesta sessão, com o argumento.
-
-BARATO E VISÍVEL NA SAÍDA: recommendation.py:135 filtra dores com
-any(c.tecnologia == citacao.tecnologia for c in citacoes) — como citacao já
-pertence a citacoes, a condição é sempre verdadeira, e dores_enderecadas lista
-as 7 dores validadas em TODA recomendação.
+O QUE ESTE PLANO NÃO FAZ, e os cortes são decisão:
+  · não revisita as duas mudanças reprovadas na 07 (D-059, D-060) — estão atrás
+    de flag, medidas, e o veredito está escrito
+  · não mexe em maturidade_stack (6/7, é guarda)
+  · não escreve interface nem README — são 04-07/09
 
 Antes de eu aprovar, o plano precisa dizer: quantas chamadas de API custa no
-total — contando o pytest, que roda o grafo de verdade, e o python -m src.graph,
-que custa ~42 por execução e não ~15 —, o que ele NÃO faz, e um BLOCO DE
-CONTINGÊNCIA para re-medição depois do /code-review. As sessões 05 e 06 estouraram
-o orçamento pelo mesmo motivo: o bloco não orçado foi o de re-medir depois da
-revisão.
-
-CORTADO, e o corte é decisão: ajustar o prompt do juiz do Extractor até ele passar
-da margem de D-055. Ver D-056 — ajustar até passar não é medir.
+total, contando o pytest (~64/run) e o python -m src.graph (~42/run); o que ele
+NÃO faz; e o bloco de contingência de re-medição.
 
 Regras: português. Toda decisão vai para decisoes.md no momento em que é tomada.
-/code-review high antes de considerar pronto.
+Limpe __pycache__ antes de cada medição — na 07 uma medição foi contaminada por
+bytecode obsoleto, porque a edição preservou o tamanho do arquivo.
 ```
 
 ---
 
-## O que aconteceu em 27/08, entre a 06 e a 07
+## Estado em 27/08, para quem abrir o chat novo
 
-Sessão curta de higiene, sem código de agente:
+**Funciona:** os 381 vetores (o embedder sobreviveu) · os 8 agentes, todos determinísticos · a
+régua dos agentes e a régua de exclusão, ambas com zero API · 48 de 49 testes · as linhas
+denso/BM25/híbrida da tabela do RAG.
 
-- **A sessão 06 inteira foi commitada e empurrada.** Estava fora do git desde 25/08 — 827 inserções
-  e 8 arquivos novos. `origin/main` estava no commit de docs de 22/08; hoje tem os 42.
-- **Cinco instruções contaminadas corrigidas.** `contexto/05` §4.3 recomendava um reranker morto
-  desde 18/05; `.env.example` documentava o embedder morto em 25/08 (os valores já estavam certos);
-  `sessao-04.md` guardava a dívida nº 6 sem a anotação de refutação; `CLAUDE.md` dizia 46 testes e
-  são 49. E, fora do repo, `~/.claude/settings.json` carregava um bloco `autoMode.environment` que
-  descrevia OUTRO projeto — GitLab da faculdade, branch `develop` protegida via merge request —
-  em escopo global, portanto lido aqui. Movido para o projeto dono.
-- **Duas correções de número dentro do código**, ambas da mesma classe que a sessão 06 diagnosticou:
-  o comentário de `USAR_JUIZ_LLM` publicava 58% (n=1) depois de D-056 ter corrigido para a faixa
-  50–62% (n=3), e o docstring de `avaliar_agentes.py` ainda afirmava, em presente, que o extrator
-  emite o mesmo conjunto de dores para toda startup — a hipótese que o próprio harness refutou
-  com discriminação 8/8.
+**Não funciona:** `python -m src.graph` (404 no reranker) · o passo 8 (410 no LLM) ·
+`test_grafo_roda_ponta_a_ponta` · as linhas com rerank da tabela.
 
-**Contexto de prazo:** a entrega é 09/09 e o vídeo é 07/09, eliminatório e com teto de 7 minutos.
-Tudo que ele precisa MOSTRAR tem que existir em 06/09. Os critérios 1 e 3 valem 40 pontos e estão
-em nível de stub; o critério 2 vale 20 e está no teto. A sessão marginal rende aqui.
+**O `/code-review` da 07 já rodou:** 15 achados, 11 pagos, 4 registrados em D-066. `pytest` está em
+**52 passed, 1 failed** de 53 — a única falha é o 404. A régua de produção continua idêntica à
+linha de base depois das correções, que é o esperado de correção de rastreabilidade.
 
-**Depois da 07:** a M3 completa, a interface (5 pontos, uma sessão e não mais), e o README —
-que o `plano.md` agenda para 06–07/09 e que hoje ainda diz "Como rodar: *Em breve*" e "*a definir*"
-para LLM, embeddings e busca vetorial, todos decididos desde a sessão 01.
+**Calendário:** entrega 09/09 · vídeo 07/09, eliminatório, teto de 7 min · tudo que o vídeo mostra
+tem que existir em 06/09.
+
+**Perguntas para a liga**, se houver contato: (1) o reranker hospedado da NVIDIA saiu do ar e o
+TAPI recomenda Cohere, que também não é NVIDIA — cross-encoder local é aceitável no passo 7?
+(2) vocês vão **executar** o projeto na avaliação, e com chave de quem? (3) aviso de que o catálogo
+de preview aposentou modelos em 18/05, 25/08 e 27/08.

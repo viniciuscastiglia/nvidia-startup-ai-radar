@@ -305,6 +305,13 @@ tem um custo a mais, porque qualquer sweep de dimensão precisa rodar na stack n
   praticamente igual (535 vs 520 ms).
 - **Cohere Rerank** — é o que o TAPI sugere, mas é pago e quebraria a narrativa de rodar tudo
   na stack NVIDIA.
+  > **CORREÇÃO DE 27/08 (D-065): "é pago" está ERRADO, e era verificável em 22/08.** A Cohere
+  > oferece **trial key gratuita** cobrindo Command, Embed e Rerank — 1.000 chamadas/mês, Rerank a
+  > 10 req/min, vedada a uso comercial (o que não é o caso de um processo seletivo). O motivo real
+  > que sobra é o segundo, e ele é **narrativo**, igual ao que descartou o cross-encoder local
+  > logo abaixo. Ou seja: as DUAS alternativas ao fornecedor único foram descartadas por narrativa,
+  > uma delas com um fato falso em cima. Foi isso que deixou o projeto sem contingência em 25/08 e
+  > sem reranker nenhum em 27/08.
 - **Cross-encoder local** (BGE, Jina) — sem custo de API, mas exige baixar e rodar o modelo, e
   perde o argumento do Diferencial.
 **Motivo:** o corpus do RAG é texto puro (documentação NVIDIA). O ganho do modelo VL é entender
@@ -2383,6 +2390,670 @@ tem um tipo só e devolve `baixa`. Consequência perversa: **um extrator que ach
 BAIXA a confiança do diagnóstico**. O mínimo deveria ser sobre as afirmações que sustentam a
 classificação — as que já estão em `diagnostico.evidencias` —, não sobre sinais de dor não
 relacionados. É isso que o 0/6 da régua está medindo, e não a qualidade do classificador.
+
+---
+
+## D-058 — O critério de sucesso do Classifier e do Evidence Validator, fixado ANTES do código
+
+**Data:** 27/08/2026 · **Sessão 07, Bloco 0** · escrito antes de a primeira linha ser alterada
+
+D-055 é a única razão pela qual a conclusão sobre o juiz do Extractor é defensável hoje: a margem
+existia antes do número. Sem ela, 58% teria virado "melhorou" e o juiz teria entrado. Esta decisão
+aplica a mesma disciplina aos dois campos que a régua nomeou como gargalo, e ela precisa existir
+por escrito porque **o alvo aqui não é "melhorou"** — nos dois campos o sistema atual **perde do
+classificador trivial**, então "melhorou" pode significar continuar perdendo.
+
+**A linha de base, medida em 27/08 antes de planejar** (`--baseline` e o default, zero API):
+
+| campo | trivial | casador (produção) |
+|---|---|---|
+| classe | 4/7 (+1 ambíguo) | **3/7** (+1 ambíguo) |
+| confianca | 3/8 | **0/6** (+2 ambíguos) |
+
+E o `--falhas` dá o diagnóstico que a tabela esconde:
+
+- **Os 4 erros de `classe` apontam todos para o mesmo lado** — Axenya, Doutor-AI, Laura Networks e
+  Maritaca são `AI-native` no gabarito e saem `AI-enabled`. Nenhum erro no sentido contrário. As
+  três que o casador acerta são Deal, RD Station e SunnyHUB.
+- **Os 6 erros de `confianca` são todos `baixa`.** O campo é constante, não impreciso.
+
+### Os alvos
+
+| campo | trivial | hoje | alvo |
+|---|---|---|---|
+| `classe` | 4/7 | 3/7 | **≥ 5/7** *e* nenhuma perda entre Deal, RD Station e SunnyHUB |
+| `confianca` | 3/8 (37,5%) | 0/6 | **≥ 4 acertos absolutos** *e* taxa sobre decididos ≥ 50% |
+
+**Por que duas condições em cada um, e não uma taxa:**
+
+- Em `classe`, porque os 4 erros são unidirecionais. Uma regra mais frouxa compra `AI-native`
+  barato e o preço aparece na SunnyHUB — emitir `AI-native` para uma empresa de painel solar é,
+  nas palavras da própria fixture, *"o falso positivo mais caro que este projeto pode cometer numa
+  demonstração"*. Subir de 3 para 5 perdendo a SunnyHUB seria uma vitória na tabela e uma derrota
+  na demo.
+- Em `confianca`, porque **a taxa é gamificável pelo denominador**: duas fixtures têm conjunto
+  ambíguo (`[baixa, media]`), e responder dentro deles tira a fixture do denominador sem acertar
+  nada. É exatamente o que o casador faz hoje para chegar a 0/**6** enquanto o trivial é medido
+  sobre **8**. Exigir 4 acertos em valor absoluto fecha essa porta: o trivial tem 3.
+
+### As guardas — não são alvo, são veto
+
+`maturidade_stack ≥ 6/7` · `dor — precisão ≥ 49%` · `dor — recall = 100%` · `discriminação 8/8` ·
+`elegivel ≥ 5/7` · `motivo_exclusao ≥ 5/7` · `pytest -q` verde.
+
+**Se qualquer guarda cair, a mudança sai — mesmo que o campo-alvo tenha passado.** É a lição de
+D-048, que trocou um falso positivo visível por um falso negativo silencioso e só foi pega pelo
+code review.
+
+### O que fazer se empatar
+
+1. **Os dois campos são julgados INDEPENDENTEMENTE.** São dois agentes e dois defeitos distintos.
+   `confianca` pode entrar sem `classe` e vice-versa. Julgar em bloco deixaria um campo carregar o
+   outro, que é "ajustar até passar" com outra roupa.
+2. **Empate ou derrota: a mudança não entra em produção.** Vira achado medido aqui, com o número, e
+   o código volta ao que era — o mesmo destino de `USAR_JUIZ_LLM` em D-056.
+3. **Um ajuste só, declarado como único antes de rodar.** Se a primeira redação da regra não
+   alcançar o alvo, não há segunda tentativa calibrada contra o gabarito. É literalmente o erro que
+   D-056 nomeou: *"ajustar até passar de 64% não seria medir, seria ajustar ao gabarito"*.
+4. **O gabarito não muda para o sistema passar.** Um valor só pode ser alterado com argumento
+   escrito a partir de `contexto/02`, **nunca a partir do resultado medido**, e a alteração é
+   commitada *antes* da medição do novo desenho. Candidato já visível e registrado agora, antes de
+   qualquer placar: `SunnyHUB.confianca: media` é o único valor do gabarito das 8 fixtures sem
+   justificativa escrita na `nota`. Auditar é legítimo; auditar depois de ver o placar não é.
+
+### A linha de controle, e por que ela existe
+
+A tabela da sessão 06 tem a linha trivial porque sem ela 49% de precisão pareceria bom em vez de
+"17 pontos acima de emitir tudo". O Bloco 1 tem a dele: **a mesma aritmética de hoje com o limiar
+em 3** (`pontos >= 3`) — a correção de um caractere.
+
+Ela é medida **antes** de a aritmética ser substituída e vai para a tabela junto. Se a rubrica em
+degraus não bater o limiar-3, a rubrica não paga a complexidade que introduz. É o mesmo papel de
+`--truncar-pool` em D-037, que separou "ganho do pool" de "ganho da fusão".
+
+**Medida em 27/08, antes de qualquer mudança de desenho: `classe` 4/7.** Nada mais se move —
+maturidade 6/7, confiança 0/6, dor 49%, discriminação 8/8, todos idênticos. Ou seja: **um caractere
+já empata com o classificador trivial** e recupera a Axenya. Isso não afrouxa o alvo, aperta: a
+barra de ≥ 5/7 fixada acima é exatamente o que separa "a rubrica pagou" de "a rubrica fez o que um
+`>= 3` faz de graça". Se a rubrica em degraus parar em 4/7, ela não entra — pela regra 2, e porque
+seria complexidade sem contrapartida medida.
+
+### A ordem de medição tem três passos, e o motivo é atribuição
+
+O desenho escolhido para `confianca` lê `diagnostico.evidencias`, e quem preenche esse campo é o
+Classifier. Mexer no Classifier move `confianca` junto — e uma medição em que as duas mudanças
+entram ao mesmo tempo não consegue dizer de quem é o delta.
+
+| passo | o que muda | o que fica atribuído |
+|---|---|---|
+| 0 | nada | a linha de base |
+| 0b | `pontos >= 3` | a linha de controle |
+| 1 | **só** o Evidence Validator | o delta de `confianca`, isolado |
+| 2 | **e então** o Classifier | o delta de `classe` + o efeito de 2ª ordem em `confianca` |
+
+O efeito de segunda ordem é **reportado, nunca escondido**: se o passo 2 mexer em `confianca`, as
+duas colunas vão para a tabela.
+
+---
+
+## D-059 — A confiança do diagnóstico sai da evidência DO DIAGNÓSTICO — e mesmo assim perde do trivial
+
+**Data:** 27/08/2026 · **Sessão 07, Bloco 1a** · alvo fixado em D-058 · **REPROVADA, fica atrás de flag**
+
+**O defeito, que D-057 já tinha nomeado:** `diagnostico.confianca` era `min()` sobre
+`perfil.afirmacoes`, e essa property inclui TODAS as `dores_observadas`. Com 7 dores na Axenya e 6
+na Maritaca, sempre existe um elo fraco: `alta` era **estruturalmente inalcançável** e o campo saía
+`baixa` para as oito fixtures. Não era impreciso, era **constante**. E a consequência ia na direção
+errada: um Extractor que achasse MAIS dores reais BAIXAVA a confiança do diagnóstico — a métrica de
+um agente se movendo contra a melhoria de outro.
+
+**A correção:** aplicar `avaliar()` — a função que já existe, com as mesmas 5 regras de
+`contexto/02` §6 — sobre uma `Afirmacao` sintética montada com `diagnostico.evidencias`, que são os
+trechos que o Classifier anexou porque sustentam o rótulo.
+
+O argumento é da rubrica e não do gabarito: a **regra 2** fala de corroboração entre TIPOS de
+documento *da conclusão*; a **regra 5** fala do *output* carregar a confiança. As duas falam da
+evidência da conclusão, nunca de sinais de dor não relacionados. O `min()` sobre o perfil inteiro
+era uma terceira coisa, herdada do stub da sessão 01, que ninguém decidiu.
+
+**O resultado, contra o alvo de D-058 (>= 4 acertos absolutos e taxa >= 50%):**
+
+| | trivial | produção | **com a correção** |
+|---|---|---|---|
+| confianca | **3/8 (37,5%)** | 0/6 | **2/6 (33%)** |
+
+**O defeito estrutural sumiu** — `alta` volta a ser alcançável, Axenya e RD Station passam a
+acertar, e o campo deixa de ser constante. **E mesmo assim perde de responder "alta" para todo
+mundo.** Pela regra 2 de D-058, não entra em produção: fica em
+`CONFIANCA_DA_EVIDENCIA_DO_DIAGNOSTICO = False`, ligável por `--confianca-diagnostico`, medida e
+com o número no comentário. É o destino de `USAR_JUIZ_LLM` em D-056, e D-058 citou esse precedente
+por nome antes de a medição existir.
+
+**O achado vale mais que o número: o gargalo mudou de lugar, e não é mais o validator.**
+
+| fixture | evidência anexada ao diagnóstico | confiança | gabarito |
+|---|---|---|---|
+| Doutor-AI | **1 trecho**, de um `release` **sem data** | baixa | alta |
+| SunnyHUB | **nenhum** — nenhum sinal disparou | baixa | media |
+| Deal | 1 trecho, `site`, sem data | baixa | media |
+| Maritaca | 3 trechos, `blog` + `site`, nenhum recente | media | alta |
+
+O validator está relatando **fielmente** a espessura da evidência que o Classifier produziu. Quatro
+dos seis erros são casos em que o diagnóstico se apoia em um documento só, ou em nenhum. Melhorar a
+confiança daqui para frente não é mexer no validator — é fazer o Classifier anexar evidência mais
+larga, e isso é trabalho do Extractor, que recorta **uma frase por documento**.
+
+**Alternativas descartadas, e os motivos:**
+
+- **`min()` sobre um subconjunto nomeado** (só os sinais dos dois eixos, sem dores). Continua sendo
+  `min()` sobre um conjunto de tamanho variável, então preserva a monotonicidade perversa em escala
+  menor; e duplicaria "o que sustenta o diagnóstico" em dois lugares quando o Classifier já
+  materializa isso em `diagnostico.evidencias`. Duas fontes da mesma verdade divergem.
+- **Média ponderada das confianças.** Inventa uma escala numérica que a rubrica não tem, esconde o
+  caso "uma afirmação forte e cinco fracas" e deixa de ser explicável em uma frase — `avaliar()`
+  devolve um motivo citável, uma média não devolve nada.
+- **Tirar `dores_observadas` da property `afirmacoes`.** Parece a correção óbvia e quebraria o
+  sistema **em silêncio**: `afirmacoes` é o que o validator varre para ANOTAR cada dor, e
+  `recommendation.py` filtra por `d.validada`. Sem a anotação, o filtro da regra 3 do Recommendation
+  para de funcionar sem derrubar nenhum teste. A property tem dois consumidores com necessidades
+  diferentes; a correção é separar os consumidores, não mutilar a property.
+
+**Fica em produção, porque não é métrica:** `Diagnostico.motivo_confianca` e a linha que o briefing
+imprime. A regra 5 é *"o output carrega a confiança, não só o rótulo"*, e imprimir
+`(confiança baixa)` sem dizer qual regra a produziu deixava o rodapé — *"toda conclusão acima aponta
+para o documento que a sustenta"* — mentindo na linha mais lida do relatório. Com a flag desligada o
+campo fica `None` e nada é impresso, que é o comportamento honesto: `min()` não produz motivo.
+
+---
+
+## D-060 — A rubrica em degraus empata com um caractere, e o teto que faltava explica por quê
+
+**Data:** 27/08/2026 · **Sessão 07, Bloco 1b** · alvo fixado em D-058 · **REPROVADA, fica atrás de flag**
+
+**O defeito:** o eixo 1 era `pontos = 2·autopilot + 2·dado_proprietário + 1·técnica`, com `>= 4`
+para `AI-native`. Os pesos 2/2/1 não vinham da rubrica — `contexto/02` §4 lista os sinais como um
+conjunto, sem hierarquia —, e o limiar exigia na prática autopilot **E** dado proprietário, porque
+profundidade técnica sozinha valia 1. Por isso a Maritaca (quantização QAT, MoE, prefill/decode,
+MFU em B200) saía `AI-enabled`. E os 4 erros da régua apontavam **todos para o mesmo lado**:
+Axenya, Doutor-AI, Laura Networks e Maritaca são `AI-native` no gabarito e saíam `AI-enabled`.
+
+**O que foi implementado e medido — três degraus declarados, sem aritmética:**
+
+```
+1. nenhum sinal de IA no caminho crítico                    -> non-AI
+2. a empresa OPERA a própria IA — basta UM dos dois:
+   a. profundidade técnica própria (>= 3 marcadores
+      distintos de PROFUNDOS, nos DOCUMENTOS INTEIROS)
+   b. autopilot + dado proprietário                         -> AI-native
+3. resto                                                    -> AI-enabled
+```
+
+`2b` é exatamente o que a aritmética já deixava passar (2+2=4), então a mudança é aditiva do lado
+`AI-native` e o raio de regressão fica limitado às três fixtures que o casador acertava. O `>= 3` de
+`2a` não é parâmetro novo: é o número que o eixo 2 já declara para `maturidade alta`. Zero grau de
+liberdade introduzido, e portanto nada para calibrar contra o gabarito.
+
+**O resultado, contra o alvo de D-058 (>= 5/7, sem perder Deal, RD Station e SunnyHUB):**
+
+| | trivial | **controle: `pontos >= 3`** | produção | **rubrica em degraus** |
+|---|---|---|---|---|
+| classe | 4/7 | **4/7** | 3/7 | **4/7** |
+
+Recupera a Maritaca, não perde nenhuma das três. E **empata com o classificador trivial E com a
+linha de controle** — que é a mesma aritmética com um caractere trocado. Não compra nada que `>= 3`
+não compre de graça. Pela regra 2 de D-058, não entra: `RUBRICA_EM_DEGRAUS = False`, ligável por
+`--rubrica`.
+
+### O erro desta sessão não foi a rubrica, foi a barra ter sido fixada sem o teto
+
+O harness tinha `teto_do_casador` para dores desde D-053 — *"nenhum julgamento por LLM pode superá-lo,
+então ele é o teto"* — e **nenhum teto equivalente para `classe`**. D-058 escreveu `>= 5/7` sem ele.
+
+O teto, calculado depois e agora medido pelo `--validar`:
+
+```
+teto do degrau 2a da rubrica: 1/4 das AI-native decididas
+    - Axenya: 0 marcador(es) de profundidade — fora do alcance do degrau 2a, depende do 2b
+    - Doutor-AI: 0 marcador(es)
+    - Laura Networks: 0 marcador(es)
+```
+
+**Sete das oito fixtures têm profundidade ZERO** — só a Maritaca tem vocabulário de infraestrutura
+nos documentos. O degrau `2a` **nunca poderia mover mais de uma fixture**, e as outras três
+`AI-native` dependem do `2b`, que é idêntico à aritmética antiga. Logo o máximo alcançável era
+3/7 + 1 = **4/7 — exatamente o placar do trivial.** O alvo de 5/7 era **inalcançável por
+construção, e isso era calculável antes de medir**.
+
+Isso não invalida a medição: a rubrica de fato empata, e a decisão de não promovê-la está certa. O
+que fica registrado é o defeito de método — **D-055 ensinou a fixar a margem antes de medir, e esta
+sessão aprendeu que fixar a margem sem calcular o teto é fixar um número, não um critério.**
+`teto_do_degrau_2a` entrou no harness para que a próxima barra seja fixada sabendo o que é
+alcançável.
+
+**E o teto diz para onde ir:** o gargalo de `classe` não está na regra de decisão, está no
+**vocabulário** — três das quatro fixtures `AI-native` não têm um único marcador de infraestrutura.
+Ou os documentos coletados não contêm o sinal (e o trabalho é de curadoria, na M3), ou a lista
+`PROFUNDOS` não cobre como uma healthtech descreve a própria stack (e o trabalho é de rubrica). As
+duas hipóteses são testáveis com a base ampliada, e nenhuma se resolve mexendo no limiar.
+
+**Duas coisas ficam em produção, porque nenhuma delas é métrica:**
+
+1. **`profundidade_tecnica()` e `MARCADORES_PARA_PROFUNDIDADE`**, usados pelos dois eixos. O número
+   passou a existir uma vez só: mexer nele para consertar a classe mexeria na maturidade no mesmo
+   movimento, o que torna a calibração contra o gabarito visível em vez de silenciosa.
+2. **`extractor._frases` virou `extractor.frases`**, pública. O Classifier precisa do MESMO recorte
+   para que a evidência do eixo 1 seja literal pela mesma regra — duas regexes criariam duas
+   definições de "trecho literal", e `--validar` só consegue verificar enquanto houver uma.
+
+**`maturidade_stack` não foi tocada e ficou em 6/7 em todos os braços**, que era a guarda: se ela
+tivesse se mexido, o contador do eixo 1 teria vazado para o eixo 2. As outras guardas de D-058
+também seguraram em todos os braços — dor 49%, recall 100%, discriminação 8/8, elegível 5/7.
+
+### Alternativa descartada: LLM neste nó
+
+O motivo é medido, não estético. D-056 mostrou o `llama-3.1-8b` **recitando a rubrica** quando ela é
+enumerada no prompt — 22% de precisão, com a regra nº 2 do próprio prompt devolvida como
+justificativa. A rubrica de classe tem mais categorias e mais modos de falha que o julgamento de
+dor, então é o pior caso conhecido para este modelo. E a variação entre execuções (50–62% em três
+runs) é veneno numa demo ao vivo: o vídeo vale 20 pontos e é eliminatório.
+
+### Nota de método: uma medição desta sessão foi contaminada por bytecode obsoleto
+
+A primeira leitura do passo 1 deu `classe` 4/7 quando **só o Evidence Validator** tinha mudado — e
+ele roda DEPOIS do Classifier, então era estruturalmente impossível. Causa: a medição da linha de
+controle trocou `>= 4` por `>= 3`, que **preserva o tamanho do arquivo**, e o `git checkout` devolveu
+um mtime que o `.pyc` já tinha registrado — o Python serviu o bytecode do limiar-3 com o fonte
+dizendo 4. Só foi pego porque o número se mexeu onde não podia.
+
+**Toda medição desta sessão passou a ser precedida de limpeza do `__pycache__`.** Vale para qualquer
+harness que rode a partir do fonte: uma edição que preserva o tamanho do arquivo pode ser invisível
+para o Python, e a régua mede a versão anterior sem avisar.
+
+---
+
+## D-061 — A régua de exclusão entra, a correção NÃO — e a régua achou um falso negativo já em produção
+
+**Data:** 27/08/2026 · **Sessão 07, Bloco 2** · `data/avaliacao/exclusoes.yaml` + `--exclusoes`
+
+D-052, achado 3, adiou a correção do filtro do Inception por **assimetria de risco**: um padrão de
+identidade introduz falso negativo silencioso, e falso positivo aparece no briefing enquanto falso
+negativo não aparece em lugar nenhum. A decisão estava certa e era **argumentada, não medida** — a
+base tinha UMA fixture (Deal) exercitando o lado positivo, o que é anedota.
+
+**O entregável desta sessão é a régua, não a correção.** 14 casos em pares mínimos: mesmo termo,
+sujeito diferente. 6 vêm de documento real das fixtures, 8 são sintéticos e estão **declarados como
+tais** — cobrir `revenda`, que nenhuma fixture exercita, exige frase escrita para o teste, e passar
+sintético por real seria a desonestidade que D-021 barrou no seed.
+
+**Os dois números nunca são somados.** Um filtro que exclui tudo tem zero falso negativo; um que não
+exclui nada tem zero falso positivo. Uma acurácia única premiaria os dois e esconderia a assimetria
+que motivou o arquivo. É a mesma razão pela qual a linha trivial existe em `avaliar_agentes.py`.
+
+### O que a régua achou na PRIMEIRA execução, e ninguém sabia
+
+```
+excluídas corretamente         6/7   <- falso NEGATIVO: o risco silencioso
+passaram corretamente          3/7   <- falso positivo: aparece no briefing
+  x FALSO NEGATIVO · revenda    passou: 'Somos revendedores autorizados de licenças de software...'
+```
+
+**`"Somos revendedores autorizados"` passa pelo filtro do Inception.** `"revenda"` não é prefixo de
+`"revendedores"` — o 7º caractere é `a` contra `e` —, então nunca casou, com âncora ou sem.
+
+E o comentário de `briefing.py` afirmava o contrário: *"`revenda` continua casando em `revenda(s)` /
+`revende(dor)`"*. O plural casa; a família `revende-` **nunca** casou. É a mesma classe do achado 1
+de D-057 — o comentário descrevendo comportamento que o código não tem — e **sobreviveu à auditoria
+que D-057 fez de D-048**, porque não havia régua que exercitasse `revenda`. É a terceira vez neste
+projeto que ampliar o instrumento derruba uma afirmação escrita (D-039, D-052, agora esta).
+
+### A correção de corpus foi medida e NÃO entra, apesar de fazer 7/7
+
+O desenho recomendado no plano era trocar o CORPUS, não o padrão: o defeito não é o termo, é onde
+ele é procurado — `elegibilidade()` varre TODAS as evidências do perfil, inclusive trechos sobre
+parceiros e clientes.
+
+| corpus | fixtures (`elegivel`) | régua: excluídas | régua: passaram |
+|---|---|---|---|
+| produção — todas as afirmações | 5/7 | 6/7 | 3/7 |
+| A — `proposta_valor` + `descricao_curta` | 6/7 | 6/7 | 3/7 |
+| **B — só `descricao_curta`** | **7/7** | **6/7** | **3/7** |
+
+O corpus A **não conserta a Axenya**: *"Integramos consultoria, dados e operação clínica"* está nos
+primeiros 400 caracteres do site, que é exatamente o que `proposta_valor` recorta.
+
+O corpus B conserta as duas e faz 7/7 nas fixtures. **E mesmo assim não entra**, por um motivo que a
+segunda coluna torna visível: ele deixa a regra de casamento em **6/7 · 3/7, idêntica à produção**.
+Ele não resolve discriminação de sujeito — **ele evita as frases onde o problema acontece.** O 7/7
+é comprado lendo um campo de UMA LINHA, curado à mão, em vez dos documentos:
+
+- `descricao_curta` é `str | None` em `StartupRef` — opcional por tipo. Empresa sem o campo nunca
+  seria excluída, por nada.
+- Ele **não é texto coletado**, é redação de curadoria. E a M3 vai somar 22 empresas cuja
+  `descricao_curta` eu mesmo escrevo: a correção do Diferencial passaria a ser propriedade da minha
+  curadoria, não do sistema, e a régua estaria medindo a curadoria.
+
+**É exatamente a troca que D-057 puniu**: falso positivo visível trocado por falso negativo
+silencioso. Que 7/7 nas fixtures não baste é o ponto — foi para isso que a segunda régua existe.
+
+**Nota sobre o critério, e é um defeito de método:** o critério fixado no plano dizia *"zero falso
+negativo NOVO"* e, entre parênteses, *"nenhum caso do lado `exclui` pode passar"*. As duas leituras
+divergem, porque foi escrito sem saber que **já existia** um falso negativo em produção. Resolvido
+pela leitura conservadora, que é a que a assimetria de D-052 exige. A lição é a mesma de D-060: um
+critério fixado antes de conhecer o estado da linha de base pode ser ambíguo justamente onde importa.
+
+### O que fica medido para a próxima sessão decidir
+
+Trocar `"revenda"` pelo prefixo `"revend"` leva o falso negativo de **6/7 para 7/7** e o falso
+positivo de **3/7 para 2/7** — conserta o vazamento silencioso e cria um falso positivo visível em
+*"Nossos clientes revendem os relatórios"*. Pela lógica de D-057, essa é a direção **boa** da troca.
+Não entrou hoje porque é mudança de comportamento fora do critério fixado, e mudança de
+comportamento não medida contra o critério é o que esta sessão inteira existe para não fazer.
+
+**Descartada:** adicionar startups reais inelegíveis como fixtures. Custa ~12 min por empresa e uma
+empresa real traz muitas variáveis ao mesmo tempo — não isola o filtro. Fica como complemento
+gratuito da M3: 3-4 das 22 novas empresas escolhidas de propósito para serem inelegíveis.
+
+---
+
+## D-062 — A M3 fecha em 30 empresas, em duas camadas, e a coleta é sessão própria
+
+**Data:** 27/08/2026 · **Sessão 07, Bloco 3** · M3 vence em 02/09
+
+**A decisão é 30** — o piso do TAPI e do `plano.md`. Hoje são 8.
+
+**O argumento, e ele começa admitindo o que joga contra:** o barema **não tem linha para tamanho de
+base**. Os critérios 1, 2 e 3 medem os agentes, o RAG e o motor de recomendação; nenhum deles
+pontua por número de empresas. Pela lógica de "a sessão marginal rende onde há pontos", 22 empresas
+a mais compram zero.
+
+O que decide contra esse raciocínio é que **`30 a 50` está escrito no requisito**, e o barema pontua
+"nível 2 = cumpre o mínimo". Ficar visivelmente abaixo de um número escrito no TAPI é perda de ponto
+**não recuperável** em dois critérios (1 e 7), e não é recuperável por qualidade: nenhuma explicação
+no README transforma 8 em "cumpriu a M3". Já as ~2h que separam 20 de 30 **cabem no calendário** —
+custo medido na sessão 06: ~12 min por empresa com 3 documentos, logo 22 empresas ≈ 4,4h.
+
+**A estrutura é em duas camadas, e é ela que faz a hora pagar duas vezes:**
+
+- **8 com bloco `gabarito:`** — as atuais. São a régua dos critérios 1 e 3, e **só elas movem
+  número**. Nenhuma empresa nova recebe gabarito: gabarito é curadoria cara e o valor marginal da
+  nona fixture rotulada é menor que o da primeira.
+- **22 como dado**, sem `gabarito:`. Dão volume ao Retriever, cobrem a diversidade que a M3 exige
+  (AI-native / AI-enabled / non-AI) e cumprem o requisito.
+- **3-4 das 22 escolhidas adversarialmente** — uma consultoria de IA real, uma revenda, uma non-AI.
+  Viram caso real da régua de D-061, que hoje cobre `revenda` só com frase sintética. É a única
+  parte da coleta que compra ponto de critério, e ela sai de graça.
+
+**A coleta acontece em sessão PRÓPRIA, depois desta.** A régua de exclusão de D-061 usa pares
+mínimos e não depende de coleta, então nada nesta sessão fica bloqueado. Somar 3-4h de curadoria a
+uma sessão que já tem dois blocos de agente mais o code review faria dela ~8h — e é exatamente
+assim que as sessões 05 e 06 estouraram o orçamento.
+
+**Timebox de 3h, com piso declarado em 20.** Se estourar, para onde estiver e o número entra no
+README com o argumento. É a regra 5 do `plano.md` aplicada como está escrita: *"corte o número de
+empresas, não o rigor"*.
+
+**Alternativas descartadas:** **25** (o número que o próprio `plano.md` ilustra) e **20** — as duas
+economizam 1 a 2h e as duas exigem justificar no README por que o requisito não foi cumprido. O
+argumento que as venceu é que o texto de justificativa carrega mais risco que as 2h que ele
+economiza, num critério (7) que vale 10 pontos e é lido por quem também leu o TAPI.
+
+---
+
+## D-063 — `dores_enderecadas` deixa de ser tautológico: duas perguntas, duas listas
+
+**Data:** 27/08/2026 · **Sessão 07** · paga a dívida deixada visível em D-020
+
+`recommendation.node` filtrava dores com `any(c.tecnologia == citacao.tecnologia for c in citacoes)`.
+Como `citacao` **pertence** a `citacoes`, a condição é sempre verdadeira. Efeito: `dores_enderecadas`
+listava **todas** as dores validadas em toda recomendação — as 7 da Axenya apareciam idênticas sob
+cada tecnologia recomendada, impressas no briefing, sugerindo que cada tecnologia endereça tudo.
+
+**Por que a correção de uma linha não servia**, e isso já estava escrito no módulo desde 24/08:
+`evidencias` derivava da MESMA lista `dores`. Trocar a condição por `d.dor == citacao.dor_origem`
+estreitaria as duas juntas, e recomendação cuja dor de origem não passou pelo Evidence Validator
+cairia no `if not evidencias: continue` e **sumiria** — mudando quantas recomendações o sistema
+emite, que é comportamento medido por `test_toda_recomendacao_tem_evidencia`.
+
+**O que entrou é a separação que o próprio comentário apontava como a reescrita:**
+
+```python
+validadas   = [d for d in perfil.dores_observadas if d.validada]
+evidencias  = [e for d in validadas for e in d.evidencias][:3]      # lastro: continua largo
+dores       = [d for d in validadas if d.dor == citacao.dor_origem]  # declaração: só a dor de origem
+```
+
+"De quais dores tiro EVIDÊNCIA" e "quais dores DECLARO endereçadas" são perguntas diferentes e
+agora são listas diferentes. O lastro continua vindo de todas as dores validadas — nenhuma
+recomendação some, o teste continua valendo — e a declaração passa a ser só a dor que puxou aquela
+citação, que é o que `CitacaoRAG.dor_origem` sabe desde D-043.
+
+**Detalhe que teria virado bug de apresentação:** `proxima_acao` interpola essa lista numa frase que
+termina em `": {dores}."`. Com `dor_origem = None` — o caminho da interface, onde quem pergunta é um
+humano e não uma dor — a lista fica vazia e a frase terminaria em `": ."` no briefing. A ação ganhou
+um fecho alternativo para esse caso.
+
+---
+
+## D-064 — TERCEIRO EOL, em 27/08: o LLM e o reranker morreram. Decisão EM ABERTO
+
+**Data:** 27/08/2026 · **Sessão 07** · descoberto pelo `pytest`, confirmado pelo smoke e por sondagem
+direta · **13 dias da entrega, 11 do vídeo**
+
+O risco nº 1 da tabela do `plano.md` disparou pela **terceira vez em três meses** — e desta vez
+**dois dias** depois da anterior:
+
+| data | o que morreu |
+|---|---|
+| 18/05/2026 | `llama-3.2-nv-embedqa-1b-v2` e `llama-3.2-nv-rerankqa-1b-v2` (D-013) |
+| 25/08/2026 | `llama-nemotron-embed-1b-v2` e `llama-nemotron-rerank-1b-v2` (D-046) |
+| **27/08/2026** | **`meta/llama-3.1-8b-instruct` e `nvidia/rerank-qa-mistral-4b`** |
+
+**O que foi medido, não suposto:**
+
+| capacidade | modelo | resultado |
+|---|---|---|
+| chat completion | `meta/llama-3.1-8b-instruct` (D-012) | **HTTP 410 Gone** |
+| embedding | `nvidia/llama-nemotron-embed-vl-1b-v2` (D-046) | **PASSOU** — 1024 dims, PT 0,3456 vs 0,0069 |
+| reranking | `nvidia/rerank-qa-mistral-4b` (D-046) | **HTTP 404** |
+
+O 410 é **do modelo, não do endpoint**: `GET /v1/models` responde **200 com 84 modelos**, e nenhum
+casa `llama-3.1-8b`. Seis combinações de path × modelo de reranking foram sondadas — todas 404,
+menos `llama-3_2-nemoretriever-500m-rerank-v2`, que devolve **410 Gone**, a semântica de
+aposentadoria.
+
+**A notícia boa, e ela é grande:** o **embedder sobreviveu**. Era o único cuja morte invalidaria os
+**381 vetores** de `chunks_nvidia` e exigiria `reembedar.py` mais re-medir a régua inteira. O corpus
+está intacto.
+
+### O tamanho honesto do estrago, critério a critério
+
+- **Critério 2 (RAG, 20 pts, hoje em nível 4):** o motor de produção é `rerank sobre híbrida`. Sem
+  reranker ele não roda. **A linha de base sobrevive**: o denso puro faz **95% de r@1 e 100% de
+  r@3** sozinho (D-046) — o que o reranking comprava era o critério estrito, **e@3 de 79% → 95%**.
+  O sistema continua respondendo; perde a camada que o levava ao teto.
+- **Critério 1 e 3 (agentes, 40 pts):** **quase intactos.** Os 8 agentes são determinísticos e
+  `USAR_JUIZ_LLM = False` desde D-056. `pytest` deu **48 passed, 1 failed**, e a única falha é
+  `nvidia_rag` recebendo 404 no rerank. Nada do trabalho desta sessão depende de LLM.
+- **Passo 8 (geração com abstenção):** `src/rag/geracao.py` é o único arquivo que chama LLM. Sem
+  modelo, a abstenção não roda.
+- **O que perde valor de prova:** toda medição de geração — abstenção **20–22/24** (D-040),
+  `json_schema` **4/5 × 0/5 × 0/5** (D-047), o juiz do Extractor **50–62%** (D-056). Foram
+  produzidas por um modelo que não existe mais. **Trocar o LLM não as conserta: invalida.**
+
+### As opções, com o custo de cada uma. A decisão é do Vinícius
+
+**Para o LLM** — o catálogo vivo oferece substitutos diretos:
+`nvidia/mistral-nemo-minitron-8b-8k-instruct` (8b, o mais próximo do que morreu),
+`nv-mistralai/mistral-nemo-12b-instruct`, `nvidia/llama-3.1-nemotron-70b-instruct`.
+Trocar é **uma env var** (`LLM_MODEL`) — o `src/llm.py` isola. O custo não é o código, é a
+**re-medição**: as três medições acima precisam ser refeitas com n=3 para continuarem citáveis, ou
+declaradas como históricas com a data e o modelo, do jeito que D-046 fez com as sessões 02/03.
+
+**Para o reranking** — não há substituto visível no catálogo, e é aqui que mora o risco real:
+1. **Rodar sem reranker** (`peso_lexical` e fusão continuam; o passo 7 vira no-op). O RAG entrega
+   95% r@1. Custo: o critério 2 perde a decisão técnica que o levava a nível 4, e o TAPI cita
+   reranking explicitamente.
+2. **Cross-encoder local** (`sentence-transformers`, ex. `BAAI/bge-reranker-v2-m3`). Mantém o passo
+   7 real e demonstrável no vídeo. Custo: sai da stack NVIDIA, que é o **Diferencial declarado**.
+3. **Cohere Rerank** — é o que o TAPI recomenda, e o Diferencial do projeto era justamente não usar.
+   Pago.
+
+**A decisão não é minha e não vai ser tomada por inércia.** A opção 2 salva o critério 2 e fere o
+Diferencial; a 1 preserva o Diferencial e rebaixa o critério 2. As duas são defensáveis, e a
+diferença entre elas é de **peso 20 contra peso 5** — o que sugere a 2, com o Diferencial reescrito
+para "o RAG roda na stack NVIDIA no que ela ainda oferece: o embedding". Fica registrado como
+recomendação, não como feito.
+
+**O que este episódio já provou, e vale para a defesa na banca:** a arquitetura aguentou. Provedor
+isolado em `src/config.py`, nenhum agente conhecendo a NVIDIA, e um smoke test que nomeia a
+capacidade morta em 30 segundos. Três EOLs em três meses e o custo de cada um foi **medido em
+horas, não em dias** — e nesta terceira o corpus nem precisou ser tocado.
+
+---
+
+## D-065 — "Cohere é pago" era falso, e as duas alternativas ao fornecedor único caíram por narrativa
+
+**Data:** 27/08/2026 · **Sessão 07** · corrige D-015 · levantado por questionamento do Vinícius
+
+D-015 descartou o Cohere Rerank em 22/08 com duas razões: *"é pago"* e *"quebraria a narrativa de
+rodar tudo na stack NVIDIA"*. **A primeira é falsa**, e era verificável naquele dia:
+
+| | trial (grátis) | production (pago) |
+|---|---|---|
+| volume | **1.000 chamadas/mês**, todos os endpoints | pay-as-you-go |
+| Rerank | **10 req/min** | 1.000 req/min |
+| cobertura | Command + Embed + **Rerank 3.5** | idem |
+| restrição | **vedada a uso comercial/produção** | livre |
+
+Processo seletivo não é uso comercial, então a trial key sempre foi legítima aqui.
+
+**O que isso revela é maior que o erro de fato.** Na mesma decisão, o cross-encoder local foi
+descartado por *"perde o argumento do Diferencial"* — motivo explicitamente narrativo, e D-046 já
+tinha marcado essa linha como *"a única do log onde uma história venceu uma propriedade técnica"*.
+
+Com esta correção, a leitura certa é mais dura: **as DUAS alternativas ao fornecedor único foram
+descartadas por narrativa** — e uma delas com um fato falso por cima. Não foi uma linha ruim no
+log, foi um padrão. E o resultado está medido: em 25/08 o projeto ficou sem contingência, e em
+27/08 ficou sem reranker nenhum.
+
+**Erro de método, nomeado:** D-015 tratou "é pago" como fato assumido e não o verificou, enquanto o
+mesmo dia media margem de reranker com quatro casas decimais. **O rigor foi aplicado à escolha
+técnica e não à premissa que eliminou as alternativas** — e é a premissa que decide o espaço de
+opções.
+
+### Os limites da trial batem em coisas concretas, e isso não é objeção — é planejamento
+
+- **1.000 chamadas/mês.** Uma avaliação completa do RAG gasta ~67 chamadas de rerank; um
+  `python -m src.graph` gasta ~20. Trabalhável por 13 dias, mas a disciplina de n=3 do projeto come
+  ~200 numa tacada.
+- **10 req/min no Rerank.** Um run do grafo faz ~20 chamadas sequenciais: **~2 minutos de throttle**.
+  Num vídeo com teto de 7 minutos e demo ao vivo, é material. **A verificar antes de o roteiro
+  depender disso.**
+- **O avaliador precisa de chave própria.** Melhor que a NVIDIA hoje — chave grátis sai na hora,
+  modelo aposentado não volta com chave nenhuma —, mas ainda é dependência externa entre o
+  repositório e alguém conseguir executá-lo, e o eliminatório nº 3 é sobre executar.
+
+### O que fica em aberto, de propósito
+
+A decisão do passo 7 **não é tomada aqui**. O que esta decisão faz é devolver o Cohere ao conjunto
+de opções, de onde ele nunca deveria ter saído, e corrigir os três lugares que afirmavam o
+contrário: D-015, a linha do Diferencial no `CLAUDE.md` e a frase de D-046.
+
+**A hipótese que a próxima sessão deve avaliar, e que é filha do método deste projeto:** não
+escolher um só. Cross-encoder local como default — o repositório roda sempre, sem chave, sem quota,
+sem EOL — e Cohere atrás de env var como o braço que o TAPI recomenda, com **as duas linhas na
+tabela de ablação** ao lado de "sem rerank". É `--truncar-pool` aplicado ao fornecedor, e responde
+"por que não Cohere?" com número em vez de narrativa — que é exatamente o que faltou em 22/08.
+
+---
+
+## D-066 — O code review derrubou uma correção desta sessão e mostrou dois campos que eram código morto
+
+**Data:** 27/08/2026 · **Sessão 07, `/code-review`** · 15 achados · **11 pagos, 4 registrados**
+
+Como em D-057, os que importam não são polimento — são afirmações desta sessão que estavam erradas.
+
+### 1. D-063 quebrou a rastreabilidade que existe para proteger (achado nº 1)
+
+A correção de `dores_enderecadas` estreitou a **declaração** para a dor de origem e deixou o
+**lastro** saindo de TODAS as dores validadas. Resultado reproduzido:
+
+```
+dores_enderecadas : ['observabilidade']
+evidências citadas: ['nosso CUSTO de nuvem dobrou', ...]
+```
+
+Uma recomendação que **declara uma dor e cita a evidência de outra**, impressa sob o rodapé *"toda
+conclusão acima aponta para o documento que a sustenta"*. Antes de D-063 as duas listas concordavam
+por construção; **a correção tornou a divergência possível e nada a impedia.**
+
+Corrigido com `lastro = dores or validadas`: o lastro segue a declaração quando ela existe, e volta
+ao conjunto validado quando a citação não veio de uma dor — o que preserva o que D-063 comprou
+(nenhuma recomendação some). Dor validada sempre tem evidência, porque `avaliar()` devolve
+`validada=False` quando não há; logo `dores` não-vazia implica lastro não-vazio.
+
+**A lição:** D-063 foi a única mudança de comportamento desta sessão que entrou **sem flag, sem
+teste e sem braço de harness** — enquanto a mesma sessão exigia critério fixado antes do código para
+tudo o mais. O único caminho que exercita `recommendation.node` é `--motor ponta-a-ponta`, que custa
+API e hoje nem roda. **Quatro testes novos** (achado nº 9) fecham isso com zero chamada.
+
+### 2. `motivo_confianca` era código morto na configuração que roda (achado nº 5)
+
+D-059 afirmou que o campo *"fica em produção, porque não é métrica"*. **Ele só era preenchido dentro
+do braço da flag**, que é `False` por default — o campo novo em `state.py` e a linha nova do briefing
+nunca executavam. A afirmação era falsa no momento em que foi escrita.
+
+Corrigido: o braço de produção também preenche o motivo, dizendo o que o `min()` faz e sobre
+quantas afirmações — o que torna o defeito de D-059 **visível na saída** em vez de só documentado.
+
+### 3. O raio de regressão do Classifier estava mal declarado (achado nº 2)
+
+O docstring afirmava que *"o degrau 1 mantém a semântica de `pontos == 0`"*. **Não mantém:** o
+degrau 1 inclui `n_profundos >= 1` enquanto o `2a` exige `>= 3`. Uma startup com 1 ou 2 marcadores
+de infraestrutura e nenhum outro sinal era `non-AI` e passa a `AI-enabled` — saindo de
+`fora-do-funil` e fazendo o `nvidia_rag` gastar API por dor. **Nenhuma das 8 fixtures cai nesse
+caso, e é por o placar NÃO medir isso que precisava estar escrito.**
+
+### 4. A régua de exclusão media pela metade o lado que criou para medir (achado nº 6)
+
+`exclui: true` checava só `rotulo in rotulos` — nunca que **nenhum rótulo errado** também disparou.
+É exatamente o defeito que D-048 pagou (startup recusada por "cripto" ao falar em custo por token),
+sobrevivendo dentro da régua escrita para pegá-lo. Agora exige `rotulos == {rotulo}`. E
+`validar_exclusoes()` passou a checar rótulo inexistente, campo faltando e **par mínimo incompleto**
+— sem isso um typo em `rotulo:` viraria um falso negativo fantasma permanente (achado nº 7).
+
+**Correção de honestidade junto:** o cabeçalho contava 6 casos "de documento real" incluindo um
+derivado de `tests/test_grafo.py`. Agora são três categorias: **5 de fixture, 1 derivado de teste,
+8 sintéticos.**
+
+### 5. Instrução contaminada, de novo, e no arquivo carregado em toda sessão (achados nº 8, 14, 15)
+
+A tabela de Stack do `CLAUDE.md` ainda apresentava `rerank-qa-mistral-4b` como *"(o único vivo)"* e
+`meta/llama-3.1-8b-instruct` como o LLM vigente — vinte linhas acima do aviso *"nunca usar esses
+seis nomes"*, adicionado pela mesma sessão. `src/config.py` e `.env.example` seguem com os dois
+nomes mortos como default. E a linha nova da tabela de EOL tinha ficado **sem o `>` do blockquote**,
+o que a jogaria para fora da caixa de aviso no GitHub — no arquivo em que o critério 7 é avaliado.
+
+Tudo corrigido, com os defaults mantidos e **anotados**: trocá-los por um palpite não medido seria
+pior que falhar alto, que é o que o smoke test já faz em 30 segundos.
+
+### Registrados e NÃO pagos, com o motivo
+
+- **A dedup do `nvidia_rag` faz `dores_enderecadas` sub-declarar** (nº 11). Uma página recuperada
+  por duas dores guarda só o `dor_origem` da primeira, então uma citação que responde `custo` **e**
+  `latencia` declara só `custo`. D-063 trocou uma **super**-declaração por uma **sub**-declaração, e
+  isso não estava registrado. Fica registrado. Pagar exige `dor_origem` virar lista, o que muda o
+  contrato de `CitacaoRAG`.
+- **`profundidade_tecnica` contorna o juiz de D-053** (nº 4). Com `--juiz`, evidência que o juiz
+  reprovou volta pela porta do eixo 1. Não pago porque a rubrica está **reprovada e desligada**;
+  anotado no módulo para o caso de ela ser promovida.
+- **`_perfil_de_um_trecho` duplica o helper de `tests/test_elegibilidade.py`** (nº 13). Real, e a
+  hora de unificar é quando `elegibilidade()` mudar de corpus — que é justamente a decisão que
+  D-061 deixou em aberto.
+
+**Estado depois das correções:** `pytest` **52 passed, 1 failed** (53 testes; a falha é o 404 do
+reranker, não o código). A régua de produção continua **idêntica à linha de base** — nenhuma
+correção do review mexeu no placar, que é o que se espera de correção de rastreabilidade.
 
 ---
 
