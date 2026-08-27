@@ -251,6 +251,131 @@ def teto_do_casador(fixtures: list[dict]) -> tuple[int, int, list[str]]:
     return alcancadas, total, perdidas
 
 
+ARQ_EXCLUSOES = Path(__file__).resolve().parent.parent / "data" / "avaliacao" / "exclusoes.yaml"
+
+
+def _perfil_de_um_trecho(frase: str):
+    """O perfil mínimo que `elegibilidade()` sabe ler: ela varre
+    `perfil.afirmacoes[*].evidencias[*].trecho` e nada mais."""
+    from src.state import Afirmacao, Evidencia, PerfilStartup
+    return PerfilStartup(
+        startup_id=1, nome="Acme",
+        sinais_otimizacao_tecnica=[Afirmacao(
+            texto="trecho sob teste",
+            evidencias=[Evidencia(documento_id=1, tipo_documento="site",
+                                  url_fonte="https://exemplo.test/", trecho=frase)])],
+    )
+
+
+def medir_exclusoes() -> dict:
+    """O FILTRO DO INCEPTION, MEDIDO NOS DOIS LADOS (D-061). Zero chamada de API.
+
+    Os dois números NÃO são somados, e isso é a decisão que o arquivo inteiro carrega. Um filtro
+    que exclui tudo tem zero falso negativo; um que não exclui nada tem zero falso positivo. Uma
+    "acurácia" única premiaria os dois e esconderia exatamente a assimetria que fez D-052 adiar a
+    correção: o falso positivo aparece no briefing, o falso NEGATIVO não aparece em lugar nenhum.
+
+    Para `exclui: true` não basta recusar — tem que recusar pelo RÓTULO CERTO. É a regra que a
+    fixture da Deal já declarava: *"recusar pelo motivo errado conta como erro nomeado, e não como
+    acerto"*, e foi o defeito que D-048 pagou quando uma startup de infraestrutura era recusada por
+    "cripto" ao falar em custo por token.
+    """
+    from src.state import StartupRef
+    casos = yaml.safe_load(ARQ_EXCLUSOES.read_text(encoding="utf-8"))["casos"]
+    startup = StartupRef(startup_id=1, nome="Acme", site="https://exemplo.test",
+                         ano_fundacao=2022)
+
+    acertos = {True: 0, False: 0}
+    totais = {True: 0, False: 0}
+    falhas: list[str] = []
+    for caso in casos:
+        esperado, rotulo = caso["exclui"], caso["rotulo"]
+        resultado = briefing.elegibilidade(startup, _perfil_de_um_trecho(caso["frase"]))
+        rotulos = {m.split("'")[1] for m in resultado.motivos_exclusao
+                   if m.startswith("exclusão por '")}
+        totais[esperado] += 1
+        if esperado:
+            # RÓTULO CERTO **E NENHUM OUTRO**. A primeira versão checava só `rotulo in rotulos`,
+            # o que deixava passar exatamente o defeito que D-048 pagou — recusar pelo motivo
+            # errado — na metade da régua criada para pegá-lo. Achado nº 6 do review de 27/08.
+            ok = rotulos == {rotulo}
+            if not ok:
+                falhas.append(
+                    f"FALSO NEGATIVO · {rotulo:15} passou: {caso['frase'][:78]!r}"
+                    if rotulo not in rotulos else
+                    f"rótulo EXTRA  · esperado só {rotulo!r}, veio {sorted(rotulos)}: "
+                    f"{caso['frase'][:56]!r}")
+        else:
+            ok = not rotulos
+            if not ok:
+                falhas.append(f"falso positivo · {rotulo:15} excluiu por {sorted(rotulos)}: "
+                              f"{caso['frase'][:60]!r}")
+        acertos[esperado] += ok
+    proc = {"de fixture": 0, "derivado de teste": 0, "sintético": 0}
+    for c in casos:
+        o = c["origem"]
+        proc["sintético" if o == "sintético"
+             else "de fixture" if o.startswith("data/seed") else "derivado de teste"] += 1
+    return {"acertos": acertos, "totais": totais, "falhas": falhas,
+            "proc": proc, "n": len(casos)}
+
+
+def validar_exclusoes() -> list[str]:
+    """O gabarito de exclusão também precisa de gabarito (achado nº 7 do review de 27/08).
+
+    Sem isto, `rotulo: consultria` com um typo vira um FALSO NEGATIVO fantasma que nunca some, e
+    o operador vai procurar o defeito em `briefing.EXCLUSOES`, onde ele não está.
+    """
+    problemas: list[str] = []
+    casos = yaml.safe_load(ARQ_EXCLUSOES.read_text(encoding="utf-8"))["casos"]
+    vistos: dict[str, set[bool]] = {}
+    for i, c in enumerate(casos):
+        onde = f"exclusoes.yaml[{i}]"
+        for campo in ("rotulo", "exclui", "frase", "origem"):
+            if campo not in c:
+                problemas.append(f"{onde}: falta `{campo}`")
+        if (r := c.get("rotulo")) and r not in briefing.EXCLUSOES:
+            problemas.append(f"{onde}: rótulo {r!r} não existe em briefing.EXCLUSOES")
+        elif r is not None:
+            vistos.setdefault(r, set()).add(bool(c.get("exclui")))
+    # Par mínimo: um rótulo com um lado só mede metade, e é a metade que a assimetria de D-052
+    # diz que não pode ser medida sozinha.
+    for r, lados in sorted(vistos.items()):
+        if len(lados) < 2:
+            problemas.append(f"rótulo {r!r} só tem o lado `exclui: {lados.pop()}` — "
+                             f"par mínimo exige os dois")
+    return problemas
+
+
+def teto_do_degrau_2a(fixtures: list[dict]) -> tuple[int, int, list[str]]:
+    """O TETO DA RUBRICA EM DEGRAUS, medido sem gastar uma chamada — e a lição de D-060.
+
+    Irmão de `teto_do_casador`, e ele existe pelo mesmo motivo: um alvo fixado sem saber o que é
+    ALCANÇÁVEL não é disciplina, é chute com cara de disciplina. D-058 pôs a barra de `classe` em
+    5/7 sem este número; se ele existisse, teria mostrado que o degrau `2a` — profundidade técnica
+    própria — só pode mover as fixtures que TÊM vocabulário de infraestrutura nos documentos, e que
+    são **uma**. As outras `AI-native` do gabarito dependem do degrau `2b`, que é idêntico à
+    aritmética antiga e portanto não move nada.
+
+    Devolve: quantas fixtures cujo gabarito decide `AI-native` têm profundidade suficiente para o
+    degrau `2a` disparar. Nenhuma rubrica que dependa de `2a` pode superar isso.
+    """
+    alcancaveis = total = 0
+    fora: list[str] = []
+    for i, f in enumerate(fixtures):
+        aceitos = _aceitaveis((f.get("gabarito") or {}).get("classe"))
+        if aceitos != {"AI-native"}:      # só as que o gabarito DECIDE como AI-native
+            continue
+        total += 1
+        n, _ = classifier.profundidade_tecnica(como_startup(f, i).documentos)
+        if n >= classifier.MARCADORES_PARA_PROFUNDIDADE:
+            alcancaveis += 1
+        else:
+            fora.append(f"{f['nome']}: {n} marcador(es) de profundidade — fora do alcance do "
+                        f"degrau 2a, depende do 2b")
+    return alcancaveis, total, fora
+
+
 # ─────────────────────────────────────────────────────────────────────────────
 # Execução dos agentes
 # ─────────────────────────────────────────────────────────────────────────────
@@ -424,7 +549,33 @@ def main() -> int:
     ap.add_argument("--falhas", action="store_true", help="detalha cada divergência")
     ap.add_argument("--juiz", action="store_true",
                     help="LIGA o juiz com LLM do Extractor (default é desligado, D-056). CUSTA API")
+    # Os dois braços medidos na sessão 07 e REPROVADOS por D-058. Ficam ligáveis pelo mesmo motivo
+    # que `--juiz`: a alternativa medida no repositório é material de defesa melhor que um registro
+    # só no histórico do git, e o harness consegue medir os dois lados. Zero API nos dois.
+    ap.add_argument("--exclusoes", action="store_true",
+                    help="régua do filtro do Inception: falso positivo E falso negativo. Zero API")
+    ap.add_argument("--rubrica", action="store_true",
+                    help="LIGA a rubrica em degraus do Classifier (default desligado, D-060)")
+    ap.add_argument("--confianca-diagnostico", action="store_true",
+                    help="LIGA a confiança tirada da evidência do diagnóstico (default desligado, D-059)")
     args = ap.parse_args()
+
+    # Braço ligado que o modo escolhido nunca executa é pior que erro: o título ANUNCIA o braço
+    # e a tabela sai da produção. Mesma disciplina que `--juiz --validar` já tinha.
+    # Achado nº 12 do code review de 27/08.
+    inertes = [n for n, on in (("--rubrica", args.rubrica),
+                               ("--confianca-diagnostico", args.confianca_diagnostico)) if on]
+    if inertes and (args.baseline or args.exclusoes or args.validar
+                    or args.motor == "extrator"):
+        modo = ("--baseline" if args.baseline else "--exclusoes" if args.exclusoes
+                else "--validar" if args.validar else "--motor extrator")
+        print(f"  {', '.join(inertes)} ignorado(s) em {modo}: este modo não chama o agente")
+        args.rubrica = args.confianca_diagnostico = False
+
+    if args.rubrica:
+        classifier.RUBRICA_EM_DEGRAUS = True
+    if args.confianca_diagnostico:
+        evidence_validator.CONFIANCA_DA_EVIDENCIA_DO_DIAGNOSTICO = True
 
     if args.juiz and args.validar:
         # `--validar` chama `extractor.node` nas 8 fixtures (evidência literal e teto do
@@ -437,6 +588,24 @@ def main() -> int:
         # `--truncar-pool` no harness do RAG (D-044).
         import src.agents.extractor as _ex
         _ex.USAR_JUIZ_LLM = True
+
+    if args.exclusoes:
+        if problemas := validar_exclusoes():
+            print("RÉGUA DE EXCLUSÃO INCOERENTE:")
+            for p_ in problemas:
+                print(f"  - {p_}")
+            return 1
+        r = medir_exclusoes()
+        proc = ", ".join(f"{v} {k}" for k, v in r["proc"].items() if v)
+        print(f"{r['n']} caso(s) em data/avaliacao/exclusoes.yaml ({proc})\n")
+        print("  filtro do NVIDIA Inception — os dois lados, NUNCA somados:")
+        print(f"    {'excluídas corretamente':30} {r['acertos'][True]}/{r['totais'][True]}"
+              f"   <- falso NEGATIVO: o risco silencioso")
+        print(f"    {'passaram corretamente':30} {r['acertos'][False]}/{r['totais'][False]}"
+              f"   <- falso positivo: aparece no briefing")
+        for f in r["falhas"]:
+            print(f"      x {f}")
+        return 0
 
     fixtures = carregar()
     print(f"{len(fixtures)} fixture(s) em data/seed/")
@@ -460,11 +629,19 @@ def main() -> int:
         print(f"  teto de recall do casador: {ok}/{total} = {ok / total:.0%}")
         for p in perdidas:
             print(f"      - {p}")
+
+        ok, total, fora = teto_do_degrau_2a(fixtures)
+        print(f"  teto do degrau 2a da rubrica: {ok}/{total} das AI-native decididas")
+        for f in fora:
+            print(f"      - {f}")
         return 0
 
     r = medir(fixtures, args.motor, args.baseline)
+    bracos = [n for n, ligado in (("juiz LLM", args.juiz), ("rubrica em degraus", args.rubrica),
+                                  ("confiança do diagnóstico", args.confianca_diagnostico)) if ligado]
     titulo = ("linha de base TRIVIAL (sempre AI-native, todas as 8 dores)" if args.baseline
-              else f"motor: {args.motor}" + (" · JUIZ LLM LIGADO" if args.juiz else " · casador (produção)"))
+              else f"motor: {args.motor}"
+                   + (f" · LIGADO: {', '.join(bracos)}" if bracos else " · casador (produção)"))
     imprimir(titulo, r, args.falhas)
     return 0
 

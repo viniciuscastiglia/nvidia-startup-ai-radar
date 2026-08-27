@@ -1,0 +1,136 @@
+# A RÉGUA DE FALSO NEGATIVO DO FILTRO DO INCEPTION (D-061)
+#
+# POR QUE ELA EXISTE, E POR QUE VEM ANTES DA CORREÇÃO
+# -----------------------------------------------------
+# `briefing.elegibilidade()` é o Diferencial declarado do projeto: um sistema que RECUSA
+# recomendar o Inception para uma consultoria de IA, e explica por quê, demonstra regra de
+# negócio. Em 25/08 a régua dos agentes mostrou que ele exclui por MENÇÃO, não por identidade —
+# a Axenya (prospect de prioridade máxima) é recusada por "Integramos consultoria, dados e
+# operação clínica", e a Freedom AI porque um PARCEIRO dela é "auditoria, consultoria e
+# tributos".
+#
+# D-052, achado 3, decidiu NÃO consertar, e o motivo era assimetria de risco: um padrão de
+# identidade introduz falso negativo SILENCIOSO. Falso positivo aparece no briefing; falso
+# negativo não aparece em lugar nenhum. E a base tinha UMA fixture (Deal) exercitando o lado
+# positivo — isso é anedota, não régua.
+#
+# PARES MÍNIMOS: MESMO TERMO, SUJEITO DIFERENTE
+# -----------------------------------------------
+# Cada `rotulo` tem casos dos DOIS lados. É a mesma lógica da linha trivial em
+# `avaliar_agentes.py`: sem os dois lados, "zero falso positivo" é alcançável por um filtro que
+# não exclui nada, e "zero falso negativo" por um que exclui tudo. Um número só esconde
+# exatamente a assimetria que motivou o arquivo.
+#
+# `origem` é obrigatória e distingue o que veio de documento real do que foi escrito para o
+# teste. Um caso sintético é legítimo — é assim que se cobre `revenda`, que nenhuma fixture
+# exercita — mas passar sintético por real seria a mesma desonestidade que D-021 barrou nas
+# fixtures do seed.
+
+casos:
+
+  # ── consultoria ────────────────────────────────────────────────────────────
+  # O rótulo que o filtro erra hoje, e o único com material real dos dois lados.
+
+  - rotulo: consultoria
+    exclui: true
+    frase: "A Deal é uma consultoria de IA para empresas brasileiras e latino-americanas, com mais de 600 especialistas atuando em mais de 120 cidades."
+    origem: data/seed/deal.yaml — site
+    nota: identidade declarada com o verbo de ligação — "é uma consultoria"
+
+  - rotulo: consultoria
+    exclui: true
+    frase: "Somos uma consultoria e serviços de tecnologia com 21 anos"
+    origem: data/seed/deal.yaml — vaga
+    nota: identidade em primeira pessoa — "somos uma consultoria"
+
+  - rotulo: consultoria
+    exclui: true
+    frase: "Como nossa consultoria de IA para empresas gera resultados"
+    origem: data/seed/deal.yaml — site
+    nota: >-
+      identidade por POSSESSIVO — "nossa consultoria". É o caso que um padrão ancorado em
+      "somos|é uma" perde, e por isso ele está aqui: é a armadilha do desenho recomendado.
+
+  - rotulo: consultoria
+    exclui: false
+    frase: "Integramos consultoria, dados e operação clínica em uma única plataforma para prevenir antes que a doença vire custo."
+    origem: data/seed/axenya.yaml — site
+    nota: >-
+      USO, não identidade. A Axenya usa consultoria como insumo; não é uma consultoria. É o
+      falso positivo que recusa o prospect de prioridade máxima do projeto.
+
+  - rotulo: consultoria
+    exclui: false
+    frase: "Além disso, a startup tem uma parceria com a Grant Thornton, uma das maiores empresas globais de auditoria, consultoria e tributos, para validação e inovação."
+    origem: data/seed/freedom-ai.yaml — noticia
+    nota: >-
+      o sujeito é um PARCEIRO. A frase descreve a Grant Thornton, não a Freedom AI. Nenhuma
+      fronteira de palavra separa isto — o termo é o certo, a empresa é outra.
+
+  - rotulo: consultoria
+    exclui: false
+    frase: "Contratamos uma consultoria externa para auditar nosso pipeline de dados antes da rodada."
+    origem: sintético
+    nota: a empresa é CLIENTE de consultoria. Terceiro sujeito possível, sem caso real na base.
+
+  # ── revenda ────────────────────────────────────────────────────────────────
+  # Nenhuma fixture exercita este rótulo. Os dois lados são sintéticos, e isso está declarado.
+
+  - rotulo: revenda
+    exclui: true
+    frase: "Somos revendedores autorizados de licenças de software para o mercado corporativo."
+    origem: sintético
+    nota: identidade — a empresa revende
+
+  - rotulo: revenda
+    exclui: false
+    frase: "Nossos clientes revendem os relatórios gerados pela plataforma para as próprias carteiras."
+    origem: sintético
+    nota: quem revende é o CLIENTE. Mesmo defeito de sujeito da Freedom AI, em outro rótulo.
+
+  # ── cripto ─────────────────────────────────────────────────────────────────
+  # O par que documenta D-048: "token" saiu da lista porque é ambíguo entre cripto e
+  # inferência de LLM, e "custo por token" derrubava qualquer startup de infraestrutura.
+
+  - rotulo: cripto
+    exclui: true
+    frase: "A plataforma faz tokenização de ativos imobiliários registrada em blockchain."
+    origem: sintético
+    nota: identidade cripto por dois termos independentes
+
+  - rotulo: cripto
+    exclui: false
+    frase: "Reduzimos o custo por token de inferência em 40% depois de migrar o serving."
+    origem: >-
+      derivado de tests/test_grafo.py — o caso real que D-048 pagou
+    nota: >-
+      "token" em contexto de LLM. Este caso é a rede de D-048: se ele voltar a excluir, o termo
+      ambíguo voltou para a lista.
+
+  # ── cloud provider ─────────────────────────────────────────────────────────
+
+  - rotulo: cloud provider
+    exclui: true
+    frase: "Operamos datacenter próprio em três regiões e vendemos capacidade como provedor de nuvem."
+    origem: sintético
+    nota: identidade — a empresa É o provedor
+
+  - rotulo: cloud provider
+    exclui: false
+    frase: "Rodamos nossa inferência no datacenter próprio de um parceiro de infraestrutura."
+    origem: sintético
+    nota: o datacenter é de terceiro. A empresa é inquilina, não provedora.
+
+  # ── capital aberto ─────────────────────────────────────────────────────────
+
+  - rotulo: capital aberto
+    exclui: true
+    frase: "A companhia é listada na B3 desde 2021 sob o código ACME3."
+    origem: sintético
+    nota: identidade — a própria empresa é listada
+
+  - rotulo: capital aberto
+    exclui: false
+    frase: "Entre os clientes estão seis empresas listadas na B3 e duas estatais."
+    origem: sintético
+    nota: quem tem capital aberto é o CLIENTE.
