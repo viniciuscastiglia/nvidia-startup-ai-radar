@@ -234,7 +234,7 @@ python scripts/avaliar_agentes.py --motor ponta-a-ponta   # inclui nvidia_rag: C
 python -m src.graph "sua consulta aqui"    # roda o pipeline ponta a ponta (thread novo por run)
 python -m src.graph --thread <id> "..."    # retoma um run pelo thread_id que o CLI imprime
 python scripts/diagramas.py                # regenera os .mmd a partir do grafo compilado
-pytest -q                                  # 46 testes — exigem Postgres e a API (o grafo roda de verdade)
+pytest -q                                  # 49 testes — exigem Postgres e a API (o grafo roda de verdade)
 python scripts/coletar.py <url>            # auxiliar de curadoria: texto real de uma página
 ```
 

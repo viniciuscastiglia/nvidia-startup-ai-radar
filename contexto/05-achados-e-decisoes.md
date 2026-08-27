@@ -72,14 +72,26 @@ chamadas de um pipeline de 8 agentes rodando várias vezes em desenvolvimento. V
 ter um fallback configurável por variável de ambiente.
 
 ### 4.3 Reranker
+
+> **Atualizado em 27/08/2026.** Esta seção foi escrita em 22/08 recomendando
+> `llama-3.2-nv-rerankqa-1b-v2`, que **morreu com HTTP 410 em 18/05/2026** — e o substituto que
+> D-015 adotou morreu junto, em **25/08/2026**. A §1 deste arquivo já registrava os dois EOLs; a
+> recomendação abaixo não tinha sido corrigida e apontava para um modelo morto. Ver D-013 e D-046.
+
 Três opções:
-- **NeMo Retriever** (`llama-3.2-nv-rerankqa-1b-v2`, endpoint `/v1/ranking`) — grátis, coerente
-  com o case, multilíngue. **Recomendado**
+- **NeMo Retriever** — grátis, coerente com o case, multilíngue. **Recomendado**, e é o que a
+  produção roda. O modelo vivo é **`nvidia/rerank-qa-mistral-4b`**, no endpoint genérico
+  `/v1/retrieval/nvidia/reranking`, que **não** embute o nome do modelo no path como o anterior.
+  Ele é 4B e não 1B, então a escala de logit é outra: D-034 e D-035 foram re-medidos em D-046
 - **Cohere Rerank** — é o que o TAPI sugere, mas é pago
 - **Cross-encoder local** (BGE, Jina) — sem custo de API, mas exige rodar o modelo
 
 Usar o NeMo Retriever e **documentar a comparação com as alternativas** vale mais do que só
 escolher: o barema premia decisão consciente, e essa é uma decisão fácil de defender.
+
+**E o nome do modelo é perecível — trate esta linha como datada.** Duas mortes em três meses é
+cadência, não azar. Rode `python scripts/smoke_nvidia.py` antes de confiar em qualquer nome desta
+página; trocar o embedder ainda obriga a `scripts/reembedar.py` mais re-medir a régua inteira.
 
 ### 4.4 Banco vetorial
 Qdrant é o recomendado; ChromaDB, Pinecone e pgvector são explicitamente permitidos.

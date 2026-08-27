@@ -69,6 +69,17 @@ o diagnóstico tem duas partes, nenhuma delas no RAG:
 1. **O Extractor ainda é stub** e produz dores genéricas — `custo, escalabilidade,
    observabilidade, privacidade` para toda startup. Consulta genérica recupera chunk genérico, e
    o recuperador está fazendo exatamente o que foi medido fazendo bem.
+
+   > **REFUTADO EM 25/08 — anotação de 27/08, D-052.** A metade forte desta afirmação está
+   > errada: o Extractor **não** produz o mesmo conjunto de dores para toda startup. Sobre as 8
+   > fixtures da régua ele produz **8 conjuntos distintos** (`discriminacao` 8/8, contra 1/8 do
+   > classificador trivial). O que se via aqui era artefato de uma base com 3 startups, todas de
+   > saúde — a conclusão generalizava a amostra. É a segunda vez que ampliar o n derruba uma
+   > conclusão deste projeto; a primeira foi D-039.
+   >
+   > **O que sobrevive, e é o que importa:** precisão de dor de **49%**. São as dores ERRADAS que
+   > poluem a consulta, não a falta de variação — e o alvo da correção muda junto. O texto acima
+   > fica como estava porque é registro do que se acreditava em 24/08.
 2. **O Recommendation pega os 3 primeiros trechos sem julgar o que eles são.** Um chunk de
    "Resources / Forums" não deveria ser recomendável em nenhuma circunstância.
 
