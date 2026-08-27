@@ -91,6 +91,9 @@ _API_KEY = _env("LLM_API_KEY") or _env("NVIDIA_API_KEY")
 LLM = ConfigLLM(
     base_url=_env("LLM_BASE_URL", "https://integrate.api.nvidia.com/v1"),
     api_key=_API_KEY,
+    # MORTO em 27/08 (HTTP 410, D-064). O default fica até o Bloco 0 da sessão 08
+    # escolher o substituto — trocá-lo por um palpite não medido seria pior que
+    # falhar alto, que é o que o smoke test já faz em 30 segundos.
     modelo=_env("LLM_MODEL", "meta/llama-3.1-8b-instruct"),
     temperatura=float(_env("LLM_TEMPERATURE", "0.1")),
 )
@@ -105,6 +108,9 @@ EMBEDDING = ConfigEmbedding(
 RERANK = ConfigRerank(
     url=_env("RERANK_URL", "https://ai.api.nvidia.com/v1/retrieval/nvidia/reranking"),
     api_key=_API_KEY,
+    # MORTO em 27/08 (HTTP 404, D-064) e SEM substituto no catálogo da NVIDIA:
+    # 18 sondagens de path x modelo, todas 404/410. A decisão do passo 7 está em
+    # aberto (D-065) — cross-encoder local, Cohere com trial key, ou os dois medidos.
     modelo=_env("RERANK_MODEL", "nvidia/rerank-qa-mistral-4b"),
 )
 

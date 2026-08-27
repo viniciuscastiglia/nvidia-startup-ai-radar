@@ -1,21 +1,20 @@
 # Smoke test — build.nvidia.com
 
-Gerado por `scripts/smoke_nvidia.py` em 25/08/2026 09:39.
+Gerado por `scripts/smoke_nvidia.py` em 27/08/2026 13:49.
 
 | Capacidade | Resultado | Latência | Modelo |
 |---|---|---|---|
-| chat completion | passou | 1038 ms | `meta/llama-3.1-8b-instruct` |
-| embedding | passou | 599 ms | `nvidia/llama-nemotron-embed-vl-1b-v2` |
-| reranking | passou | 630 ms | `nvidia/rerank-qa-mistral-4b` |
+| chat completion | falhou | — | `meta/llama-3.1-8b-instruct` |
+| embedding | passou | 668 ms | `nvidia/llama-nemotron-embed-vl-1b-v2` |
+| reranking | falhou | — | `nvidia/rerank-qa-mistral-4b` |
 
 ## Detalhes
 
 ### chat completion
 
 ```
-modelo: meta/llama-3.1-8b-instruct
-tokens: 57 prompt + 62 completion
-resposta: O NVIDIA Inception é um programa de aceleração de startups que oferece recursos, suporte e tecnologia para ajudar as empresas a desenvolver soluções inovadoras 
+HTTPStatusError: Client error '410 Gone' for url 'https://integrate.api.nvidia.com/v1/chat/completions'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/410
 ```
 
 ### embedding
@@ -29,8 +28,5 @@ EN  crosslingual 0.3844 vs irrelevante PT 0.0069 (ok)
 ### reranking
 
 ```
-endpoint que respondeu: https://ai.api.nvidia.com/v1/retrieval/nvidia/reranking
-ordem: #1(-4.39) > #2(-15.30) > #0(-16.50)
-topo = passagem #1 (correto — TensorRT-LLM é a resposta certa)
-margem topo->2º: 10.90
+nenhum dos endpoints candidatos respondeu
 ```

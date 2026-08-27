@@ -93,9 +93,9 @@ Frontend livre.
 
 | Camada | Escolha | Decisão |
 |---|---|---|
-| LLM dos agentes | `meta/llama-3.1-8b-instruct` via build.nvidia.com | D-012 |
+| LLM dos agentes | ~~`meta/llama-3.1-8b-instruct`~~ **MORTO 27/08 (410) — EM ABERTO** | D-012, **D-064** |
 | Embeddings | `nvidia/llama-nemotron-embed-vl-1b-v2`, **`dimensions=1024`** | D-014, **D-046** |
-| Reranking | `nvidia/rerank-qa-mistral-4b` (o único vivo) | D-015, **D-046** |
+| Reranking | ~~`nvidia/rerank-qa-mistral-4b`~~ **MORTO 27/08 (404), sem substituto — EM ABERTO** | D-015, D-046, **D-064, D-065** |
 | Vetores | pgvector no mesmo Postgres | D-016 |
 | Busca lexical | `bm25s` em processo para o RAG · `tsvector` para documentos de startup | D-016 |
 | Topologia | subgrafo de análise + fan-out por `Send` | D-007 |
@@ -116,8 +116,14 @@ Frontend livre.
 > |---|---|
 > | 18/05/2026 | `llama-3.2-nv-embedqa-1b-v2` e `llama-3.2-nv-rerankqa-1b-v2` — os que o TAPI cita (D-013) |
 > | **25/08/2026 09:00Z** | `llama-nemotron-embed-1b-v2` e `llama-nemotron-rerank-1b-v2` — os substitutos (D-046) |
+> | **27/08/2026** | **`meta/llama-3.1-8b-instruct` (410) e `rerank-qa-mistral-4b` (404)** — o LLM dos agentes e o ÚLTIMO reranker (D-064) |
 >
-> Nunca usar esses quatro nomes. **Env var não protege contra isto:** trocar o embedder muda o
+> **ESTADO EM 27/08: só o EMBEDDING responde.** Chat 410, reranking 404 em 18 sondagens de
+> path × modelo, e o catálogo vivo (84 modelos) não lista **nenhum** reranker. O embedder
+> `llama-nemotron-embed-vl-1b-v2` sobreviveu — os 381 vetores estão intactos. **A escolha do passo
+> 7 e do LLM está EM ABERTO (D-064, D-065)** e é o Bloco 0 da sessão 08.
+>
+> Nunca usar esses seis nomes. **Env var não protege contra isto:** trocar o embedder muda o
 > espaço vetorial e invalida os 381 vetores — é `scripts/reembedar.py` mais re-medir a régua
 > inteira. Ver D-046 e `contexto/03` §3.
 
@@ -202,8 +208,17 @@ argumento muda de *"o método impede a alucinação"* para *"reduz de 3/3 para 1
 **O `nvidia_rag` consulta o pipeline real**, com a linguagem literal da startup e não com um
 rótulo de dor (D-043).
 
-**Diferencial:** o RAG roda inteiro na própria stack NVIDIA — embedding e reranking do NeMo
-Retriever no lugar do Cohere (pago). Dá o argumento "usei a stack que o sistema recomenda".
+**Diferencial — EM REVISÃO desde 27/08, e a frase antiga tinha um fato falso.** Ela dizia
+"embedding e reranking do NeMo Retriever no lugar do Cohere (pago)". **O Cohere tem trial key
+gratuita** cobrindo Command, Embed e Rerank (1.000 chamadas/mês, Rerank a 10 req/min, vedada a uso
+comercial — o que não se aplica a um processo seletivo). Ver D-065.
+
+E o reranking do NeMo Retriever **não existe mais** (D-064): 18 sondagens de path × modelo, todas
+404/410. Hoje o que resta de fato é o **embedding** rodando na stack NVIDIA.
+
+A reformulação que D-046 já tinha proposto, e que sobrevive a tudo isto: *"o Diferencial não é usar
+a stack NVIDIA; é ter medido a propriedade do fornecedor que ninguém mediu"* — três EOLs em três
+meses, com data, e um projeto que continua rodando. **A decisão do passo 7 está em aberto.**
 
 ## Comandos
 
@@ -229,12 +244,18 @@ python scripts/avaliar_rag.py --geracao        # passo 8: acurácia de abstenç�
 python scripts/avaliar_agentes.py --validar    # régua dos agentes: gabarito, evidência literal, teto do casador
 python scripts/avaliar_agentes.py --baseline   # a linha de base trivial, obrigatória na tabela
 python scripts/avaliar_agentes.py              # extrator + classificador + validador (zero API)
+python scripts/avaliar_agentes.py --exclusoes  # filtro do Inception: falso positivo E falso negativo
+python scripts/avaliar_agentes.py --rubrica    # braço REPROVADO: rubrica em degraus do Classifier (D-060)
+python scripts/avaliar_agentes.py --confianca-diagnostico  # braço REPROVADO: confiança da evidência do diagnóstico (D-059)
 python scripts/avaliar_agentes.py --juiz       # LIGA o juiz com LLM do Extractor — ~52 chamadas
 python scripts/avaliar_agentes.py --motor ponta-a-ponta   # inclui nvidia_rag: CUSTA API
+# ATENÇÃO — QUEBRADOS desde o EOL de 27/08 (D-064), até o Bloco 0 da sessão 08 fechar:
+#   `python -m src.graph` e `pytest` param no reranker (404); o passo 8 para no LLM (410).
+#   O que continua rodando: TODA a régua (`avaliar_agentes.py`, zero API) e 52 dos 53 testes.
 python -m src.graph "sua consulta aqui"    # roda o pipeline ponta a ponta (thread novo por run)
 python -m src.graph --thread <id> "..."    # retoma um run pelo thread_id que o CLI imprime
 python scripts/diagramas.py                # regenera os .mmd a partir do grafo compilado
-pytest -q                                  # 49 testes — exigem Postgres e a API (o grafo roda de verdade)
+pytest -q                                  # 53 testes — exigem Postgres e a API (o grafo roda de verdade)
 python scripts/coletar.py <url>            # auxiliar de curadoria: texto real de uma página
 ```
 
@@ -273,7 +294,9 @@ Para quem for avaliar sem Postgres local: `docker compose up -d` (porta 5433) e 
 | `projeto/sessao-NN.md` | pauta executável da sessão corrente; abre com o fechamento da anterior |
 | `projeto/sessao-05.md` | o EOL de 25/08, o code review e os 3 achados de agente **não pagos** — abrir antes de tocar na M4 |
 | `projeto/sessao-06.md` | a régua dos agentes, o Extractor medido e o empate de D-055 — abrir antes de mexer no Classifier |
+| `projeto/sessao-07.md` | **o terceiro EOL, as duas reprovações do Bloco 1 e o teto que faltava — abrir ANTES de qualquer coisa** |
 | `scripts/avaliar_agentes.py` | a régua dos agentes: o que se conta, como o ambíguo é registrado, e por que a linha trivial existe |
+| `data/avaliacao/exclusoes.yaml` | a régua do filtro do Inception: pares mínimos, falso positivo E falso negativo medidos separados (D-061) |
 | `data/nvidia/fontes.yaml` | manifesto curado das 16 fontes do RAG — de onde busca vs. o que cita |
 | `data/avaliacao/gabarito.yaml` | as 20 perguntas com documento-fonte esperado; é a régua do RAG |
 | `projeto/decisoes.md` | **sempre que uma decisão for tomada** — escrever na hora |
