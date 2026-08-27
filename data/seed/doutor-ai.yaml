@@ -22,6 +22,31 @@ coletado_em: '2026-08-22'
 perfil_alvo: AI-native
 perfil_alvo_nota: |-
   Caso SWEET SPOT do modelo de dois eixos. Linguagem de autopilot pura ('força de trabalho digital', 'funcionários robôs'), 700+ agentes, breakeven em 8 meses — posicionamento AI-native claro. Mas nenhuma menção a modelo próprio, self-hosting, quantização, avaliação ou observabilidade: stack imatura. É o melhor prospect de conversão e o caso que o motor de recomendação existe para achar.
+gabarito:
+  classe: AI-native
+  maturidade_stack: baixa
+  confianca: alta
+  elegivel: true
+  motivo_exclusao: null
+  dores_esperadas: [custo, latencia, escalabilidade, governanca, privacidade]
+  dores_proibidas: [observabilidade]
+  dores_ambiguas: [avaliacao, dependencia_fornecedor]
+  nota: |-
+    A FIXTURE COM MAIS DORES REAIS DA BASE, e é ela que mostra que "muitas dores" não é o mesmo
+    que "todas as dores": cinco das oito estão literalmente nos documentos e no sentido certo —
+    custo (R$ 180-200 por jornada caem para R$ 90-120; "30% dos custos desperdiçados"), latência
+    (transcrição "em tempo real" da consulta; "otimiza o tempo de resposta"), escalabilidade
+    ("escalar com velocidade", "10 milhões de eventos"), governança ("padrões de governança e
+    segurança", "compliance") e privacidade ("já nasceu cumprindo a LGPD", "dados encriptados").
+
+    `observabilidade` é PROIBIDA e o motivo é o mesmo da Axenya: "módulo de dashboards" e
+    "monitoram adesão ao tratamento" são produto para o cliente, não instrumentação do sistema
+    de IA. É o falso positivo mais teimoso da base porque aparece em duas empresas diferentes.
+
+    `dependencia_fornecedor` é AMBÍGUA e o caso é delicado: a empresa provavelmente TEM essa dor
+    (nada indica modelo próprio), mas nenhum documento a declara. É a regra 4 do Evidence
+    Validator em forma de gabarito — ausência de sinal não é sinal negativo, e um extrator que
+    a emitisse estaria acertando por inferência, não por evidência. Não conta a favor nem contra.
 documentos:
 - tipo: noticia
   titulo: Doutor-AI aposta em IA para transformar a jornada do paciente

@@ -22,6 +22,39 @@ coletado_em: '2026-08-22'
 perfil_alvo: AI-native
 perfil_alvo_nota: |-
   Caso de CARGA DE INFERÊNCIA REAL. Declara 96 milhões de inferências clínicas por mês — é a única empresa da base com volume que torna custo e escalabilidade dores concretas e não hipotéticas. Modelos próprios, dado proprietário e substituição de trabalho terceirizado (broker/TPA), que é o wedge da Sequoia. Deve ser o prospect de maior prioridade da base; a recomendação esperada envolve NIM e TensorRT-LLM, não Inception isolado.
+gabarito:
+  # Ver o cabeçalho de scripts/avaliar_agentes.py para o que cada campo significa.
+  # Valor = decide · lista = aceitáveis (conta como AMBÍGUO) · null = não medido.
+  classe: AI-native
+  maturidade_stack: baixa
+  confianca: alta
+  elegivel: true
+  motivo_exclusao: null
+  dores_esperadas: [custo, escalabilidade]
+  dores_proibidas: [privacidade, observabilidade, dependencia_fornecedor]
+  dores_ambiguas: [latencia, governanca, avaliacao]
+  nota: |-
+    MATURIDADE BAIXA apesar de AI-native forte: os documentos falam em "modelos preditivos",
+    "algoritmos" e "tecnologia proprietária", mas não citam uma linha de infraestrutura — nada de
+    self-hosting, quantização, serving ou avaliação. O eixo 2 mede profundidade de INFRAESTRUTURA;
+    "usamos modelos preditivos" é uso de IA, que é o eixo 1. Quadrante esperado: sweet-spot.
+
+    CONFIANÇA ALTA: três tipos de documento (site, notícia, blog) e a notícia é de 04/2026,
+    dentro da janela de 24 meses da regra 3.
+
+    AS TRÊS DORES PROIBIDAS SÃO FALSOS POSITIVOS DO CASADOR DE SUBSTRING, e é por isso que
+    estão nomeadas em vez de omitidas:
+      · `observabilidade` dispara em "monitoramento contínuo" e "employee health dashboards" —
+        monitoramento de PACIENTE, não observabilidade de sistema de IA;
+      · `dependencia_fornecedor` dispara em "integração com parceiros da cadeia assistencial" —
+        o gatilho é "integração com", e aqui o complemento é um parceiro clínico, não uma API;
+      · `privacidade` não tem nenhum gatilho no texto (nem "lgpd", nem "dados sensíveis", nem
+        "prontuário"); se sair, saiu do nada.
+
+    AS AMBÍGUAS SÃO AMBÍGUAS DE VERDADE, e registrá-las assim é mais honesto que forçar um lado:
+    "atuando em tempo real" é equipe clínica, não latência de inferência, mas "analisá-los com
+    velocidade faz uma diferença enorme em saúde" chega perto; "aplica governança real" é
+    governança de saúde populacional; "Validação e próximos passos" é cabeçalho de seção.
 documentos:
 - tipo: site
   titulo: Sobre a Axenya — Uma Nova Categoria de Saúde Corporativa

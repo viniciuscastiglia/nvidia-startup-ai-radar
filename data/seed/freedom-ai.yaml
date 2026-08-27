@@ -1,0 +1,287 @@
+nome: Freedom AI
+site: https://freedom.ai/
+setor: automação corporativa
+estagio: null
+localizacao: null
+ano_fundacao: null
+tamanho_time: null
+descricao_curta: Multiagentes de IA sob medida que assumem tarefas repetitivas em vendas, finanças, RH
+  e operações de médias e grandes empresas.
+fonte_descoberta: curadoria da sessão 06 — caso de wrapper disfarçado de AI-native
+perfil_alvo: AI-enabled
+coletado_em: '2026-08-25'
+perfil_alvo_nota: |-
+  CASO MIRAGE PMF — o wrapper disfarçado de AI-native, e a fixture mais importante do conjunto.
+  A linguagem é de autopilot puro e vem da boca do fundador: "eu vendo mão de obra digital",
+  "força de trabalho", agentes que "operam 24/7" em vendas, finanças, RH e operações. A prova
+  oferecida é crescimento de receita — 900% ao ano, 3.650% ao mês —, que é exatamente o sinal
+  que a Emergence Capital chama de ilusão de PMF: "revenue growth powered by human labor rather
+  than AI leverage". O fundador descreve a própria empresa como "uma agência de agentes de
+  inteligência artificial", e sua experiência anterior é uma operação de recrutamento.
+
+  Ela alega "LLM própria" e "painel de auditoria", o que é sinal real de AI-native — mas nenhum
+  dos três documentos traz uma linha que sustente: nenhum benchmark, nenhuma arquitetura, nenhum
+  detalhe de treino ou de serving. É o contraste direto com a Maritaca AI, que alega o mesmo e
+  publica quantização, MoE e contas de GPU-hora.
+gabarito:
+  classe: [AI-native, AI-enabled]   # AMBÍGUO de propósito — ver a nota
+  maturidade_stack: baixa
+  confianca: [baixa, media]         # AMBÍGUO — ver a nota
+  elegivel: true
+  motivo_exclusao: null
+  dores_esperadas: [governanca]
+  dores_proibidas: [observabilidade, avaliacao]
+  dores_ambiguas: [custo, latencia, escalabilidade, privacidade, dependencia_fornecedor]
+  nota: |-
+    `classe` AMBÍGUA porque a base pública não decide, e fingir que decide seria o erro. Quem lê
+    "LLM própria, painel de auditoria e governança dos dados" tem base para AI-native; quem
+    exige evidência de profundidade técnica e não encontra nenhuma tem base para AI-enabled. As
+    duas leituras são defensáveis sobre ESTES documentos, então nenhuma vira acerto limpo. O que
+    seria erro é confiança ALTA em qualquer uma das duas.
+
+    `confianca` AMBÍGUA por um motivo que a regra 2 do Evidence Validator não enxerga: os três
+    documentos são de dois tipos diferentes e dois estão dentro da janela de 24 meses, então a
+    regra devolve `alta`. Mas os três derivam do MESMO anúncio de captação — duas matérias de
+    imprensa sobre o mesmo release e um BrandVoice, que é conteúdo pago pela própria empresa.
+    Dois tipos de documento não é corroboração independente quando as duas fontes reproduzem a
+    mesma assessoria. A régua registra isso como divergência conhecida em vez de escondê-la;
+    afiar a regra 2 para distinguir fonte independente de reprodução de release é trabalho
+    posterior, e esta fixture é a evidência de que ele é necessário.
+
+    `governanca` é a única dor esperada e ela é literal e no sentido certo: "painel de auditoria
+    e governança dos dados", "roda dentro do firewall do cliente", "compliance". É também a dor
+    que a NVIDIA endereça com NeMo Guardrails, o que torna esta a fixture onde uma recomendação
+    específica seria defensável.
+
+    ARMADILHA CONHECIDA, e ela é da mesma família do `"token"` de D-048: o casador de sinais
+    técnicos acha `'rag'` dentro da palavra "co(rag)em" — "quais tiveram coragem de instalar
+    seus primeiros agentes". Uma empresa ganha marcador de profundidade técnica por causa de
+    coragem. Substring sem fronteira de palavra, no Extractor desta vez.
+documentos:
+- tipo: noticia
+  titulo: 'Cresceu 900% em 1 ano: startup brasileira quer faturar R$ 500 milhões com agentes de IA'
+  url_fonte: https://exame.com/negocios/cresceu-900-em-1-ano-startup-brasileira-quer-faturar-r-500-milhoes-com-agentes-de-ia/
+  data_publicacao: '2026-01-29'
+  conteudo_texto: 'NEGÓCIOS EM EXPANSÃO
+
+    Cresceu 900% em 1 ano: startup brasileira quer faturar R$ 500 milhões com agentes de IA
+
+    Com clientes como Panvel e Vibra, a Freedom usa agentes próprios de IA. Agora, compra concorrente
+    Nalk e acelera consolidação no B2B
+
+    Lucas Affonso, CEO da Freedom: "Vendo mão de obra digital" (Divulgação/Divulgação)
+
+    29 de janeiro de 2026 às
+
+    .
+
+    Última atualização em
+
+    9 de fevereiro de 2026 às
+
+    .
+
+    Priorizar nos meus resultados Google
+
+    Acompanhe tudo sobre
+
+    A adoção de
+
+    nas empresas brasileiras acelerou, mas ainda esbarra em um problema básico: processos manuais, dados
+    espalhados e decisões lentas. É nesse gargalo que uma nova geração de empresas de
+
+    tenta se posicionar.
+
+    Uma delas é a
+
+    , companhia brasileira focada em agentes de inteligência artificial para médias e grandes empresas.
+
+    Ela acaba de anunciar uma captação de R$ 14,5 milhões em uma rodada liderada por Bertha Capital, Big
+    Rider, Bossa Invest e investidores-anjo.
+
+    O investimento marca uma virada estratégica na companhia, que entra em uma fase focada em escala,
+    consolidação e crescimento de longo prazo. Na última semana, a empresa fez a primeira aquisição ao
+    comprar a Nalk, plataforma de gestão de dados de marketing e vendas baseada em IA.
+
+    O movimento acontece após um ano de crescimento fora da curva. Em 2025, a Freedom avançou
+
+    no faturamento anual e 3.650% no faturamento mensal. Agora, a empresa aposta em aquisições como motor
+    para acelerar escala, ampliar o portfólio e ganhar musculatura no mercado B2B.
+
+    “Eu cresci numa empresa de recrutamento e agora estou montando uma agência de agentes de inteligência
+    artificial. Eu vendo mão de obra digital”, diz
+
+    , fundador e CEO da Freedom.
+
+    A estratégia é clara: crescer rápido, ganhar mercado e usar a própria tecnologia para operar com custos
+    mais baixos do que concorrentes tradicionais. O
+
+    plano declarado é chegar a R$ 500 milhões de faturamento em até cinco anos
+
+    .
+
+    A aquisição da Nalk e o salto de portfólio
+
+    Com a compra da Nalk, a Freedom dobra sua carteira de clientes, que já passa de 100 empresas, e incorpora
+    uma tecnologia focada em centralizar dados de marketing e vendas, hoje espalhados entre CRM, plataformas
+    de anúncios e planilhas.
+
+    A Nalk havia recebido investimentos do G4 Educação, grupo que registrou crescimento de 60% e faturamento
+    de R$ 500 milhões em 2025. A startup chegou perto de R$
+
+    1 milhão de
+
+    antes de a operação ser concluída. Com a transação, o fundador da Nalk, Yago Martins, passa a atuar
+    como
+
+    da Freedom.
+
+    “Quando começamos a conversar, vi uma grande oportunidade de pegar essa tecnologia e atualizar usando
+    agentes. Os dashboards estão sendo substituídos por agentes que entendem contexto e executam ações”,
+    afirma Affonso.
+
+    A carteira da Nalk é considerada complementar à da Freedom, que atua com agentes para áreas como financeiro,
+    vendas, RH e operações. A meta agora é escalar a base da Nalk em dez vezes ao longo do ano, dentro
+    da estrutura do grupo.
+
+    Da empresa da família à IA corporativa
+
+    A trajetória do fundador ajuda a explicar o apetite por crescimento. Aos 28 anos, Affonso começou
+    a trabalhar aos 14 na empresa de recrutamento da família, onde passou por áreas como RH, marketing
+    e operações. Mais tarde, empreendeu no setor de moda e fundou uma agência de publicidade durante a
+    pandemia.
+
+    Em 2022, assumiu como CEO da empresa da família e liderou uma fase agressiva de expansão. “Levei a
+    empresa de R$ 100 milhões para R$ 500 milhões de faturamento”, diz. No período, foram feitas oito
+    aquisições, com crescimento médio próximo de 100% ao ano.
+
+    Apesar do avanço, a decisão de sair veio da vontade de construir um negócio próprio. Em uma'
+- tipo: noticia
+  titulo: Freedom.AI capta R$ 14,5 milhões
+  url_fonte: https://www.baguete.com.br/noticias/freedom-ai-capta-r-145-milhoes
+  data_publicacao: '2026-02-13'
+  conteudo_texto: 'Freedom.AI capta R$ 14,5 milhões
+
+    Empresa liderada por Lucas Affonso encontrou um respaldo de peso em Jaime de Paula, fundador da Neoway.
+
+    13 de fevereiro de 2026 - 12:55
+
+    Tem algo errado neste post? Avise a redação!
+
+    Tamanho da fonte:
+
+    Lucas Affonso, fundador e CEO da Freedom. Foto: divulgação.
+
+    A Freedom.AI, startup brasileira especializada em agentes de inteligência artificial para grandes
+    companhias, captou R$ 14,5 milhões em uma rodada liderada por Bertha Capital, Big Rider, Bossa Invest
+    e investidores-anjo.
+
+    Criada entre setembro de 2024 e janeiro de 2025, a empresa desenvolve multiagentes sob medida, capazes
+    de assumir tarefas repetitivas, executar processos complexos e operar 24/7 em áreas críticas como
+    vendas, finanças, RH e operações.
+
+    Sua tecnologia roda dentro do firewall do cliente, com LLM própria, painel de auditoria e governança
+    dos dados. A promessa é integrar facilmente os agentes aos sistemas existentes, como CRMs, ERPs, plataformas
+    de suporte e financeiros.
+
+    O fundador da Freedom.AI é Lucas Affonso, que liderou a expansão da We Can BR, empresa da sua família,
+    de R$ 170 milhões a R$ 500 milhões em faturamento. Para criar a startup, Affonso encontrou apoio na
+    aceleradora Big Rider, liderada por Jaime de Paula, fundador da Neoway.
+
+    Diferente de uma gestora de investimentos tradicional focada em Bolsa de Valores, a Big Rider atua
+    no ecossistema de tecnologia, focando especialmente em
+
+    que utilizam IA e Big Data.
+
+    Jaime de Paula é uma das figuras mais conhecidas do setor tecnológico brasileiro. Ele foi o fundador
+    da Neoway, a maior empresa de Big Data Analytics da América Latina, que foi vendida para a B3 em 2021
+    por cerca de R$ 1,8 bilhão.
+
+    Atualmente, a Freedom.AI já opera com milhares de agentes de IA em produção, atendendo mais de 100
+    clientes. Entre eles, estão nomes como Panvel, Vibra, Cartão de Todos, Comerc Energia, Unifique e
+    Guepardo Investimentos.
+
+    Além disso, a startup tem uma parceria com a Grant Thornton, uma das maiores empresas globais de auditoria,
+    consultoria e tributos, para validação e implantação dos projetos.
+
+    Com o novo aporte, a Freedom.AI pretende focar em escala, consolidação e crescimento de longo prazo.
+    O plano é faturar R$ 500 milhões em até seis anos.
+
+    Para isso, a ideia é acelerar três frentes principais: expansão comercial no Brasil, aquisições estratégicas
+    e evolução da plataforma.
+
+    “O capital vem para acelerar decisões que já estavam no nosso roadmap: crescer mais rápido, consolidar
+    tecnologia e ampliar presença em grandes contas”, afirma Lucas Affonso, fundador e CEO da Freedom.AI.
+
+    A empresa já iniciou o movimento de M&A com a aquisição da Nalk, startup investida pelo G4 Educação,
+    e avalia novas oportunidades como forma de acelerar portfólio, tecnologia e base de clientes. Já a
+    internacionalização deve ficar para uma fase posterior.
+
+    “Primeiro, queremos provar escala no Brasil. Depois disso, a expansão acontece com muito mais eficiência”,
+    afirma Affonso.
+
+    A Bertha Capital foi fundada em 2017 e é uma gestora de fundos de investimento em capital de risco
+    especializada em conectar grandes companhias a startups, tendo investido em empresas como CashU e
+    Simple&Co.
+
+    Em vez de gerir um fundo para uma única companhia, ela frequentemente estrutura fundos multi-cotistas,
+    onde várias corporações de um mesmo setor (como agro ou indústria) investem juntas para diluir riscos
+    e aumentar o aprendizado.
+
+    Atualmente, a Bertha Capital gerencia mais de R$ 600 milhões distribuídos em cerca de 15 fundos. Por
+    trás deles, estão nomes como Multilaser, Viasoft, FIEAM e Microsoft.
+
+    Com operações em São Paulo e Manaus, a gestora refor'
+- tipo: release
+  titulo: Quando a IA Vira Infraestrutura
+  url_fonte: https://forbes.com.br/forbes-tech/2026/05/brandvoice-freedom-quando-a-ia-vira-infraestrutura/
+  data_publicacao: null
+  conteudo_texto: 'Quando a IA Vira Infraestrutura
+
+    Lucas Affonso, CEO & Founder da Freedom AI
+
+    O maior gargalo das empresas hoje não é mercado nem capital. É capacidade de execução. Lucas Affonso,
+    CEO e fundador da
+
+    , não chegou a essa conclusão lendo relatório de mercado. À frente de uma das maiores operações de
+    recrutamento do Brasil, ele acompanhou de dentro a contradição que toda empresa em crescimento conhece:
+    quanto mais o negócio avança, mais a operação resiste. O volume de decisões cresce em um ritmo que
+    nenhum time consegue acompanhar, e o que deveria ser escala vira acúmulo de dados represados, processos
+    travados, aprovações que se perdem no meio do caminho.
+
+    Jaime de Paula, PhD, chegou à mesma conclusão por outro caminho. Fundador da Neoway, vendida por R$
+    1,8 bilhão, e um dos nomes mais respeitados da tecnologia brasileira, ele dedicou a última década
+    a construir modelos proprietários de linguagem para ambientes corporativos de alta complexidade. Não
+    como experimento acadêmico, mas como infraestrutura real, capaz de operar onde os modelos genéricos
+    falham: dentro de sistemas críticos, sob regras de negócio específicas, com previsibilidade e controle.
+
+    A pergunta que unia os dois era a mesma: se a inteligência artificial já é capaz de raciocinar, por
+    que as empresas ainda consomem capacidade humana em tarefas que não exigem decisão estratégica? Por
+    que a tecnologia chegou à borda da autonomia e parou exatamente antes da execução? A resposta virou
+    a Freedom.ai.
+
+    Lucas Affonso, CEO & Founder da Freedom AI
+
+    A Salesforce tornou-se o sistema nervoso comercial das empresas. A AWS, a base da internet corporativa.
+    A Freedom.ai constrói a próxima camada: a plataforma que transforma agentes de IA na força de trabalho
+    autônoma das organizações. São sistemas conectados a ERPs, CRMs, bancos de dados e regras de negócio
+    que executam ciclos completos de trabalho de forma integrada. Quando agentes orquestradores coordenam
+    vendas, finanças, operações e compliance simultaneamente, a empresa deixa de funcionar como um conjunto
+    de softwares isolados e passa a operar como uma organização de execução verdadeiramente autônoma.
+
+    A união entre visão de execução e engenharia de longo prazo é o que transforma a Freedom de startup
+    em infraestrutura global para a era dos agentes. “Estamos presenciando a transição da IA como ferramenta
+    para a IA como infraestrutura”, avalia Marcelo Trad, Venture Capital e M&A Manager da Bossa Invest.
+    Para Rafael Moreira, da Bertha Capital, “quando a interoperabilidade é desenhada desde o início, você
+    deixa de vender produto e passa a construir infraestrutura”.
+
+    Construir a partir do Brasil é escolha estratégica. Empresas brasileiras operam sob alta complexidade
+    regulatória e múltiplos sistemas legados, portanto tecnologias que funcionam aqui já nascem resilientes.
+    Se suportam o Brasil, suportam o mundo.
+
+    No futuro próximo, a pergunta não será quais empresas usam IA. Perguntaremos quais tiveram coragem
+    de instalar seus primeiros agentes autônomos antes que se tornasse inevitável.
+
+    Lucas Affonso, CEO & Founder da Freedom AI
+
+    *BrandVoice é de responsabilidade exclusiva dos autores.'

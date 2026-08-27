@@ -1,0 +1,467 @@
+nome: Deal
+site: https://www.deal.com.br/
+setor: consultoria de tecnologia
+estagio: null
+localizacao: null
+ano_fundacao: null
+tamanho_time: 600
+descricao_curta: Consultoria de IA e serviços de tecnologia que aloca talentos e squads para clientes
+  corporativos, do diagnóstico à sustentação.
+fonte_descoberta: curadoria da sessão 06 — caso inelegível ao Inception
+perfil_alvo: AI-enabled
+coletado_em: '2026-08-25'
+perfil_alvo_nota: |-
+  CASO INELEGÍVEL AO INCEPTION, que contexto/03 §2 pede por escrito: "a base de startups deveria
+  conter ao menos um caso inelegível para exercitar isso". A empresa se descreve como
+  consultoria na primeira linha do próprio site — "A Deal é a consultoria de IA para empresas
+  brasileiras e latino-americanas, com mais de 600 especialistas" — e a página de carreiras diz
+  "consultoria e serviços de tecnologia com 21 anos de história". Os serviços são alocação de
+  talentos, "Squad as a Service" e desenvolvimento mobile e web sob demanda.
+
+  Não há juízo nenhum embutido no rótulo: classificar como consultoria uma empresa que se chama
+  de consultoria é ler o documento. O que a fixture mede é se o sistema RECUSA e diz por quê —
+  que é o Diferencial declarado do projeto e hoje não tem um caso real que o exercite.
+gabarito:
+  classe: AI-enabled
+  maturidade_stack: baixa
+  confianca: media
+  elegivel: false
+  motivo_exclusao: consultoria
+  dores_esperadas: []
+  dores_proibidas: [observabilidade, latencia, privacidade, avaliacao, dependencia_fornecedor]
+  dores_ambiguas: [custo, escalabilidade, governanca]
+  nota: |-
+    O CAMPO QUE MAIS IMPORTA AQUI É `motivo_exclusao`, não `elegivel`. Recusar pelo motivo errado
+    conta como erro nomeado na régua, e não como acerto — foi exatamente esse o defeito que D-048
+    pagou, onde uma startup de infraestrutura de IA era recusada por "cripto" ao falar em custo
+    por token. Excluir a Deal por qualquer rótulo que não seja `consultoria` é o mesmo defeito
+    com outra roupa.
+
+    `dores_esperadas: []` porque a empresa está fora do funil por elegibilidade, e porque o
+    material descreve o que ela faz PARA clientes, não a dor de infraestrutura dela.
+
+    NOTA DE PROCEDÊNCIA: "21 anos de história" na página de carreiras implica fundação por volta
+    de 2005, o que também a excluiria por idade. `ano_fundacao` fica `null` mesmo assim, seguindo
+    a disciplina das fixtures de 22/08 — só entra o que aparece literalmente, e "21 anos" não é
+    um ano. A consequência é boa para a medição: a exclusão testada aqui é a de consultoria,
+    isolada, e a de idade fica no teste unitário de `elegibilidade()`, também isolada. Se as duas
+    disparassem juntos nesta fixture, uma delas poderia quebrar sem que ninguém notasse.
+documentos:
+- tipo: site
+  titulo: Deal | Consultoria de IA para Empresas no Brasil — Líder em IA Generativa
+  url_fonte: https://www.deal.com.br/
+  data_publicacao: null
+  conteudo_texto: 'Ir para o conteúdo
+
+    Consultoria de IA:
+
+    da estratégia à execução
+
+    A Deal é a consultoria de IA para empresas reconhecida pelo
+
+    ISG Provider Lens™ 2025
+
+    como líder em IA Generativa no Brasil. Integramos inteligência artificial e expertise humana para
+    transformar desafios em resultados reais — acelerando entregas, reduzindo custos e desbloqueando novos
+    patamares de eficiência.
+
+    O que é a Deal e como funciona sua consultoria de IA para empresas
+
+    A Deal é uma consultoria de IA para empresas brasileiras e latino-americanas, com mais de 600 especialistas
+    atuando em mais de 120 cidades. Combinamos
+
+    inteligência artificial, dados e expertise humana
+
+    para gerar impacto real em organizações em diferentes estágios de maturidade digital — do diagnóstico
+    à implementação, com IA no centro de cada entrega. Reinventamos negócios, cocriamos o futuro.
+
+    Como nossa consultoria de IA para empresas gera resultados
+
+    A consultoria de IA para empresas da Deal atua em quatro frentes integradas:
+
+    cultura e inovação
+
+    dados e inteligência artificial
+
+    modernização de sistemas legados
+
+    . Em cada frente, conectamos estratégia, engenharia e IA para gerar valor mensurável — do diagnóstico
+    à sustentação, com governança e responsabilidade em cada etapa.
+
+    Consultoria em IA e Transformação Digital
+
+    : Desenvolvemos soluções robustas, escaláveis e alinhadas à sua estratégia de negócio.​
+
+    O que fazemos:
+
+    Desenvolvimento Mobile & Web
+
+    Consultoria de Arquitetura de Software​
+
+    Solution Discovery para validar, priorizar e estruturar produtos e soluções digitais​
+
+    Serviços de IA Generativa para Automação de Processos
+
+    : Aceleramos a transformação organizacional ao integrar cultura, agilidade e tecnologia.
+
+    O que entregamos:
+
+    Consultoria em Inovação
+
+    Transformação Cultural de IA
+
+    Culture & Tech Assessment
+
+    Inteligência Artificial aplicada a Dados e Analytics
+
+    Data & AI
+
+    : Nossa abordagem
+
+    coloca a inteligência artificial como motor da eficiência e da inovação, sempre com responsabilidade
+    e governança.​
+
+    Soluções:
+
+    Implementação de IA Generativa com euGenIA
+
+    Automação inteligente de processos
+
+    Soluções de IA para Otimização de Processos Corporativos
+
+    Legacy Modernization & Quality
+
+    : Modernizamos sistemas legados e garantimos a qualidade em todo ciclo de desenvolvimento, preparando
+    seu negócio para ser mais ágil, escalável e resiliente.​
+
+    O que fazemos:
+
+    Modernização de Sistemas Legados​
+
+    e Automação de Testes
+
+    Modelos Operacionais de Entrega (MOE)
+
+    Modelos Operacionais de Entrega
+
+    são as formas como estruturamos a atuação da
+
+    para cada cliente. Com opções flexíveis, adaptamos a entrega à realidade de cada negócio, unindo talentos,
+    governança técnica e
+
+    aplicada para gerar valor com eficiência e escala.
+
+    Alocação de talentos + gestão de pessoas, com seleção impulsionada por IA e desenvolvimento contínuo
+    de competências.​
+
+    Squad as a Service
+
+    Montamos e gerenciamos squads sob nossa governança, com co-responsabilidade pela entrega e performance.​
+
+    Ciclo completo de inovação — desde Product Discovery, Solution Design e Structuring até Delivery e
+    Growth.
+
+    FALE COM UM ESPECIALISTA
+
+    01.
+
+    -Benchmarks e tendências
+
+    -Objetivos do negócio
+
+    Desenho da solução
+
+    02.
+
+    -Objetivo da solução
+
+    -Jornada do usuário
+
+    03.
+
+    04.
+
+    05.
+
+    -Avaliações de performance
+
+    -Métricas de produto
+
+    -Análise de dados
+
+    01.
+
+    -Benchmarks e tendências
+
+    -Objetivos do negócio
+
+    Desenho da solução
+
+    02.
+
+    -Objetivo da solução
+
+    -Jornada do usuário
+
+    03.
+
+    04.
+
+    05.
+
+    -Avaliações de performance
+
+    -Métricas de produto
+
+    -Análise de dados
+
+    Por que a Deal é referência em consultoria de IA para empresas no Brasil
+
+    A Deal foi reconhecida como
+
+    líder em consultoria de IA para empresas no Brasil
+
+    ISG Provider Lens™ 2025
+
+    , n'
+- tipo: site
+  titulo: Deal Tech - Conheça nossos serviços
+  url_fonte: https://www.deal.com.br/servicos/
+  data_publicacao: null
+  conteudo_texto: 'Modelos Operacionais de Entrega (MOE)
+
+    Modelos Operacionais de Entrega
+
+    são as formas como estruturamos a atuação da
+
+    para cada cliente. Com opções flexíveis, adaptamos a entrega à realidade de cada negócio, unindo talentos,
+    governança técnica e
+
+    aplicada para gerar valor com eficiência e escala.
+
+    Alocação de talentos + gestão de pessoas, com seleção impulsionada por IA e desenvolvimento contínuo
+    de competências.​
+
+    Squad as a Service
+
+    Montamos e gerenciamos squads sob nossa governança, com co-responsabilidade pela entrega e performance.​
+
+    ​  Full Service
+
+    Ciclo completo de inovação — desde Product Discovery, Solution Design e Structuring até Delivery e
+    Growth.
+
+    , oferecemos soluções completas para acelerar a transformação digital — conectando estratégia, cultura,
+    engenharia, dados e inteligência artificial. Atuamos do diagnóstico ao desenvolvimento, da modernização
+    à sustentação, sempre com IA no centro e um olhar humano no processo.​
+
+    Desenvolvemos soluções robustas, escaláveis e alinhadas à sua estratégia de negócio.​
+
+    O que fazemos:
+
+    Desenvolvimento Mobile & Web
+
+    Consultoria de Arquitetura de Software​
+
+    Solution Discovery para validar, priorizar e estruturar produtos e soluções digitais​
+
+    Aceleramos a transformação organizacional ao integrar cultura, agilidade e tecnologia.​
+
+    O que entregamos:
+
+    Consultoria em Inovação​
+
+    Transformação Cultural Ágil
+
+    Culture & Tech Assessment​
+
+    Data & AI
+
+    coloca a inteligência artificial como motor da eficiência e da inovação, sempre com responsabilidade
+    e governança.​
+
+    Soluções:
+
+    Implementação de IA Generativa com euGenIA
+
+    Automação inteligente de processos
+
+    Legacy Modernization & Quality
+
+    Modernizamos sistemas legados e garantimos a qualidade em todo ciclo de desenvolvimento, preparando
+    seu negócio para ser mais ágil, escalável e resiliente.​
+
+    O que fazemos:
+
+    Modernização de Sistemas Legados​
+
+    e Automação de Testes
+
+    Por meio de um framework próprio, nossos multiespecialistas cocriam as melhores soluções possíveis
+    para os nossos clientes
+
+    Nosso cliente tem um desafio ou problema a ser resolvido
+
+    Nós entendemos o problema e propomos a melhor solução
+
+    Traçamos um plano detalhado, com estratégia e objetivos reais
+
+    Desenvolvemos soluções únicas, personalizadas e escaláveis
+
+    01.
+
+    -Benchmarks e tendências
+
+    -Objetivos do negócio
+
+    Desenho da solução
+
+    02.
+
+    -Objetivo da solução
+
+    -Jornada do usuário
+
+    03.
+
+    04.
+
+    05.
+
+    -Avaliações de performance
+
+    -Métricas de produto
+
+    -Análise de dados
+
+    01.
+
+    -Benchmarks e tendências
+
+    -Objetivos do negócio
+
+    Desenho da solução
+
+    02.
+
+    -Objetivo da solução
+
+    -Jornada do usuário
+
+    03.
+
+    04.
+
+    05.
+
+    -Avaliações de performance
+
+    -Métricas de produto
+
+    -Análise de dados
+
+    Quer acelerar sua entrega com soluções testadas e validadas?
+
+    Nossos serviços produtizados foram criados para gerar valor desde o primeiro sprint. Acesse diagnósticos,
+    descobertas, modernização, due diligence e muito mais com IA, metodologia e time técnico especializado.
+
+    Entre em contato
+
+    e inove com a
+
+    .
+
+    Conecte-se com nossos multiespecialistas para iniciarmos uma transformação.'
+- tipo: vaga
+  titulo: Deal Tech – Carreiras na Deal
+  url_fonte: https://www.deal.com.br/carreira/
+  data_publicacao: null
+  conteudo_texto: 'Ir para o conteúdo
+
+    Carreiras na Deal
+
+    Somos uma consultoria e serviços de tecnologia com 21 anos
+
+    de história e mais de 600 pessoas curiosas, criativas e ágeis, que não se contentam com o convencional
+    e o preestabelecido.
+
+    Aqui as verdadeiras protagonistas da nossa TECNOLOGIA são as nossas pessoas.
+
+    E todas podem propor, pensar, questionar, testar, aprofundar, criar e recriar.
+
+    ACESSE NOSSAS VAGAS
+
+    Criamos um ambiente de
+
+    real.
+
+    Cocrie o futuro
+
+    Todos podem contribuir com o nosso futuro e tem livre acesso às lideranças.
+
+    Qualquer Dealmaker, em qualquer lugar, está sempre pronto para te ajudar a chegar mais longe.
+
+    Entender para atender
+
+    Atuamos de forma consultiva e construtiva em cada cliente e entre todas as áreas da Deal.
+
+    Seja você mesmo
+
+    Vivemos em um ambiente seguro que nos permite ir além do esperado, dos códigos prontos e das fórmulas
+    fechadas.
+
+    Errar é parte do sucesso
+
+    Errar faz do aprendizado e nos aproxima do caminho certo.
+
+    As habilidades corporativas sustentam nossas relações e guiam nossa forma de ser e agir.
+
+    Ter uma atitude propositiva que saiba identificar, entender e relacionar os desafios de negócio com
+    as competências do grupo.​
+
+    Propiciar um ambiente de confiança onde as empresas, áreas e pessoas possam contribuir com suas competências
+    em direção ​a um objetivo.
+
+    Oferecer a cultura de aprendizado contínuo alinhado com a estratégia do grupo, estimulando e reconhecendo
+    o protagonismo de cada um.​
+
+    Como é trabalhar na Deal, pelas nossas pessoas
+
+    Entrei na Deal pelo F5 Refresh (programa de recolocação de pessoas 40+) e estou na área de pré-vendas,
+    aprendendo a cada dia com a equipe que, por sinal, é top demais. Espero seguir na Deal por muito tempo,
+    sempre aprendendo, contribuindo com o crescimento do negócio e retribuindo o carinho com o qual fui
+    recebido. Acho muito importante a preocupação que a empresa tem com as pessoas, pois faz com que nos
+    sintamos parte do todo. Agradeço pela oportunidade e por terem me escolhido em meio a tantas outras
+    pessoas!
+
+    Antonio Carlos da Silva
+
+    Analista de Pré Vendas Jr
+
+    Iniciei na Deal como Tech Recruiter Júnior e, no decorrer da minha trajetória, obtive crescimento
+    e desenvolvimento profissional por meio das mentorias internas e do apoio de gestores. Sou muito grata
+    por fazer parte dessa empresa.
+
+    Edna Aparecida Alves
+
+    Analista de recrutamento e seleção Sênior
+
+    Para mim, é motivador fazer parte do propósito da Deal e sinto que nós fazemos a diferença de verdade
+    por aqui. Ser um Dealmaker é sentir acolhido em todos os momentos e sou muito grato por trabalhar
+    aqui!
+
+    Fui convidado para participar do time de líderes de projetos da Deal e me senti acolhido desde o primeiro
+    contato até o presente momento. Quando entrei fui imerso em uma cultura totalmente alinhada com os
+    meus valores profissionais e pessoais, principalmente no que diz respeito ao cuidado com as pessoas
+    e a liberdade geográfica que me permite trabalhar de onde eu estiver. Agradeço a todos pelo acolhimento
+    e pela confiança. Vamos seguir firmes e forte nessa jornada de
+
+    Ao olhar para a Luísa da época do Challenge Júnior (programa de estágio da Deal) e para a Luísa de
+    hoje, vejo o quanto já cresci com a ajuda da Deal. Trabalhar aqui é uma experiência única e, olhando
+    para o futuro, consigo ver o quanto ainda posso crescer por aqui e isso me impulsiona todos os dias.
+    Agradeço a todas as pessoas que estão comigo nessa caminhada e desejo que possamos ir muito além!  🚀💚
+
+    Scrum Master Júnior
+
+    Para mim, trabalhar na Deal é desafiador, dinâmico e prazeroso. A Deal é uma empresa humana que, além
+    de dar todo suporte aos seus Dealmakers, oferece um ambiente seguro'

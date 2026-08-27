@@ -1,0 +1,271 @@
+nome: RD Station
+site: https://www.rdstation.com/
+setor: marketing e vendas
+estagio: null
+localizacao: null
+ano_fundacao: null
+tamanho_time: null
+descricao_curta: Plataforma de automação de marketing, CRM e atendimento que passou a oferecer funcionalidades
+  de IA sobre os produtos já existentes.
+fonte_descoberta: curadoria da sessão 06 — caso AI-enabled do eixo 1
+perfil_alvo: AI-enabled
+coletado_em: '2026-08-25'
+perfil_alvo_nota: |-
+  CASO AI-ENABLED CANÔNICO — o "agora com IA" sobre produto pré-existente que contexto/02 §4
+  lista como sinal típico. Cada produto da home vem carimbado com o selo "Com Inteligência
+  Artificial", o recurso principal se chama "Copiloto de IA", e a promessa é "aumentar a
+  produtividade do seu time". É copilot em estado puro: vende a ferramenta, o profissional
+  decide, e o preço é por plano/assento — os três marcadores da coluna esquerda da tabela da
+  Sequoia. Sem ela, o eixo 1 do classificador nunca vê um caso que deva recusar.
+gabarito:
+  classe: AI-enabled
+  maturidade_stack: baixa
+  confianca: media
+  elegivel: null                # NÃO MEDIDO — ver a nota
+  motivo_exclusao: null
+  dores_esperadas: []
+  dores_proibidas: [escalabilidade, observabilidade, avaliacao, privacidade, latencia]
+  dores_ambiguas: [custo, governanca, dependencia_fornecedor]
+  nota: |-
+    `dores_esperadas: []` É O PONTO DESTA FIXTURE, não uma omissão. O que o Extractor procura é
+    a dor DA STARTUP, que vira consulta à base NVIDIA. O material do RD Station descreve as
+    dores do CLIENTE dele ("escale os resultados", "pare de perder oportunidades") e nenhuma
+    dor própria de infraestrutura de IA. Um extrator que emitir qualquer dor aqui estará lendo
+    o marketing do produto como se fosse a operação da empresa — que é o erro exato que a
+    dívida nº 6 diagnosticou.
+
+    `elegivel: null` — a RD Station foi adquirida pela Totvs, que é de capital aberto, o que
+    provavelmente a torna inelegível. NENHUM dos três documentos coletados diz isso. Marcar
+    `false` seria premiar o sistema por saber algo que a base não contém; marcar `true` seria
+    afirmar elegibilidade que não se sustenta. "Não medido" é a única leitura honesta, e este
+    campo existe justamente para casos assim.
+
+    ARMADILHA CONHECIDA: o casador de substring acha `'resultado'` (sinal de AUTOPILOT) em
+    "acelerar resultados em marketing" e `'ferramenta'` (COPILOT) uma vez só. Como o desempate
+    de `extractor.node` é `len(ev_auto) >= len(ev_copi)`, o empate 1×1 resolve para AUTOPILOT —
+    e a empresa mais copilot da base é classificada como quem vende o trabalho. Está anotado
+    aqui de propósito: se a régua não acusar isso, ela não está medindo nada.
+documentos:
+- tipo: site
+  titulo: Inteligência Artificial em Marketing e Vendas | RD Station
+  url_fonte: https://www.rdstation.com/inteligencia-artificial/
+  data_publicacao: null
+  conteudo_texto: 'IA que entende seu negócio e transforma dados em crescimento
+
+    A IA da RD Station usa os dados da sua operação para automatizar tarefas, gerar insights e acelerar
+    resultados em marketing, vendas e atendimento.
+
+    Fale com vendas
+
+    Fale com o chat
+
+    IA integrada de verdade à sua operação
+
+    A IA da RD Station foi pensada para atuar dentro da rotina da sua empresa: conectada aos seus leads,
+    oportunidades, campanhas, e conversas.
+
+    Crie, otimize e personalize campanhas com mais agilidade, usando dados para atrair e converter melhor.
+
+    Fale com vendas
+
+    Priorize oportunidades, receba recomendações de próximas ações e ajude vendedores a focar nos leads
+    com maior potencial.
+
+    Fale com vendas
+
+    Automatize o atendimento com agentes de IA, priorize conversas de forma inteligente e conte com copilotos
+    para aumentar a produtividade do seu time.
+
+    Fale com vendas
+
+    Conheça o Copiloto de IA, da RD Station
+
+    Transforme dados da sua operação em insights e ações para vender, atender e crescer com mais inteligência.
+    O Copiloto de IA está disponível em todos os planos RD Station, para ajudar sua equipe a trabalhar
+    com mais inteligência desde o primeiro acesso.
+
+    Entender a performance da operação
+
+    Faça perguntas sobre campanhas, funil de vendas, atendimento e resultados para identificar gargalos
+    e oportunidades.
+
+    Transformar dados em insights práticos
+
+    Receba análises claras para entender o que está funcionando, o que precisa melhorar e onde agir primeiro.
+
+    Apoiar decisões em marketing, vendas e atendimento
+
+    Use a IA para orientar próximos passos, melhorar processos e aumentar a produtividade dos times.
+
+    Ganhar velocidade no dia a dia
+
+    Acesse informações importantes de forma simples, sem depender de análises manuais demoradas.
+
+    Marketing com mais performance
+
+    Use IA para criar conteúdos, otimizar campanhas e focar nos leads com maior potencial de conversão.
+
+    Gerar conteúdos com mais agilidade
+
+    Crie assuntos de e-mail, textos, CTAs, conteúdos para Landing Pages e postagens de redes sociais com
+    apoio da IA.
+
+    Enviar a mensagem certa, no melhor momento e canal
+
+    Use recursos como Envio Inteligente e Mensagem Inteligente para definir o melhor horário e o melhor
+    canal de comunicação para cada lead.
+
+    Priorizar leads com maior chance de compra
+
+    Com a Lista Inteligente de Leads, o time consegue identificar contatos com maior potencial de conversão
+    e direcionar campanhas mais eficientes.
+
+    Conheça o Copiloto de IA, da RD Station
+
+    Transforme dados da sua operação em insights e ações para vender, atender e crescer com mais inteligência.
+    O Copiloto de IA está disponível em todos os planos RD Station, para ajudar sua equipe a trabalhar
+    com mais inteligência desde o primeiro acesso.
+
+    Entender a performance da operação
+
+    Faça perguntas sobre campanhas, funil de vendas, atendimento e resultados para identificar gargalos
+    e oportunidades.
+
+    Transformar dados em insights práticos
+
+    Receba análises claras para entender o que está funcionando, o que precisa melhorar e onde agir primeiro.
+
+    Apoiar decisões em marketing, vendas e atendimento
+
+    Use a IA para orientar próximos passos, melhorar processos e aumentar a produtividade dos times.
+
+    Ganhar velocidade no dia a dia
+
+    Acesse informações importantes de forma simples, sem depender de análises manuais demoradas.
+
+    Marketing com mais performance
+
+    Use IA para criar conteúdos, otimizar campanhas e focar nos leads com maior potencial de conversão.
+
+    Gerar conteúdos com mais agilidade
+
+    Crie assuntos de e-mail, textos, CTAs, conteúdos para Landing Pages e postagens de redes sociais com
+    apoio da IA.
+
+    Enviar a mensagem certa, no melhor momento e canal
+
+    Use recursos como Envio Inteligente e Mensagem Int'
+- tipo: site
+  titulo: Planos e Preços | RD Station Marketing
+  url_fonte: https://www.rdstation.com/precos/
+  data_publicacao: null
+  conteudo_texto: "Automação de Marketing que cabe no bolso\nQuanto custa atrair, relacionar e converter\
+    \ com praticidade?\nEstou dando os primeiros passos no marketing digital e preciso capturar leads\
+    \ e enviar emails em massa.\nA partir de\n/mês por 3 meses\nDesconto válido por 3 meses, \Lapós o\
+    \ período o valor volta para\npara novas contas\nFale com Vendas\nOU TESTE GRÁTIS\nCopiloto de IA\n\
+    Atraia contatos para a sua base\nEngaje e prepare leads para a venda\nCentralize sua comunicação\n\
+    Suporte por e-mail e WhatsApp\nAtendimento por chat nos primeiros 30 dias., depois atendimento por\
+    \ e-mail e/ou WhatsApp.\nSem contrato de fidelidade\nMais sobre o plano Light\nJá faço ações de marketing,\
+    \ mas preciso converter mais leads e fazer análises básicas de resultados.\nA partir de\nFale com\
+    \ Vendas\nOU TESTE GRÁTIS\nCopiloto de IA\nExplore canais de aquisição\nMelhore a performance do seu\
+    \ marketing\nPersonalize sua comunicação\nSuporte por e-mail e Chat\nEscolha como quer ser atendimento:\
+    \ chat, e-mail e/ou WhatsApp\nSem contrato de fidelidade\nMais sobre o plano Basic\nMais escolhido:\
+    \ completo com IA\nTenho uma estratégia de marketing rodando e preciso usar IA, dados e automação\
+    \ para qualificar leads e melhorar resultados.\nA partir de\nFale com vendas\nCopiloto de IA\nIntegre\
+    \ sua operação com qualquer IA do mercado (MCP)\nCrie automações para qualificar e nutrir leads\n\
+    Integre ações de marketing e vendas\nAtendimento por chat, e-mail e WhatsApp, além de apoio estratégico\
+    \ de especialistas.\nIniciante ou avançado, feito para quem quer ajuda especializada para construir\
+    \ e analisar uma estratégia.\nA partir de\nFale com vendas\nCopiloto de IA\nApoio para construir uma\
+    \ estratégia personalizada\nAcompanhamento durante toda a jornada\nRecursos avançados de IA para gerar\
+    \ mais oportunidades\nSuporte mais próximo\nAtendimento com especialista técnico e estratégico disponível\
+    \ por videochamada, com o apoio de um gerente de Sucesso do Cliente\nAtendimento por chat, e-mail\
+    \ e WhatsApp com prioridade nas solicitações.\nMais sobre o plano Advanced\nPlanos cobrados em real,\
+    \ sem taxas escondidas\nA implementação personalizada é obrigatória nos planos Pro (R$1.499) e Advanced\
+    \ (R$1.999), onde apoiamos o planejamento e a viabilização da sua estratégia, alinhada aos objetivos\
+    \ da sua empresa.\nMais detalhes dos planos e serviços\nGaranta a continuidade da sua operação com\
+    \ atendimento técnico prioritário via WhatsApp, disponível 24/7. Conte com suporte consultivo de analistas\
+    \ sêniores e foco total na investigação de causa raiz de problemas para operações em escala.\nMais\
+    \ detalhes do Suporte Prime\nOferta de desconto:\nOs descontos aplicados nos planos Light e Basic\
+    \ acontecem nos três primeiros meses para novas contas. Depois desse período, o desconto deixa de\
+    \ ser aplicado e a cobrança volta ao valor original.\nTermos de cancelamento:\nVocê pode cancelar\
+    \ os planos Light e Basic a qualquer momento, sem multa. Nos planos Pro e Advanced, o período mínimo\
+    \ de contrato é de 12 meses, podendo ser prorrogado. Caso precise cancelar antes de 12 meses, a multa\
+    \ de rescisão assinada em contrato será cobrada.\nValor da implementação personalizada:\nO serviço\
+    \ de implementação personalizada é obrigatório para os planos Pro (R$ 1.499) e Advanced (R$1.999).\
+    \ Após a contratação, um de nossos especialistas apoia você no planejamento e viabilização da sua\
+    \ estratégia de Marketing Digital — sempre seguindo os objetivos da sua empresa.\nEnvio de emails\
+    \ ilimitados para os planos ativos:\nTodos os planos ativos do RD Station Marketing contam com disparo\
+    \ ilimitado de Emails para bases de até 250.000 contatos — com duas exceções: quando as políticas\
+    \ anti-spam não são cumpridas"
+- tipo: blog
+  titulo: Maior Portal sobre Marketing e Vendas | RD Station
+  url_fonte: https://www.rdstation.com/blog/
+  data_publicacao: null
+  conteudo_texto: 'Descubra como usar WhatsApp para conectar, atender e reter clientes, com a ajuda de
+    Inteligência Artificial, sem perder proximidade e personalização.
+
+    Eventos e materiais gratuitos
+
+    Otimize sua estratégia com
+
+    Atraia potenciais clientes com
+
+    Como performar melhor em
+
+    Demonstrações de Marketing e Vendas na prática
+
+    Conheça as ferramentas RD Station e receba recomendações sob medida para saber quando utilizar Email
+    Marketing, Anúncios, Landing Pages, SEO, WhatsApp, Automação de Marketing, Lead Scoring, Análise de
+    Marketing e muito mais
+
+    Assista às demonstrações
+
+    CRM e Vendas:
+
+    pare de perder oportunidades e escale os resultados
+
+    Os processos de Vendas pedem automação para que uma empresa venda mais, gerencie a produtividade de
+    todo o time e possa fazer ofertas sem sair do WhatsApp.
+
+    E você, precisa mostrar mais resultados?
+
+    Então, confira nossa trilha de conteúdos para:
+
+    Fazer valer cada oportunidade de vendas
+
+    Otimizar técnicas de prospecção
+
+    Vender (muito!) mais
+
+    Vem pra trilha de vendas
+
+    Freelancers e Agências
+
+    Amplie o conhecimento em marketing e vendas para acelerar o seu negócio!
+
+    Aqui você vai começar com o pé direito a prestar serviços na área de marketing digital, seja criando
+    sua agência ou começando como freela! Confira nossas trilhas de conteúdos para:
+
+    Aprimorar seu conhecimento
+
+    Conquistar novos clientes
+
+    Crescer (muito!) mais
+
+    Criador de agentes de IA: o que a RD Station anunciou no Mundo RD 2026
+
+    Como implementar o Marketing Contínuo na prática?
+
+    Como vender mais no e-commerce: estratégias para acelerar suas vendas digitais
+
+    Automação de Marketing
+
+    Automação de Marketing: o que é, benefícios, ferramentas e como fazer
+
+    O que são vendas conversacionais: saiba implementar a estratégia no dia a dia
+
+    5 principais benefícios do Telegram para sua empresa
+
+    O que é Inbound Marketing: melhores estratégias e como adotar na sua empresa
+
+    Como fazer Automação de WhatsApp: confira dicas e opções de ferramentas'

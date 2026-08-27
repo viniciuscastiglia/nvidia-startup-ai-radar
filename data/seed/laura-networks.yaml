@@ -22,6 +22,37 @@ coletado_em: '2026-08-22'
 perfil_alvo: AI-native
 perfil_alvo_nota: |-
   Caso de EVIDÊNCIA DATADA. Os sinais de negócio são fortes (vende desfecho clínico, mortalidade -25%, dado hospitalar proprietário), mas o site institucional fala em 'computação cognitiva' sem citar um único modelo, framework ou métrica técnica, e a notícia mais rica é de 2021. Exercita a regra 3 do Evidence Validator: documento antigo vale menos. O esperado é AI-native com confiança BAIXA e maturidade de stack indeterminada — não AI-native com confiança alta.
+gabarito:
+  classe: AI-native
+  maturidade_stack: null        # NÃO MEDIDO — ver a nota
+  confianca: [baixa, media]     # AMBÍGUO de propósito — ver a nota
+  elegivel: true
+  motivo_exclusao: null
+  dores_esperadas: [escalabilidade]
+  dores_proibidas: [governanca, observabilidade, dependencia_fornecedor]
+  dores_ambiguas: [custo, latencia, privacidade, avaliacao]
+  nota: |-
+    A FIXTURE QUE EXERCITA AS DUAS CATEGORIAS QUE NÃO SÃO "ACERTO" NEM "ERRO".
+
+    `maturidade_stack: null` — "não medido", e é a leitura correta, não uma desistência. O site
+    diz "computação cognitiva" e não cita um único modelo, framework ou métrica de
+    infraestrutura. Pela regra 4 de contexto/02 §6, ausência de sinal técnico NÃO é prova de
+    stack imatura: é ausência de informação. Um gabarito que escrevesse `baixa` aqui estaria
+    premiando o sistema por adivinhar. Fica fora do denominador e aparece na coluna própria.
+
+    `confianca: [baixa, media]` — a divergência é real e a régua existe para torná-la visível.
+    A curadoria de 22/08 escreveu "confiança BAIXA" olhando para a notícia mais rica ser de 2021
+    e o site não ter métrica técnica. A regra 3 como está IMPLEMENTADA devolve `media`: dois
+    tipos de documento (regra 2 atendida) e nenhum dentro da janela de 24 meses (regra 3
+    rebaixa um degrau, não dois). As duas leituras são defensáveis, então nenhuma vira "acerto":
+    bater qualquer uma conta como ambíguo. Se a decisão for afiar a regra 3 depois, este campo
+    vira valor único e a mudança fica registrada.
+
+    DORES: só `escalabilidade` tem gatilho literal e sentido certo ("10,7 milhões de
+    atendimentos", "expansão nacional e internacional"). `observabilidade` dispara em "com a
+    ajuda das métricas da Laura" — métrica de desfecho clínico, não do sistema. `governanca` e
+    `dependencia_fornecedor` não têm gatilho nenhum no texto. As quatro ambíguas são dores que a
+    empresa plausivelmente tem e que os documentos não expressam como dor dela.
 documentos:
 - tipo: site
   titulo: Laura Networks — Empoderar o talento é a nossa vocação

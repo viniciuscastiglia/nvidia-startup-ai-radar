@@ -1,0 +1,354 @@
+nome: SunnyHUB
+site: https://www.sunnyhub.com.br/
+setor: energia
+estagio: null
+localizacao: null
+ano_fundacao: 2018
+tamanho_time: null
+descricao_curta: 'Cleantech de energia solar e baterias em modelo de assinatura: instala o sistema fotovoltaico
+  no imóvel do cliente por mensalidade fixa.'
+fonte_descoberta: curadoria da sessão 06 — caso non-AI do eixo 1
+perfil_alvo: non-AI
+coletado_em: '2026-08-25'
+perfil_alvo_nota: |-
+  CASO non-AI, e o eixo 1 não tinha nenhum. Cleantech que instala painel solar e bateria por
+  mensalidade fixa: o valor entregue é equipamento, instalação, manutenção e um desconto na
+  conta de luz. Não há IA no caminho crítico da entrega — os três documentos não contêm um
+  único termo do vocabulário técnico de contexto/02 §5, nem de autopilot, nem de copilot, nem
+  de dado proprietário. É a fixture que exercita a regra 1 de contexto/03 §4 ponta a ponta:
+  non-AI está FORA DO FUNIL e não deve receber recomendação nenhuma. Hoje essa regra só é
+  testada em unidade sobre `derivar_quadrante`; nunca sobre uma empresa de verdade.
+gabarito:
+  classe: non-AI
+  maturidade_stack: baixa
+  confianca: media
+  elegivel: true
+  motivo_exclusao: null
+  dores_esperadas: []
+  dores_proibidas: [custo, latencia, escalabilidade, governanca, privacidade, avaliacao,
+                    observabilidade, dependencia_fornecedor]
+  nota: |-
+    AS OITO DORES SÃO PROIBIDAS, e isso é afirmação forte de propósito. Uma dor observada vira
+    consulta à base de conhecimento NVIDIA e, adiante, recomendação de tecnologia. Emitir
+    QUALQUER dor aqui significa que o sistema achou carga de IA numa empresa que instala painel
+    fotovoltaico — e o briefing vai propor NIM ou TensorRT-LLM para quem limpa placa solar. É o
+    falso positivo mais caro que este projeto pode cometer numa demonstração.
+
+    O casador de substring emite pelo menos duas hoje: `custo` por "economia" (economia na conta
+    de luz) e `observabilidade` por "monitoramento" (monitoramento do equipamento, incluso na
+    assinatura). Nenhuma das duas é dor de infraestrutura de IA; as duas são features do produto.
+
+    `elegivel: true` com `ano_fundacao: 2018` — o único caso da base com ano de fundação que
+    aparece LITERALMENTE no documento ("Cleantech brasileira · desde 2018", na home). Oito anos,
+    dentro do limite de dez. Elegível ao Inception e mesmo assim fora do funil por ser non-AI:
+    são dois filtros independentes, e esta fixture é a que prova que eles não se confundem.
+documentos:
+- tipo: site
+  titulo: Energia solar por assinatura | SunnyHUB
+  url_fonte: https://www.sunnyhub.com.br/
+  data_publicacao: null
+  conteudo_texto: 'Cleantech brasileira · desde 2018
+
+    Energia solar por assinatura.
+
+    Ninguém faz o que
+
+    a gente faz
+
+    .
+
+    Energia solar e baterias contra apagão no seu imóvel — com tudo incluso, em modelo de assinatura.
+
+    Conheça as assinaturas
+
+    Peça sua proposta personalizada
+
+    Descentralização · Descarbonização · Digitalização
+
+    De uma usina
+
+    .
+
+    Somos a alternativa para uma melhor infraestrutura de energia limpa no Brasil. Mas, mais do que isso,
+    existimos para transformar a relação das pessoas com o setor de energia, tornando o consumidor o protagonista
+    dessa história.
+
+    cleantech pioneira em assinatura
+
+    satisfação dos clientes
+
+    Conheça alguns de
+
+    parceiros.
+
+    Em 3 passos
+
+    Do primeiro contato à instalação, a SunnyHUB conduz cada etapa. Você acompanha de perto, sem burocracia
+    no seu colo.
+
+    A partir do seu consumo médio anterior ou projetado, fazemos uma proposta de sistema para atender
+    sua demanda energética.
+
+    Nossos técnicos garantem que esteja tudo certo e fazem o processo burocrático com a concessionária
+    de energia.
+
+    Enviamos e instalamos os equipamentos no seu imóvel, e seguimos ao seu lado para a ativação e para
+    o pós-venda.
+
+    Prefere fazer as contas primeiro?
+
+    Use nossas calculadoras gratuitas →
+
+    Mudamos o jogo
+
+    da energia para você
+
+    Nas assinaturas:
+
+    Equipamento sem compra ou financiamento
+
+    Economia anual de até 30%
+
+    Bloqueio da inflação energética
+
+    Manutenção, seguro e suporte
+
+    Na Rede SunnyHUB:
+
+    Leve as assinaturas como benefício para a sua empresa
+
+    Energia limpa & Responsabilidade social
+
+    Solução de marketing, RH e ESG
+
+    Seja empresa parceira
+
+    Em programas exclusivos:
+
+    O cliente ou colaborador da SunnyHUB aproveita promoções únicas e participa de programas exclusivos
+    para ter ainda mais dinheiro no bolso
+
+    Indique e ganhe
+
+    Nossas ofertas redefinem a relação entre as pessoas e a produção de energia. Com atenção a cada detalhe
+    e ao futuro do setor.
+
+    Energia solar por assinatura.
+
+    Energia solar + Bateria contra apagão por assinatura.
+
+    Proteção contra apagão para condomínios por assinatura.
+
+    O que torna
+
+    nosso modelo único?
+
+    Energia como serviço
+
+    Energia direto do seu telhado, sem bandeira vermelha, nem juros de financiamento. Sem surpresas.
+
+    Você gera e consome energia limpa todos os dias, sem precisar mudar sua rotina.
+
+    Suporte técnico especializado em energia solar residencial.
+
+    Mensalidade fixa. Limpeza, suporte, seguro e manutenção inclusos na assinatura.
+
+    Sem investimento inicial em kit de energia solar.
+
+    “A startup gaúcha SunnyHUB acelera expansão com tecnologia contra apagões e projeta 50 mil clientes,
+    impulsionada por acordos estratégicos firmados com empresas chinesas para a produção de painéis e
+    baterias de lítio com marca própria.”
+
+    Ler a matéria no O Sul →
+
+    “O futuro da geração distribuída será ancorado nos sistemas híbridos, com painéis fotovoltaicos e
+    baterias — tecnologia que está ingressando com força no mercado para tratar “várias dores” dos consumidores
+    e resolver o problema do risco de falta de energia.”
+
+    Ler a matéria no Jornal do Comércio →
+
+    “Sistema integra painéis solares com baterias de lítio, uma tecnologia robusta que oferece autonomia
+    por horas ou até dias, garantindo segurança e economia na conta de luz, mesmo em cenários de apagões
+    prolongados.”
+
+    “A startup gaúcha apresenta uma solução de resiliência baseada em geração solar e armazenamento avançado
+    em baterias, transformando o consumidor em um produtor independente com a própria energia.”
+
+    Também na imprensa:
+
+    Click Petróleo e Gás
+
+    .
+
+    1.
+
+    Quem é a SunnyHUB?
+
+    Somos uma cleantech pioneira e líder de mercado no modelo de energia por assinatura no Brasil, com
+    sistemas já instalados em 7 estados e no Distrito Federal. Fundada em 2018 por um'
+- tipo: site
+  titulo: Assinaturas de energia solar | SunnyHUB
+  url_fonte: https://www.sunnyhub.com.br/assinaturas/
+  data_publicacao: null
+  conteudo_texto: 'Escolha a assinatura de energia que mais combina com o seu perfil.
+
+    Sem investimento inicial em kit de energia solar
+
+    Instalação e manutenção completa do sistema fotovoltaico
+
+    Limpeza dos painéis solares para evitar perda de geração
+
+    Sem preocupação com riscos aos equipamentos
+
+    Suporte técnico especializado em energia solar residencial
+
+    Geração e consumo de energia limpa e renovável
+
+    A partir do seu consumo médio anterior ou projetado, fazemos uma proposta de sistema para atender
+    sua demanda energética.
+
+    Nossos técnicos garantem que esteja tudo certo e fazem o processo burocrático com a concessionária
+    de energia.
+
+    Enviamos e instalamos os equipamentos no seu imóvel, e seguimos ao seu lado para a ativação e para
+    o pós-venda.
+
+    O modelo de assinatura da SunnyHUB substitui a compra de equipamentos de geração e armazenamento de
+    energia por uma mensalidade fixa. Ou seja, você não precisa investir um alto valor ou fazer financiamento
+    para ter os benefícios da energia solar e das baterias contra apagão.
+
+    Energia solar por assinatura, sem investimento inicial. A SunnyHUB instala painéis solares no seu
+    telhado e você passa a gerar sua própria energia limpa, pagando uma mensalidade fixa, que faz você
+    economizar diretamente até 30% ao ano.
+
+    Limpeza e suporte
+
+    Energia solar com bateria para proteção contra apagões. Além dos painéis solares, o SunnyBOX inclui
+    bateria de lítio que armazena energia e mantém seu imóvel com luz mesmo quando a rede elétrica falha.
+
+    Proteção contra inflação
+
+    Proteção contra apagões
+
+    Serviço exclusivo para portarias de condomínios. Sistema de energia solar com baterias para cargas
+    críticas do condomínio, que garante funcionamento de portões, câmeras e acessos mesmo durante quedas
+    de energia.
+
+    Proteção contra apagões
+
+    Não sabe qual assinatura é a sua? Fale com um especialista.
+
+    Prefere fazer as contas primeiro?
+
+    Use nossas calculadoras gratuitas →
+
+    1.
+
+    O que são as assinaturas da SunnyHUB?
+
+    As assinaturas da SunnyHUB são ofertas que seguem o modelo de energia como serviço (Energy as a Service
+    – EaaS), no qual o cliente passa a se beneficiar da produção no local de energia limpa, sem comprar
+    equipamentos. A SunnyHUB projeta, instala e opera o sistema, enquanto o cliente paga uma mensalidade
+    previsível pelo uso da energia. Esse formato permite acesso à energia solar e armazenamento de energia
+    para público residencial ou para pequenos negócios, com economia na conta de luz, redução de exposição
+    a reajustes tarifários e sem preocupações com manutenção, limpeza ou substituição de equipamentos.
+
+    2.
+
+    As assinaturas da SunnyHUB exigem instalação?
+
+    Sim. A SunnyHUB instala os equipamentos no próprio imóvel do cliente, garantindo geração local de
+    energia solar e a possibilidade de armazenar essa energia com baterias. Toda a instalação é feita
+    por equipes especializadas, seguindo normas técnicas e regulatórias. O cliente passa a produzir a
+    própria energia, reduzindo a dependência da rede elétrica e ganhando mais controle e previsibilidade
+    no consumo e custos.
+
+    3.
+
+    Qual a diferença entre assinatura de energia e compra de equipamentos?
+
+    A diferença vai muito além de quem "é dono" do sistema. Na compra, o cliente adquire todos os ativos
+    — painéis, inversores, estrutura e, se quiser, baterias — o que exige investimento inicial elevado
+    e coloca sobre ele toda a responsabilidade: manutenção, limpeza, trocas de equipamentos e o risco
+    financeiro em falhas ou eventos climáticos. Na assinatura da SunnyHUB, o cliente usa a tecnologia
+    sem precisar comprá-la: a SunnyHUB dimensiona, instala e cuida de toda a operação (monitoramento,
+    manutenção preventiva e corretiva, substitui'
+- tipo: blog
+  titulo: 10 motivos para contratar energia solar por assinatura com a SunnyHUB
+  url_fonte: https://www.sunnyhub.com.br/10-motivos-para-contratar-energia-solar-por-assinatura-com-a-sunnyhub/
+  data_publicacao: null
+  conteudo_texto: 'Sem tempo? Veja os pontos principais antes de ler tudo.
+
+    A SunnyHUB instala o sistema fotovoltaico sem investimento inicial: equipamentos, instalação e manutenção
+    por conta dela.
+
+    A mensalidade fixa livra você das bandeiras tarifárias e dá previsibilidade ao orçamento.
+
+    Seguro contra danos, monitoramento e troca de equipamentos entram inclusos, sem custo além da assinatura.
+
+    A partir do terceiro ano você pode comprar o sistema com condições facilitadas.
+
+    Como funciona a energia solar por assinatura?
+
+    Quem é a SunnyHUB?
+
+    10 motivos para apostar na SunnyHUB para contratar sua energia solar por assinatura:
+
+    Atualmente o consumo de energia elétrica no Brasil é um dos maiores do mundo. Esses custos foram acompanhados
+    por altos custos de uso de energia elétrica com cada vez mais altas, aumento do aumento dos impactos.
+
+    O Brasil é um dos líderes mundiais em energia sustentável, sendo o sexto país onde as fontes de energia
+    solar e eólica mais prosperam. A tendência é que, em um prazo, é que os recursos hidrelétricos podem
+    ser usados ​​como fonte de energia dos orientadores - a energia solar como uma das tendências mais
+    fortes.
+
+    Quer se antecipar às novas tendências, economizar e investir em uma fonte de energia sustentável?
+    Então mergulhe com a SunnyHUB neste artigo e descubra 10 motivos para apostar na energia solar por
+    assinatura.
+
+    Como funciona a energia solar por assinatura?
+
+    A principal barreira que afasta o consumidor é a necessidade de alto investimento em equipamentos
+    e instalação para o seu funcionamento.
+
+    Na prática, o consumidor paga uma forma de suprir uma oferta de um projeto de personalização de consumo
+    cliente. O investimento em equipamentos, instalação, manutenção e monitoramento é por conta da empresa
+    que fornece energia solar por assinatura.
+
+    Dessa forma, o uso de energia solar é mais limpo e sustentável e muito barato, vem ser mais acessível
+    no Brasil de energia solar acessível como uma modalidade de contratação no país SunnyHUB nesta modalidade
+    de contratação no país.
+
+    Quem é a SunnyHUB?
+
+    No Brasil, a SunnyHUB é uma startup gaúcha, pioneira no serviço de energia solar por assinatura, com
+    uma metodologia que reduz até 30% dos custos na sua conta de luz.
+
+    Com o serviço de assinatura solar da SunnyHUB não há sustos, - sua conta de luz não depende da probabilidade
+    das bandeiras tarifárias e suas variações. O investimento é todo da SunnyHUB, e a economia aproveitada
+    pelos seus clientes.
+
+    A filosofia, sem o mesmo projeto, desde um modelo de projeto de negócios extras, até o atendimento
+    do mesmo projeto, desde o momento de construção da instalação.
+
+    10 motivos para apostar na SunnyHUB para contratar sua energia solar por assinatura:
+
+    Para ajudar você a avaliar com mais clareza dos benefícios da contratação de energia solar, como 10
+    principais benefícios que você terá ao contratar os serviços. Confira!
+
+    1. Custos Fixos e Previsibilidade
+
+    Zero surpresas: ao contratar a sua energia solar por assinatura você não fica refém das bandeiras
+    tarifárias. A previsibilidade do valor mensal vai ajudar você no seu planejamento.
+
+    2. Economia na conta de luz
+
+    Ao usar energia solar, você passa a produzir sua própria energia elétrica, em vez de comprá-la de
+    uma concessionária. Seu único custo será a mensalidade de sua assinatura, e não terá mais oscilações
+    de acordo com as onerosas bandeiras tarifárias. É  possível alcançar uma economia de pelo menos 2%
+    com a contratação por assinatura, de acordo com o seu consumo energético.
+
+    3. Sem custo de equipamentos e de instalação
+
+    Nós fornecemos o monitoramento do sistema fotovoltaico sem custos adicionais durante o período em
+    que'

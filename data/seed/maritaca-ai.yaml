@@ -1,0 +1,304 @@
+nome: Maritaca AI
+site: https://www.maritaca.ai/
+setor: infraestrutura de IA
+estagio: null
+localizacao: null
+ano_fundacao: 2022
+tamanho_time: null
+descricao_curta: Desenvolve a família Sabiá de modelos de linguagem especializados em português e em contextos
+  brasileiros, servidos via API própria.
+fonte_descoberta: curadoria da sessão 06 — caso AI-native com stack MADURA
+perfil_alvo: AI-native
+coletado_em: '2026-08-25'
+perfil_alvo_nota: |-
+  CASO AI-NATIVE COM STACK MADURA — o quadrante `ja-otimizada`, que até hoje existia só no papel:
+  nenhuma das três startups da base o produzia, e portanto metade da matriz de dois eixos de
+  contexto/02 §4 nunca tinha sido exercitada por uma empresa real.
+
+  O post de engenharia é o documento mais denso da base inteira: quantização QAT para 4 e 8 bits
+  no serving, precisão mista por componente do bloco transformer, MoE com desbalanceamento de
+  experts, separação de prefill e decode em grupos de GPU distintos, MFU de 40% em B200, e conta
+  de GPU-hora com custo em neocloud. Some-se a disciplina declarada de avaliação — "não fazemos
+  mudanças no modelo se não conseguimos medir a capacidade" — e o que se tem é o oposto do
+  wrapper: uma empresa que desce à camada 4 do bolo de cinco camadas da NVIDIA.
+
+  É a fixture que dá o contraste do vídeo: DOIS AI-native, prioridades opostas. A Doutor-AI é
+  sweet-spot e a Maritaca é `ja-otimizada` — provavelmente já é membro do Inception ou já usa
+  NVIDIA, e a prioridade da recomendação cai por isso, não apesar disso.
+gabarito:
+  classe: AI-native
+  maturidade_stack: alta
+  confianca: alta
+  elegivel: true
+  motivo_exclusao: null
+  dores_esperadas: [custo, latencia, avaliacao]
+  dores_proibidas: [dependencia_fornecedor]
+  dores_ambiguas: [escalabilidade, governanca, privacidade, observabilidade]
+  nota: |-
+    AS TRÊS DORES ESPERADAS SÃO LITERAIS E NO SENTIDO CERTO, o que é raro nesta base: "para
+    servir os usuários com latência e custo aceitáveis, ele precisa caber no hardware de
+    inferência e rodar de forma econômica" traz custo e latência na mesma frase, e a seção
+    inteira de benchmarks é a dor de avaliação declarada como método.
+
+    `dependencia_fornecedor` É PROIBIDA E O CASO É DIVERTIDO: o gatilho `'chatgpt'` casa no
+    TÍTULO da matéria do TechTudo — "conheça a IA 100% brasileira no estilo do ChatGPT" —, onde
+    o ChatGPT é a COMPARAÇÃO usada pelo jornalista, não um fornecedor da empresa. A Maritaca é
+    literalmente o contrário de dependente: ela treina o próprio modelo. Um extrator que emitir
+    essa dor aqui vai consultar a base NVIDIA por "dependência de fornecedor" para a empresa
+    menos dependente da base.
+
+    `maturidade_stack: alta` é o valor que nenhuma fixture produzia, e ele muda o quadrante para
+    `ja-otimizada` e a prioridade para `baixa`. Se a régua mostrar prioridade `alta` aqui, o
+    modelo de dois eixos está decorativo — é o mesmo teste de
+    `test_dois_eixos_separam_sweet_spot_de_ja_otimizada`, agora sobre documento real.
+
+    ARMADILHA CONHECIDA: `'sla'`, que está em SINAIS_AUTOPILOT para pegar "SLA", casa dentro de
+    "legi(sla)ção". É o MESMO defeito que D-039 achou no gabarito do RAG, onde `ILIKE '%SLA%'`
+    casava dentro de "tran(sla)tion" — e que D-048 acabou de corrigir em `briefing.py`. Aqui ele
+    ainda está de pé, no Extractor.
+documentos:
+- tipo: blog
+  titulo: Escalando treinamento de LLMs na Maritaca AI
+  url_fonte: https://www.maritaca.ai/blog/como-treinamos-modelos
+  data_publicacao: null
+  conteudo_texto: 'Quantização para servir
+
+    Concluído o treinamento, o modelo ainda precisa ser preparado para produção. Para servir os usuários
+    com latência e custo aceitáveis, ele precisa caber no hardware de inferência e rodar de forma econômica.
+    Por isso, depois de treinado,
+
+    os pesos: a partir da precisão usada no treino, que pode ser BF16 ou FP8 com
+
+    (QAT), reduzimos para 8 ou até 4 bits no serving.
+
+    A regra é simples: quanto mais agressiva a redução de precisão, mais trabalho de treino é necessário
+    para preservar qualidade. Reduzir para 8 bits ainda costuma ser viável com calibração baseada em estatísticas
+    das ativações, e a degradação tende a ser pequena. Já reduzir para 4 bits é outro patamar: cada peso
+    passa a ter apenas 16 valores possíveis, e isso normalmente não é suficiente para representar bem
+    a distribuição de pesos da rede sem comprometer capacidades importantes do modelo. Por isso, em 4
+    bits, as técnicas modernas combinam calibração com
+
+    , em que o próprio treino simula o efeito da quantização para que o modelo aprenda pesos que toleram
+    a perda de precisão. Quantizar deixa, então, de ser um passo pós-treino barato e passa a ser mais
+    um estágio de treino. Concretamente, no regime de 4 bits:
+
+    Os dados usados importam.
+
+    Diferentes pipelines combinam QAT durante o treino, calibração pós-treino com um conjunto menor, ou
+    ambos. Há ainda formatos como o NVFP4 da NVIDIA, em que o pré-treino acontece direto em 4 bits e dispensa
+    uma fase de calibração separada. Em todos esses caminhos, os dados (treino ou calibração) precisam
+    refletir as distribuições reais de uso do modelo, incluindo idiomas, domínios, formatos de prompt
+    e comprimentos típicos, já que amostragem aleatória de texto não basta.
+
+    Misturam-se precisões em diferentes partes da rede.
+
+    Camadas mais sensíveis à perda numérica (atenção, embeddings, normalizações) tendem a ficar em precisão
+    maior (8 bits ou na precisão original). Partes mais redundantes, em particular os experts em modelos
+    MoE (onde o roteamento já dilui o impacto de qualquer expert individual), toleram precisão menor.
+    As combinações específicas variam por equipe e workflow, mas o princípio comum é alocar precisão proporcional
+    à sensibilidade de cada componente.
+
+    A validação usa a bateria completa de benchmarks.
+
+    Quantização pode parecer inócua em métricas agregadas e ainda assim degradar capacidades específicas
+    como chamada de função, raciocínio matemático e contexto longo. A única forma de pegar isso é rodar
+    a avaliação inteira, o que nos leva de volta ao Passo 2 do ciclo.
+
+    Figura 10: precisão mista por componente do bloco transformer. Embeddings, normalizações e o router
+    do MoE ficam em precisão maior (BF16), porque são as partes mais sensíveis a erro numérico. Atenção
+    e cabeça de saída descem para 8 bits com calibração. Os experts do MoE, que concentram a maior parte
+    dos parâmetros do modelo, descem para 4 bits — a redundância intrínseca do roteamento dilui o impacto
+    da redução, e quantizar só eles já corta a maior parte da memória de inferência.
+
+    Arquitetura: denso vs Mixture of Experts
+
+    Outra escolha relevante na hora de treinar é a
+
+    arquitetura do modelo
+
+    . Nas últimas gerações, a opção dominante na fronteira tem sido
+
+    Mixture of Experts (MoE)
+
+    , caminho que também seguimos na Maritaca.
+
+    (todo parâmetro é ativado a cada token) ainda dominam em algumas frentes, especialmente em
+
+    tarefas de raciocínio puro
+
+    , onde a capacidade total do modelo importa mais do que sua eficiência por token. Densos também atingem
+    MFU (Model Flops Utilization) de 50–60% em treino, um indicador de eficiência computacional.
+
+    Modelos MoE esparsos
+
+    , por outro lado'
+- tipo: site
+  titulo: Maritaca AI — Inteligência artificial para o Brasil
+  url_fonte: https://www.maritaca.ai/
+  data_publicacao: null
+  conteudo_texto: 'para o Brasil
+
+    Testar o novo modelo no chat
+
+    Veja o Sabiá em ação
+
+    Pergunte qualquer coisa sobre o Brasil — o Sabiá pesquisa em dados oficiais e responde com a fonte.
+
+    Sabiá 4 Thinking
+
+    Pensou e consultou bases de dados oficiais
+
+    Rápido e econômico
+
+    Sabiá 4 Thinking
+
+    Raciocínio para tarefas complexas
+
+    Para profissionais de todo o Brasil
+
+    Feito para advogados, economistas, jornalistas, professores, gestores públicos e quem empreende, do
+    agro ao mercado imobiliário.
+
+    Respostas com dados oficiais do Brasil
+
+    Consulta dezenas de bases brasileiras (população, empresas, saúde, economia, segurança e mais) e responde
+    na hora com números e fontes reais.
+
+    Pode rodar inteiramente em território nacional, para casos que exigem soberania e residência de dados.
+
+    Até 100 arquivos de uma vez
+
+    Analise até 100 arquivos de uma só vez, de contratos e planilhas a laudos. A maioria das ferramentas
+    para em 10 a 20.
+
+    Como eu faço para usar os modelos Sabiá?
+
+    ou baixe o app para Android ou iOS. Para uso via API, consulte a documentação em
+
+    .
+
+    O que os modelos são capazes de fazer?
+
+    Os modelos da família Sabiá são especializados em português e em contextos brasileiros.
+
+    Entre as principais capacidades estão: análise e resumo de documentos extensos (PDFs, contratos, legislação),
+    compreensão profunda de temas jurídicos, educacionais e institucionais brasileiros, chamada de funções
+    (function calling) para integração com sistemas, busca na web, e geração de texto em português com
+    alta fluência.
+
+    Para detalhes de desempenho em benchmarks, consulte a página de modelos na documentação.
+
+    Consigo fazer finetuning nos meus dados a partir dos modelos da Maritaca?
+
+    Não oferecemos fine-tuning no momento. Para casos de uso que exigem customização, recomendamos o uso
+    de RAG (Retrieval-Augmented Generation) com nossos modelos, que costuma atender a maioria dos cenários.
+    Consulte nosso guia de RAG na documentação.
+
+    Como os modelos são treinados e qual a arquitetura?
+
+    Os modelos são baseados na arquitetura Transformer. O número exato de parâmetros não é divulgado publicamente.
+    Os modelos da família Sabiá 4 foram treinados a partir de um modelo base generalista, com aprendizado
+    contínuo em quatro etapas: (1) pré-treino contínuo em um grande corpus em português e em um corpus
+    jurídico brasileiro, (2) extensão de contexto longo para 128 mil tokens, (3) ajuste fino supervisionado
+    em dados de chat, código, tarefas jurídicas, seguimento de instruções e chamada de funções, e (4)
+    alinhamento de preferências. Os dados de pré-treino passam por um pipeline de filtragem de qualidade,
+    pontuação de relevância e reescrita de documentos. Além de dados públicos, os modelos também foram
+    treinados com dados comerciais proprietários.
+
+    Meus dados são usados para treinamento? Qual é a política de retenção de dados?
+
+    API:
+
+    o conteúdo dos prompts e das respostas é descartado imediatamente após gerada a saída e nunca é usado
+    para treinamento. Mantemos registros técnicos (IP, data e hora, contagem de tokens) pelo prazo exigido
+    e autorizado em lei: o Marco Civil da Internet obriga a guarda dos registros de acesso por no mínimo
+    seis meses, e a LGPD permite mantê-los pelo tempo necessário para cobrança, prevenção a fraudes, segurança
+    e defesa em eventuais processos; mantemos esses registros por até dezoito meses. Logs de erro podem
+    conter fragmentos da requisição e são descartados em até trinta dias. Veja detalhes na página de
+
+    Tratamento de Dados
+
+    .
+
+    Chatbot Web e Mobile Apps:
+
+    Os dados das conversas são armazenados para permitir que os usuários possam acessá-los posteriormente.
+    Entretanto, esses dados não são utilizados para fins de trein'
+- tipo: noticia
+  titulo: 'Maritaca AI: conheça a IA 100% brasileira no estilo do ChatGPT'
+  url_fonte: https://www.techtudo.com.br/guia/2025/06/maritaca-ai-conheca-a-ia-100percent-brasileira-no-estilo-do-chatgpt-edsoftwares.ghtml
+  data_publicacao: '2025-06-01'
+  conteudo_texto: 'Maritaca AI: conheça a IA 100% brasileira no estilo do ChatGPT
+
+    Startup criou a Maritalk, inteligência artificial de geração de texto totalmente brasileira, treinada
+    com dados em português; saiba mais curiosidades sobre a Maritaca AI
+
+    , para o TechTudo
+
+    é um uma startup de tecnologia fundada em 2022 por Rodrigo Nogueira, em parceria com pesquisadores
+    do núcleo de estudos de IA da Unicamp. A empresa criou a Maritalk, uma ferramenta de
+
+    inteligência artificial (IA)
+
+    100% brasileira treinada em português com informações relevantes sobre o Brasil, incluindo temas como
+    legislação, sistema de saúde e o Exame Nacional do Ensino médio. A proposta do software é que, ao
+    contrário do
+
+    , que serve usuários de todo o mundo, a Maritalk seja direcionada especificamente ao público brasileiro.
+    Nas próximas linhas, veja um guia completo com mais informações sobre a Maritaca AI e como usá-la.
+
+    Nova trend do ChatGPT cria imagem de como é conversar com você; conheça
+
+    5 jeitos de ganhar dinheiro com o ChatGPT que você deveria testar hoje
+
+    Maritaca AI: conheça a inteligência artificial totalmente brasileira — Foto: Reprodução/Thaisi Carvalho
+
+    É possível criar uma inteligência artificial em casa
+
+    ? Entenda no Fórum do TechTudo
+
+    Canal do TechTudo no WhatsApp: acompanhe as principais notícias, tutoriais e reviews
+
+    1. O que é a Maritaca AI?
+
+    A empresa Maritaca AI, que desenvolve inteligências artificiais, foi fundada em 2022 pelo pesquisador
+    Rodrigo Nogueira. A criação do software envolveu uma união do especialista com diversos pesquisadores
+    da Universidade Estadual de Campinas (Unicamp) para criar o MariTalk, um
+
+    de IA 100% brasileiro. Uma das tarefas desenvolvidas para atingir esse objetivo foi o treinamento
+    da ferramenta em português, já que seu foco é atender demandas de usuários brasileiros, afinal, seu
+    banco de dados está diretamente ligado ao contexto cultural do país.
+
+    Os pesquisadores descobriram que, quando o conhecimento dado a uma IA é mais direcionado e ela é treinada
+    em seu idioma nativo, as respostas melhoram. Por isso, ofereceram dados que pudessem ampliar a capacidade
+    da inteligência artificial responder de maneira satisfatória sobre temas ligadosao Brasil, incluindo
+    as leis brasileiras, sistema de saúde e o sistema de educação. Vale ressaltar que a empresa recebeu
+    o valor de US$ 1 milhão do
+
+    para investir no treinamento da Maritalk.
+
+    Saiba mais sobre a Maritaca AI — Foto: Reprodução/Thaisi Carvalho
+
+    2. Qual o diferencial da Maritaca AI em relação ao ChatGPT?
+
+    A Maritaca AI utiliza um modelo de linguagem desenvolvido pela própria empresa, chamado Sabiá. O diferencial
+    dele é a abordagem focada nas nuances da cultura brasileira. Ou seja, ele consegue "alfabetizar" o
+    chatbot de inteligência artificial levando em conta contextos comuns no Brasil, gírias da língua portuguesa
+    e a diversidade existente nas diferentes regiões brasileiras.
+
+    Como o ChatGPT foi treinado em inglês, ele responde e compreende melhor as interações em inglês. Porém,
+    embora o chatbot de
+
+    também seja capaz de responder em português, ele não foi treinado neste idioma e pode apresentar limitações
+    para compreender determinadas consultas ligadas ao contexto da cultura brasileira. Neste sentido,
+    a Maritaca AI se destaca como uma inteligência artificial capaz de entender detalhes como as leis
+    brasileiras, a história e a geografia do país, e até mesmo provas como Enem, OAB,
+
+    e Enade.
+
+    Maritaca AI se destaca por ter um chatbot treinado em português e que entende a cultura brasileira
+    — Foto: Reprodução/Thaisi Carvalho
+
+    3. Como o Maritaca AI se relaciona com o ChatGPT?
+
+    Enquanto a OpenAI desenvolveu o ChatGPT e co'
