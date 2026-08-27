@@ -14,15 +14,50 @@ exclui — vira pendência a verificar na conversa. É a mesma regra 4 do Eviden
 
 from __future__ import annotations
 
+import re
 from datetime import date
 
-from src.state import AnaliseStartup, Elegibilidade, EstadoAnalise, EstadoRadar
+from src.state import (
+    AnaliseStartup,
+    Elegibilidade,
+    Evidencia,
+    EstadoAnalise,
+    EstadoRadar,
+)
 
 # Exclusões explícitas do programa (contexto/03 §2).
+#
+# POR QUE O CASAMENTO É POR FRONTEIRA DE PALAVRA, E NÃO POR SUBSTRING (D-048)
+# ----------------------------------------------------------------------------
+# Até 25/08 esta lista continha `"token"` e era casada com `if termo in texto`. Como
+# `SINAIS_TECNICOS` do Extractor inclui `"tokens por segundo"`, uma frase sobre custo de
+# inferência virava evidência técnica e disparava *"exclusão por 'cripto'"* — QUALQUER startup
+# que falasse em "custo por token" era reportada NÃO ELEGÍVEL ao Inception, pelo motivo errado,
+# no filtro que o projeto chama de Diferencial.
+#
+# Duas correções, e elas são independentes:
+#   1. `"token"` SAIU. Ele é ambíguo entre dois domínios (cripto e inferência de LLM) e o
+#      contexto que os separa não cabe numa lista de termos. Os substitutos abaixo só existem
+#      em contexto cripto, e `criptomoeda`/`blockchain`/`web3`/`bitcoin` já cobriam o resto —
+#      medido: o caso de teste de tokenização continua excluído por `blockchain`.
+#   2. O casamento passou a exigir fronteira de palavra NO INÍCIO DO TERMO, e só no início.
+#      `"ipo"` deixa de casar dentro de "equ(ipo)" e "princ(ípio)", que era o alvo; e
+#      `"consultoria"` continua casando em "consultoria(s)" e `"revenda"` em "revenda(s)" /
+#      "revende(dor)", que é o comportamento desejado — plural é a forma comum em texto
+#      institucional. É a mesma correção que D-039 exigiu no gabarito do RAG, onde
+#      `ILIKE '%SLA%'` casava dentro de "tran(sla)tion".
+#
+#      ANCORAR OS DOIS LADOS FOI TENTADO E ESTÁ ERRADO: `\bconsultoria\b` NÃO casa
+#      "prestamos consultorias de dados", e uma empresa que se descreve no plural passa pelo
+#      filtro. O code review de 25/08 mediu isso; o teste `test_plural_continua_excluindo` é a
+#      rede. Ressalva conhecida: a comparação é sensível a acento — `"ipo concluído"` não casa
+#      "ipo concluido".
 EXCLUSOES = {
     "consultoria": ["consultoria", "consulting", "desenvolvimento terceirizado", "fábrica de software",
                     "body shop", "outsourcing de ti"],
-    "cripto": ["criptomoeda", "cryptocurrency", "blockchain", "token", "web3", "bitcoin"],
+    "cripto": ["criptomoeda", "cryptocurrency", "blockchain", "web3", "bitcoin",
+               "tokenização de ativos", "security token", "utility token",
+               "token não fungível", "nft"],
     "cloud provider": ["cloud service provider", "provedor de nuvem", "datacenter próprio"],
     "revenda": ["revenda", "distribuidor", "reseller"],
     "capital aberto": ["capital aberto", "listada na b3", "publicly traded", "ipo concluído"],
@@ -30,19 +65,32 @@ EXCLUSOES = {
 IDADE_MAXIMA = 10   # o programa exige menos de 10 anos de existência
 
 
+def _ocorre(termo: str, texto: str) -> bool:
+    """Fronteira de palavra NO INÍCIO do termo. Ver o comentário de `EXCLUSOES`."""
+    return re.search(rf"\b{re.escape(termo)}", texto) is not None
+
+
 def elegibilidade(analise_startup, perfil) -> Elegibilidade:
     motivos: list[str] = []
     pendentes: list[str] = []
-    evidencias = []
+    evidencias: list[Evidencia] = []
 
-    texto = " ".join(
-        e.trecho.lower() for a in (perfil.afirmacoes if perfil else []) for e in a.evidencias
-    )
+    # PERCORRE EVIDÊNCIA A EVIDÊNCIA, E NÃO O TEXTO CONCATENADO (D-049).
+    # A versão anterior juntava todos os trechos numa string só, o que tornava impossível dizer
+    # DE ONDE veio o termo — e `Elegibilidade.evidencias` nascia `[]` e nunca era preenchida,
+    # enquanto o motivo afirmava "o termo X aparece nos documentos" sob o rodapé "Toda conclusão
+    # acima aponta para o documento que a sustenta". Era a única conclusão do sistema sem
+    # `list[Evidencia]`, contra a invariante do repositório.
+    todas = [e for a in (perfil.afirmacoes if perfil else []) for e in a.evidencias]
     for rotulo, termos in EXCLUSOES.items():
-        for termo in termos:
-            if termo in texto:
-                motivos.append(f"exclusão por '{rotulo}': o termo {termo!r} aparece nos documentos")
-                break
+        achou = next(
+            ((termo, ev) for termo in termos for ev in todas if _ocorre(termo, ev.trecho.lower())),
+            None,
+        )
+        if achou:
+            termo, ev = achou
+            motivos.append(f"exclusão por '{rotulo}': o termo {termo!r} aparece nos documentos")
+            evidencias.append(ev)
 
     if analise_startup.ano_fundacao:
         idade = date.today().year - analise_startup.ano_fundacao
@@ -51,10 +99,10 @@ def elegibilidade(analise_startup, perfil) -> Elegibilidade:
                 f"exclusão por idade: fundada em {analise_startup.ano_fundacao}, {idade} anos "
                 f"(o programa exige menos de {IDADE_MAXIMA})"
             )
-    else:
-        pendentes.append("ano de fundação não consta na base — verificar se tem menos de 10 anos")
 
     # Requisitos que a base não tem como provar. NÃO excluem — viram pauta da conversa.
+    if not analise_startup.ano_fundacao:
+        pendentes.append("ano de fundação não consta na base — verificar se tem menos de 10 anos")
     if not analise_startup.site:
         pendentes.append("site ativo não confirmado na base")
     if not (perfil and perfil.sinais_otimizacao_tecnica):
@@ -97,8 +145,15 @@ def _secao(a: AnaliseStartup) -> list[str]:
     if a.elegibilidade:
         e = a.elegibilidade
         L.append(f"\n  NVIDIA Inception: {'ELEGÍVEL' if e.elegivel else 'NÃO ELEGÍVEL'}")
-        for m in e.motivos_exclusao:
+        # D-049 passou a GUARDAR a evidência de cada exclusão; se ela não for IMPRESSA, o
+        # rodapé "toda conclusão aponta para o documento que a sustenta" continua mentindo
+        # exatamente aqui. Achado nº 5 do code review de 25/08.
+        for i, m in enumerate(e.motivos_exclusao):
             L.append(f"    x {m}")
+            if i < len(e.evidencias):
+                ev = e.evidencias[i]
+                L.append(f"        [{ev.tipo_documento}] {ev.url_fonte}")
+                L.append(f"           \"{ev.trecho[:130]}...\"")
         for p in e.requisitos_nao_verificados:
             L.append(f"    ? {p}")
 
