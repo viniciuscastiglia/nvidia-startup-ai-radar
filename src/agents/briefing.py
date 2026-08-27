@@ -42,10 +42,26 @@ from src.state import (
 #      medido: o caso de teste de tokenização continua excluído por `blockchain`.
 #   2. O casamento passou a exigir fronteira de palavra NO INÍCIO DO TERMO, e só no início.
 #      `"ipo"` deixa de casar dentro de "equ(ipo)" e "princ(ípio)", que era o alvo; e
-#      `"consultoria"` continua casando em "consultoria(s)" e `"revenda"` em "revenda(s)" /
-#      "revende(dor)", que é o comportamento desejado — plural é a forma comum em texto
-#      institucional. É a mesma correção que D-039 exigiu no gabarito do RAG, onde
-#      `ILIKE '%SLA%'` casava dentro de "tran(sla)tion".
+#      `"consultoria"` continua casando em "consultoria(s)", que é o comportamento desejado —
+#      plural é a forma comum em texto institucional. É a mesma correção que D-039 exigiu no
+#      gabarito do RAG, onde `ILIKE '%SLA%'` casava dentro de "tran(sla)tion".
+#
+#      CORREÇÃO DE 27/08 (D-061): este comentário afirmava também que `"revenda"` casava em
+#      "revende(dor)". **É FALSO, e nunca foi verdade** — "revenda" não é prefixo de
+#      "revendedor" (o 7º caractere é `a` contra `e`), com âncora ou sem ela. Consequência
+#      MEDIDA pela régua de exclusões: *"Somos revendedores autorizados de licenças de
+#      software"* **passa pelo filtro do Inception**. É um falso negativo silencioso vivo no
+#      Diferencial, da mesma classe do achado 1 de D-057 — o comentário descrevendo um
+#      comportamento que o código não tem —, e ele sobreviveu à auditoria que D-057 fez de D-048
+#      porque não havia régua que exercitasse `revenda`. Agora há: `--exclusoes`.
+#
+#      A correção candidata está MEDIDA e não foi aplicada nesta sessão: trocar o termo pelo
+#      prefixo `"revend"` leva o lado do falso negativo de 6/7 para **7/7** e o lado do falso
+#      positivo de 3/7 para **2/7** — conserta o vazamento silencioso e cria um falso positivo
+#      visível em *"Nossos clientes revendem os relatórios"*. Pela lógica de D-057 essa é a
+#      direção BOA da troca (o falso positivo aparece no briefing; o falso negativo não aparece
+#      em lugar nenhum), mas é mudança de comportamento fora do critério fixado para esta
+#      sessão, e entra com a decisão explícita da próxima.
 #
 #      ANCORAR OS DOIS LADOS FOI TENTADO E ESTÁ ERRADO: `\bconsultoria\b` NÃO casa
 #      "prestamos consultorias de dados", e uma empresa que se descreve no plural passa pelo
@@ -142,6 +158,13 @@ def _secao(a: AnaliseStartup) -> list[str]:
             f"  Quadrante     : {ROTULO_QUADRANTE.get(d.quadrante, d.quadrante)}",
             f"  Base          : {d.justificativa}",
         ]
+        # A regra 5 de contexto/02 §6 é "o output carrega a confiança, NÃO SÓ O RÓTULO". Imprimir
+        # `(confiança baixa)` sem dizer qual regra a produziu deixa o rodapé desta página — "toda
+        # conclusão acima aponta para o documento que a sustenta" — mentindo na linha mais lida do
+        # briefing. É o mesmo defeito do achado nº 5 do code review de 25/08, onde D-049 guardava a
+        # evidência da exclusão e `_secao` não a imprimia.
+        if d.motivo_confianca:
+            L.append(f"  Confiança     : {d.motivo_confianca}")
     if a.elegibilidade:
         e = a.elegibilidade
         L.append(f"\n  NVIDIA Inception: {'ELEGÍVEL' if e.elegivel else 'NÃO ELEGÍVEL'}")
@@ -164,7 +187,10 @@ def _secao(a: AnaliseStartup) -> list[str]:
         L += [
             f"\n    {i}. {', '.join(r.tecnologias)}",
             f"       prioridade {r.prioridade} · complexidade {r.complexidade}",
-            f"       dores      : {', '.join(r.dores_enderecadas)}",
+            # Lista vazia é alcançável desde D-063 (citação sem `dor_origem`, o caminho da
+            # interface) e renderizava "dores      : " com nada depois dos dois-pontos, no
+            # entregável que o vídeo mostra. Mesmo defeito que `proxima_acao` já guardava.
+            f"       dores      : {', '.join(r.dores_enderecadas) or '— (citação não veio de uma dor)'}",
             f"       técnica    : {r.justificativa_tecnica[:150]}",
             f"       negócio    : {r.justificativa_negocio[:150]}",
             f"       ação       : {r.proxima_acao}",

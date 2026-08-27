@@ -11,20 +11,22 @@ já estão implementadas, porque são regra de negócio e não redação:
 A regra 3 é onde a decisão D-010 se paga: o Evidence Validator anotou e rebaixou, mas quem
 BARRA é aqui. Recomendação de prioridade alta apoiada só em afirmação de confiança baixa não sai.
 
-DÍVIDA CONHECIDA, DEIXADA VISÍVEL (herdeira de D-020, para a M4)
------------------------------------------------------------------
-O filtro de dores abaixo tem uma condição inócua: `any(c.tecnologia == citacao.tecnologia for c
-in citacoes)` é sempre verdadeira, porque `citacao` está em `citacoes`. Na prática
-`dores_enderecadas` lista TODAS as dores validadas, não as que aquela tecnologia endereça.
+DÍVIDA DE D-020 PAGA EM 27/08 (D-063)
+--------------------------------------
+O filtro de dores tinha uma condição inócua: `any(c.tecnologia == citacao.tecnologia for c in
+citacoes)` é SEMPRE verdadeira, porque `citacao` está em `citacoes`. Na prática
+`dores_enderecadas` listava TODAS as dores validadas em toda recomendação — as 7 da Axenya
+apareciam igualzinhas sob cada tecnologia, impressas no briefing.
 
-**A informação que falta para corrigir passou a existir em 24/08:** `CitacaoRAG.dor_origem` diz
-por qual dor a citação foi recuperada, e `justificativa_negocio` já a usa. Trocar a condição por
-`d.dor == citacao.dor_origem` é UMA LINHA — e mesmo assim ela não entra agora, por uma razão que
-não é preguiça: `evidencias` é derivada desta mesma lista `dores`, e estreitá-la faz recomendação
-cujo dor de origem não passou pelo Evidence Validator cair no `if not evidencias: continue` e
-sumir. Isso muda quantas recomendações o sistema emite, que é comportamento medido em
-`test_toda_recomendacao_tem_evidencia`. Separar "de quais dores tiro EVIDÊNCIA" de "quais dores
-DECLARO endereçadas" é a reescrita deste agente, e ela é da M4.
+A correção não era a linha óbvia. Trocar a condição por `d.dor == citacao.dor_origem` de uma vez
+faria `evidencias`, derivada da MESMA lista, estreitar junto — e recomendação cuja dor de origem
+não passou pelo Evidence Validator cairia no `if not evidencias: continue` e sumiria, mudando o que
+`test_toda_recomendacao_tem_evidencia` mede.
+
+O que entrou foi a separação que o próprio comentário apontava como a reescrita: **"de quais dores
+tiro EVIDÊNCIA" e "quais dores DECLARO endereçadas" viraram duas listas.** O lastro continua vindo
+de todas as dores validadas, então nenhuma recomendação some; a declaração passa a ser só a dor que
+puxou aquela citação, que é o que `dor_origem` sabe desde D-043.
 """
 
 from __future__ import annotations
@@ -130,11 +132,33 @@ def node(state: EstadoAnalise) -> dict:
     recomendacoes: list[Recomendacao] = []
     for citacao in citacoes[:TETO_RECOMENDACOES]:
         # Regra 3: só as dores cuja afirmação passou pelo validator entram.
-        dores = [
-            d for d in perfil.dores_observadas
-            if d.validada and any(c.tecnologia == citacao.tecnologia for c in citacoes)
-        ]
-        evidencias = [e for d in dores for e in d.evidencias][:3]
+        validadas = [d for d in perfil.dores_observadas if d.validada]
+        # DE ONDE SAI EVIDÊNCIA e QUAIS DORES SÃO DECLARADAS ENDEREÇADAS são duas perguntas
+        # diferentes, e até 27/08 eram a mesma lista (D-063). A condição antiga —
+        # `any(c.tecnologia == citacao.tecnologia for c in citacoes)` — era SEMPRE VERDADEIRA,
+        # porque `citacao` pertence a `citacoes`: `dores_enderecadas` listava as 7 dores validadas
+        # em TODA recomendação, e isso estava impresso no briefing.
+        #
+        # A correção de uma linha (`d.dor == citacao.dor_origem`) não podia entrar sozinha porque
+        # `evidencias` derivava da MESMA lista: estreitá-la faria recomendações caírem no
+        # `if not evidencias: continue` e sumirem, mudando o que
+        # `test_toda_recomendacao_tem_evidencia` mede. Separando os dois usos, o lastro continua
+        # largo — nenhuma recomendação some — e a declaração fica honesta.
+        # `dor_origem` é carimbado por `nvidia_rag` na consulta que recuperou esta citação.
+        dores = [d for d in validadas if d.dor == citacao.dor_origem]
+        # O LASTRO SEGUE A DECLARAÇÃO — e a primeira versão de D-063 errou exatamente aqui.
+        # Estreitar `dores_enderecadas` para a dor de origem e deixar `evidencias` saindo de TODAS
+        # as dores validadas produzia recomendação que DECLARA `observabilidade` e CITA trechos
+        # sobre custo, sob o rodapé "toda conclusão acima aponta para o documento que a sustenta".
+        # Antes de D-063 as duas listas concordavam por construção; a correção tornou a divergência
+        # possível e nada a impedia. Achado nº 1 do code review de 27/08.
+        #
+        # `dores or validadas` preserva o que D-063 comprou: sem `dor_origem` (o caminho da
+        # interface) o lastro volta a ser o conjunto validado e NENHUMA recomendação some. E dor
+        # validada SEMPRE tem evidência — `avaliar()` devolve `validada=False` quando não há —,
+        # então `dores` não-vazia implica `evidencias` não-vazia.
+        lastro = dores or validadas
+        evidencias = [e for d in lastro for e in d.evidencias][:3]
         if not evidencias:
             continue
 
@@ -146,10 +170,15 @@ def node(state: EstadoAnalise) -> dict:
             ),
             prioridade=_prioridade(diagnostico.quadrante, diagnostico.confianca),
             complexidade=COMPLEXIDADE.get(citacao.tecnologia, "media"),
+            # Sem `dor_origem` a lista fica vazia — o caminho da interface, onde quem pergunta é
+            # um humano e não uma dor. A frase precisa de outro fecho em vez de terminar em ": .".
             proxima_acao=(
                 f"Agendar conversa técnica sobre {citacao.tecnologia} com o time de engenharia "
                 f"da {perfil.nome}, partindo das dores observadas: "
                 f"{', '.join(sorted({d.dor for d in dores}))}."
+                if dores else
+                f"Agendar conversa técnica sobre {citacao.tecnologia} com o time de engenharia "
+                f"da {perfil.nome}."
             ),
             evidencias=evidencias,
             citacoes_rag=[citacao],

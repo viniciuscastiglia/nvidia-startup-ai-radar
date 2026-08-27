@@ -226,3 +226,83 @@ def test_falha_no_meio_da_analise_preserva_o_trabalho_parcial(monkeypatch):
     assert final.get("perfil") is not None, \
         "o perfil extraído ANTES da falha foi descartado — é isso que o error_handler evita"
     assert final.get("diagnostico") is None, "não pode haver diagnóstico se o classifier caiu"
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# D-063 — `dores_enderecadas` e o lastro. ZERO chamada de API: o estado é montado
+# à mão, porque o único caminho do harness que exercita `recommendation.node` é
+# `--motor ponta-a-ponta`, que custa API e hoje nem roda (reranker 404).
+# Achado nº 9 do code review de 27/08: a mudança tinha entrado em produção sem rede.
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+def _perfil_com_duas_dores():
+    from src.state import DorObservada, Evidencia, PerfilStartup
+    ev = lambda t, d: Evidencia(documento_id=d, tipo_documento="site",
+                                url_fonte=f"https://exemplo.test/{d}", trecho=t)
+    return PerfilStartup(startup_id=1, nome="Acme", dores_observadas=[
+        DorObservada(dor="custo", texto="c", validada=True,
+                     evidencias=[ev("o custo de nuvem dobrou no último ano", 1)]),
+        DorObservada(dor="observabilidade", texto="o", validada=True,
+                     evidencias=[ev("falta monitoramento do modelo em produção", 2)]),
+    ])
+
+
+def _diagnostico_sweet_spot():
+    from src.state import Diagnostico
+    return Diagnostico(classe="AI-native", maturidade_stack="baixa", quadrante="sweet-spot",
+                       confianca="alta", justificativa="j")
+
+
+def _recomendar(dor_origem):
+    from src.agents import recommendation
+    from src.state import CitacaoRAG
+    citacao = CitacaoRAG(tecnologia="NVIDIA NIM", trecho="t",
+                         url_fonte="https://build.nvidia.com/nim", dor_origem=dor_origem)
+    return recommendation.node({"perfil": _perfil_com_duas_dores(),
+                                "diagnostico": _diagnostico_sweet_spot(),
+                                "citacoes_rag": [citacao]})["recomendacoes"]
+
+
+def test_dores_enderecadas_e_so_a_dor_que_puxou_a_citacao():
+    """O filtro antigo (`any(c.tecnologia == citacao.tecnologia for c in citacoes)`) era SEMPRE
+    verdadeiro, então toda recomendação declarava todas as dores validadas."""
+    rec = _recomendar("observabilidade")[0]
+    assert rec.dores_enderecadas == ["observabilidade"], rec.dores_enderecadas
+
+
+def test_a_evidencia_citada_sustenta_a_dor_declarada():
+    """A REDE DO ACHADO Nº 1 DO REVIEW. A primeira versão de D-063 estreitou a declaração e
+    deixou o lastro largo: a recomendação declarava `observabilidade` e citava trechos sobre
+    custo, sob o rodapé que promete que toda conclusão aponta para o documento que a sustenta."""
+    rec = _recomendar("observabilidade")[0]
+    assert rec.evidencias, "recomendação sem lastro"
+    assert all("monitoramento" in e.trecho for e in rec.evidencias), \
+        [e.trecho for e in rec.evidencias]
+
+
+def test_sem_dor_de_origem_a_recomendacao_nao_some_e_o_briefing_nao_pendura_o_rotulo():
+    """`dor_origem=None` é o caminho da interface. D-063 não pode fazer a recomendação sumir
+    (era a razão de a dívida não ter sido paga antes), e o briefing não pode imprimir
+    `dores      : ` com nada depois — achado nº 10 do review."""
+    from src.agents import briefing
+    from src.state import AnaliseStartup
+    recs = _recomendar(None)
+    assert recs, "a recomendação sumiu quando a citação não veio de uma dor"
+    assert recs[0].dores_enderecadas == []
+    analise = AnaliseStartup(startup_id=1, nome="Acme", perfil=_perfil_com_duas_dores(),
+                             diagnostico=_diagnostico_sweet_spot(), recomendacoes=recs)
+    linha = next(l for l in briefing._secao(analise) if "dores" in l)
+    assert not linha.rstrip().endswith(":"), f"rótulo pendurado: {linha!r}"
+
+
+def test_o_diagnostico_carrega_o_motivo_da_confianca_em_producao():
+    """Regra 5 de contexto/02 §6. Achado nº 5 do review: `motivo_confianca` só era preenchido
+    no braço da flag, que é `False` por default — o campo e a linha do briefing eram código
+    morto na configuração que roda, e D-059 afirmava o contrário."""
+    from src.agents import evidence_validator
+    assert evidence_validator.CONFIANCA_DA_EVIDENCIA_DO_DIAGNOSTICO is False, \
+        "este teste mede o braço de PRODUÇÃO"
+    estado = {"perfil": _perfil_com_duas_dores(), "diagnostico": _diagnostico_sweet_spot()}
+    diagnostico = evidence_validator.node(estado)["diagnostico"]
+    assert diagnostico.motivo_confianca, "confiança sem motivo no braço de produção"
