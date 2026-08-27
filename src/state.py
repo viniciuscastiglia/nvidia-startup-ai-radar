@@ -227,7 +227,14 @@ def derivar_quadrante(classe: ClasseStartup, maturidade: MaturidadeStack) -> Qua
 
 
 class Diagnostico(BaseModel):
-    """Saída do Startup Classifier, com a confiança preenchida pelo Evidence Validator."""
+    """Saída do Startup Classifier, com a confiança preenchida pelo Evidence Validator.
+
+    `motivo_confianca` é a regra 5 de `contexto/02` §6 levada a sério: *"o output deve carregar a
+    confiança, não só o rótulo"*. `avaliar()` já devolve a frase que explica o grau — qual regra
+    decidiu, quantos tipos de documento corroboraram, se algum está dentro da janela — e até 27/08
+    essa frase era jogada fora para o diagnóstico, enquanto era guardada para cada `Afirmacao`.
+    O briefing imprimia `(confiança baixa)` sem fonte, sob o rodapé que promete o contrário.
+    """
 
     classe: ClasseStartup
     maturidade_stack: MaturidadeStack
@@ -235,6 +242,7 @@ class Diagnostico(BaseModel):
     confianca: Confianca
     justificativa: str
     evidencias: list[Evidencia] = Field(default_factory=list)
+    motivo_confianca: str | None = None
 
 
 class Elegibilidade(BaseModel):

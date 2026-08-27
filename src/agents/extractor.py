@@ -135,7 +135,14 @@ indices_aprovados — não reprove o que você acabou de justificar como válido
 Devolva em indices_aprovados os números das frases aprovadas."""
 
 
-def _frases(doc: DocumentoRef) -> list[str]:
+def frases(doc: DocumentoRef) -> list[str]:
+    """Como um documento vira frases citáveis. PÚBLICA desde 27/08 (D-060).
+
+    O Classifier passou a precisar do MESMO recorte para contar profundidade técnica sobre os
+    documentos inteiros. Duplicar a regex nos dois módulos criaria duas definições de "trecho
+    literal" que divergiriam na primeira vez que uma delas mudasse — e `Evidencia.trecho` só é
+    verificável (`avaliar_agentes.py --validar`) enquanto houver uma definição só.
+    """
     return [f.strip() for f in re.split(r"(?<=[.!?])\s+|\n+", doc.conteudo_texto) if len(f.strip()) > 40]
 
 
@@ -143,7 +150,7 @@ def _casar(docs: list[DocumentoRef], termos: list[str], teto: int = 3) -> list[E
     """Devolve CANDIDATOS cujo trecho é a frase literal que contém o termo."""
     achados: list[Evidencia] = []
     for doc in docs:
-        for frase in _frases(doc):
+        for frase in frases(doc):
             baixa = frase.lower()
             if any(t in baixa for t in termos):
                 achados.append(Evidencia.de_documento(doc, frase[:400]))
