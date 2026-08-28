@@ -93,17 +93,17 @@ Frontend livre.
 
 | Camada | Escolha | Decisão |
 |---|---|---|
-| LLM dos agentes | ~~`meta/llama-3.1-8b-instruct`~~ **MORTO 27/08 (410) — EM ABERTO** | D-012, **D-064** |
+| LLM dos agentes | **`nvidia/nemotron-3-nano-30b-a3b`** — 1 utilizável de 10 sondados | D-012, D-064, **D-067** |
 | Embeddings | `nvidia/llama-nemotron-embed-vl-1b-v2`, **`dimensions=1024`** | D-014, **D-046** |
-| Reranking | ~~`nvidia/rerank-qa-mistral-4b`~~ **MORTO 27/08 (404), sem substituto — EM ABERTO** | D-015, D-046, **D-064, D-065** |
+| Reranking | **Cohere `rerank-v3.5`** (provedor via env: `cohere`/`nvidia`/`nenhum`) | D-015, D-064, D-065, **D-068** |
 | Vetores | pgvector no mesmo Postgres | D-016 |
 | Busca lexical | `bm25s` em processo para o RAG · `tsvector` para documentos de startup | D-016 |
 | Topologia | subgrafo de análise + fan-out por `Send` | D-007 |
 | Chunking | estrutural por seção + breadcrumb prefixado · janela fixa como controle | D-025, D-027 |
 | BM25 | `bm25s` método **`lucene`**, `k1=1.2`, `b=0.75`, tokenizador que dobra acento | D-036 |
 | Fusão | **RRF** (`K=10`) de produção · soma ponderada como braço de controle medido | D-037 |
-| Rerank | lê `texto_indexado` (com breadcrumb); janela real de **8192 tokens conjuntos** | D-034, D-038 |
-| Saída estruturada | `with_structured_output(..., method="json_schema")` via `src/llm.py` | D-040 |
+| Rerank | lê `texto_indexado` (com breadcrumb) · janela: 1B 8192 → 4B ~6958 → **Cohere >32k** | D-034, D-038, **D-068** |
+| Saída estruturada | `with_structured_output(..., method="json_schema")` via `src/llm.py` | D-040, **D-069** |
 | Schema que vai ao LLM | tipo **estreito** por chamada — docstring de schema é **prompt** | D-045 |
 | Consulta do RAG | rótulo da dor + `dor.evidencias[*].trecho` (a fala da startup) | D-043 |
 | Harness | importa os defaults de `src.rag.pipeline`; **não trunca** o pool | D-044 |
@@ -118,14 +118,27 @@ Frontend livre.
 > | **25/08/2026 09:00Z** | `llama-nemotron-embed-1b-v2` e `llama-nemotron-rerank-1b-v2` — os substitutos (D-046) |
 > | **27/08/2026** | **`meta/llama-3.1-8b-instruct` (410) e `rerank-qa-mistral-4b` (404)** — o LLM dos agentes e o ÚLTIMO reranker (D-064) |
 >
-> **ESTADO EM 27/08: só o EMBEDDING responde.** Chat 410, reranking 404 em 18 sondagens de
-> path × modelo, e o catálogo vivo (84 modelos) não lista **nenhum** reranker. O embedder
-> `llama-nemotron-embed-vl-1b-v2` sobreviveu — os 381 vetores estão intactos. **A escolha do passo
-> 7 e do LLM está EM ABERTO (D-064, D-065)** e é o Bloco 0 da sessão 08.
+> **RESOLVIDO em 28/08 (D-067, D-068), e a saída foi trocar de FORNECEDOR, não de modelo.**
+> O LLM é `nvidia/nemotron-3-nano-30b-a3b` — **1 utilizável de 10 candidatos sondados** — e o
+> passo 7 é o **Cohere Rerank**, que é o que o TAPI recomenda desde sempre e que D-015 descartou
+> com um fato falso ("é pago", corrigido em D-065). O embedder sobreviveu: os 381 vetores estão
+> intactos.
+>
+> **`GET /v1/models` NÃO é prova de nada (D-070):** 9 dos 10 candidatos mortos estavam listados,
+> inclusive o que D-064 recomendou por nome. Só chamada real conta —
+> `python scripts/sondar_catalogo.py --structured`. E o catálogo **encolhe entre execuções**:
+> 84 modelos em 27/08, 83 em 28/08, com dois que respondiam parando de responder.
 >
 > Nunca usar esses seis nomes. **Env var não protege contra isto:** trocar o embedder muda o
 > espaço vetorial e invalida os 381 vetores — é `scripts/reembedar.py` mais re-medir a régua
 > inteira. Ver D-046 e `contexto/03` §3.
+>
+> **O teto da trial do Cohere é pior que a documentação** (medido em 28/08): o 429 chega na **4ª**
+> chamada sequencial, `retry-after` vem **ausente** e a janela de recuperação é de **~26 s**. Por
+> isso `src/rag/rerank.py` tem limitador proativo (`COHERE_REQ_POR_MIN`, default 10) e retry —
+> sem eles o grafo não roda. **Consequência para o vídeo: ~2-3 min só de rerank num run completo**,
+> com teto de 7. O TAPI pede a demo *pela interface*, então a cena é uma consulta com
+> `MAX_STARTUPS` baixo, não o run inteiro.
 
 **Em aberto:** framework de frontend (P-06) e quantas startups entram na base final.
 
@@ -175,27 +188,37 @@ resolve — é julgamento de sujeito. Ver D-052, achado 3.
 estruturais + 204 de controle em `chunks_nvidia`, gabarito de **24 perguntas (19 com resposta,
 5 sem)** em `data/avaliacao/gabarito.yaml`. **Os 9 passos do pipeline do TAPI estão fechados.**
 
-Medido em **25/08, na stack pós-EOL** (D-046). Os números das sessões 02/03 foram produzidos por
-dois modelos que não existem mais e **não são reproduzíveis** — estão preservados no `decisoes.md`
-com a data, não aqui:
+Medido em **28/08, com o passo 7 no Cohere** (D-068). As linhas sem rerank são as de 25/08 e
+**continuam válidas** — não tocam rerank nem LLM, e o embedder sobreviveu. Os números das sessões
+02/03 foram produzidos por modelos que não existem mais e estão preservados no `decisoes.md` com
+a data, não aqui:
 
 | motor | r@1 | r@3 | r@5 | e@1 | e@3 | e@5 |
 |---|---|---|---|---|---|---|
 | denso puro — linha de base | 95% | 100% | 100% | 79% | 79% | 84% |
 | lexical (BM25) | 58% | 63% | 74% | 42% | 47% | 63% |
 | híbrido (RRF K=10) | 95% | 100% | 100% | 79% | 79% | 79% |
-| rerank sobre denso | 95% | 100% | 100% | 84% | 95% | 95% |
-| **rerank sobre híbrida — produção** | **95%** | **100%** | **100%** | **84%** | **95%** | **100%** |
+| rerank Cohere sobre denso | 95% | 100% | 100% | 79% | **95%** | 95% |
+| **rerank Cohere sobre híbrida — produção** | **95%** | **100%** | **100%** | **79%** | **95%** | **95%** |
 
-A troca de stack **melhorou** a recuperação (o denso puro sozinho já faz os 95% de r@1 que antes
-exigiam o reranker), e o reranking continua pagando no critério estrito: e@3 de 79% → 95%.
+**O reranking continua pagando o que sempre pagou: e@3 de 79% → 95%**, que é o critério estrito e
+o motivo de o passo 7 existir. Mas a troca de fornecedor **custou duas perguntas**, e isso fica
+escrito porque medir para si mesmo é o método aqui:
 
-**O braço lexical passou a pagar, e por uma pergunta só.** Na stack antiga `rerank_denso` e
-`rerank_hibrido` davam números idênticos; agora diferem em **e@5, 95% vs 100%**. O braço de
-controle (`--truncar-pool`) mostra que o ganho vem do **pool maior**, não da fusão, e o
-diagnóstico é a **q17**: a âncora (`Evaluator`) não é recuperada pelo braço denso de jeito nenhum
-e entra só pelo BM25. É **1 pergunta em 19** e só em e@5 — o tamanho honesto está em D-037,
-Atualização 2.
+| | NVIDIA `rerank-qa-mistral-4b` (25/08) | **Cohere `rerank-v3.5` (28/08)** |
+|---|---|---|
+| e@1 | 84% | **79%** |
+| e@5 (sobre híbrida) | 100% | **95%** |
+| ganho do braço lexical | e@5 95% → 100% | **nenhum — os dois braços empatam** |
+
+**O braço lexical voltou a não pagar nada.** Na stack NVIDIA `rerank_hibrido` ganhava de
+`rerank_denso` em e@5 por causa da q17 (âncora `Evaluator`, que só o BM25 recupera); o Cohere não
+a promove. O achado de D-037 Atualização 2 era **específico do reranker**, não uma propriedade da
+fusão — e é a segunda vez que ampliar o instrumento derruba uma afirmação sobre o braço lexical.
+
+**Isso NÃO virou mudança de produção**, e a omissão é decisão: trocar o motor por causa disto
+exige critério fixado antes do código (D-055, D-058), e o híbrido custa mais chamadas de rerank —
+o que agora importa, porque o teto do Cohere é 10 req/min.
 
 **Abstenção: nenhum limiar sobre score funciona** — nem a cosseno densa (margem −0,2251) nem o
 logit do cross-encoder (**−11,0039**). Ela vive no passo 8, como campo estruturado da geração
@@ -249,9 +272,10 @@ python scripts/avaliar_agentes.py --rubrica    # braço REPROVADO: rubrica em de
 python scripts/avaliar_agentes.py --confianca-diagnostico  # braço REPROVADO: confiança da evidência do diagnóstico (D-059)
 python scripts/avaliar_agentes.py --juiz       # LIGA o juiz com LLM do Extractor — ~52 chamadas
 python scripts/avaliar_agentes.py --motor ponta-a-ponta   # inclui nvidia_rag: CUSTA API
-# ATENÇÃO — QUEBRADOS desde o EOL de 27/08 (D-064), até o Bloco 0 da sessão 08 fechar:
-#   `python -m src.graph` e `pytest` param no reranker (404); o passo 8 para no LLM (410).
-#   O que continua rodando: TODA a régua (`avaliar_agentes.py`, zero API) e 52 dos 53 testes.
+python scripts/sondar_catalogo.py --structured --rerank   # o que está VIVO no catálogo (D-070)
+python scripts/verificar_cohere.py --janela --throttle 15  # ordena? janela? quantas req/min?
+python scripts/medir_saida_estruturada.py -n 5           # re-mede D-047: json_schema x function_calling
+python scripts/avaliar_rag.py --rerank-provedor nenhum   # braço de controle: o passo 7 fora do caminho
 python -m src.graph "sua consulta aqui"    # roda o pipeline ponta a ponta (thread novo por run)
 python -m src.graph --thread <id> "..."    # retoma um run pelo thread_id que o CLI imprime
 python scripts/diagramas.py                # regenera os .mmd a partir do grafo compilado

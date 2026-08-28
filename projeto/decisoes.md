@@ -3278,6 +3278,79 @@ desenhado para testá-lo: **o docstring do schema é prompt**, e medir com schem
 o brinquedo. Fica registrado como aviso de método para qualquer medição futura de LLM aqui.
 
 
+## D-072 — O juiz do Extractor foi re-medido no modelo novo e PASSA o critério de D-055 (n=3)
+
+**Data:** 28/08/2026 · **Sessão 08, Bloco 0C** · ~156 chamadas · reabre D-056 · **promoção PENDENTE**
+
+D-056 mediu o juiz em 25/08 com `meta/llama-3.1-8b-instruct` e ele **empatou**: 50-62% de precisão
+contra o alvo de 64% fixado em D-055. Aquele modelo morreu em 27/08 (D-064). Re-medido com
+`nvidia/nemotron-3-nano-30b-a3b` (D-067), **mesmo código, mesmo prompt, só o modelo mudou**:
+
+| campo | trivial | produção | **juiz, n=3 (28/08)** | juiz n=3 (25/08, 8b †) |
+|---|---|---|---|---|
+| classe | 4/7 | 3/7 | **2-3 / 7** | 2-3 / 7 |
+| maturidade_stack | 6/7 | 6/7 | 6/7 | 6/7 |
+| confiança | 3/8 | 0/6 | **0/6** | 0/6 |
+| elegível | 6/7 | 5/7 | **6/7 nas três** | 5-6 / 7 |
+| motivo_exclusão | 6/7 | 5/7 | **6/7 nas três** | 5-6 / 7 |
+| **dor — precisão** | 32% | **49%** | **83-96%** | 50-62% |
+| dor — recall | 100% | 100% | **71-79%** | 79-96% |
+| discriminação | 1/8 | 8/8 | 6-8 / 8 | 8/8 |
+| dor proibida | 28 | 10 | **1-2** | 6-9 |
+
+† preservado com modelo e data, como manda D-069.
+
+### O critério de D-055, verificado literalmente
+
+D-055 definiu **empate** como *"não bate a precisão por margem ≥ 0,15 **e** não leva a
+discriminação a ≥ 6 de 8"*, e registrou que *"a decisão fica inteira na precisão"*.
+
+- alvo de precisão: 49% + 0,15 = **64%** · medido: **83%, 96%, 96%** — passa nas três, e o **pior
+  caso supera o alvo por 19 pontos**
+- piso de discriminação: **≥ 6/8** · medido: 6, 8, 6 — passa nas três
+
+**Não houve empate. O critério fixado antes do código foi atendido.**
+
+### O que a mudança de modelo prova, e é maior que o placar
+
+O juiz de 25/08 e o de 28/08 são **o mesmo código e o mesmo prompt**. A diferença é só o modelo, e
+o resultado vai de reprovado a aprovado com folga. Some-se a isto o achado de D-069 (o mesmo modelo
+alucina com schema de brinquedo e faz 10/10 com o schema real): **as conclusões deste projeto sobre
+"o LLM não dá conta" eram sobre um modelo de 8B, não sobre a abordagem.**
+
+E o modo de falha que D-056 nomeou — *o 8b recitava os modos de falha do prompt como se fossem a
+justificativa dele* — não reapareceu. Era falha de modelo pequeno, como a hipótese previa.
+
+### O que NÃO se resolve, e precisa estar escrito
+
+1. **`confianca` continua 0/6 em todos os braços.** O juiz não toca nisso: o defeito é o `min()`
+   do `evidence_validator` (D-059, D-066), e é problema separado.
+2. **`classe` piora de 3/7 para 2-3/7.** D-055 não fixou guarda para ela; a piora é de meia a uma
+   fixture e o gargalo real é vocabulário (sessão 07), não o Extractor.
+3. **`recall` cai de 100% para 71-79%** — o juiz descarta dores erradas e leva junto ~1 em 4 das
+   certas.
+
+### A lacuna do critério, que é a mesma da sessão 07
+
+**D-055 nunca fixou guarda de recall.** Pela letra, ele não é obstáculo. Mas promover fingindo que
+uma métrica não caiu 25 pontos seria desonesto — e **reprovar agora por causa dela seria mudar o
+critério depois de ver o placar**, que é exatamente o que D-055 existe para impedir, e o que a
+sessão 07 respeitou quando reprovou as próprias mudanças.
+
+É a mesma classe de lacuna que a 07 encontrou em `classe`: *fixar a margem sem calcular todos os
+lados é fixar um número, não um critério*. Registrada aqui pela segunda vez, e a régua de qualquer
+critério futuro precisa nomear **todas** as métricas que podem se mover, não só a alvo.
+
+**O argumento a favor de promover, e ele é a assimetria de D-057:** uma dor falsa no briefing
+produz uma **conversa errada** com a startup e contamina a credibilidade do documento inteiro
+(o sistema hoje diz que a SunnyHUB, de energia solar, tem dor de observabilidade de IA, porque leu
+*"monitoramento do sistema fotovoltaico"*). Uma dor faltando é uma oportunidade não mencionada —
+nada do que está escrito fica errado. **Erro por omissão é recuperável; erro por afirmação, não.**
+
+**A promoção fica PENDENTE de decisão do Vinícius.** `USAR_JUIZ_LLM` segue `False`. Registrar a
+medição não é promover — e esta linha existe para que a diferença fique explícita no log.
+
+
 ## Decisões pendentes
 
 Levantadas em `contexto/05-achados-e-decisoes.md` §4, a serem fechadas na sessão 01:
