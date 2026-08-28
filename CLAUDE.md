@@ -147,29 +147,34 @@ flipa, com bloco `gabarito:` estruturado que **não vai para o banco**. É o que
 critérios 1 e 3 (40 pontos) — antes eram 3 startups e as 3 `AI-native`, então um classificador
 que devolvesse "AI-native" incondicionalmente passava em 3 de 3 (D-050, D-051).
 
-| | trivial | **casador — produção** | juiz com LLM (n=3, D-056) |
+| | trivial | **casador — produção** | **juiz com LLM, n=3 (D-072)** |
 |---|---|---|---|
 | classe | 4/7 | **3/7** | 2–3 / 7 |
 | maturidade_stack | 6/7 | **6/7** | 6/7 |
 | confiança | 3/8 | **0/6** (+2 ambíguos) | 0/6 |
-| elegível | 6/7 | **5/7** | 5–6 / 7 |
-| motivo_exclusão | 6/7 | **5/7** | 5–6 / 7 |
-| **dor — precisão** | 32% | **49%** | 50–62% |
-| dor — recall | 100% | **100%** | 79–96% |
-| discriminação | 1/8 | **8/8** | 8/8 |
-| dor proibida emitida | 28 | **10** | 6–9 |
+| elegível | 6/7 | **5/7** | **6/7 nas três** |
+| motivo_exclusão | 6/7 | **5/7** | **6/7 nas três** |
+| **dor — precisão** | 32% | **49%** | **83–96%** |
+| dor — recall | 100% | **100%** | 71–79% |
+| discriminação | 1/8 | **8/8** | 6–8 / 8 |
+| dor proibida emitida | 28 | **10** | **1–2** |
 
 **A linha trivial é obrigatória na tabela** — é o `denso puro` deste critério. E ela expõe o
 achado que justificou a sessão: **o casador perde do classificador trivial em 4 dos 5 campos** e
 só ganha em dor (precisão 49% × 32%, discriminação 8/8 × 1/8). O valor dele está inteiro na
 EXTRAÇÃO; a camada de classificação em cima é pior que constante (D-052, D-057).
 
-**O Extractor com LLM (opção C: heurística gera candidato, LLM julga) foi medido e EMPATOU.**
-D-055 exigia precisão ≥ 64% (49% + 0,15); a faixa em 3 execuções é **50–62%** — nem o melhor caso
-alcança. O juiz varia entre execuções, e isso é argumento a mais contra pô-lo numa demo ao vivo. `USAR_JUIZ_LLM = False` é resultado de medição,
-não esquecimento — liga com `--juiz`. O achado que vale mais que o número: **enumerar modos de
-falha no prompt ensinou o 8b a recitá-los** — a primeira versão fez 22% de precisão e devolvia a
-regra do prompt como justificativa (D-056).
+**O Extractor com LLM (opção C: heurística gera candidato, LLM julga) EMPATOU no 8b e PASSOU no
+30B — mesmo código, mesmo prompt (D-056 → D-072).** D-055 exigia precisão ≥ 64% (49% + 0,15). Com
+`llama-3.1-8b` (morto): 50–62%, empate. Com `nemotron-3-nano-30b`: **83 · 96 · 96**, e as dores
+proibidas caem de 10 para 1–2. O modo de falha de D-056 — **enumerar modos de falha no prompt
+ensinou o 8b a recitá-los**, devolvendo a regra do prompt como justificativa — **não reapareceu**.
+
+> **A tese que isto abre:** várias conclusões deste projeto sobre *"o LLM não dá conta"* eram sobre
+> um modelo de **8B**, não sobre a abordagem. Vale re-testar onde o LLM foi descartado.
+
+**`USAR_JUIZ_LLM = False` continua**, agora por decisão pendente e não por reprovação: D-055 nunca
+fixou guarda de **recall**, que cai de 100% para 71–79%. Liga com `--juiz`. **Medir não é promover.**
 
 **Correção do diagnóstico da dívida nº 6:** a afirmação *"o Extractor produz o mesmo conjunto de
 dores para toda startup"* está **refutada** — sobre 8 fixtures diversas ele produz 8 conjuntos
@@ -318,7 +323,9 @@ Para quem for avaliar sem Postgres local: `docker compose up -d` (porta 5433) e 
 | `projeto/sessao-NN.md` | pauta executável da sessão corrente; abre com o fechamento da anterior |
 | `projeto/sessao-05.md` | o EOL de 25/08, o code review e os 3 achados de agente **não pagos** — abrir antes de tocar na M4 |
 | `projeto/sessao-06.md` | a régua dos agentes, o Extractor medido e o empate de D-055 — abrir antes de mexer no Classifier |
-| `projeto/sessao-07.md` | **o terceiro EOL, as duas reprovações do Bloco 1 e o teto que faltava — abrir ANTES de qualquer coisa** |
+| `projeto/sessao-07.md` | o terceiro EOL, as duas reprovações do Bloco 1 e o teto que faltava |
+| `projeto/sessao-08.md` | **a stack de volta, o juiz APROVADO e o diagnóstico do núcleo — abrir ANTES de qualquer coisa** |
+| **[Anatomia do Radar](https://claude.ai/code/artifact/dc527bde-f149-49f8-87a5-3105197cc2e2)** | **documento de estudo: os 9 agentes, os 9 passos, o que está medido e as 4 decisões abertas** |
 | `scripts/avaliar_agentes.py` | a régua dos agentes: o que se conta, como o ambíguo é registrado, e por que a linha trivial existe |
 | `data/avaliacao/exclusoes.yaml` | a régua do filtro do Inception: pares mínimos, falso positivo E falso negativo medidos separados (D-061) |
 | `data/nvidia/fontes.yaml` | manifesto curado das 16 fontes do RAG — de onde busca vs. o que cita |
