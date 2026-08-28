@@ -1,11 +1,11 @@
 # Smoke test — build.nvidia.com
 
-Gerado por `scripts/smoke_nvidia.py` em 27/08/2026 13:49.
+Gerado por `scripts/smoke_nvidia.py` em 28/08/2026 07:56.
 
 | Capacidade | Resultado | Latência | Modelo |
 |---|---|---|---|
-| chat completion | falhou | — | `meta/llama-3.1-8b-instruct` |
-| embedding | passou | 668 ms | `nvidia/llama-nemotron-embed-vl-1b-v2` |
+| chat completion | passou | 1484 ms | `nvidia/nemotron-3-nano-30b-a3b` |
+| embedding | passou | 609 ms | `nvidia/llama-nemotron-embed-vl-1b-v2` |
 | reranking | falhou | — | `nvidia/rerank-qa-mistral-4b` |
 
 ## Detalhes
@@ -13,8 +13,9 @@ Gerado por `scripts/smoke_nvidia.py` em 27/08/2026 13:49.
 ### chat completion
 
 ```
-HTTPStatusError: Client error '410 Gone' for url 'https://integrate.api.nvidia.com/v1/chat/completions'
-For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/410
+modelo: nvidia/nemotron-3-nano-30b-a3b
+tokens: 37 prompt + 120 completion
+resposta: O NVIDIA Inception é um programa de aceleração para startups de IA que oferece recursos, mentoria e suporte
 ```
 
 ### embedding

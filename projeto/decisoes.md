@@ -3057,6 +3057,68 @@ correção do review mexeu no placar, que é o que se espera de correção de ra
 
 ---
 
+## D-067 — O LLM dos agentes é `nemotron-3-nano-30b-a3b`, escolhido por ELIMINAÇÃO medida
+
+**Data:** 28/08/2026 · **Sessão 08, Bloco 0A** · substitui D-012 · **12 dias da entrega, 10 do vídeo**
+
+D-064 recomendou `nvidia/mistral-nemo-minitron-8b-8k-instruct` **por nome**, com base em ele
+aparecer em `GET /v1/models`. **Ele devolve HTTP 404.** A recomendação nunca foi testada — é o
+mesmo erro de método que D-065 nomeou dois dias antes, agora cometido dentro da própria correção.
+
+### Os 10 candidatos, sondados um a um com chamada real
+
+| resultado | quantos | quais |
+|---|---|---|
+| **HTTP 404** | 7 | `mistral-nemo-minitron-8b-8k`, `mistral-nemo-12b`, `llama-3.1-nemotron-70b`, `mistral-7b-v0.3`, `granite-3.0-8b`, `gemma-3-12b-it`, `phi-3.5-moe` |
+| **inutilizável** | 2 | `nemotron-3.5-lightning-30b-a3b` (HTTP 400, depois **timeout de 300 s**) · `mistral-nemotron` (200 em **35 s**, e **HTTP 500** no structured output) |
+| **utilizável** | **1** | **`nvidia/nemotron-3-nano-30b-a3b`** — ~650 ms, absteve corretamente nos dois métodos |
+
+**Todos os 10 estavam listados no catálogo.** A escolha não é preferência: é o único que sobrou.
+
+**O que a troca custou:** uma variável (`LLM_MODEL`) em `.env`, `.env.example` e `src/config.py`.
+Nenhum agente mudou, porque nenhum agente conhece o provedor. A costura de D-001 pagou pela
+terceira vez.
+
+**O que ela NÃO conserta, e é o ponto:** abstenção (D-040), `json_schema` (D-047) e o juiz (D-056)
+foram produzidos pelo modelo morto. Trocar o modelo **invalida** esses números em vez de
+consertá-los. O destino de cada um está em D-069.
+
+**Alternativa descartada:** Grok, que a liga sugeriu e que portanto está pré-autorizado. Não foi
+descartado por mérito — **não foi testado**, porque a chave ainda não existe. Fica registrado como
+não medido, e não como pior, que é a distinção que D-065 cobrou.
+
+---
+
+## D-070 — O catálogo é vitrine, não inventário: estar em `/v1/models` não é estar vivo
+
+**Data:** 28/08/2026 · **Sessão 08** · generaliza o achado de D-067 · `scripts/sondar_catalogo.py`
+
+**9 dos 10 candidatos sondados estavam LISTADOS em `GET /v1/models` e 9 não serviam.** A listagem
+respondeu 200 com 83 modelos e não é evidência de disponibilidade de nenhum deles.
+
+Isso muda o procedimento, não só um fato:
+
+1. **Nenhuma decisão de modelo pode citar a listagem como prova.** Só chamada real conta. D-064
+   citou, e errou o substituto que recomendou.
+2. **O catálogo encolhe entre execuções.** 84 modelos em 27/08, **83** em 28/08 — um dia. E dois
+   modelos que responderam em 27/08 pararam de responder em 28/08. Não é um evento de EOL com data:
+   é erosão contínua.
+3. **`scripts/sondar_catalogo.py` fica versionado**, separado do smoke. Os dois respondem perguntas
+   diferentes: o smoke pergunta *"a config vigente funciona?"* e precisa **falhar alto**; a
+   sondagem pergunta *"o que existe para substituí-la?"*. O próprio docstring do smoke já dizia,
+   sobre paths de rerank, que varrer candidatos *"mascararia uma regressão futura"* — o argumento
+   vale para modelos, e é por isso que são dois arquivos e não um.
+
+**Reconfirmado na mesma sondagem:** 9 combinações de path × modelo de reranking, **todas 404/410**,
+e zero modelos com `rank` no nome entre os 83. Não há reranker no catálogo da NVIDIA — o que leva
+a D-068.
+
+**O valor disto para a banca não é a lista de modelos mortos, é a régua:** o projeto passou a medir
+uma propriedade do FORNECEDOR — volatilidade de catálogo — com um instrumento versionado, em vez de
+descobri-la por acidente a cada `pytest` quebrado. Três EOLs (18/05, 25/08, 27/08) e uma erosão
+diária, com data e método.
+
+
 ## Decisões pendentes
 
 Levantadas em `contexto/05-achados-e-decisoes.md` §4, a serem fechadas na sessão 01:

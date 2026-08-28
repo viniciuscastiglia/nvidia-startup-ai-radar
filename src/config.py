@@ -91,10 +91,13 @@ _API_KEY = _env("LLM_API_KEY") or _env("NVIDIA_API_KEY")
 LLM = ConfigLLM(
     base_url=_env("LLM_BASE_URL", "https://integrate.api.nvidia.com/v1"),
     api_key=_API_KEY,
-    # MORTO em 27/08 (HTTP 410, D-064). O default fica até o Bloco 0 da sessão 08
-    # escolher o substituto — trocá-lo por um palpite não medido seria pior que
-    # falhar alto, que é o que o smoke test já faz em 30 segundos.
-    modelo=_env("LLM_MODEL", "meta/llama-3.1-8b-instruct"),
+    # Escolhido em 28/08 por ELIMINAÇÃO MEDIDA, não por preferência (D-067): dos 10
+    # candidatos do catálogo sondados com chamada real, 7 deram 404, 1 alternou
+    # HTTP 400 com timeout de 300 s, 1 responde em ~35 s e quebra no structured
+    # output (HTTP 500). Este responde em ~650 ms e passa nos dois métodos.
+    # `scripts/sondar_catalogo.py` refaz a sondagem inteira — o catálogo LISTA
+    # modelos que não respondem, então a listagem nunca é a prova (D-070).
+    modelo=_env("LLM_MODEL", "nvidia/nemotron-3-nano-30b-a3b"),
     temperatura=float(_env("LLM_TEMPERATURE", "0.1")),
 )
 
