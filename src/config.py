@@ -105,6 +105,7 @@ class ConfigRerank:
     modelo: str
     cohere_api_key: str | None
     cohere_modelo: str
+    cohere_req_por_min: int
 
 
 # Chave única: aceita NVIDIA_API_KEY (nome específico) ou LLM_API_KEY (nome neutro),
@@ -141,6 +142,11 @@ RERANK = ConfigRerank(
     modelo=_env("RERANK_MODEL", "nvidia/rerank-qa-mistral-4b"),
     cohere_api_key=_env("COHERE_API_KEY"),
     cohere_modelo=_env("COHERE_RERANK_MODEL", "rerank-v3.5"),
+    # Teto de requisições por minuto. Default 10 = o da TRIAL, medido em 28/08 e pior do
+    # que a documentação sugere: o 429 chega na 4ª chamada sequencial, `retry-after` vem
+    # AUSENTE, e a janela de recuperação medida foi de ~26 s. Quem tiver chave paga
+    # (1.000 req/min) põe o número real aqui e o limitador some do caminho. 0 desliga.
+    cohere_req_por_min=int(_env("COHERE_REQ_POR_MIN", "10")),
 )
 
 DATABASE_URL = _env("DATABASE_URL", "postgresql://localhost:5432/case_nvidia")

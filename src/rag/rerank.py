@@ -58,6 +58,8 @@ As métricas de recall (r@k, e@k) continuam comparáveis, porque medem posição
 
 from __future__ import annotations
 
+import time
+
 import httpx
 
 from src.config import RERANK
@@ -72,6 +74,43 @@ LOTE = 32
 TIMEOUT = 120.0
 
 URL_COHERE = "https://api.cohere.com/v2/rerank"
+
+# QUANTAS VEZES INSISTIR NUM 429, E POR QUE ISTO NÃO É ZELO DEFENSIVO (D-068, Atualização)
+# Medido em 28/08 na trial: o 429 chega na **4ª** chamada sequencial (a documentação promete
+# 10 req/min), o cabeçalho `retry-after` vem **AUSENTE**, e a janela de recuperação é de
+# **~26 s**. Sem retry, um `python -m src.graph` — que faz 20 a 30 chamadas sequenciais de
+# rerank — falha em quase todas. O passo 7 não é opcional no caminho de produção, então a
+# alternativa a isto não é "um pouco mais lento": é não rodar.
+TENTATIVAS_429 = 6
+ESPERA_INICIAL_429 = 8.0     # cobre os ~26 s medidos em 8 -> 16 -> 32
+ESPERA_MAXIMA_429 = 60.0
+
+_ultima_chamada = 0.0
+
+
+def _respeitar_taxa() -> None:
+    """Limitador PROATIVO: espaça as chamadas em vez de bater no teto e esperar.
+
+    Por que proativo e não só retry: bater no 429 custa a latência da chamada perdida MAIS a
+    espera do backoff. Espaçar custa só a espera. Com o teto da trial (10/min) a diferença numa
+    avaliação de ~67 chamadas é de minutos.
+
+    Por que é configurável e não uma constante: `COHERE_REQ_POR_MIN=1000` numa chave paga faz o
+    limitador desaparecer. Fixar 10 no código puniria para sempre quem paga — e o número 10 é
+    uma propriedade da TRIAL, não do Cohere.
+
+    Global de módulo é suficiente aqui porque o pipeline é sequencial: `logits_de` loteia em
+    série e o grafo processa uma dor por vez. Se um dia houver rerank concorrente, isto vira
+    um semáforo — e o teste que vai denunciar é o 429 voltando.
+    """
+    global _ultima_chamada
+    if RERANK.cohere_req_por_min <= 0:
+        return
+    intervalo = 60.0 / RERANK.cohere_req_por_min
+    espera = intervalo - (time.monotonic() - _ultima_chamada)
+    if espera > 0:
+        time.sleep(espera)
+    _ultima_chamada = time.monotonic()
 
 
 class RerankIndisponivel(RuntimeError):
@@ -118,23 +157,36 @@ def _chamar_cohere(consulta: str, textos: list[str]) -> list[float]:
             "(1.000 chamadas/mês, Rerank a 10 req/min) ou rode com RERANK_PROVEDOR=nenhum, "
             "que degrada o passo 7 para a ordem da busca híbrida."
         )
-    r = httpx.post(
-        URL_COHERE,
-        headers={"Authorization": f"Bearer {RERANK.cohere_api_key}",
-                 "Accept": "application/json"},
-        json={
-            "model": RERANK.cohere_modelo,
-            "query": consulta,
-            "documents": textos,
-            # Sem `top_n` de propósito: `logits_de` é um contrato de "score POR passagem".
-            # Cortar aqui devolveria menos linhas do que entrou e quebraria o `zip` de quem
-            # chama — o corte é decisão de `reranquear`, um nível acima.
-        },
-        timeout=TIMEOUT,
+    corpo = {
+        "model": RERANK.cohere_modelo,
+        "query": consulta,
+        "documents": textos,
+        # Sem `top_n` de propósito: `logits_de` é um contrato de "score POR passagem".
+        # Cortar aqui devolveria menos linhas do que entrou e quebraria o `zip` de quem
+        # chama — o corte é decisão de `reranquear`, um nível acima.
+    }
+    cabecalhos = {"Authorization": f"Bearer {RERANK.cohere_api_key}",
+                  "Accept": "application/json"}
+
+    for tentativa in range(TENTATIVAS_429):
+        _respeitar_taxa()
+        r = httpx.post(URL_COHERE, headers=cabecalhos, json=corpo, timeout=TIMEOUT)
+        if r.status_code == 429 and tentativa < TENTATIVAS_429 - 1:
+            # `retry-after` VEM AUSENTE na trial (medido) — por isso o fallback exponencial
+            # existe e não é decoração. Se um dia vier, ele manda: o servidor sabe melhor.
+            cabecalho = r.headers.get("retry-after")
+            espera = float(cabecalho) if cabecalho else ESPERA_INICIAL_429 * (2 ** tentativa)
+            time.sleep(min(espera, ESPERA_MAXIMA_429))
+            continue
+        r.raise_for_status()
+        por_indice = {x["index"]: float(x["relevance_score"]) for x in r.json()["results"]}
+        return [por_indice[i] for i in range(len(textos))]
+
+    raise RerankIndisponivel(
+        f"Cohere devolveu 429 em {TENTATIVAS_429} tentativas. A trial permite "
+        f"{RERANK.cohere_req_por_min} req/min; ajuste COHERE_REQ_POR_MIN, ou rode com "
+        f"RERANK_PROVEDOR=nenhum para degradar o passo 7 em vez de falhar."
     )
-    r.raise_for_status()
-    por_indice = {x["index"]: float(x["relevance_score"]) for x in r.json()["results"]}
-    return [por_indice[i] for i in range(len(textos))]
 
 
 def _chamar_nenhum(consulta: str, textos: list[str]) -> list[float]:
