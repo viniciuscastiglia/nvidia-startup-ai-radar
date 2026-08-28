@@ -1,12 +1,12 @@
 # Smoke test — build.nvidia.com
 
-Gerado por `scripts/smoke_nvidia.py` em 28/08/2026 07:56.
+Gerado por `scripts/smoke_nvidia.py` em 28/08/2026 08:21.
 
 | Capacidade | Resultado | Latência | Modelo |
 |---|---|---|---|
-| chat completion | passou | 1484 ms | `nvidia/nemotron-3-nano-30b-a3b` |
-| embedding | passou | 609 ms | `nvidia/llama-nemotron-embed-vl-1b-v2` |
-| reranking | falhou | — | `nvidia/rerank-qa-mistral-4b` |
+| chat completion | passou | 1451 ms | `nvidia/nemotron-3-nano-30b-a3b` |
+| embedding | passou | 615 ms | `nvidia/llama-nemotron-embed-vl-1b-v2` |
+| reranking | passou | — | `nvidia/rerank-qa-mistral-4b` |
 
 ## Detalhes
 
@@ -15,7 +15,7 @@ Gerado por `scripts/smoke_nvidia.py` em 28/08/2026 07:56.
 ```
 modelo: nvidia/nemotron-3-nano-30b-a3b
 tokens: 37 prompt + 120 completion
-resposta: O NVIDIA Inception é um programa de aceleração para startups de IA que oferece recursos, mentoria e suporte
+resposta: O NVIDIA Inception é um programa de aceleração de startups focado em IA, que ofere
 ```
 
 ### embedding
@@ -29,5 +29,6 @@ EN  crosslingual 0.3844 vs irrelevante PT 0.0069 (ok)
 ### reranking
 
 ```
-nenhum dos endpoints candidatos respondeu
+RERANK_PROVEDOR=nenhum: o passo 7 sai do caminho de propósito e a resposta
+vira a ordem da busca híbrida (95% r@1, 100% r@3 — D-046). Não é falha.
 ```

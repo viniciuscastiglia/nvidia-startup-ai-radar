@@ -3225,6 +3225,59 @@ teste é variádico, o do harness recebe um trecho), e unificá-los criaria uma 
 `scripts/` para `tests/` que hoje não existe. Fica duplicado, com o gatilho intacto.
 
 
+## D-069 — O que é re-medido e o que é declarado histórico depois da troca de LLM
+
+**Data:** 28/08/2026 · **Sessão 08, Bloco 0C** · consequência de D-067 · segue o método de D-046
+
+Trocar o LLM **não conserta** as medições feitas com o modelo morto — **invalida**. Este é o mapa,
+decidido antes de medir para que o resultado não escolhesse o critério:
+
+| medição | destino | por quê |
+|---|---|---|
+| `json_schema` × `function_calling` (D-047) | **RE-MEDIDA, n=15** | sustenta a convenção mais transversal do repo |
+| abstenção do passo 8 (D-040, 20-22/24) | **RE-MEDIR, n=3** | é o número que o vídeo cita, e o passo 8 é entregável |
+| juiz do Extractor (D-056, 50-62%) | **SONDA n=1** | está desligado; a sonda só decide se vale abrir n=3 |
+| tabela do RAG: denso, BM25, híbrida | **continuam válidas** | não tocam rerank nem LLM; o embedder sobreviveu |
+| tabela do RAG: linhas com rerank | **RE-MEDIR** | o provedor mudou (D-068) |
+| régua dos agentes | **intacta** | determinística, zero LLM — reconferida em 28/08, idêntica |
+
+As invalidadas ficam preservadas **com modelo e data**, como D-046 fez com as sessões 02/03.
+
+### D-047 re-medido: a diferença que ele mediu DESAPARECEU (n=15)
+
+Mesmo protocolo — q23, `temperature=0`, schema e prompt **reais** do passo 8 — em
+`scripts/medir_saida_estruturada.py`, agora versionado. Uma recuperação só, reusada nos três
+braços, para que o que varie entre eles seja apenas a decodificação.
+
+| método | 24/08 · `llama-3.1-8b` (morto) | 28/08 · `nemotron-3-nano-30b-a3b` |
+|---|---|---|
+| `json_schema` | **4/5** | 4/5 e 10/10 → **14/15** |
+| `function_calling` | 0/5 | 5/5 e 10/10 → **15/15** |
+| `json_mode` | 0/5 | **0/5** — segue sem parsear |
+
+**A DECISÃO FICA (`json_schema`), E O ARGUMENTO MORRE.** D-047 dizia que `function_calling`
+*"adiciona pressão para PREENCHER os campos da ferramenta"*. Com o modelo novo os dois empatam:
+14/15 contra 15/15 é **uma execução de diferença**, e trocar a convenção do repositório inteiro
+por isso seria exatamente o que D-055 e D-058 punem. `json_schema` permanece por continuidade e
+porque `json_mode` continua quebrado — não porque proteja mais.
+
+**A propriedade era do MODELO, não do método.** O 8b precisava do `json_schema` para não inventar
+"30%"; o 30B abstém pelos dois caminhos. Isso encerra a linhagem de D-040 → D-047 → aqui: o
+argumento saiu de *"o método impede a alucinação"* para *"reduz de 3/3 para 1/5"* (D-047,
+Atualização) e agora para **"com este modelo, o método não é a variável"**.
+
+### O achado colateral, e ele vale mais que o placar
+
+Na primeira sonda de 27/08, com um schema de brinquedo (dois campos, docstring genérico), este
+mesmo modelo **alucinou** em `json_schema`. Com `SaidaGerador` e a `INSTRUCAO` reais, faz 10/10.
+
+**O que carrega o resultado é o prompt, não o método** — e a `INSTRUCAO` do passo 8 tem, escrito
+nela, exatamente o caso da q23: *"pergunta pede uma comparação entre A e B, o trecho cita A e B
+juntos mas não os compara -> abstencao=true"*. É D-045 confirmado por um caminho que não foi
+desenhado para testá-lo: **o docstring do schema é prompt**, e medir com schema de brinquedo mede
+o brinquedo. Fica registrado como aviso de método para qualquer medição futura de LLM aqui.
+
+
 ## Decisões pendentes
 
 Levantadas em `contexto/05-achados-e-decisoes.md` §4, a serem fechadas na sessão 01:

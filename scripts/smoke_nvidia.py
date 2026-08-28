@@ -204,7 +204,25 @@ def teste_embedding() -> None:
 # 3. RERANKING
 # ─────────────────────────────────────────────────────────────────────────────
 def teste_rerank() -> None:
-    print(f"\n3. RERANKING — {RERANK.modelo} (cross-encoder)")
+    """O passo 7 NO PROVEDOR CONFIGURADO, seja ele qual for (D-068).
+
+    Até 27/08 este teste era NVIDIA hard-coded. Depois que o provedor virou configuração, um
+    smoke preso a um fornecedor reportaria 404 com o passo 7 funcionando perfeitamente em outro —
+    que é a definição de instrumento quebrado.
+
+    A asserção NÃO é "respondeu 200": é que a passagem #1 (TensorRT-LLM, a única que fala de
+    latência de inferência) vá para o TOPO. Um reranker que responde e não ordena passa no teste
+    de encanamento e reprova no que se está comprando.
+    """
+    rotulo = {"cohere": RERANK.cohere_modelo, "nvidia": RERANK.modelo,
+              "nenhum": "— passo 7 desligado"}.get(RERANK.provedor, "?")
+    print(f"\n3. RERANKING — provedor {RERANK.provedor} · {rotulo}")
+
+    if RERANK.provedor == "nenhum":
+        registrar("reranking", True, None,
+                  "RERANK_PROVEDOR=nenhum: o passo 7 sai do caminho de propósito e a resposta\n"
+                  "vira a ordem da busca híbrida (95% r@1, 100% r@3 — D-046). Não é falha.")
+        return
 
     consulta = "Como reduzir a latência de inferência de um LLM em produção?"
     passagens = [
@@ -212,50 +230,31 @@ def teste_rerank() -> None:
         "TensorRT-LLM aplica quantização FP8 e speculative decoding, com ganho de ~3x de throughput.",
         "cuDF acelera operações de pandas em GPU sem mudança de código, com fallback para CPU.",
     ]
-    # Esperado: índice 1 no topo. É o teste de que o reranker de fato ordena por relevância.
 
-    # Um candidato só: a URL da config. A varredura de paths foi feita à mão em 22/08 e
-    # está registrada em D-012 — deixar o script tentando N endpoints mascararia uma
-    # regressão futura ("passou, mas por outro caminho").
-    candidatos = [RERANK.url]
-    vistos: set[str] = set()
+    try:
+        from src.rag.rerank import _chamar   # o MESMO caminho que a produção usa
 
-    for url in candidatos:
-        if url in vistos:
-            continue
-        vistos.add(url)
-        payload = {
-            "model": RERANK.modelo,
-            "query": {"text": consulta},
-            "passages": [{"text": p} for p in passagens],
-            "truncate": "END",
-        }
-        try:
-            t0 = time.perf_counter()
-            r = httpx.post(url, headers=cabecalhos(RERANK.api_key), json=payload, timeout=TIMEOUT)
-            ms = (time.perf_counter() - t0) * 1000
-            if r.status_code >= 400:
-                print(f"          tentei {url} -> HTTP {r.status_code}")
-                continue
-            rankings = r.json()["rankings"]
-            topo = rankings[0]["index"]
-            ordem = " > ".join(f"#{x['index']}({x['logit']:.2f})" for x in rankings)
-            acertou = topo == 1
-            registrar(
-                "reranking",
-                acertou,
-                ms,
-                f"endpoint que respondeu: {url}\n"
-                f"ordem: {ordem}\n"
-                f"topo = passagem #{topo} "
-                f"{'(correto — TensorRT-LLM é a resposta certa)' if acertou else '(ERRADO — esperado #1)'}\n"
-                f"margem topo->2º: {rankings[0]['logit'] - rankings[1]['logit']:.2f}",
-            )
-            return
-        except Exception as exc:  # noqa: BLE001
-            print(f"          tentei {url} -> {type(exc).__name__}: {exc}")
-
-    registrar("reranking", False, None, "nenhum dos endpoints candidatos respondeu")
+        t0 = time.perf_counter()
+        scores = _chamar(consulta, passagens)
+        ms = (time.perf_counter() - t0) * 1000
+        ordem_idx = sorted(range(len(scores)), key=lambda i: -scores[i])
+        topo = ordem_idx[0]
+        acertou = topo == 1
+        ordem = " > ".join(f"#{i}({scores[i]:.4f})" for i in ordem_idx)
+        registrar(
+            "reranking",
+            acertou,
+            ms,
+            f"provedor: {RERANK.provedor} · modelo: {rotulo}\n"
+            f"ordem: {ordem}\n"
+            f"topo = passagem #{topo} "
+            f"{'(correto — TensorRT-LLM é a resposta certa)' if acertou else '(ERRADO — esperado #1)'}\n"
+            f"margem topo->2º: {scores[topo] - scores[ordem_idx[1]]:.4f} "
+            f"({'relevance_score em [0,1]' if RERANK.provedor == 'cohere' else 'logit cru'} "
+            f"— as escalas NÃO se comparam entre provedores, D-068)",
+        )
+    except Exception as exc:  # noqa: BLE001
+        registrar("reranking", False, None, f"{type(exc).__name__}: {str(exc)[:200]}")
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -275,7 +274,7 @@ def escrever_relatorio() -> Path:
     modelos = {
         "chat completion": LLM.modelo,
         "embedding": EMBEDDING.modelo,
-        "reranking": RERANK.modelo,
+        "reranking": RERANK.cohere_modelo if RERANK.provedor == "cohere" else RERANK.modelo,
     }
     for res in RESULTADOS:
         lat = f"{res['ms']:.0f} ms" if res["ms"] is not None else "—"
