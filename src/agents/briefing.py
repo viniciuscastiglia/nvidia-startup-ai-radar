@@ -55,13 +55,15 @@ from src.state import (
 #      comportamento que o código não tem —, e ele sobreviveu à auditoria que D-057 fez de D-048
 #      porque não havia régua que exercitasse `revenda`. Agora há: `--exclusoes`.
 #
-#      A correção candidata está MEDIDA e não foi aplicada nesta sessão: trocar o termo pelo
-#      prefixo `"revend"` leva o lado do falso negativo de 6/7 para **7/7** e o lado do falso
-#      positivo de 3/7 para **2/7** — conserta o vazamento silencioso e cria um falso positivo
-#      visível em *"Nossos clientes revendem os relatórios"*. Pela lógica de D-057 essa é a
-#      direção BOA da troca (o falso positivo aparece no briefing; o falso negativo não aparece
-#      em lugar nenhum), mas é mudança de comportamento fora do critério fixado para esta
-#      sessão, e entra com a decisão explícita da próxima.
+#      APLICADA EM 28/08 (D-071), com a decisão explícita que D-061 exigiu. O termo virou o
+#      prefixo `"revend"`, e o efeito medido é um TRADE-OFF e não uma melhora dos dois lados:
+#      falso negativo 6/7 -> **7/7**, falso positivo 3/7 -> **2/7**. Conserta o vazamento
+#      silencioso ("Somos revendedores autorizados" passava) e cria um falso positivo visível
+#      em *"Nossos clientes revendem os relatórios"*.
+#      O que autoriza a troca é a ASSIMETRIA de D-057, não o placar: o falso positivo aparece
+#      no briefing e alguém o corrige; o falso negativo não aparece em lugar nenhum — a
+#      startup inelegível entra na recomendação e ninguém fica sabendo. Somar os dois lados num
+#      número só esconderia exatamente isto, que é a razão de `--exclusoes` nunca os somar.
 #
 #      ANCORAR OS DOIS LADOS FOI TENTADO E ESTÁ ERRADO: `\bconsultoria\b` NÃO casa
 #      "prestamos consultorias de dados", e uma empresa que se descreve no plural passa pelo
@@ -75,7 +77,7 @@ EXCLUSOES = {
                "tokenização de ativos", "security token", "utility token",
                "token não fungível", "nft"],
     "cloud provider": ["cloud service provider", "provedor de nuvem", "datacenter próprio"],
-    "revenda": ["revenda", "distribuidor", "reseller"],
+    "revenda": ["revend", "distribuidor", "reseller"],   # prefixo: cobre revenda E revendedor (D-071)
     "capital aberto": ["capital aberto", "listada na b3", "publicly traded", "ipo concluído"],
 }
 IDADE_MAXIMA = 10   # o programa exige menos de 10 anos de existência

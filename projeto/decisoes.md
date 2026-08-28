@@ -3119,6 +3119,112 @@ descobri-la por acidente a cada `pytest` quebrado. Três EOLs (18/05, 25/08, 27/
 diária, com data e método.
 
 
+## D-068 — O passo 7 passa a ser o Cohere Rerank, e o provedor vira configuração
+
+**Data:** 28/08/2026 · **Sessão 08, Bloco 0B** · fecha o que D-064 e D-065 deixaram em aberto ·
+substitui D-015
+
+O reranking da NVIDIA morreu em 27/08 e **não há substituto**: reconfirmado em 28/08 com 9
+sondagens de path × modelo (todas 404/410) e **zero modelos com `rank` no nome** entre os 83 do
+catálogo. O passo 7 não tinha para onde ir dentro do fornecedor.
+
+### Por que o Cohere, e por que isto é uma correção de método e não uma escolha nova
+
+D-015 o descartou em 22/08 por *"é pago"* — **falso**, há trial key gratuita (D-065) — e por
+*"quebraria a narrativa"*. **Nenhum argumento medido contra ele existiu em momento algum**, porque
+ele nunca foi testado. E o TAPI o recomenda **nominalmente**, na seção 5.3, na mesma lista de
+Qdrant/PostgreSQL/BM25. Voltar a ele é alinhamento com o enunciado, não desvio.
+
+O requisito técnico que ele precisa satisfazer é específico deste projeto e elimina a maior parte
+das alternativas de prateleira: **as perguntas são em português e o corpus da NVIDIA é em inglês**,
+então todo par (consulta, passagem) do passo 7 é **crosslingual**. `rerank-v3.5` é multilíngue.
+Foi essa mesma propriedade que sempre justificou o NeMo Retriever.
+
+### A variável que faltava não era o modelo — era o fornecedor
+
+`ConfigRerank` ganhou `provedor`, com três valores:
+
+| valor | papel |
+|---|---|
+| `cohere` | **produção** |
+| `nvidia` | preservado como registro do que rodou até 27/08; é como se testa, em 30 s, se voltou |
+| `nenhum` | **degradação graciosa**: o passo 7 sai do caminho e a resposta vira a ordem da híbrida |
+
+A costura de D-001 isolava o *modelo* atrás de env var. A terceira morte mostrou o limite disso:
+**trocar o modelo só resolve se existir outro modelo.** Em 27/08 não existia.
+
+**`nenhum` NÃO é uma linha nova na tabela de ablação, e a distinção importa.** A tabela já tem a
+linha sem rerank: são os motores `denso` e `hibrido`. O provedor `nenhum` existe para o *runtime* —
+quem clonar o repositório sem chave nenhuma roda, em vez de receber um stack trace. É a metade
+executável do eliminatório nº 3, e ele **é uma conjunção**: *"projeto que não executa **e** cujo
+vídeo não demonstra funcionamento real"*. Verificado no TAPI, e é o que permite não pagar 900 MB
+de `torch` mais 1,1-2,3 GB de pesos por um fallback local.
+
+Medido: com `--rerank-provedor nenhum`, o motor `rerank_hibrido` devolve **exatamente** os números
+da híbrida (95% / 100% / 79% / 79%) e score 0,0000. O no-op é no-op de verdade.
+
+### A escala do score mudou, e isso NÃO reabre o limiar
+
+    NVIDIA  ->  `logit` cru, faixa medida de -11,00 a +11,94, quantizado em 1/16
+    Cohere  ->  `relevance_score` normalizado em [0, 1]
+
+D-035 mediu que **nenhum** corte sobre score separa quem tem resposta de quem não tem, e a
+abstenção mora no passo 8 como campo estruturado (D-040). Aquele resultado era sobre a ORDEM não
+separar as classes, não sobre a faixa numérica — trocar a escala não o afeta. O que a troca exige é
+mais modesto: os scores de rerank anteriores a 28/08 são de outra unidade e **não se comparam
+linha a linha** com os novos. r@k e e@k continuam comparáveis, porque medem posição.
+
+### Alternativa descartada, e com o custo medido
+
+**Cross-encoder local** (`bge-reranker-v2-m3` ou `jina-reranker-v2-base-multilingual`): implementado
+como provedor? **Não.** Medido o preço antes de decidir: `torch` são **74 MB** no macOS arm64 mas
+**900 MB** no Linux x86_64 da máquina de quem avalia, mais 27 pacotes novos, mais **1,1 a 2,3 GB**
+de pesos. Ele trocaria uma dependência de rede em *runtime* por uma de ~3 GB na *instalação*.
+
+Isso não o mata como ideia — ele é a única opção sem chave, sem quota e sem EOL, e continua sendo
+a resposta certa se a trial do Cohere apertar. Mas ele entra **medido ou não entra**, que é
+exatamente a régua que D-065 cobrou. Fica registrado como **não medido**, não como pior.
+
+### O que continua sendo um risco, e não se resolve aqui
+
+O Cohere é outro serviço hospedado. A diferença material é que é produto comercial com SLA, não
+catálogo de preview — mas a lição das três mortes é que **componente hospedado é passivo do
+entregável**, e trocar de hospedeiro não zera isso. O provedor `nenhum` é o que limita o estrago.
+
+---
+
+## D-071 — `revenda` vira o prefixo `revend`: um TRADE-OFF aceito, não uma melhora dos dois lados
+
+**Data:** 28/08/2026 · **Sessão 08, Bloco 1** · fecha o que D-061 deixou explicitamente para decidir
+
+| lado | antes | depois |
+|---|---|---|
+| falso **negativo** (excluídas corretamente) | 6/7 | **7/7** |
+| falso **positivo** (passaram corretamente) | 3/7 | **2/7** |
+
+**A troca piora um dos lados, e isso precisa estar escrito assim.** Ela fecha o vazamento
+silencioso que a régua achou em 27/08 (*"Somos revendedores autorizados"* passava pelo filtro,
+porque `revenda` não é prefixo de `revendedor`) e cria um falso positivo novo em *"Nossos clientes
+revendem os relatórios gerados pela plataforma"*.
+
+**O que autoriza a troca não é o placar — é a assimetria de D-057.** O falso positivo aparece no
+briefing e alguém o corrige; o falso negativo não aparece em lugar nenhum: a startup inelegível
+entra na recomendação e ninguém fica sabendo. É precisamente por isso que `--exclusoes` **nunca
+soma os dois números** — uma "acurácia" única aqui teria mostrado 9/14 antes e 9/14 depois, e
+concluído que nada mudou.
+
+### O helper duplicado NÃO foi unificado, e o motivo é o gatilho
+
+O achado nº 13 de D-066 registrou que `_perfil_de_um_trecho` (harness) duplica `_perfil` (testes),
+e definiu o gatilho: *"a hora de unificar é quando `elegibilidade()` mudar de corpus"*. **O corpus
+não mudou** — a correção de corpus foi medida e **reprovada** na sessão 07, e o que mudou aqui foi
+um termo. O gatilho não disparou.
+
+Somado a isso: os dois helpers têm assinaturas diferentes por razões legítimas de cada lado (o de
+teste é variádico, o do harness recebe um trecho), e unificá-los criaria uma dependência de
+`scripts/` para `tests/` que hoje não existe. Fica duplicado, com o gatilho intacto.
+
+
 ## Decisões pendentes
 
 Levantadas em `contexto/05-achados-e-decisoes.md` §4, a serem fechadas na sessão 01:
