@@ -31,6 +31,29 @@ transferem — a escala de logit de um 4B é outra.
    D-034 supunha variação entre execuções e a revisão da sessão 03 já a tinha refutado no 1B.
    **Nenhuma lógica pode depender de margem abaixo do passo da grade** — e isso vale
    especialmente para qualquer limiar de abstenção (ver D-035).
+
+
+O PROVEDOR MUDOU EM 28/08, E A ESCALA DO SCORE MUDOU COM ELE (D-068)
+----------------------------------------------------------------------
+O reranking da NVIDIA morreu em 27/08 sem substituto no catálogo, e o passo 7 passou a rodar no
+**Cohere Rerank**, que é o que o TAPI recomenda desde sempre (seção 5.3) e que D-015 havia
+descartado por *"é pago"* — afirmação falsa, corrigida em D-065.
+
+**As duas escalas não são comparáveis e nunca devem ser misturadas numa mesma tabela:**
+
+    NVIDIA  ->  `logit`, cross-encoder cru, faixa medida de -11,00 a +11,94, quantizado em 1/16
+    Cohere  ->  `relevance_score`, normalizado em [0, 1]
+
+Isto NÃO reabre a questão do limiar. D-035 mediu que **nenhum** corte sobre score separa o que
+tem resposta do que não tem — nem a cosseno densa (margem -0,2251) nem o logit do cross-encoder
+(-11,0039) —, e a abstenção mora no passo 8 como campo estruturado da geração (D-040). Trocar a
+escala não muda esse resultado: ele era sobre a ORDEM não separar as classes, não sobre a faixa
+numérica. Qualquer código que passe a comparar `score_rerank` com uma constante está errado
+independentemente do provedor.
+
+O que a mudança de escala exige de fato é mais modesto: os números de rerank das tabelas
+anteriores a 28/08 são de outra unidade e **não se comparam de linha para linha** com os novos.
+As métricas de recall (r@k, e@k) continuam comparáveis, porque medem posição, não score.
 """
 
 from __future__ import annotations
@@ -48,9 +71,19 @@ LOTE = 32
 
 TIMEOUT = 120.0
 
+URL_COHERE = "https://api.cohere.com/v2/rerank"
 
-def _chamar(consulta: str, textos: list[str]) -> list[float]:
-    """Logits na MESMA ordem da entrada. A API devolve ordenado por relevância, não por índice."""
+
+class RerankIndisponivel(RuntimeError):
+    """O provedor configurado não pode atender. Quem chama decide se degrada ou explode."""
+
+
+def _chamar_nvidia(consulta: str, textos: list[str]) -> list[float]:
+    """PRESERVADO COMO REGISTRO — devolve 404 desde 27/08 (D-064).
+
+    Fica no código porque é o que produziu todos os números de rerank das sessões 03 a 07, e
+    porque `RERANK_PROVEDOR=nvidia` é como se verifica, em 30 segundos, se a NVIDIA voltou.
+    """
     r = httpx.post(
         RERANK.url,
         headers={"Authorization": f"Bearer {RERANK.api_key}", "Accept": "application/json"},
@@ -65,6 +98,67 @@ def _chamar(consulta: str, textos: list[str]) -> list[float]:
     r.raise_for_status()
     por_indice = {x["index"]: float(x["logit"]) for x in r.json()["rankings"]}
     return [por_indice[i] for i in range(len(textos))]
+
+
+def _chamar_cohere(consulta: str, textos: list[str]) -> list[float]:
+    """Cohere Rerank v2. Devolve `relevance_score` em [0, 1], não logit — ver o docstring.
+
+    HTTP CRU E NÃO O SDK `cohere`, pelo mesmo motivo do smoke test: uma falha aqui é do
+    endpoint, não de uma abstração no meio. E é uma dependência a menos no `requirements.txt`,
+    que num projeto cuja stack já morreu três vezes não é economia de vaidade.
+
+    `rerank-v3.5` é multilíngue, e isso não é detalhe: as perguntas deste projeto são em
+    PORTUGUÊS e o corpus da NVIDIA é em INGLÊS. Todo par (consulta, passagem) do passo 7 é
+    crosslingual — foi o que sempre justificou o NeMo Retriever, e é o requisito que elimina
+    a maior parte dos cross-encoders de prateleira, treinados só em inglês.
+    """
+    if not RERANK.cohere_api_key:
+        raise RerankIndisponivel(
+            "COHERE_API_KEY ausente. Crie uma trial key gratuita em dashboard.cohere.com "
+            "(1.000 chamadas/mês, Rerank a 10 req/min) ou rode com RERANK_PROVEDOR=nenhum, "
+            "que degrada o passo 7 para a ordem da busca híbrida."
+        )
+    r = httpx.post(
+        URL_COHERE,
+        headers={"Authorization": f"Bearer {RERANK.cohere_api_key}",
+                 "Accept": "application/json"},
+        json={
+            "model": RERANK.cohere_modelo,
+            "query": consulta,
+            "documents": textos,
+            # Sem `top_n` de propósito: `logits_de` é um contrato de "score POR passagem".
+            # Cortar aqui devolveria menos linhas do que entrou e quebraria o `zip` de quem
+            # chama — o corte é decisão de `reranquear`, um nível acima.
+        },
+        timeout=TIMEOUT,
+    )
+    r.raise_for_status()
+    por_indice = {x["index"]: float(x["relevance_score"]) for x in r.json()["results"]}
+    return [por_indice[i] for i in range(len(textos))]
+
+
+def _chamar_nenhum(consulta: str, textos: list[str]) -> list[float]:
+    """Sem reranker: score CONSTANTE, que preserva a ordem de entrada.
+
+    `sorted` do Python é estável, então empatar todo mundo em 0,0 devolve exatamente a ordem
+    que a fusão produziu. Não é um reranker ruim — é o passo 7 saindo do caminho.
+    """
+    return [0.0] * len(textos)
+
+
+_PROVEDORES = {"cohere": _chamar_cohere, "nvidia": _chamar_nvidia, "nenhum": _chamar_nenhum}
+
+
+def _chamar(consulta: str, textos: list[str]) -> list[float]:
+    """Scores na MESMA ordem da entrada — as APIs devolvem ordenado por relevância, não por índice."""
+    try:
+        fn = _PROVEDORES[RERANK.provedor]
+    except KeyError:
+        raise RerankIndisponivel(
+            f"RERANK_PROVEDOR={RERANK.provedor!r} desconhecido. "
+            f"Use um de: {', '.join(sorted(_PROVEDORES))}."
+        ) from None
+    return fn(consulta, textos)
 
 
 def logits_de(consulta: str, passagens: list[Passagem]) -> dict[int, float]:

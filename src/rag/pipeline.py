@@ -22,6 +22,7 @@ que é a linha de base de D-032: é o botão de desligar o braço lexical sem to
 
 from __future__ import annotations
 
+from src.config import RERANK
 from src.rag.busca import ESTRATEGIA_PADRAO, Passagem, buscar_denso_bruto, para_citacao
 from src.rag.fusao import fundir_rrf, fundir_soma
 from src.rag.geracao import gerar
@@ -113,6 +114,15 @@ def buscar_com_rerank(
     `avaliar_rag.py --truncar-pool` é o braço de controle que mantém isso medível — foi ele que
     separou "ganho do pool maior" de "ganho da fusão".
     """
+    # SEM PROVEDOR DE RERANK, O CAMINHO DE PRODUÇÃO É A HÍBRIDA (D-068).
+    # Poderia cair em `reranquear` e receber 0,0 para todo mundo — a ordem sairia igual —, mas
+    # aí `score_rerank` viria preenchido com um número que nenhum reranker produziu. `None` é a
+    # convenção do projeto para "este motor não votou", e é diferente de "votou zero".
+    # É isto que faz o repositório rodar para quem clona sem chave nenhuma, em vez de explodir:
+    # a híbrida sozinha faz 95% r@1 e 100% r@3 (D-046).
+    if RERANK.provedor == "nenhum":
+        return buscar_hibrido(consulta, k=k, estrategia=estrategia, **kwargs)
+
     fundido, sd, sl = recuperar(consulta, estrategia=estrategia, **kwargs)
     if not fundido:
         return []

@@ -69,6 +69,7 @@ import yaml
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
+from src.config import RERANK
 from src.db import conectar
 from src.rag.busca import Passagem, buscar_denso_bruto, para_citacao
 from src.rag.fusao import fundir_rrf, fundir_soma
@@ -176,7 +177,11 @@ def validar(perguntas: list[dict]) -> int:
 
 _CACHE_DENSO: dict[tuple[str, str, int], Resultado] = {}
 _CACHE_LEXICAL: dict[tuple[str, str, int], Resultado] = {}
-_CACHE_RERANK: dict[tuple[str, tuple[int, ...]], dict[int, float]] = {}
+# O PROVEDOR ENTRA NA CHAVE, E ISSO NÃO É ZELO (D-068). Sem ele, rodar duas linhas de
+# provedor no mesmo processo faria a segunda ler os scores da primeira e as duas sairiam
+# IDÊNTICAS — um empate produzido pelo cache, não pela medição. É a mesma classe de erro
+# que o bytecode obsoleto causou na sessão 07: o número aparece, e é de outra coisa.
+_CACHE_RERANK: dict[tuple[str, str, tuple[int, ...]], dict[int, float]] = {}
 
 
 def braco_denso(consulta: str, estrategia: str, pool: int) -> Resultado:
@@ -194,7 +199,7 @@ def braco_lexical(consulta: str, estrategia: str, pool: int) -> Resultado:
 
 
 def braco_rerank(consulta: str, passagens: list[Passagem]) -> dict[int, float]:
-    chave = (consulta, tuple(p.chunk_id for p in passagens))
+    chave = (consulta, RERANK.provedor, tuple(p.chunk_id for p in passagens))
     if chave not in _CACHE_RERANK:
         _CACHE_RERANK[chave] = logits_de(consulta, passagens)
     return _CACHE_RERANK[chave]
@@ -467,6 +472,11 @@ def main() -> int:
     ap.add_argument("--motor", choices=MOTORES, action="append")
     ap.add_argument("--estrategia", choices=ESTRATEGIAS, action="append")
     ap.add_argument("--pool", type=int, default=POOL_PADRAO)
+    ap.add_argument("--rerank-provedor", choices=("cohere", "nvidia", "nenhum"),
+                    help="sobrescreve RERANK_PROVEDOR nesta execução. É --truncar-pool "
+                         "aplicado ao FORNECEDOR: mede o passo 7 trocando quem o hospeda, "
+                         "com a mesma régua. A linha 'sem rerank' já existe na tabela — "
+                         "são os motores `denso` e `hibrido`.")
     ap.add_argument("--truncar-pool", action="store_true",
                     help="corta a união em --pool antes do rerank; braço de controle (D-044)")
     ap.add_argument("--falhas", action="store_true")
@@ -478,6 +488,19 @@ def main() -> int:
     ap.add_argument("--peso-lexical", type=float, default=PESO_LEXICAL_PADRAO)
     ap.add_argument("--norm", choices=("minmax", "soma"), default="minmax")
     args = ap.parse_args()
+
+    # Sobrescreve ANTES de qualquer chamada. `RERANK` é frozen, então trocamos o campo por
+    # `dataclasses.replace` e reapontamos o módulo — em vez de mutar um dataclass congelado.
+    if args.rerank_provedor:
+        import dataclasses
+
+        import src.config
+        import src.rag.rerank
+        novo = dataclasses.replace(src.config.RERANK, provedor=args.rerank_provedor)
+        src.config.RERANK = novo
+        src.rag.rerank.RERANK = novo
+        globals()["RERANK"] = novo
+        print(f"provedor de rerank: {args.rerank_provedor}")
 
     perguntas = carregar()
     if args.validar:

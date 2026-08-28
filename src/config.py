@@ -19,6 +19,12 @@ Para o EMBEDDER ela não funciona: trocar o modelo muda o espaço vetorial e inv
 já indexado. Env var não é pin de dependência; um modelo é um serviço remoto, não um pacote
 do `requirements.txt`.
 
+E EM 27/08 A COSTURA NÃO BASTOU NEM PARA O RERANKING (D-064, D-068)
+--------------------------------------------------------------------
+Trocar o modelo só resolve se existir outro modelo. Na terceira morte não existia: o catálogo
+não tem nenhum reranker. Por isso `ConfigRerank` ganhou `provedor` — a variável que faltava não
+era o nome do modelo, era o nome de QUEM o hospeda.
+
 Isso só é possível porque os endpoints NIM da NVIDIA são OpenAI-compatible: mesmo payload,
 mesmo formato de resposta, só muda o `base_url`. Ver contexto/03-stack-nvidia.md §1.
 É também a razão de usarmos `langchain-openai` em vez de `langchain-nvidia-ai-endpoints`:
@@ -73,15 +79,32 @@ class ConfigEmbedding:
 
 @dataclass(frozen=True)
 class ConfigRerank:
-    """Reranking (cross-encoder).
+    """Reranking (cross-encoder) — passo 7. O PROVEDOR é escolhido aqui (D-068).
 
-    O endpoint de ranking NÃO é o mesmo path do chat/embedding — por isso `url` completa
-    em vez de base_url + sufixo fixo. O smoke test confirma qual path responde.
+    `provedor` existe porque o passo 7 já perdeu o fornecedor três vezes (D-013, D-046, D-064)
+    e na terceira não sobrou substituto na NVIDIA: 9 sondagens de path x modelo, todas 404/410,
+    e zero modelos com `rank` no nome entre os 83 do catálogo.
+
+        cohere  -> produção. É o que o TAPI recomenda nominalmente (secão 5.3)
+        nvidia  -> o que rodava até 27/08. Preservado como registro, NÃO funciona hoje
+        nenhum  -> degradação graciosa: sem chave, o passo 7 sai do caminho e a resposta
+                   vira a ordem da busca híbrida, que sozinha faz 95% r@1 e 100% r@3 (D-046)
+
+    POR QUE `nenhum` NÃO É UMA LINHA A MAIS NO HARNESS DE ABLAÇÃO
+    A tabela de `avaliar_rag.py` JÁ tem a linha sem rerank: são os motores `denso` e `hibrido`.
+    O provedor `nenhum` não existe para medir nada — existe para que quem clonar o repositório
+    sem chave nenhuma consiga rodar, que é a metade executável do eliminatório nº 3.
+
+    O endpoint de ranking da NVIDIA NÃO é o mesmo path do chat/embedding — por isso `url`
+    completa em vez de base_url + sufixo fixo. O Cohere tem path próprio e não usa `url`.
     """
 
+    provedor: str
     url: str
     api_key: str | None
     modelo: str
+    cohere_api_key: str | None
+    cohere_modelo: str
 
 
 # Chave única: aceita NVIDIA_API_KEY (nome específico) ou LLM_API_KEY (nome neutro),
@@ -109,12 +132,15 @@ EMBEDDING = ConfigEmbedding(
 )
 
 RERANK = ConfigRerank(
+    # Default `cohere` desde 28/08 (D-068). O provedor `nvidia` morreu em 27/08 e o
+    # catálogo não tem substituto; o Cohere é o que o TAPI recomenda desde sempre, e
+    # D-015 o descartou por "é pago" — afirmação FALSA, corrigida em D-065.
+    provedor=_env("RERANK_PROVEDOR", "cohere"),
     url=_env("RERANK_URL", "https://ai.api.nvidia.com/v1/retrieval/nvidia/reranking"),
     api_key=_API_KEY,
-    # MORTO em 27/08 (HTTP 404, D-064) e SEM substituto no catálogo da NVIDIA:
-    # 18 sondagens de path x modelo, todas 404/410. A decisão do passo 7 está em
-    # aberto (D-065) — cross-encoder local, Cohere com trial key, ou os dois medidos.
     modelo=_env("RERANK_MODEL", "nvidia/rerank-qa-mistral-4b"),
+    cohere_api_key=_env("COHERE_API_KEY"),
+    cohere_modelo=_env("COHERE_RERANK_MODEL", "rerank-v3.5"),
 )
 
 DATABASE_URL = _env("DATABASE_URL", "postgresql://localhost:5432/case_nvidia")
