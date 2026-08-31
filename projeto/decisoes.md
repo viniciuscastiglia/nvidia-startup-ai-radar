@@ -1787,5 +1787,5 @@ referências cruzadas a `D-0NN` em `src/`, `tests/`, `scripts/` e na documentaç
 | **P-11** | **O `min()` da confiança** | 0/6 constante. Barato, mas exige critério fixado antes — uma tentativa já foi reprovada (D-059) |
 | **P-12** | **`classe`: vocabulário ou curadoria?** | D-060 mostrou que o gargalo não é a regra de decisão. Exige base ampliada |
 | **P-13** | **Exclusão por menção vs. identidade** | D-052 achado 3, aberto desde 25/08. Axenya e Freedom recusadas por citação de terceiro |
-| **P-14** | **`estrategia_analise` é calculado e nada o lê** | ou o subgrafo passa a ler, ou a arquitetura publicada para de prometer o campo |
+| **P-14** | **Quatro campos são calculados e nada os lê** | `estrategia_analise` e `exige_sinais_ia` (Query Planner), `score_recuperacao` (Retriever), `motivo_validacao` (Evidence Validator). Não é código morto — é capacidade anunciada e não entregue: a arquitetura publicada promete *"critérios de busca + estratégia de análise"*. Ou o subgrafo passa a lê-los, ou o diagrama para de prometê-los |
 | **P-15** | **Re-medir a abstenção do passo 8** | os 20-22/24 são do modelo morto; D-069 previu n=3 e não foi executado |

@@ -63,8 +63,7 @@ import time
 import httpx
 
 from src.config import RERANK
-from src.rag.busca import Passagem, para_citacao
-from src.state import CitacaoRAG
+from src.rag.busca import Passagem
 
 # Quantas passagens vão por chamada. A API aceita mais que isto, mas lotear tem uma vantagem que
 # não é de limite: o cross-encoder pontua cada par (consulta, passagem) de forma INDEPENDENTE,
@@ -234,29 +233,3 @@ def reranquear(
     if top_n is not None:
         ordenado = ordenado[:top_n]
     return [(p, logits[p.chunk_id]) for p in ordenado]
-
-
-def reranquear_citacoes(
-    consulta: str,
-    passagens: list[Passagem],
-    scores_denso: dict[int, float] | None = None,
-    scores_lexical: dict[int, float] | None = None,
-    top_n: int | None = None,
-) -> list[CitacaoRAG]:
-    """A borda: devolve `CitacaoRAG` com OS TRÊS SCORES preenchidos.
-
-    Guardar os três separados é o que permite MOSTRAR o reranker mudando a ordem — no vídeo e no
-    harness. `None` num deles continua significando "este motor não votou", que é diferente de
-    "votou zero".
-    """
-    scores_denso = scores_denso or {}
-    scores_lexical = scores_lexical or {}
-    return [
-        para_citacao(
-            p,
-            denso=scores_denso.get(p.chunk_id),
-            lexical=scores_lexical.get(p.chunk_id),
-            rerank=logit,
-        )
-        for p, logit in reranquear(consulta, passagens, top_n)
-    ]

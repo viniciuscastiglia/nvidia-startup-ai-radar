@@ -26,8 +26,7 @@ import unicodedata
 import bm25s
 
 from src.db import conectar
-from src.rag.busca import ESTRATEGIA_PADRAO, Passagem, para_citacao
-from src.state import CitacaoRAG
+from src.rag.busca import ESTRATEGIA_PADRAO, Passagem
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Os parâmetros do Okapi, explícitos porque D-016 justifica a escolha por eles
@@ -144,11 +143,6 @@ def _indice(estrategia: str) -> tuple[bm25s.BM25, list[Passagem]]:
     return _INDICES[estrategia]
 
 
-def invalidar_indice() -> None:
-    """Só para teste e para depois de re-ingerir o corpus."""
-    _INDICES.clear()
-
-
 def buscar_lexical_bruto(
     consulta: str, k: int = 10, estrategia: str = ESTRATEGIA_PADRAO
 ) -> list[tuple[Passagem, float]]:
@@ -167,9 +161,3 @@ def buscar_lexical_bruto(
         if s > 0
     ]
 
-
-def buscar_lexical(
-    consulta: str, k: int = 10, estrategia: str = ESTRATEGIA_PADRAO
-) -> list[CitacaoRAG]:
-    """Mesma assinatura de `buscar_denso` — é o que deixa o harness trocar de motor."""
-    return [para_citacao(p, lexical=s) for p, s in buscar_lexical_bruto(consulta, k, estrategia)]

@@ -46,24 +46,17 @@ from src.state import (
 #      plural é a forma comum em texto institucional. É a mesma correção que D-039 exigiu no
 #      gabarito do RAG, onde `ILIKE '%SLA%'` casava dentro de "tran(sla)tion".
 #
-#      CORREÇÃO DE 27/08 (D-061): este comentário afirmava também que `"revenda"` casava em
-#      "revende(dor)". **É FALSO, e nunca foi verdade** — "revenda" não é prefixo de
-#      "revendedor" (o 7º caractere é `a` contra `e`), com âncora ou sem ela. Consequência
-#      MEDIDA pela régua de exclusões: *"Somos revendedores autorizados de licenças de
-#      software"* **passa pelo filtro do Inception**. É um falso negativo silencioso vivo no
-#      Diferencial, da mesma classe do achado 1 de D-057 — o comentário descrevendo um
-#      comportamento que o código não tem —, e ele sobreviveu à auditoria que D-057 fez de D-048
-#      porque não havia régua que exercitasse `revenda`. Agora há: `--exclusoes`.
-#
-#      APLICADA EM 28/08 (D-071), com a decisão explícita que D-061 exigiu. O termo virou o
-#      prefixo `"revend"`, e o efeito medido é um TRADE-OFF e não uma melhora dos dois lados:
-#      falso negativo 6/7 -> **7/7**, falso positivo 3/7 -> **2/7**. Conserta o vazamento
-#      silencioso ("Somos revendedores autorizados" passava) e cria um falso positivo visível
-#      em *"Nossos clientes revendem os relatórios"*.
-#      O que autoriza a troca é a ASSIMETRIA de D-057, não o placar: o falso positivo aparece
-#      no briefing e alguém o corrige; o falso negativo não aparece em lugar nenhum — a
-#      startup inelegível entra na recomendação e ninguém fica sabendo. Somar os dois lados num
-#      número só esconderia exatamente isto, que é a razão de `--exclusoes` nunca os somar.
+#   3. `"revenda"` virou o PREFIXO `"revend"` (D-071), e o efeito medido é um TRADE-OFF, não uma
+#      melhora dos dois lados: falso negativo 6/7 -> **7/7**, falso positivo 3/7 -> **2/7**.
+#      Conserta um vazamento silencioso — *"Somos revendedores autorizados"* passava pelo filtro,
+#      porque "revenda" não é prefixo de "revendedor" — e cria um falso positivo visível em
+#      *"Nossos clientes revendem os relatórios"*.
+#      O que autoriza a troca é a ASSIMETRIA de D-057, não o placar: o falso positivo aparece no
+#      briefing e alguém o corrige; o falso negativo não aparece em lugar nenhum — a startup
+#      inelegível entra na recomendação e ninguém fica sabendo. Somar os dois lados num número só
+#      esconderia exatamente isto, que é a razão de `--exclusoes` nunca os somar.
+#      O vazamento só foi achado quando a régua passou a exercitar `revenda` (D-061): ele
+#      sobreviveu à auditoria que D-057 fez de D-048 porque não havia caso que o exercitasse.
 #
 #      ANCORAR OS DOIS LADOS FOI TENTADO E ESTÁ ERRADO: `\bconsultoria\b` NÃO casa
 #      "prestamos consultorias de dados", e uma empresa que se descreve no plural passa pelo

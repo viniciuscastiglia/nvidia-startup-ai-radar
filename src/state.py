@@ -129,6 +129,9 @@ class Afirmacao(BaseModel):
     evidencias: list[Evidencia] = Field(default_factory=list)
     confianca: Confianca | None = None
     validada: bool | None = None
+    # Preenchido em produção por `avaliar()`, o mesmo caminho que produz `Diagnostico.
+    # motivo_confianca` — que D-066 mandou preencher para "o rodapé não mentir". Este ainda não é
+    # impresso pelo briefing: é o irmão por-afirmação daquele, e a lacuna é a mesma (P-14).
     motivo_validacao: str | None = None
 
     @property
@@ -160,9 +163,15 @@ class PlanoDeBusca(BaseModel):
     porte_min_time: int | None = None
     porte_max_time: int | None = None
     palavras_chave: list[str] = Field(default_factory=list)
+    # SEM CONSUMIDOR (P-14, levantado em 31/08). Este campo, `estrategia_analise`,
+    # `StartupRef.score_recuperacao` e `Afirmacao.motivo_validacao` são calculados corretamente e
+    # NADA os lê. Não são código morto — são capacidade anunciada e não entregue: a arquitetura
+    # publicada diz "Query Planner: critérios de busca + estratégia de análise", e a estratégia é
+    # descartada. Apagá-los esconderia a lacuna; ficam anotados, como manda D-020. Ou o subgrafo
+    # passa a lê-los, ou o diagrama para de prometê-los — a decisão é P-14.
     exige_sinais_ia: bool = True
     max_startups: int = 5
-    estrategia_analise: str = ""
+    estrategia_analise: str = ""   # sem consumidor — P-14
 
 
 class StartupRef(BaseModel):
@@ -178,7 +187,7 @@ class StartupRef(BaseModel):
     tamanho_time: int | None = None
     descricao_curta: str | None = None
     documentos: list[DocumentoRef] = Field(default_factory=list)
-    score_recuperacao: float = 0.0
+    score_recuperacao: float = 0.0   # sem consumidor — P-14
 
 
 class PerfilStartup(BaseModel):

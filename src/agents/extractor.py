@@ -194,8 +194,7 @@ def node(state: EstadoAnalise) -> dict:
     # mais favorável. Medido em 25/08 sobre as 8 fixtures: os dois operadores dão o MESMO placar
     # (classe 3/7, precisão 49%) — a mudança não compra métrica, e dizer o contrário seria
     # inventar um ganho. Muda o rótulo de Freedom AI, Laura Networks e Maritaca AI, que empatam
-    # 1x1, 1x1 e 2x2. NÃO muda a RD Station, que é 3x1 e sai autopilot nos dois — a primeira
-    # versão deste comentário afirmava o contrário e estava errada (code review de 25/08, nº 3).
+    # 1x1, 1x1 e 2x2. NÃO muda a RD Station, que é 3x1 e sai autopilot nos dois operadores.
     ev_auto, _ = _julgar("a empresa vende o TRABALHO EXECUTADO / o resultado pronto (autopilot), "
                          "assumindo a operação no lugar do cliente", nome,
                          _casar(docs, SINAIS_AUTOPILOT))

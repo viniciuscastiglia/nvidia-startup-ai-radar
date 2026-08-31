@@ -30,9 +30,7 @@ O DEFEITO REAL DO RRF, QUE É POR ISSO QUE `K` É PARÂMETRO E NÃO A CONSTANTE 
 Com `K=60` e listas de 20 — que é o `POOL_PADRAO` real deste sistema —, as contribuições vão de
 1/61 a 1/80: **31% de amplitude**. O RRF degenera em "aparece nas duas listas?" e a informação de
 ranking evapora. Em corpus grande isso não aparece porque as listas são longas; no nosso, aparece.
-(Uma versão anterior deste parágrafo fazia a conta com listas de 10 e dizia 15%, e emendava "no
-nosso, com pool de 20" logo depois — dois números para o mesmo sistema. O que vale é 20 e 31%.) Com `K=10` a amplitude
-entre o 1º e o 10º vira ~2x, e o ranking volta a pesar. `K` é escolhido medindo, pelo mesmo
+Com `K=10` a amplitude entre o 1º e o 10º vira ~2x, e o ranking volta a pesar. `K` é escolhido medindo, pelo mesmo
 argumento que D-016 usa para `k1` e `b`.
 
 A GARANTIA QUE PROTEGE O CASO CROSSLINGUAL
