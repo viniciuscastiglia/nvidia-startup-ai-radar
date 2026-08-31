@@ -41,10 +41,17 @@ from src.state import (
 #      em contexto cripto, e `criptomoeda`/`blockchain`/`web3`/`bitcoin` já cobriam o resto —
 #      medido: o caso de teste de tokenização continua excluído por `blockchain`.
 #   2. O casamento passou a exigir fronteira de palavra NO INÍCIO DO TERMO, e só no início.
-#      `"ipo"` deixa de casar dentro de "equ(ipo)" e "princ(ípio)", que era o alvo; e
-#      `"consultoria"` continua casando em "consultoria(s)", que é o comportamento desejado —
-#      plural é a forma comum em texto institucional. É a mesma correção que D-039 exigiu no
-#      gabarito do RAG, onde `ILIKE '%SLA%'` casava dentro de "tran(sla)tion".
+#      `"consultoria"` casa em "consultoria(s)" — plural é a forma comum em texto institucional —
+#      e `"revend"` casa em "revendedores". Ancorar TAMBÉM no fim desliga os dois (D-057).
+#      É a mesma correção que D-039 exigiu no gabarito do RAG, onde `ILIKE '%SLA%'` casava
+#      dentro de "tran(sla)tion".
+#
+#      CORREÇÃO DE 31/08: este comentário justificava a fronteira dizendo que `"ipo"` deixava de
+#      casar dentro de "equ(ipo)" e "princ(ípio)". **O termo desta lista SEMPRE foi `"ipo
+#      concluído"`** — verificado no primeiro commit que o criou —, e "ipo concluído" nunca casou
+#      dentro de "equipo", com âncora ou sem. O exemplo era ficção: a mudança está certa pelos
+#      dois motivos reais acima, mas um dos argumentos que a sustentavam nunca foi verificado.
+#      Quarta ocorrência do mesmo padrão no projeto (D-057 nº 1, D-061, D-066 nº 3).
 #
 #   3. `"revenda"` virou o PREFIXO `"revend"` (D-071), e o efeito medido é um TRADE-OFF, não uma
 #      melhora dos dois lados: falso negativo 6/7 -> **7/7**, falso positivo 3/7 -> **2/7**.
