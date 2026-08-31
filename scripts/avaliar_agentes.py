@@ -460,6 +460,10 @@ def medir(fixtures: list[dict], motor: str, usar_baseline: bool) -> dict:
     precisoes: list[float] = []
     recalls: list[float] = []
     assinaturas: set[frozenset] = set()
+    proibidas_validadas: list[str] = []
+    precisoes_v: list[float] = []
+    recalls_v: list[float] = []
+    assinaturas_validadas: set[frozenset] = set()
 
     for i, f in enumerate(fixtures):
         g = f.get("gabarito") or {}
@@ -486,34 +490,64 @@ def medir(fixtures: list[dict], motor: str, usar_baseline: bool) -> dict:
                     f"{f['nome']:16} {campo:17} esperado {sorted(map(str, aceitos))} · obtido {obtido!r}")
 
         perfil = estado.get("perfil")
-        emitidas = {d.dor for d in perfil.dores_observadas} if perfil else set()
+        dores = perfil.dores_observadas if perfil else []
+        # DUAS COLUNAS, E A SEPARAÇÃO É O PASSO 0 DE D-074.
+        #
+        # `emitidas` é o que o Extractor produziu; `validadas` é o que sobrevive ao Evidence
+        # Validator e chega ao Recommendation, que filtra por `d.validada`.
+        #
+        # Até 31/08 esta régua lia SÓ `dores_observadas` e ignorava `validada`. Isso a tornava
+        # CEGA para a mudança que D-074 decide: um validator que marca a dor como inválida em vez
+        # de deletá-la não moveria o placar um milímetro, e a medição mediria zero.
+        #
+        # Hoje as duas colunas são IDÊNTICAS, e essa identidade é o achado: `validada` só é
+        # `False` quando não há evidência nenhuma, e o Extractor nunca cria dor sem evidência.
+        # Medido em 31/08: 34 de 34 passam. É um portão que nunca fecha.
+        emitidas = {d.dor for d in dores}
+        validadas = {d.dor for d in dores if d.validada}
         assinaturas.add(frozenset(emitidas))
+        assinaturas_validadas.add(frozenset(validadas))
         esperadas = set(g.get("dores_esperadas") or [])
         proibidas = set(g.get("dores_proibidas") or [])
         ambiguas = set(g.get("dores_ambiguas") or [])
 
         for dor in sorted(emitidas & proibidas):
-            proibidas_emitidas.append(f"{f['nome']:16} emitiu `{dor}`, que o gabarito PROÍBE")
+            marca = "" if dor in validadas else " (mas o validator BARROU)"
+            proibidas_emitidas.append(
+                f"{f['nome']:16} emitiu `{dor}`, que o gabarito PROÍBE{marca}")
+        for dor in sorted(validadas & proibidas):
+            proibidas_validadas.append(
+                f"{f['nome']:16} entregou `{dor}` ao Recommendation, e o gabarito PROÍBE")
 
-        # As ambíguas saem dos dois lados: não contam a favor nem contra.
-        contaveis = emitidas - ambiguas
-        if contaveis:
-            precisoes.append(len(contaveis & esperadas) / len(contaveis))
-        elif not esperadas:
-            # Nada esperado e nada emitido é o comportamento CORRETO, e precisa ser premiado:
-            # três fixtures (SunnyHUB, RD Station, Deal) existem justamente para medir isso.
-            precisoes.append(1.0)
-        # Emitiu nada e havia o que emitir: precisão é INDEFINIDA, não zero — "não previu" não
-        # é o mesmo que "previu tudo errado", e é o recall que pune este caso. Simétrico com o
-        # recall, que já pula fixtures sem `dores_esperadas`. Achado nº 7 do code review.
-        if esperadas:
-            recalls.append(len(emitidas & esperadas) / len(esperadas))
+        for conjunto, precs, recs in ((emitidas, precisoes, recalls),
+                                      (validadas, precisoes_v, recalls_v)):
+            # As ambíguas saem dos dois lados: não contam a favor nem contra.
+            contaveis = conjunto - ambiguas
+            if contaveis:
+                precs.append(len(contaveis & esperadas) / len(contaveis))
+            elif not esperadas:
+                # Nada esperado e nada emitido é o comportamento CORRETO, e precisa ser premiado:
+                # três fixtures (SunnyHUB, RD Station, Deal) existem justamente para medir isso.
+                precs.append(1.0)
+            # Emitiu nada e havia o que emitir: precisão é INDEFINIDA, não zero — "não previu" não
+            # é o mesmo que "previu tudo errado", e é o recall que pune este caso. Simétrico com o
+            # recall, que já pula fixtures sem `dores_esperadas`. Achado nº 7 do code review.
+            if esperadas:
+                recs.append(len(conjunto & esperadas) / len(esperadas))
+
+    def _media(v):
+        return sum(v) / len(v) if v else None
 
     return {
         "placar": placar, "divergencias": divergencias, "proibidas": proibidas_emitidas,
-        "precisao": sum(precisoes) / len(precisoes),
-        "recall": sum(recalls) / len(recalls) if recalls else None,
+        "precisao": _media(precisoes),
+        "recall": _media(recalls),
         "discriminacao": (len(assinaturas), len(fixtures)),
+        # Coluna `validada` — o que chega ao Recommendation. Ver D-074.
+        "proibidas_v": proibidas_validadas,
+        "precisao_v": _media(precisoes_v),
+        "recall_v": _media(recalls_v),
+        "discriminacao_v": (len(assinaturas_validadas), len(fixtures)),
     }
 
 
@@ -524,12 +558,24 @@ def imprimir(titulo: str, r: dict, detalhar: bool) -> None:
         decididos = p["acerto"] + p["erro"]
         marca = f"{p['acerto']}/{decididos}" if decididos else "—"
         print(f"  {campo:18} {marca:>10}  {p['ambiguo']:>9} {p['nao_medido']:>12}")
-    prec, rec = r["precisao"], r["recall"]
-    print(f"  {'dor — precisão':18} {prec:>10.0%}   <- manchete")
-    print(f"  {'dor — recall':18} {rec:>10.0%}" if rec is not None else "  dor — recall            —")
+    # DUAS COLUNAS (D-074, passo 0): `emitida` é o que o Extractor produziu, `validada` é o que
+    # sobrevive ao Evidence Validator e chega ao Recommendation. Enquanto forem idênticas, o
+    # portão `if d.validada` do recommendation.py não está filtrando nada.
+    def _pct(v):
+        return f"{v:.0%}" if v is not None else "—"
+
     d, n = r["discriminacao"]
-    print(f"  {'discriminação':18} {f'{d}/{n}':>10}   conjuntos distintos de dores")
-    print(f"  {'dor proibida':18} {len(r['proibidas']):>10}   emissão(ões)")
+    dv, _ = r["discriminacao_v"]
+    identicas = (r["precisao"] == r["precisao_v"] and r["recall"] == r["recall_v"]
+                 and len(r["proibidas"]) == len(r["proibidas_v"]))
+    print(f"  {'dor':18} {'emitida':>10} {'validada':>10}")
+    print(f"  {'  precisão':18} {_pct(r['precisao']):>10} {_pct(r['precisao_v']):>10}   <- manchete")
+    print(f"  {'  recall':18} {_pct(r['recall']):>10} {_pct(r['recall_v']):>10}")
+    print(f"  {'  discriminação':18} {f'{d}/{n}':>10} {f'{dv}/{n}':>10}")
+    print(f"  {'  proibida':18} {len(r['proibidas']):>10} {len(r['proibidas_v']):>10}   emissão(ões)")
+    if identicas:
+        print("       ^ as duas colunas são IDÊNTICAS: o filtro `if d.validada` do "
+              "recommendation.py não barrou nada (D-074)")
     if detalhar:
         for linha in r["divergencias"]:
             print(f"    x {linha}")

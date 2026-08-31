@@ -1773,7 +1773,7 @@ referências cruzadas a `D-0NN` em `src/`, `tests/`, `scripts/` e na documentaç
 ---
 
 ## D-074 — O critério do julgamento semântico no Evidence Validator, fixado ANTES do código
-**Data:** 31/08/2026 · escrito antes de a primeira linha ser alterada · **RASCUNHO, a ajustar**
+**Data:** 31/08/2026 · escrito antes de a primeira linha ser alterada · **APROVADO em 31/08, alvos CONGELADOS**
 
 **O que está sendo decidido.** Mover a pergunta *"a evidência SUSTENTA a afirmação?"* para o
 **Evidence Validator**, que marca `validada=False` em vez de deletar — em vez de mantê-la no juiz
@@ -1846,8 +1846,7 @@ porque o teto foi calculado antes.
 
 **Por que 80% e não 64%:** o controle barato é determinístico em 69%, e o espalhamento do juiz entre
 execuções é de ~13 pontos. Uma barra em 80% exige que **a pior execução** supere o controle por 11
-pontos — margem maior do que a variação entre execuções consegue fabricar. *(Este número é o que
-mais merece discussão antes de valer.)*
+pontos — margem maior do que a variação entre execuções consegue fabricar.
 
 **Por que o recall aparece em DOIS lugares:** é a lacuna que D-055 deixou e que D-060 e D-072
 encontraram de novo — *fixar a barra sem nomear todas as métricas que podem se mover*. Terceira vez;
