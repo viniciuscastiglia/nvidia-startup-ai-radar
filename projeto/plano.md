@@ -70,68 +70,37 @@ Alvo é "funcional e limpa", não "impressionante".
 **M6 — 07/09 · O vídeo está gravado**
 Até 7 minutos: arquitetura dos agentes, sistema RAG, demonstração funcional pela interface.
 
-## Projeção de sessões (feita em 23/08, ao fechar a M1)
+## Estado em 31/08 — 9 dias da entrega, 7 do vídeo
 
-**11 a 13 sessões** do calibre da 01 (4-5h). Restam 17 dias — cerca de 0,7 sessão por dia.
+| marco | estado |
+|---|---|
+| **M1** pipeline executa | **fechada** em 23/08, dois dias adiantada |
+| **M2** RAG responde com citação | **fechada** — os 9 passos do TAPI, mais o harness do passo 9 |
+| **M3** base 30-50 startups | **8 de 30.** É o maior débito aberto (D-062) |
+| **M4** recomendações defensáveis | régua existe (D-050); 4 dos 9 agentes ainda sem instrumento |
+| **M5** interface | não começada |
+| **M6** README + vídeo | README desatualizado; vídeo não gravado |
 
-| Marco | Sessões | Corte |
-|---|---|---|
-| **M2** RAG | **3** | ~~ingestão+embed+gabarito~~ 23/08 · ~~híbrida+rerank+**geração**~~ 24/08 · resta só otimização medida. A sessão 03 puxou o passo 8 para dentro da M2 (D-040), então **os 9 passos do TAPI estão fechados** e a 3ª sessão vira sweep, não entrega |
-| **M3** base 30-50 startups | **2-3** | ⚠️ o sumidouro |
-| **M4** agentes com LLM | **2-3** | inclui corrigir os 3 erros de D-020 |
-| **M5** interface | **1** | vale 5 pontos, não vale mais |
-| **M6** README + vídeo | **2** | uma para roteiro, uma para gravar |
-| buffer | **1** | |
+**O que a realidade fez com esta tabela, e vale mais que o placar:** a M2 fechou adiantada e a M3
+travou. O sumidouro previsto no risco nº 3 era o certo — mas ele não consumiu tempo, foi
+**despriorizado** três vezes seguidas por EOL de stack. Três das oito sessões foram gastas
+reconstruindo a stack de recuperação, não construindo o produto.
 
-**Três coisas que a tabela esconde:**
+**Onde a sessão marginal rende, hoje:** o critério 3 (motor de recomendação, 20 pontos) **não tem
+régua** — o gabarito das 8 fixtures não tem campo de recomendação, então nada quebra se ela vier
+errada. É o mesmo estado que os agentes tinham antes de D-050. Depois disso, a M3 e o vídeo.
 
-1. **A restrição não é sessão, é calendário.** O vídeo é 07/09, é eliminatório se faltar e tem
-   teto de 7 minutos. Tudo que ele precisa *mostrar* tem que existir em 06/09.
-2. **M3 pode virar 5 sessões sem avisar.** D-021 matou o atalho: resumo automático de página não
-   preenche campo do banco. Cada empresa é ~15-20 min feita direito. Se estourar, **corte o
-   número de empresas, não o rigor** — 25 bem curadas com a diversidade coberta valem mais que
-   50 rasas.
-3. **"Mais completo" tem teto.** O barema para em nível 4 por critério, e entregável fora dos 7
-   vale zero. A sessão marginal rende mais no **harness do passo 9** e no **vídeo** — nunca em
-   mais startups nem em mais interface.
-
-Uma sessão a mais, fora da conta: **a stack NVIDIA (`contexto/03`) e a rubrica AI-native
-(`contexto/02`)**. Não se aprendem implementando e são o que o vídeo mais cobra.
-
-**Estado em 25/08, depois do segundo EOL:** M1 fechada dois dias adiantada, **os 9 passos do
-pipeline RAG do TAPI fechados**, e a stack de recuperação **trocada inteira** (D-046) porque
-embedder e reranker morreram às 09:00Z. Reconstruído no mesmo dia: 381 chunks re-embedados,
-régua re-medida, `pytest` de volta a 40, grafo rodando ponta a ponta.
-
-`recall@1` está em **95%** já no denso puro, e@3 em **95%** com reranking. A acurácia de abstenção
-caiu para uma faixa de **20–22 de 24** e a assimetria "nunca alucina" foi **refutada** (D-040,
-Atualização 3). `json_schema` fechado com n=5 (D-047).
-
-**O sweep que esta terceira sessão da M2 tinha reservado — dimensão, banda de chunk, `k1`/`b` —
-está CORTADO.** O critério 2 vale 20 pontos e para em nível 4; ele já está lá. A sessão marginal
-rende mais na M4, onde 40 pontos ainda estão em nível de stub: `src/rag/geracao.py` é o único
-arquivo do projeto que chama um LLM, e os 8 agentes são determinísticos.
-
-**O risco de abstenção que a sessão 02 abriu está FECHADO, e não como se esperava.** D-033 supôs
-que o cross-encoder resolveria. Não resolveu: a margem piorou de −0,19 para **−17,63** com o
-gabarito ampliado (D-035). A abstenção desceu para a geração e **funciona lá** — 5/5, incluindo
-uma pergunta desenhada para induzir alucinação com citação de fonte real. Isso NÃO encostou na
-M4: fechou dentro da M2.
-
-**Um risco novo, menor, que a sessão 03 revelou:** o `llama-3.1-8b` erra a **citação** com
-frequência não desprezível (aponta índice errado, ou responde sem apontar nada) mesmo quando a
-resposta está certa. A abstenção é confiável; o "de onde veio" ainda não é. Como rastreabilidade é
-requisito duro do TAPI, isso é trabalho da M4 — modelo maior só neste nó, ou uma verificação por
-código de que a afirmação ocorre no trecho citado.
+**Não rende mais:** o critério 2 está em nível 4 e para lá. O sweep de dimensão, banda de chunk e
+`k1`/`b` continua **cortado**, e o corte é decisão.
 
 ## Riscos identificados
 
 | Risco | Mitigação |
 |---|---|
-| **A NVIDIA aposentar o embedder ou o reranker antes de 09/09 (HTTP 410).** Já aconteceu DUAS vezes: 18/05 (D-013) e 25/08 (D-046). A cadência do catálogo de preview é de meses, e o vídeo é 07/09 | **hoje: nenhuma.** Env var não cobre — trocar o embedder invalida os 381 vetores. `scripts/reembedar.py` reduz a recuperação a ~25 chamadas e 20 min, mas a régua inteira precisa ser re-medida junto. **Um caminho local de fallback é o Bloco 0 da próxima sessão** |
-| Créditos do build.nvidia.com insuficientes para 8 agentes em desenvolvimento | validar no Bloco 1 da sessão 01, antes de qualquer decisão depender disso; provedor configurável por env var |
-| Montar a base consumir dias demais (é o maior sumidouro do projeto) | timebox rígido; base pequena e bem curada vale mais que grande e rasa — o barema avalia o raciocínio sobre os dados, não o tamanho do dataset |
-| Estado do grafo mal modelado, exigindo refatorar os 8 nós | resolver no Bloco 3 da sessão 01, com plan mode, antes de escrever lógica |
+| **A stack morrer de novo antes de 09/09.** Já aconteceu **TRÊS** vezes: 18/05 (D-013), 25/08 (D-046) e 27/08 (D-064) — e o catálogo **encolhe entre execuções**, não só em datas de EOL (D-070) | **parcial.** O passo 7 ganhou `provedor` (D-068), então perder o fornecedor inteiro é uma env var; `nenhum` degrada com graça. **O embedder continua descoberto:** trocá-lo invalida os 381 vetores — `reembedar.py` são ~25 chamadas, mas a régua inteira precisa ser re-medida junto. Cross-encoder local segue **não medido**, e é a saída se a trial do Cohere apertar |
+| ~~Créditos do build.nvidia.com insuficientes~~ | **não se materializou** em 9 dias de uso. O risco real era outro — EOL de modelo, linha acima. O que aperta hoje é a **trial do Cohere**: 1.000 chamadas/mês e 10 req/min, o que já custa ~2-3 min de throttle num run completo (D-065, D-068) |
+| **A M3 não acontecer.** 8 de 30 empresas, e ela foi adiada três vezes | timebox de 3h com piso em 20, duas camadas: só as 8 atuais têm gabarito, as demais entram como dado (D-062). 3-4 escolhidas adversarialmente compram caso real para a régua de exclusão |
+| ~~Estado do grafo mal modelado~~ | **não se materializou.** D-008 e D-009 seguraram: nenhuma sessão precisou refatorar os nós por causa do estado |
 | Vídeo deixado para o fim | data-limite 07/09 tratada como inegociável |
 | Perder pontos por não conseguir defender uma decisão | log de decisões atualizado na hora + sessões de arguição (ver `guia-de-trabalho.md`) |
 
