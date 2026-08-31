@@ -1770,6 +1770,133 @@ referências cruzadas a `D-0NN` em `src/`, `tests/`, `scripts/` e na documentaç
 
 ---
 
+---
+
+## D-074 — O critério do julgamento semântico no Evidence Validator, fixado ANTES do código
+**Data:** 31/08/2026 · escrito antes de a primeira linha ser alterada · **RASCUNHO, a ajustar**
+
+**O que está sendo decidido.** Mover a pergunta *"a evidência SUSTENTA a afirmação?"* para o
+**Evidence Validator**, que marca `validada=False` em vez de deletar — em vez de mantê-la no juiz
+do Extractor, que descarta o candidato e a dor nunca nasce.
+
+**O defeito, medido em 31/08 e não suposto:** o Extractor emite 34 dores sobre as 8 fixtures e
+**10 estão erradas**. O Evidence Validator **não barra nenhuma**: 0 de 10, e a confiança de uma dor
+errada é indistinguível da de uma certa (erradas: 4 baixa / 4 media / 2 alta; certas: 4 / 5 / 3).
+Ele mede a **espessura da evidência** — quantos tipos de documento, quão recente — e nunca o salto
+da evidência para a conclusão. A frase *"monitoramento do sistema fotovoltaico"* é fonte impecável
+para uma conclusão errada.
+
+**É a terceira vez que este projeto encontra a mesma forma.** D-035: *relevância não é
+responsibilidade* — um trecho pode ser perfeitamente relevante e não conter a resposta. Aqui:
+***não contradizer não é sustentar***. As 10 dores erradas não são contraditas pela evidência; são
+**neutras** em relação a ela. Por isso uma checagem de *contradição* pegaria zero — a que funciona
+é de *sustentação*, que é a que o juiz já faz.
+
+**Por que no Validator e não no Extractor** — três argumentos, e o terceiro é o mais forte:
+1. `validada` hoje é **estruturalmente `True`**: o único caminho para `False` é "nenhuma
+   evidência", e o Extractor nunca cria dor sem evidência. Medido: **34 de 34 passam**. A linha
+   `validadas = [d for d in ... if d.validada]` no `recommendation.py` é um portão que nunca fecha.
+2. Põe o desenho de **D-010** para funcionar pela primeira vez: *"o Validator anota e rebaixa, quem
+   barra é o Recommendation"* está no repositório desde o dia 1 e nunca operou, porque a camada 1
+   nunca conseguia dizer não.
+3. **O juiz do Extractor viola o princípio da própria D-010** — ele DELETA o candidato. D-010 diz,
+   com todas as letras: *"ausência de sinal ≠ sinal negativo. Nada é DELETADO, só rebaixado."*
+**A hipótese que isso abre, e é a razão de a decisão valer a pena:** o juiz custa recall (100% →
+71-79%) **porque deleta**. Se a dor sobrevive marcada, a informação não é destruída — e o recall do
+perfil não cai. **Hipótese, não medição.**
+
+### PRÉ-CONDIÇÃO — sem isto a medição mede zero
+
+`avaliar_agentes.py:489` faz `emitidas = {d.dor for d in perfil.dores_observadas}` e **não olha
+`validada`**. Com a dor sobrevivendo marcada, o placar não se move. **A régua tem que separar
+`emitida` de `validada` ANTES de qualquer mudança de comportamento**, e a linha de base tem que ser
+re-medida nas duas colunas. Isso não é preparação: é o passo 0.
+
+### A linha de base e o TETO, medidos em 31/08
+
+| braço | precisão | recall | discrim | proibidas |
+|---|---|---|---|---|
+| trivial (D-051) | 32% | 100% | 1/8 | 28 |
+| casador — produção | 49% | 100% | 8/8 | 10 |
+| **controle barato: sem os 2 gatilhos piores** | **69%** | 100% | 8/8 | 3 |
+| juiz no Extractor, deleta (D-072) | 83-96% | **71-79%** | 6-8/8 | 1-2 |
+| **TETO — julgamento perfeito** | **100%** | **100%** | **6/8** | **0** |
+
+**O controle barato é obrigatório na tabela, e ele é constrangedor.** `observabilidade` e
+`dependencia_fornecedor` causam **7 dos 10 erros**; apagar os dois é mudança de 8 caracteres e faz
+**69%** — acima dos 64% que D-055 fixou como alvo para o juiz. **A barra de D-055 está queimada:
+qualquer critério novo se fixa contra 69%, não contra 49%.** (Apagar os gatilhos não é a solução —
+mataria uma das 8 dores do TAPI para sempre e seria ajuste a 8 fixtures. É linha de controle, como
+`--truncar-pool` em D-037.)
+
+**E o teto proíbe uma guarda de D-058.** Com julgamento **perfeito** a discriminação cai para
+**6/8**: duas fixtures passam a emitir o mesmo conjunto quando os erros somem. **O 8/8 de hoje é em
+parte artefato dos erros.** Guardar em 8/8 vetaria um juiz perfeito — é literalmente o erro de
+D-060 (*"fixar a margem sem calcular o teto é fixar um número, não um critério"*), evitado desta vez
+porque o teto foi calculado antes.
+
+### Os alvos
+
+| métrica | onde | alvo |
+|---|---|---|
+| **precisão de dor** | o que chega ao Recommendation | **≥ 80% nas três execuções** |
+| **recall no PERFIL** | `perfil.dores_observadas` | **= 100%, exato** — se cair, algo foi deletado e o desenho falhou |
+| **recall no Recommendation** | depois do filtro `validada` | **≥ 79%** — não pode custar mais recall que o juiz que deleta |
+| dores proibidas | o que chega ao Recommendation | **≤ 2 nas três execuções** |
+
+**Por que 80% e não 64%:** o controle barato é determinístico em 69%, e o espalhamento do juiz entre
+execuções é de ~13 pontos. Uma barra em 80% exige que **a pior execução** supere o controle por 11
+pontos — margem maior do que a variação entre execuções consegue fabricar. *(Este número é o que
+mais merece discussão antes de valer.)*
+
+**Por que o recall aparece em DOIS lugares:** é a lacuna que D-055 deixou e que D-060 e D-072
+encontraram de novo — *fixar a barra sem nomear todas as métricas que podem se mover*. Terceira vez;
+aqui ela é fechada por construção, e a separação perfil × recommendation é justamente o que
+distingue "rebaixar" de "deletar".
+
+### As guardas — não são alvo, são veto
+
+`maturidade_stack ≥ 6/7` · `elegivel ≥ 5/7` · `motivo_exclusao ≥ 5/7` · `evidência literal 100%` ·
+`pytest` verde · **`discriminação ≥ 6/8`** (não 8/8 — ver o teto) · **`classe ≥ 2/7`**.
+
+**`classe` é guardada em 2/7 e isso precisa ser dito em voz alta:** o juiz já a piora de 3/7 para
+2-3/7, e D-060 mediu que o gargalo dela é **vocabulário**, não regra de decisão — três das quatro
+fixtures `AI-native` não têm um único marcador de profundidade técnica. Guardar em 3/7 vetaria por
+um defeito que esta mudança não causa e não pode consertar. Guardar em 2/7 é aceitar a perda
+conhecida sem deixá-la crescer em silêncio.
+
+**Se qualquer guarda cair, a mudança sai — mesmo que o alvo tenha passado** (D-058, lição de D-048).
+
+### A ordem de medição, e o motivo é atribuição
+
+| passo | o que muda | o que fica atribuído |
+|---|---|---|
+| 0 | a régua separa `emitida` de `validada` | a linha de base nas duas colunas |
+| 0b | apagar os dois gatilhos piores | a linha de controle barata (69%) |
+| 1 | **só** o Evidence Validator julga sustentação | o delta desta decisão, isolado |
+| 2 | comparar com o juiz que deleta (D-072) | qual COLOCAÇÃO é melhor, não se a pergunta funciona |
+
+O passo 2 não re-mede se a pergunta funciona — **D-072 já provou que funciona**. Ele responde a
+pergunta que sobrou: deletar ou rebaixar.
+
+### O que fazer se empatar
+
+1. **Empate ou derrota: não entra em produção.** Vira achado medido, com o número, atrás de flag —
+   o destino de `USAR_JUIZ_LLM` (D-056), `CONFIANCA_DA_EVIDENCIA_DO_DIAGNOSTICO` (D-059) e
+   `RUBRICA_EM_DEGRAUS` (D-060).
+2. **Um ajuste de prompt só**, declarado como único antes de rodar. D-056: *"um ajuste é correção;
+   três é sobreajuste com outro nome."*
+3. **O gabarito não muda para o sistema passar.** Um valor só se altera com argumento escrito a
+   partir de `contexto/02`, **nunca a partir do resultado medido**, e commitado antes da medição.
+4. **A régua não muda depois do passo 0.** Ela é instrumento; mexer nela depois de ver o placar é a
+   versão sofisticada de mexer no gabarito.
+
+**Custo estimado:** ~34 chamadas de LLM por execução (uma por dor), × 3 execuções = ~100. Não toca o
+Cohere, então o teto de 10 req/min não entra. Cabe no orçamento.
+
+**Reversível?** Fácil — nasce atrás de flag, como as três anteriores.
+
+
 ## Decisões pendentes
 
 | # | Decisão | Estado |
@@ -1785,6 +1912,7 @@ referências cruzadas a `D-0NN` em `src/`, `tests/`, `scripts/` e na documentaç
 | **P-09** | **Promover o juiz do Extractor?** | D-072 passou o critério; falta decidir a lacuna de recall (100% → 71-79%) |
 | **P-10** | **Régua do motor de recomendação** | **20 pontos sem instrumento.** O gabarito das 8 fixtures não tem campo de recomendação |
 | **P-11** | **O `min()` da confiança** | 0/6 constante. Barato, mas exige critério fixado antes — uma tentativa já foi reprovada (D-059) |
+| **P-16** | **Julgamento semântico no Evidence Validator** | critério fixado em **D-074**, pré-condição escrita, teto calculado. Falta executar os 4 passos. Fecha junto a P-09 (deletar ou rebaixar) |
 | **P-12** | **`classe`: vocabulário ou curadoria?** | D-060 mostrou que o gargalo não é a regra de decisão. Exige base ampliada |
 | **P-13** | **Exclusão por menção vs. identidade** | D-052 achado 3, aberto desde 25/08. Axenya e Freedom recusadas por citação de terceiro |
 | **P-14** | **Quatro campos são calculados e nada os lê** | `estrategia_analise` e `exige_sinais_ia` (Query Planner), `score_recuperacao` (Retriever), `motivo_validacao` (Evidence Validator). Não é código morto — é capacidade anunciada e não entregue: a arquitetura publicada promete *"critérios de busca + estratégia de análise"*. Ou o subgrafo passa a lê-los, ou o diagrama para de prometê-los |
