@@ -226,7 +226,7 @@ def main() -> int:
     print("    PRECISAO DE RECUPERACAO e nao restricao do motor.")
     print("  · Alguma logica pode depender de margem pequena? Logits quantizados tem passo de")
     print("    grade, e a repetibilidade e' medida em")
-    print("    scripts/auditoria/janela_rerank_qa_mistral_4b.py (3 chamadas, espalhamento 0 em 25/08).")
+    print("    O reranker da NVIDIA morreu em 27/08 (D-064) e o passo 7 e Cohere (D-068).")
     return 0
 
 

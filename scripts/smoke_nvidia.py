@@ -271,10 +271,20 @@ def escrever_relatorio() -> Path:
         "| Capacidade | Resultado | Latência | Modelo |",
         "|---|---|---|---|",
     ]
+    # O rótulo do rerank segue o PROVEDOR, não um if binário. A versão anterior era
+    # `cohere_modelo if provedor == "cohere" else RERANK.modelo`, e com RERANK_PROVEDOR=nenhum
+    # ela caía no else e publicava "reranking | passou | nvidia/rerank-qa-mistral-4b" — o nome de
+    # um modelo MORTO desde 27/08 (D-064), ao lado de um "passou", num modelo que nem foi chamado.
+    # Este arquivo vira `docs/smoke-nvidia.md`, que é artefato commitado e lido por quem avalia:
+    # é a mesma "instrução contaminada" do achado 5 de D-066, agora na saída do instrumento que
+    # existe justamente para denunciar modelo morto.
     modelos = {
         "chat completion": LLM.modelo,
         "embedding": EMBEDDING.modelo,
-        "reranking": RERANK.cohere_modelo if RERANK.provedor == "cohere" else RERANK.modelo,
+        "reranking": {
+            "cohere": RERANK.cohere_modelo,
+            "nvidia": RERANK.modelo,
+        }.get(RERANK.provedor, "— passo 7 desligado"),
     }
     for res in RESULTADOS:
         lat = f"{res['ms']:.0f} ms" if res["ms"] is not None else "—"

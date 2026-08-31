@@ -71,6 +71,11 @@ pronto — exatamente o que eu não quero num projeto onde preciso entender cada
 É carregado em **toda** sessão, então tudo que está lá custa contexto. Nunca colocar status,
 todo-list ou narrativa do que aconteceu.
 
+**E nunca colocar número.** Número envelhece, e o `CLAUDE.md` é o arquivo que menos se relê com
+olhos críticos — foi assim que ele chegou a apresentar dois modelos mortos como vigentes, vinte
+linhas acima do próprio aviso de que eles estavam mortos (achado 5 de D-066). A régua mora na
+decisão que a produziu; o `CLAUDE.md` aponta para ela.
+
 **O que vale adicionar conforme o projeto anda:**
 - seção **Comandos** — subir o banco, rodar o grafo, popular a base, rodar os testes.
   É o que mais economiza tempo em sessão nova
@@ -82,7 +87,26 @@ todo-list ou narrativa do que aconteceu.
 O levantamento do case. Só muda se um fato mudar (um link cair, a NVIDIA renomear um produto).
 
 ### `projeto/` — vivo
-`plano.md` ajusta conforme a realidade. `decisoes.md` só cresce, nunca reescreve.
+Quatro arquivos: `plano.md` (a sequência), `decisoes.md` (o log), este guia (o método) e
+`sessao-atual.md` (o que está aberto agora).
+
+**`decisoes.md` guarda a decisão, não o caderno de laboratório** (D-073, 31/08). A regra anterior
+era *"só cresce, nunca reescreve"*, e ela produziu um arquivo de 3.367 linhas com 16 blocos de
+correção empilhados: para saber o fato corrente de uma decisão era preciso ler três camadas. A
+regra nova:
+
+- **o append-only é garantido pelo git, não pelo arquivo.** `git show` na revisão anterior devolve
+  qualquer versão. Manter tudo no arquivo não compra segurança — compra presença na árvore de
+  trabalho, que é o custo.
+- **um número só fica se é verdade sobre o sistema que roda hoje.** Se o instrumento que o
+  produziu morreu, fica a **conclusão**, e só quando ela sobrevive ao instrumento. Medição de
+  instrumento morto é armadilha: este projeto já foi mordido por ela (D-064 recomendou por nome um
+  modelo que devolvia 404).
+- quando uma medição posterior derruba uma conclusão, isso **não some** — vira uma linha
+  `**Revisto:**` na decisão. São 13 hoje, e elas são o material mais forte do log.
+
+**`sessao-atual.md` guarda só o que está ABERTO.** Não é diário: fechamento de sessão vira decisão
+no log, ou não vale registro.
 
 ---
 

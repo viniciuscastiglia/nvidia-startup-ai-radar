@@ -46,7 +46,7 @@ O vídeo vale o mesmo que o sistema multi-agente inteiro. A interface vale um qu
 
 **M1 — 25/08 · O pipeline executa**
 Grafo LangGraph com os 8 nós rodando ponta a ponta, 5 startups no Postgres, decisões de stack
-fechadas e registradas. Detalhamento em `sessao-01.md`.
+fechadas e registradas (D-001 a D-024).
 
 **M2 — 30/08 · O RAG responde com citação**
 As 16 tecnologias NVIDIA ingeridas, busca híbrida funcionando, reranking aplicado, resposta
@@ -95,8 +95,8 @@ Até 7 minutos: arquitetura dos agentes, sistema RAG, demonstração funcional p
    vale zero. A sessão marginal rende mais no **harness do passo 9** e no **vídeo** — nunca em
    mais startups nem em mais interface.
 
-Uma sessão a mais, fora da conta: **os conceitos de domínio 11 e 12 de `conceitos.md`** (stack
-NVIDIA e rubrica AI-native). Não se aprendem implementando e são o que o vídeo mais cobra.
+Uma sessão a mais, fora da conta: **a stack NVIDIA (`contexto/03`) e a rubrica AI-native
+(`contexto/02`)**. Não se aprendem implementando e são o que o vídeo mais cobra.
 
 **Estado em 25/08, depois do segundo EOL:** M1 fechada dois dias adiantada, **os 9 passos do
 pipeline RAG do TAPI fechados**, e a stack de recuperação **trocada inteira** (D-046) porque

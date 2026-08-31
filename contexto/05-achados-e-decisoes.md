@@ -15,7 +15,7 @@ nomenclaturas demonstra que a fonte atual foi consultada — vale ponto no víde
 | **RAPIDS** | **CUDA-X Data Science** | Rebrand em **11/08/2026**; funcionalidade idêntica. cuDF, cuML, cuGraph e cuxfilter seguem com os mesmos nomes |
 | **Triton Inference Server** | **Dynamo-Triton** | Continua open source; agora parte do NVIDIA AI Enterprise. **NVIDIA Dynamo** é o framework distribuído de serving em escala de datacenter que trabalha junto |
 | **NVIDIA Clara** | *desmembrado* | **Não existe mais como marca guarda-chuva.** O portfólio de Healthcare & Life Sciences hoje é BioNeMo, MONAI, Parabricks, Holoscan SDK e Isaac for Healthcare |
-| **NeMo Retriever** (embedding e reranking) | família **Nemotron** | **DOIS EOLs, não um.** `llama-3.2-nv-embedqa/rerankqa-1b-v2` morreram em 18/05/2026 e os substitutos `llama-nemotron-embed/rerank-1b-v2` morreram em **25/08/2026**, todos HTTP 410 Gone. Atuais: `llama-nemotron-embed-vl-1b-v2` e `rerank-qa-mistral-4b`. **Este catálogo é perecível — rode `smoke_nvidia.py` antes de confiar nesta linha** (D-013, D-046) |
+| **NeMo Retriever** (embedding e reranking) | família **Nemotron** | **TRÊS EOLs.** 18/05, 25/08 e 27/08/2026, todos HTTP 410/404. **Do NeMo Retriever só o embedding sobreviveu** — não há reranker no catálogo da NVIDIA (D-064, D-070). Atual: `llama-nemotron-embed-vl-1b-v2`; o passo 7 é Cohere `rerank-v3.5` (D-068). **Este catálogo é perecível — rode `sondar_catalogo.py` antes de confiar nesta linha, porque estar em `/v1/models` não é estar vivo** |
 | **NVIDIA Riva** | família **Nemotron Speech** | Riva segue sendo o nome do produto; os modelos são apresentados como Nemotron Speech, ~40 idiomas |
 
 ## 2. Inconsistências do próprio TAPI
@@ -62,36 +62,36 @@ sinal. Estratégia detalhada em `04-ecossistema-br.md` §3.
 nisso. Base pequena e bem curada provavelmente vale mais que base grande e rasa — o barema avalia
 a qualidade do raciocínio sobre os dados, não o tamanho do dataset.
 
-### 4.2 Provedor de LLM e de embeddings
-O TAPI não define. **Recomendação: NVIDIA NIM via build.nvidia.com** — créditos grátis que não
-expiram, API OpenAI-compatible (funciona direto com LangChain/LangGraph), e coerência narrativa
-com o case. Ver `03-stack-nvidia.md` §3.
+### 4.2 Provedor de LLM e de embeddings — **RESOLVIDA** (D-012, D-067)
+NVIDIA NIM via build.nvidia.com, API OpenAI-compatible, provedor atrás de env var (D-002).
 
-**Risco a verificar antes de comprometer:** limite prático dos créditos grátis para o volume de
-chamadas de um pipeline de 8 agentes rodando várias vezes em desenvolvimento. Vale testar cedo e
-ter um fallback configurável por variável de ambiente.
+**O risco que esta seção mandou verificar não era o certo.** Ela apontava o *limite de créditos*;
+o que de fato mordeu, três vezes, foi o **EOL de modelo**. Os créditos nunca acabaram. O LLM atual
+é `nvidia/nemotron-3-nano-30b-a3b`, escolhido por **eliminação medida** — 1 utilizável de 10
+candidatos sondados com chamada real (D-067).
 
-### 4.3 Reranker
+### 4.3 Reranker — **RESOLVIDA** (D-068), e esta seção tinha um fato FALSO
 
-> **Atualizado em 27/08/2026.** Esta seção foi escrita em 22/08 recomendando
-> `llama-3.2-nv-rerankqa-1b-v2`, que **morreu com HTTP 410 em 18/05/2026** — e o substituto que
-> D-015 adotou morreu junto, em **25/08/2026**. A §1 deste arquivo já registrava os dois EOLs; a
-> recomendação abaixo não tinha sido corrigida e apontava para um modelo morto. Ver D-013 e D-046.
+> **Corrigido em 31/08/2026.** Esta seção dizia *"**Cohere Rerank** — é o que o TAPI sugere, mas é
+> **pago**"*. **É falso, e era verificável em 22/08:** a Cohere tem trial key gratuita cobrindo
+> Rerank (1.000 chamadas/mês, 10 req/min, vedada a uso comercial — o que não se aplica a um
+> processo seletivo). Foi essa afirmação que eliminou a única contingência que o projeto tinha, e
+> ela custou três meses. Ver **D-065**, que é a decisão que nomeou o erro de método: o rigor foi
+> aplicado à escolha técnica e não à **premissa que eliminou as alternativas**.
 
-Três opções:
-- **NeMo Retriever** — grátis, coerente com o case, multilíngue. **Recomendado**, e é o que a
-  produção roda. O modelo vivo é **`nvidia/rerank-qa-mistral-4b`**, no endpoint genérico
-  `/v1/retrieval/nvidia/reranking`, que **não** embute o nome do modelo no path como o anterior.
-  Ele é 4B e não 1B, então a escala de logit é outra: D-034 e D-035 foram re-medidos em D-046
-- **Cohere Rerank** — é o que o TAPI sugere, mas é pago
-- **Cross-encoder local** (BGE, Jina) — sem custo de API, mas exige rodar o modelo
+**A produção roda Cohere `rerank-v3.5`** desde 28/08. O requisito técnico que decide é específico
+deste projeto: as perguntas são em português e o corpus é em inglês, então **todo par do passo 7 é
+crosslingual** — e `rerank-v3.5` é multilíngue, a mesma propriedade que sempre justificou o NeMo.
 
-Usar o NeMo Retriever e **documentar a comparação com as alternativas** vale mais do que só
-escolher: o barema premia decisão consciente, e essa é uma decisão fácil de defender.
-
-**E o nome do modelo é perecível — trate esta linha como datada.** Duas mortes em três meses é
-cadência, não azar. Rode `python scripts/smoke_nvidia.py` antes de confiar em qualquer nome desta
-página; trocar o embedder ainda obriga a `scripts/reembedar.py` mais re-medir a régua inteira.
+As alternativas, com o estado real de cada uma:
+- **NeMo Retriever** — **não existe mais.** 9 sondagens de path × modelo em 28/08, todas 404/410,
+  e zero modelos com `rank` no nome entre os 83 do catálogo (D-064, D-070)
+- **Cross-encoder local** (BGE, Jina) — a única opção sem chave, sem quota e sem EOL, e a resposta
+  certa se a trial do Cohere apertar. Custo medido antes de decidir: `torch` são 900 MB no Linux
+  x86_64 de quem avalia, mais 27 pacotes e 1,1-2,3 GB de pesos. **Registrado como não medido, não
+  como pior** (D-068)
+- **Provedor `nenhum`** — degradação graciosa: sem chave, o passo 7 sai do caminho e a resposta
+  vira a ordem da híbrida, que sozinha faz 95% r@1. É a metade executável do eliminatório nº 3
 
 ### 4.4 Banco vetorial
 Qdrant é o recomendado; ChromaDB, Pinecone e pgvector são explicitamente permitidos.
@@ -106,10 +106,16 @@ Mas atenção: **o vídeo (peso 20) exige demonstrar o projeto funcionando pela 
 ou seja, a interface precisa ser boa o bastante para o demo não parecer quebrado. O alvo é
 "funcional e limpa", não "impressionante".
 
-### 4.6 Diferencial (peso 5)
-**Candidato principal:** rodar o RAG inteiro na própria stack NVIDIA (build.nvidia.com + NeMo
-Retriever para embedding e reranking). Empurra o critério 2 junto e dá o melhor argumento
-possível no vídeo.
+### 4.6 Diferencial (peso 5) — **REFORMULADO** (D-070)
+**A formulação original não sobreviveu aos fatos.** Ela era *"rodar o RAG inteiro na própria stack
+NVIDIA — NeMo Retriever para embedding **e reranking**"*. O reranking do NeMo **não existe mais**
+(D-064), e o que resta rodando na stack NVIDIA é o embedding e o LLM dos agentes.
+
+**O Diferencial passa a ser o que o projeto de fato mediu e ninguém mede:** a **volatilidade de
+catálogo do fornecedor**, com instrumento versionado (`scripts/sondar_catalogo.py`). Três EOLs em
+três meses, com data e método; a constatação de que `GET /v1/models` **lista modelos que devolvem
+404**; e um sistema que continuou rodando através dos três, porque o provedor está isolado em
+`src/config.py` e nenhum agente conhece a NVIDIA. Ver D-070.
 
 **Candidatos secundários, todos já mapeados no contexto:**
 - Filtro de **elegibilidade do Inception** no Briefing Agent — o sistema recusar recomendar o
