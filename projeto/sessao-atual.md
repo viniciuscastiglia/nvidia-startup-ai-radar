@@ -59,9 +59,14 @@ técnica sai como *"Join our ecosystem of startups, partners, and developers"*.
 - **A abstenção do passo 8 não foi re-medida no modelo novo.** Os 20-22/24 são do modelo morto;
   D-069 previu n=3 e não foi executado.
 - **A M3 está em 8 das 30 empresas** (D-062).
-- **`pytest` completo não roda desde a troca de reranker** — exige uma passada com Cohere, ~7 min de
-  throttle.
 - **Interface web (P-06)** — 5 pontos, ainda não começada.
+
+## Estado verificado em 31/08, depois da faxina
+
+`pytest -q` → **53 passed, 0 failed** em 179 s. É a primeira vez que a suíte inteira passa desde o
+EOL de 27/08. `smoke_nvidia.py` → **3/3**: chat 1808 ms, embedding 592 ms, rerank Cohere 1193 ms.
+A régua dos agentes bate linha por linha com D-072 e o filtro do Inception com D-071 — nenhuma
+remoção da faxina mexeu em placar.
 
 ## Perguntas para a liga, se houver contato
 
