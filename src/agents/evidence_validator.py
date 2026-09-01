@@ -20,8 +20,9 @@ A regra 4 é a que separa este agente de um filtro. Ver D-010: quem barra é o R
 from __future__ import annotations
 
 from datetime import date
+from time import perf_counter as _perf
 
-from src.state import Afirmacao, Confianca, EstadoAnalise
+from src.state import Afirmacao, Confianca, DorObservada, EstadoAnalise
 
 JANELA_MESES = 24
 
@@ -42,6 +43,44 @@ JANELA_MESES = 24
 #
 # `avaliar_agentes.py --confianca-diagnostico` liga.
 CONFIANCA_DA_EVIDENCIA_DO_DIAGNOSTICO = False
+
+
+# JULGAMENTO DE SUSTENTAÇÃO — o critério está em D-074, fixado ANTES deste código.
+#
+# O DEFEITO, medido em 31/08 e não suposto: as cinco regras acima medem a ESPESSURA da evidência
+# — quantos tipos de documento corroboram, quão recente. Nenhuma olha o salto da evidência para a
+# conclusão. Resultado: das 10 dores que o gabarito PROÍBE, este agente barrava **zero**, e a
+# confiança de uma dor errada era indistinguível da de uma certa (erradas: 4 baixa/4 media/2 alta;
+# certas: 4/5/3). A frase "monitoramento do sistema fotovoltaico" é fonte impecável — real,
+# literal, datada — para a conclusão errada de que uma empresa de energia solar tem dor de
+# observabilidade DE IA.
+#
+# NÃO CONTRADIZER NÃO É SUSTENTAR. As 10 erradas não são CONTRADITAS pela evidência: são NEUTRAS
+# em relação a ela. Uma checagem de contradição pegaria zero. A que funciona pergunta o oposto —
+# "a evidência SUSTENTA?" —, e é o irmão de D-035: lá, relevância não era responsibilidade.
+#
+# POR QUE AQUI E NÃO NO EXTRACTOR, onde o mesmo julgamento já existe como `USAR_JUIZ_LLM`:
+#   1. `validada` era estruturalmente `True` — o único caminho para `False` era "nenhuma
+#      evidência", e o Extractor nunca cria dor sem evidência. 34 de 34 passavam. O portão
+#      `if d.validada` do `recommendation.py` nunca fechou.
+#   2. Põe o desenho de D-010 para operar pela primeira vez: "o Validator anota e rebaixa, quem
+#      barra é o Recommendation".
+#   3. O juiz do Extractor DELETA o candidato — e D-010 diz, com todas as letras: "ausência de
+#      sinal != sinal negativo. Nada é DELETADO, só rebaixado." Julgar aqui é mais coerente com o
+#      projeto do que a solução que já estava escrita.
+#
+# O PROMPT É O DO JUIZ, LITERALMENTE, E ISSO É DECISÃO DE MÉTODO. D-074 passo 2 compara esta
+# colocação com a do Extractor (D-072). Se o prompt mudasse, a diferença medida confundiria
+# COLOCAÇÃO com PROMPT, e nenhuma das duas ficaria atribuída. Reusar carrega junto as lições
+# caras de D-056: critério positivo primeiro, sem "na dúvida reprove", e o motivo tem que citar
+# a frase julgada.
+#
+# `confianca` e `validada` continuam ORTOGONAIS de propósito: a fonte pode ser excelente (`alta`)
+# e mesmo assim não sustentar a afirmação (`validada=False`). Fundir as duas apagaria justamente
+# a distinção que motivou esta decisão.
+#
+# `avaliar_agentes.py --sustentacao` liga.
+JULGAR_SUSTENTACAO = False
 
 
 def _recente(quando: date | None, hoje: date | None = None) -> bool:
@@ -78,6 +117,43 @@ def avaliar(afirmacao: Afirmacao) -> tuple[Confianca, bool, str]:
     )
 
 
+def sustenta(afirmacao: Afirmacao, empresa: str) -> tuple[bool, str]:
+    """A evidência sustenta a afirmação? Ver D-074 e o bloco de `JULGAR_SUSTENTACAO`.
+
+    Escopo: `DorObservada`. É onde o defeito foi medido e é o que D-074 orçou (~34 chamadas por
+    execução). As demais afirmações passam sem julgamento, e isso está declarado em vez de
+    escondido — ampliar o escopo é decisão nova, com custo novo.
+    """
+    from src.agents.extractor import CRITERIO_DOR, INSTRUCAO, Julgamento  # sem ciclo: o Extractor
+    from src.llm import estruturado                                       # não importa este módulo
+
+    if not isinstance(afirmacao, DorObservada) or not afirmacao.evidencias:
+        return True, ""
+
+    numeradas = "\n".join(f"[{i}] {e.trecho}" for i, e in enumerate(afirmacao.evidencias))
+    prompt = (f"{INSTRUCAO.format(criterio=CRITERIO_DOR[afirmacao.dor], empresa=empresa)}"
+              f"\n\nFRASES:\n{numeradas}")
+    # Progresso em tempo real: este braço é SERIAL por construção (uma chamada por dor) e a
+    # primeira execução levou ~14 min sem imprimir nada, porque o harness só imprime no fim.
+    # Sem isto não há como distinguir "lento" de "pendurado" — e a diferença decide se o
+    # problema é orçamento de tempo ou bug. `flush=True` porque a saída é lida ao vivo.
+    print(f"    · {empresa[:18]:18s} {afirmacao.dor:24s} "
+          f"{len(afirmacao.evidencias)} ev · {len(prompt)} chars ... ", end="", flush=True)
+    t0 = _perf()
+    try:
+        r = estruturado(Julgamento, temperatura=0.0).invoke(prompt)
+        print(f"{_perf() - t0:5.1f}s", flush=True)
+    except Exception as exc:  # noqa: BLE001
+        print(f"{_perf() - t0:5.1f}s FALHOU {type(exc).__name__}", flush=True)
+        # Degradação declarada, igual à do juiz: sem API a afirmação passa e diz que não foi
+        # auditada. Invalidar por falha de rede transformaria indisponibilidade em veredito.
+        return True, f"sustentação não julgada ({type(exc).__name__})"
+    aprovadas = [i for i in dict.fromkeys(r.indices_aprovados) if 0 <= i < len(afirmacao.evidencias)]
+    if aprovadas:
+        return True, ""
+    return False, f"regra 6 (D-074): nenhuma evidência sustenta `{afirmacao.dor}` — {r.motivo}"
+
+
 def node(state: EstadoAnalise) -> dict:
     perfil = state.get("perfil")
     diagnostico = state.get("diagnostico")
@@ -86,6 +162,12 @@ def node(state: EstadoAnalise) -> dict:
 
     for afirmacao in perfil.afirmacoes:
         conf, ok, motivo = avaliar(afirmacao)
+        if ok and JULGAR_SUSTENTACAO:
+            # A ORDEM IMPORTA: as 5 regras primeiro. Quem já falhou a regra 1 (sem evidência) não
+            # tem o que julgar, e gastar chamada nele seria pagar para confirmar o óbvio.
+            ok_sust, motivo_sust = sustenta(afirmacao, perfil.nome)
+            if not ok_sust:
+                ok, motivo = False, motivo_sust
         afirmacao.confianca, afirmacao.validada, afirmacao.motivo_validacao = conf, ok, motivo
 
     if diagnostico is not None:

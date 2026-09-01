@@ -1896,6 +1896,83 @@ Cohere, então o teto de 10 req/min não entra. Cabe no orçamento.
 **Reversível?** Fácil — nasce atrás de flag, como as três anteriores.
 
 
+---
+
+## D-075 — O julgamento de sustentação foi medido, REPROVA no recall, e a colocação não muda nada
+**Data:** 31/08/2026 · alvo fixado em D-074 · ~102 chamadas em 3 execuções · **REPROVADA, fica atrás de flag**
+
+**O resultado, contra os alvos congelados em D-074:**
+
+| | exec 1 | exec 2 | exec 3 | alvo | |
+|---|---|---|---|---|---|
+| precisão (validada) | 83% | 81% | 100% | ≥ 80% | passa |
+| recall (perfil) | 100% | 100% | 100% | = 100% exato | passa |
+| **recall (recommendation)** | **71%** | **75%** | **75%** | **≥ 79%** | **FALHA nas três** |
+| discriminação | 7/8 | 6/8 | 7/8 | ≥ 6/8 | passa |
+| dores proibidas | 2 | 2 | 0 | ≤ 2 | passa |
+
+Guardas: `maturidade 6/7` · `elegivel 5/7` · `motivo_exclusao 5/7` · `classe 3/7` — todas seguraram.
+**Quatro dos cinco alvos passam nas três execuções; um falha nas três.** Pela regra 1 de D-074,
+`JULGAR_SUSTENTACAO = False`. É o quarto braço que o próprio critério deste projeto reprova, depois
+de D-056, D-059 e D-060.
+
+### O passo 2 respondeu, e é o achado que vale mais que o placar
+
+| | juiz no Extractor (**deleta**) | validator (**rebaixa**) |
+|---|---|---|
+| precisão | 83-96% (D-072) | 81-100% |
+| recall | 71-79% | 71-75% |
+| dores proibidas | 1-2 | 0-2 |
+| discriminação | 6-8/8 | 6-7/8 |
+
+**Metricamente indistinguíveis.** O prompt foi reusado LITERALMENTE (`INSTRUCAO` e `CRITERIO_DOR`
+importados do Extractor) exatamente para permitir esta conclusão: com prompt idêntico, a diferença
+observada é atribuível à colocação — e ela é nula.
+
+**Logo o custo de recall é da PERGUNTA, não da colocação.** Perguntar *"a evidência sustenta?"*
+custa ~25% das dores certas em qualquer ponto do pipeline. Isto refuta a hipótese que motivou D-074:
+*"o juiz custa recall porque DELETA; se a dor sobreviver marcada, a informação não é destruída"*.
+Ela está **meio certa e meio errada**, e a régua de duas colunas mostra exatamente onde: o recall do
+**perfil** fica em 100% — nada é deletado, o desenho funciona —, mas o Recommendation filtra por
+`validada` e a perda reaparece idêntica. **A colocação mudou onde a informação sobrevive, não se o
+Recommendation a enxerga.**
+
+### O que fica em produção, porque não é métrica
+
+**O `validada` deixou de ser portão morto**, e isso vale independentemente da reprovação. Antes: o
+único caminho para `False` era "nenhuma evidência", o Extractor nunca cria dor sem evidência, e **34
+de 34 passavam**. A régua agora mede as duas colunas e **imprime sozinha** quando elas coincidem —
+o portão que não filtra virou saída do instrumento em vez de defeito escondido no código (passo 0).
+
+### O que a medição abriu, e é a próxima hipótese
+
+Se o custo é da pergunta e não da colocação, o lugar de atacá-lo é o **consumidor**:
+`recommendation.py` trata `validada` como **booleano** e descarta. D-010 diz outra coisa — *"o
+Validator anota e rebaixa; quem barra é o Recommendation"* — e "rebaixar" admite gradação que um
+`if d.validada` joga fora. Uma dor não-sustentada podia entrar como sinal fraco em vez de sumir.
+**Não medido, e é hipótese nova: exige critério próprio, fixado antes.**
+
+### Nota de operação, medida nas três execuções
+
+`src/llm.py` **não configura `timeout`**, e o `ChatOpenAI` sem timeout espera para sempre. Medido:
+p50 de **6,9s** e p90 de 12,2s, contra chamadas isoladas de **307,6s · 310,1s · 312,6s · 322,6s**.
+Elas **não são do mesmo prompt** — Laura/observabilidade numa execução, Deal/custo,
+Doutor-AI/privacidade e Maritaca/custo em outra —, e a duração quase idêntica em prompts diferentes
+é assinatura de travamento do lado do servidor com liberação em ~5 min, não de conteúdo.
+
+Consequência: uma execução deste braço leva **~4 min no caso bom e ~20 min quando a cauda aparece**.
+Isso o desqualifica para demonstração ao vivo, mesmo que um dia passe no placar.
+
+**O timeout NÃO foi adicionado durante a medição**, e a omissão é decisão: D-074 regra 4 fixa que a
+régua não muda depois do passo 0. Uma chamada que estoura cai no caminho de degradação e volta
+`validada=True`, o que move o placar — mudar isso entre execuções invalidaria as três. Entra depois,
+como decisão própria, e a escolha do valor não é óbvia: um timeout curto transforma indisponibilidade
+em veredito de sustentação.
+
+**Reversível?** É flag. `avaliar_agentes.py --sustentacao` liga; `--sustentacao` com `--juiz` é
+recusado, porque a mesma pergunta em dois pontos paga duas vezes e não atribui.
+
+
 ## Decisões pendentes
 
 | # | Decisão | Estado |
@@ -1911,7 +1988,9 @@ Cohere, então o teto de 10 req/min não entra. Cabe no orçamento.
 | **P-09** | **Promover o juiz do Extractor?** | D-072 passou o critério; falta decidir a lacuna de recall (100% → 71-79%) |
 | **P-10** | **Régua do motor de recomendação** | **20 pontos sem instrumento.** O gabarito das 8 fixtures não tem campo de recomendação |
 | **P-11** | **O `min()` da confiança** | 0/6 constante. Barato, mas exige critério fixado antes — uma tentativa já foi reprovada (D-059) |
-| **P-16** | **Julgamento semântico no Evidence Validator** | critério fixado em **D-074**, pré-condição escrita, teto calculado. Falta executar os 4 passos. Fecha junto a P-09 (deletar ou rebaixar) |
+| ~~P-16~~ | ~~Julgamento semântico no Evidence Validator~~ | **medido e REPROVADO em D-075** — 4 de 5 alvos passam, o recall no Recommendation falha nas três execuções |
+| **P-17** | **`recommendation.py` trata `validada` como booleano** | D-075 mostrou que o custo de recall é da PERGUNTA, não da colocação. D-010 pede gradação (*"anota e rebaixa"*), e um `if d.validada` a descarta. Hipótese nova, exige critério próprio |
+| **P-18** | **`src/llm.py` sem `timeout`** | medido em D-075: p50 6,9s contra chamadas de 307-322s, no portão único dos nove agentes. O valor não é óbvio — timeout curto transforma indisponibilidade em veredito |
 | **P-12** | **`classe`: vocabulário ou curadoria?** | D-060 mostrou que o gargalo não é a regra de decisão. Exige base ampliada |
 | **P-13** | **Exclusão por menção vs. identidade** | D-052 achado 3, aberto desde 25/08. Axenya e Freedom recusadas por citação de terceiro |
 | **P-14** | **Quatro campos são calculados e nada os lê** | `estrategia_analise` e `exige_sinais_ia` (Query Planner), `score_recuperacao` (Retriever), `motivo_validacao` (Evidence Validator). Não é código morto — é capacidade anunciada e não entregue: a arquitetura publicada promete *"critérios de busca + estratégia de análise"*. Ou o subgrafo passa a lê-los, ou o diagrama para de prometê-los |

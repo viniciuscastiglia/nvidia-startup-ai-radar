@@ -604,24 +604,38 @@ def main() -> int:
                     help="LIGA a rubrica em degraus do Classifier (default desligado, D-060)")
     ap.add_argument("--confianca-diagnostico", action="store_true",
                     help="LIGA a confiança tirada da evidência do diagnóstico (default desligado, D-059)")
+    ap.add_argument("--sustentacao", action="store_true",
+                    help="LIGA o julgamento de sustentação no Evidence Validator (D-074). CUSTA API")
     args = ap.parse_args()
 
     # Braço ligado que o modo escolhido nunca executa é pior que erro: o título ANUNCIA o braço
     # e a tabela sai da produção. Mesma disciplina que `--juiz --validar` já tinha.
     # Achado nº 12 do code review de 27/08.
     inertes = [n for n, on in (("--rubrica", args.rubrica),
+                               ("--sustentacao", args.sustentacao),
                                ("--confianca-diagnostico", args.confianca_diagnostico)) if on]
     if inertes and (args.baseline or args.exclusoes or args.validar
                     or args.motor == "extrator"):
         modo = ("--baseline" if args.baseline else "--exclusoes" if args.exclusoes
                 else "--validar" if args.validar else "--motor extrator")
         print(f"  {', '.join(inertes)} ignorado(s) em {modo}: este modo não chama o agente")
-        args.rubrica = args.confianca_diagnostico = False
+        args.rubrica = args.confianca_diagnostico = args.sustentacao = False
 
     if args.rubrica:
         classifier.RUBRICA_EM_DEGRAUS = True
     if args.confianca_diagnostico:
         evidence_validator.CONFIANCA_DA_EVIDENCIA_DO_DIAGNOSTICO = True
+
+    if args.sustentacao and args.juiz:
+        # Os dois fazem A MESMA PERGUNTA em pontos diferentes (D-074). Ligados juntos, o juiz
+        # deleta o candidato antes e o validator julga o que sobrou: paga-se duas vezes e o
+        # número não fica atribuído a nenhuma das duas colocações, que é justamente o que o
+        # passo 2 de D-074 existe para separar.
+        print("  --sustentacao com --juiz é recusado: a mesma pergunta em dois pontos não atribui")
+        return 1
+    if args.sustentacao:
+        # O braço que gasta API se pede pelo NOME. Mesma disciplina de `--juiz` e `--truncar-pool`.
+        evidence_validator.JULGAR_SUSTENTACAO = True
 
     if args.juiz and args.validar:
         # `--validar` chama `extractor.node` nas 8 fixtures (evidência literal e teto do
