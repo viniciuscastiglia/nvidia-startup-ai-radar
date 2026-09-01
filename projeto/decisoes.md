@@ -2000,6 +2000,47 @@ porque o dado que se tem é do portão (p50/p90 agregados), não por nó — div
 inventar números que ninguém mediu.
 
 
+## D-077 — A gradação de `validada` no Recommendation está aplicada e é INERTE — em três camadas
+**Data:** 31/08/2026 · critério fixado ANTES: recall (recommendation) ≥ 88% com precisão ≥ 80%
+· **NÃO PROMOVIDA — P-17 continua aberta**
+
+O código de P-17 está em `src/agents/recommendation.py`: a dor não-sustentada deixa de ser
+descartada e entra como sinal fraco, com `confianca` rebaixada para `baixa` numa cópia
+(`model_copy`, porque `perfil.dores_observadas` é estado compartilhado do grafo). Sintaxe válida.
+**E não move nada.** Três camadas, e cada uma sozinha já basta:
+
+**1. Em produção o novo ramo nunca executa.** `JULGAR_SUSTENTACAO = False` desde D-075, e sem o juiz
+o único caminho para `validada=False` é "nenhuma evidência" — que o Extractor nunca produz. 34 de 34
+passam. A régua confirma: `precisão 49%/49% · recall 100%/100% · discriminação 8/8 · proibidas
+10/10`, e o próprio instrumento imprime *"as duas colunas são IDÊNTICAS"*.
+
+**2. A `confianca` rebaixada não tem leitor.** A justificativa da mudança era *"impede que a dor
+fraca assuma prioridade alta"*. Ela não impede: `_prioridade()` recebe `diagnostico.confianca` —
+a confiança do DIAGNÓSTICO —, nunca a da dor. Nenhuma outra linha do módulo lê `d.confianca`. O
+rebaixamento é escrito numa cópia que ninguém consulta.
+
+**3. A régua não mede este consumidor.** `scripts/avaliar_agentes.py:507` replica o filtro
+(`{d.dor for d in dores if d.validada}`) em vez de chamar `recommendation.node()`. O espelho é do
+código de ontem: mesmo com o juiz ligado, a coluna `validada` reportaria o comportamento ANTIGO.
+
+### O achado que vale mais que as três: o critério é inalcançável por este mecanismo
+
+Se as três camadas fossem resolvidas, `validadas` passaria a conter TODA dor observada — o portão
+`validada` sai inteiro do caminho do Recommendation — e a coluna `validada` colapsa sobre a coluna
+`emitida` **por construção**. O par medido vira **recall 100% · precisão 49%**: passa nos 88% e
+falha nos 80%, e falha por desenho, não por ajuste. Admitir toda dor não-sustentada é exatamente
+desfazer o que o juiz comprava (81-100% de precisão em D-075), pelo preço que ele cobrava.
+
+**Logo o critério de P-17 exige admissão PARCIAL, e o eixo não é `confianca`.** A separação que
+D-063 já instalou é a que serve: a dor fraca pode entrar em `evidencias` (lastro secundário) sem
+entrar em `dores_enderecadas` (o que o briefing DECLARA e a régua conta). Não medido; é a próxima
+hipótese, e continua exigindo critério fixado antes.
+
+**Alternativa descartada:** mexer em `_prioridade()` junto, para que a `confianca` da dor passasse a
+ter leitor. Rejeitada agora porque mudaria o instrumento e o objeto na mesma sessão — a régua de
+prioridade não existe, e D-074 regra 4 vale aqui também.
+
+
 ## Decisões pendentes
 
 | # | Decisão | Estado |
@@ -2016,7 +2057,7 @@ inventar números que ninguém mediu.
 | **P-10** | **Régua do motor de recomendação** | **20 pontos sem instrumento.** O gabarito das 8 fixtures não tem campo de recomendação |
 | **P-11** | **O `min()` da confiança** | 0/6 constante. Barato, mas exige critério fixado antes — uma tentativa já foi reprovada (D-059) |
 | ~~P-16~~ | ~~Julgamento semântico no Evidence Validator~~ | **medido e REPROVADO em D-075** — 4 de 5 alvos passam, o recall no Recommendation falha nas três execuções |
-| **P-17** | **`recommendation.py` trata `validada` como booleano** | D-075 mostrou que o custo de recall é da PERGUNTA, não da colocação. D-010 pede gradação (*"anota e rebaixa"*), e um `if d.validada` a descarta. Hipótese nova, exige critério próprio |
+| **P-17** | **`recommendation.py` trata `validada` como booleano** | **D-077: a gradação total foi aplicada e é INERTE** — flag desligada, `confianca` sem leitor, régua espelhando o código antigo. E o critério (recall ≥ 88% com precisão ≥ 80%) é inalcançável assim: admitir tudo dá 100%/49%. Falta a admissão PARCIAL, por `dores_enderecadas` e não por `confianca` |
 | ~~P-18~~ | ~~`src/llm.py` sem `timeout`~~ | **D-076** — `LLM_TIMEOUT=30` por tentativa, `max_retries=2` do SDK mantido: ~90 s de teto combinado |
 | **P-12** | **`classe`: vocabulário ou curadoria?** | D-060 mostrou que o gargalo não é a regra de decisão. Exige base ampliada |
 | **P-13** | **Exclusão por menção vs. identidade** | D-052 achado 3, aberto desde 25/08. Axenya e Freedom recusadas por citação de terceiro |
