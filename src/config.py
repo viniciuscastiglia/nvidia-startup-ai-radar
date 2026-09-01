@@ -56,6 +56,7 @@ class ConfigLLM:
     api_key: str | None
     modelo: str
     temperatura: float
+    timeout: float
 
 
 @dataclass(frozen=True)
@@ -123,6 +124,10 @@ LLM = ConfigLLM(
     # modelos que não respondem, então a listagem nunca é a prova (D-070).
     modelo=_env("LLM_MODEL", "nvidia/nemotron-3-nano-30b-a3b"),
     temperatura=float(_env("LLM_TEMPERATURE", "0.1")),
+    # Teto POR TENTATIVA, não por chamada: o `ChatOpenAI` traz `max_retries=2` do LangChain,
+    # que fica como está — 3 tentativas x 30 s = ~90 s de teto combinado por chamada, que é o
+    # limite aceito. Está aqui e não no `src/llm.py` porque tudo que o cliente lê vem daqui.
+    timeout=float(_env("LLM_TIMEOUT", "30")),
 )
 
 EMBEDDING = ConfigEmbedding(

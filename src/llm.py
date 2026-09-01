@@ -46,6 +46,7 @@ def chat(temperatura: float | None = None) -> ChatOpenAI:
         api_key=LLM.api_key,
         model=LLM.modelo,
         temperature=LLM.temperatura if temperatura is None else temperatura,
+        timeout=LLM.timeout,
     )
 
 

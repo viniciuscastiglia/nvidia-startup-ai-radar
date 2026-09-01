@@ -1973,6 +1973,33 @@ em veredito de sustentação.
 recusado, porque a mesma pergunta em dois pontos paga duas vezes e não atribui.
 
 
+## D-076 — O `timeout` do LLM sai do literal e vira configuração (P-18)
+**Data:** 31/08/2026 · fecha a nota de operação de D-075 · **PROMOVIDA**
+
+D-075 mediu, no portão único dos nove agentes: p50 de **6,9 s** e p90 de 12,2 s contra chamadas
+isoladas de **307,6 · 310,1 · 312,6 · 322,6 s**, em prompts DIFERENTES — duração quase idêntica em
+prompts diferentes é assinatura de travamento do servidor, não de conteúdo. Sem `timeout` o
+`ChatOpenAI` espera para sempre, e uma execução ia de ~4 min a ~20 min.
+
+**`timeout=30` (`LLM_TIMEOUT`), em `src/config.py` e não em `src/llm.py`.** O literal foi a primeira
+versão e foi rejeitado: todo o resto do cliente (`base_url`, `api_key`, `modelo`, `temperatura`) lê
+de `LLM`, e um número cravado no meio quebraria pela primeira vez a convenção de que provedor só
+passa por `src/config.py`.
+
+**O `max_retries` fica no default e isso é decisão, não omissão.** Verificado no ambiente
+(langchain-openai 1.6.0 / openai 3.3.1): o wrapper deixa `max_retries=None` e delega, e o cliente
+do SDK usa **2** — logo 3 tentativas x 30 s = **~90 s de teto combinado por chamada**, não 30. É o
+teto aceito: corta a cauda de ~5 min sem transformar um soluço de rede em veredito.
+
+**O risco que D-075 nomeou continua de pé:** timeout curto vira veredito de sustentação, porque o
+caminho de degradação de `sustenta()` devolve `validada=True`. Com o julgamento atrás de flag
+desligada, hoje o risco é latente; se `JULGAR_SUSTENTACAO` for ligado, os 30 s entram na medição.
+
+**Alternativa descartada:** `timeout` por chamada, passado nos nós que sabem que são caros. Rejeitada
+porque o dado que se tem é do portão (p50/p90 agregados), não por nó — dividir o teto por nó seria
+inventar números que ninguém mediu.
+
+
 ## Decisões pendentes
 
 | # | Decisão | Estado |
@@ -1990,7 +2017,7 @@ recusado, porque a mesma pergunta em dois pontos paga duas vezes e não atribui.
 | **P-11** | **O `min()` da confiança** | 0/6 constante. Barato, mas exige critério fixado antes — uma tentativa já foi reprovada (D-059) |
 | ~~P-16~~ | ~~Julgamento semântico no Evidence Validator~~ | **medido e REPROVADO em D-075** — 4 de 5 alvos passam, o recall no Recommendation falha nas três execuções |
 | **P-17** | **`recommendation.py` trata `validada` como booleano** | D-075 mostrou que o custo de recall é da PERGUNTA, não da colocação. D-010 pede gradação (*"anota e rebaixa"*), e um `if d.validada` a descarta. Hipótese nova, exige critério próprio |
-| **P-18** | **`src/llm.py` sem `timeout`** | medido em D-075: p50 6,9s contra chamadas de 307-322s, no portão único dos nove agentes. O valor não é óbvio — timeout curto transforma indisponibilidade em veredito |
+| ~~P-18~~ | ~~`src/llm.py` sem `timeout`~~ | **D-076** — `LLM_TIMEOUT=30` por tentativa, `max_retries=2` do SDK mantido: ~90 s de teto combinado |
 | **P-12** | **`classe`: vocabulário ou curadoria?** | D-060 mostrou que o gargalo não é a regra de decisão. Exige base ampliada |
 | **P-13** | **Exclusão por menção vs. identidade** | D-052 achado 3, aberto desde 25/08. Axenya e Freedom recusadas por citação de terceiro |
 | **P-14** | **Quatro campos são calculados e nada os lê** | `estrategia_analise` e `exige_sinais_ia` (Query Planner), `score_recuperacao` (Retriever), `motivo_validacao` (Evidence Validator). Não é código morto — é capacidade anunciada e não entregue: a arquitetura publicada promete *"critérios de busca + estratégia de análise"*. Ou o subgrafo passa a lê-los, ou o diagrama para de prometê-los |
