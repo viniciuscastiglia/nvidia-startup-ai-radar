@@ -2040,6 +2040,11 @@ hipótese, e continua exigindo critério fixado antes.
 ter leitor. Rejeitada agora porque mudaria o instrumento e o objeto na mesma sessão — a régua de
 prioridade não existe, e D-074 regra 4 vale aqui também.
 
+**O código foi REVERTIDO; o achado fica.** `recommendation.py` volta byte a byte a c0c6f44. Uma
+lista que não filtra nada, dentro do arquivo cuja história inteira (D-020, D-063) é sobre listas que
+PARECIAM filtrar, é dívida disfarçada de progresso — e o achado desta decisão não precisa dela para
+existir. O que sobrevive em produção desta sessão é só D-076.
+
 
 ## Decisões pendentes
 

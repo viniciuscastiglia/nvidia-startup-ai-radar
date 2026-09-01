@@ -131,21 +131,8 @@ def node(state: EstadoAnalise) -> dict:
 
     recomendacoes: list[Recomendacao] = []
     for citacao in citacoes[:TETO_RECOMENDACOES]:
-        # P-17: `validada` deixa de ser PORTÃO BOOLEANO. D-010 manda o Validator "anotar e
-        # rebaixar" e o Recommendation barrar — e `if d.validada` descartava em vez de rebaixar,
-        # jogando fora a gradação que o desenho pedia. A dor não-sustentada entra como SINAL
-        # FRACO, com `confianca` forçada a `baixa`.
-        #
-        # `model_copy` e não atribuição: `perfil.dores_observadas` é estado COMPARTILHADO do
-        # grafo. Mutar `d.confianca` aqui reescreveria a anotação que o Evidence Validator
-        # publicou, e o briefing imprimiria uma confiança que nenhum agente decidiu.
-        # `validada is False` e não `not d.validada`: `None` significa "ainda não passou pelo
-        # validator" (state.py:124), que não é o mesmo que "passou e não se sustentou".
-        validadas = [
-            d if d.validada else d.model_copy(update={"confianca": "baixa"})
-            for d in perfil.dores_observadas
-            if d.validada or d.validada is False
-        ]
+        # Regra 3: só as dores cuja afirmação passou pelo validator entram.
+        validadas = [d for d in perfil.dores_observadas if d.validada]
         # DE ONDE SAI EVIDÊNCIA e QUAIS DORES SÃO DECLARADAS ENDEREÇADAS são duas perguntas
         # diferentes, e até 27/08 eram a mesma lista (D-063). A condição antiga —
         # `any(c.tecnologia == citacao.tecnologia for c in citacoes)` — era SEMPRE VERDADEIRA,
