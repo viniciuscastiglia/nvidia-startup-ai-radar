@@ -2,6 +2,8 @@
 
 **Entrega: 09/09 às 23:59 · Vídeo: 07/09.** Restam **7 dias**, **5 até o vídeo**.
 
+> **Visão visual deste plano:** [Os últimos sete dias](https://claude.ai/code/artifact/b6d37462-6743-43c1-ac6d-da5a15af7839) — mesma informação, para ler de relance.
+>
 > **Este documento é a fonte única do que falta.** Todo item aberto do projeto aparece aqui com um
 > destino: **FAZER** (com dia), **ACEITAR** (com a justificativa que vai para a defesa) ou
 > **DECIDIR** (é do Vinícius). **Se não está aqui, não existe.** O histórico está em `decisoes.md`.

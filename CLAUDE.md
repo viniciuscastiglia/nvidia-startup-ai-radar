@@ -242,7 +242,7 @@ Para avaliar sem Postgres local: `docker compose up -d` (porta 5433) e ajustar `
 | `projeto/sessao-atual.md` | **no início de qualquer sessão** — o que está aberto e as decisões pendentes |
 | `projeto/revisao-pontos-cegos.md` | **envelope lacrado da revisão do plano** — abre com os limites da auditoria (pode ler sempre) e fecha com a lista de quem fez o plano, que só deve ser lida DEPOIS de você ter escrito a sua |
 | `projeto/decisoes.md` | **sempre que uma decisão for tomada** — escrever na hora. É o material de defesa, o roteiro do vídeo e a seção de arquitetura do README |
-| `projeto/plano.md` | sequência dos 18 dias, marcos e riscos |
+| `projeto/plano.md` | **plano dos dias finais** — todo item aberto com destino, portões e eliminatórios · [versão visual](https://claude.ai/code/artifact/b6d37462-6743-43c1-ac6d-da5a15af7839) |
 | `projeto/guia-de-trabalho.md` | método de trabalho e manutenção desta documentação |
 | `contexto/01-tapi.md` | precisar do requisito exato: schema, os 7 campos do output, pipeline de 9 passos, regras do vídeo, tabela do barema |
 | `contexto/02-rubrica-ai-native.md` | for mexer no Extractor, no Classifier ou no Evidence Validator — é a rubrica que o TAPI não fornece |

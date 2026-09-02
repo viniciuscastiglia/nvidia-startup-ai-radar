@@ -6,6 +6,7 @@
 > **O PLANO DOS DIAS FINAIS ESTÁ FECHADO e mora em `projeto/plano.md`.** Ele é a fonte única do
 > que falta: todo item aberto tem destino (FAZER com dia · ACEITAR com justificativa · DECIDIR).
 > **Comece por ele.** Este arquivo só diz onde a última sessão parou.
+> Visão visual: [Os últimos sete dias](https://claude.ai/code/artifact/b6d37462-6743-43c1-ac6d-da5a15af7839).
 
 ## O que a sessão de 02/09 fez
 
