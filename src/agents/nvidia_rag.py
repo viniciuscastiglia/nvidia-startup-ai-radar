@@ -53,13 +53,18 @@ from __future__ import annotations
 
 from itertools import zip_longest
 
+from src.agents.justificativa import pontuar
 from src.rag.pipeline import buscar_com_rerank
 from src.state import CitacaoRAG, DorObservada, EstadoAnalise
 
 # Quantos trechos por dor. Baixo de propósito: o Recommendation Agent recebe isto multiplicado
 # pelo número de dores, e a regra 4 de `contexto/03` §4 é "não empilhar tecnologia" — recomendar
 # 8 produtos para uma seed é ruído. Um funil largo aqui vira ruído lá.
-TRECHOS_POR_DOR = 3
+# SUBIU DE 3 PARA 8 EM D-086, E O CUSTO É ZERO CHAMADA DE API: `reranquear` pontua a UNIÃO
+# INTEIRA e só depois fatia por `top_n` (`src/rag/rerank.py`). O que 8 compra é candidato: com 3,
+# quase nunca havia duas passagens da mesma página para escolher entre elas. Não muda quantas
+# recomendações saem — `melhor_da_pagina` colapsa a lista por URL logo abaixo, como antes.
+TRECHOS_POR_DOR = 8
 
 # O QUE ESTÁ NA BASE DE CONHECIMENTO MAS NÃO É COISA PARA A STARTUP ADOTAR (D-082).
 #
@@ -117,6 +122,33 @@ def node(state: EstadoAnalise) -> dict:
             c.model_copy(update={"dor_origem": dor.dor})
             for c in buscar_com_rerank(consulta, k=TRECHOS_POR_DOR)
         ])
+
+    # DEDUPLICAR POR URL PASSA A SER **ESCOLHER**, E NÃO "FICAR COM O PRIMEIRO" (D-086).
+    # Todos os chunks de uma tecnologia compartilham a URL da página, então a deduplicação
+    # decidia qual TEXTO representa aquela tecnologia — e decidia por posição do reranker, que
+    # ordena por relevância à consulta, não por servir de justificativa. Medido em 02/09: para a
+    # dor de observabilidade da Axenya, o vencedor era o chunk 81 do NeMo, quatro linhas de case
+    # da Writer e do Arize, enquanto o chunk 58 da MESMA página diz o que o NeMo faz.
+    #
+    # A escolha acontece DENTRO da lista de uma dor, nunca entre dores: `dor_origem` é o que liga
+    # a citação à evidência lá no `recommendation`, e trocar de dor aqui quebraria essa ligação
+    # em silêncio. A POSIÇÃO do grupo também é preservada — quem decide qual tecnologia entra
+    # continua sendo o reranker, que tem régua (D-068). Só o texto muda.
+    # OS SCORES ACOMPANHAM O TEXTO ESCOLHIDO, e não o primeiro colocado do grupo. A tentação era
+    # preservar os scores do melhor ranqueado para "explicar" a posição — e isso faria a citação
+    # mentir sobre si mesma: `CitacaoRAG` existe para mostrar o reranker mudando a ordem, e um
+    # score que descreve um chunk que ninguém vê não descreve nada. A POSIÇÃO do grupo já vem do
+    # primeiro colocado, porque `dict` preserva a ordem de INSERÇÃO — substituir o valor não move
+    # a chave. Ordem do reranker preservada, score honesto.
+    def melhor_da_pagina(lista: list[CitacaoRAG]) -> list[CitacaoRAG]:
+        grupos: dict[str, CitacaoRAG] = {}
+        for c in lista:
+            atual = grupos.get(c.url_fonte)
+            if atual is None or pontuar(c.trecho) > pontuar(atual.trecho):
+                grupos[c.url_fonte] = c
+        return list(grupos.values())
+
+    por_dor = [melhor_da_pagina(lista) for lista in por_dor]
 
     citacoes: list[CitacaoRAG] = []
     vistos: set[str] = set()

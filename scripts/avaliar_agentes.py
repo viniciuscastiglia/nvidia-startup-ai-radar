@@ -320,6 +320,58 @@ def medir_exclusoes() -> dict:
             "proc": proc, "n": len(casos)}
 
 
+ARQ_JUSTIFICATIVAS = (Path(__file__).resolve().parent.parent / "data" / "avaliacao"
+                     / "justificativas.yaml")
+
+
+def medir_justificativas() -> dict:
+    """A RÉGUA DA `justificativa_tecnica` — P-10 (D-086). Zero chamada de API.
+
+    A LINHA TRIVIAL É OBRIGATÓRIA AQUI COMO EM TODA TABELA DESTE ARQUIVO (D-051), e neste critério
+    ela é forte: *"os 150 primeiros caracteres do chunk"* é o que produção entregava, e metade dos
+    chunks do corpus começa por uma frase boa. Sem ela, qualquer número do seletor pareceria
+    vitória. Ela é recalculada do texto — não do rótulo `nota_prefixo` do YAML —, para que o
+    placar não dependa de quem rotulou.
+
+    Os chunks com `ancoras: null` (nada neles serve) saem do DENOMINADOR: punir o seletor por não
+    achar o que não existe mede a amostra, não o seletor. Eles continuam impressos, porque quantos
+    são é informação sobre o corpus.
+    """
+    import psycopg
+    from psycopg.rows import dict_row
+    from src.agents.justificativa import melhor_trecho
+    from src.config import DATABASE_URL
+
+    d = yaml.safe_load(ARQ_JUSTIFICATIVAS.read_text(encoding="utf-8"))
+    casos = d["casos"]
+    ids = [c["chunk"] for c in casos]
+    with psycopg.connect(DATABASE_URL, row_factory=dict_row) as cx, cx.cursor() as cur:
+        cur.execute("SELECT id, texto FROM chunks_nvidia WHERE id = ANY(%(ids)s)", {"ids": ids})
+        texto_de = {r["id"]: r["texto"] for r in cur.fetchall()}
+
+    faltando = [i for i in ids if i not in texto_de]
+    acertos = {"trivial": 0, "seletor": 0}
+    com_alvo = 0
+    falhas: list[str] = []
+    for caso in casos:
+        texto = texto_de.get(caso["chunk"])
+        if texto is None or not caso["ancoras"]:
+            continue
+        com_alvo += 1
+        trivial = texto[:150]
+        escolhido = melhor_trecho(texto)
+        ok_t = any(a in trivial for a in caso["ancoras"])
+        ok_s = any(a in escolhido for a in caso["ancoras"])
+        acertos["trivial"] += ok_t
+        acertos["seletor"] += ok_s
+        if not ok_s:
+            falhas.append(f"#{caso['chunk']:<4} {caso['tecnologia'][:22]:22} "
+                          f"escolheu {escolhido[:64]!r}")
+    return {"acertos": acertos, "com_alvo": com_alvo, "n": len(casos),
+            "sem_alvo": sum(1 for c in casos if not c["ancoras"]),
+            "faltando": faltando, "falhas": falhas, "seed": d["amostra"]["seed"]}
+
+
 def validar_exclusoes() -> list[str]:
     """O gabarito de exclusão também precisa de gabarito (achado nº 7 do review de 27/08).
 
@@ -600,6 +652,8 @@ def main() -> int:
     # só no histórico do git, e o harness consegue medir os dois lados. Zero API nos dois.
     ap.add_argument("--exclusoes", action="store_true",
                     help="régua do filtro do Inception: falso positivo E falso negativo. Zero API")
+    ap.add_argument("--justificativas", action="store_true",
+                    help="régua da justificativa_tecnica: seletor vs. os 150 primeiros. Zero API")
     ap.add_argument("--rubrica", action="store_true",
                     help="LIGA a rubrica em degraus do Classifier (default desligado, D-060)")
     ap.add_argument("--confianca-diagnostico", action="store_true",
@@ -615,6 +669,7 @@ def main() -> int:
                                ("--sustentacao", args.sustentacao),
                                ("--confianca-diagnostico", args.confianca_diagnostico)) if on]
     if inertes and (args.baseline or args.exclusoes or args.validar
+                    or args.justificativas
                     or args.motor == "extrator"):
         modo = ("--baseline" if args.baseline else "--exclusoes" if args.exclusoes
                 else "--validar" if args.validar else "--motor extrator")
@@ -663,6 +718,23 @@ def main() -> int:
               f"   <- falso NEGATIVO: o risco silencioso")
         print(f"    {'passaram corretamente':30} {r['acertos'][False]}/{r['totais'][False]}"
               f"   <- falso positivo: aparece no briefing")
+        for f in r["falhas"]:
+            print(f"      x {f}")
+        return 0
+
+    if args.justificativas:
+        r = medir_justificativas()
+        if r["faltando"]:
+            print(f"chunks do gabarito ausentes do banco: {r['faltando']}")
+            print("  a amostra é por ID e o corpus foi re-ingerido — re-amostre antes de medir")
+            return 1
+        print(f"{r['n']} chunk(s) em data/avaliacao/justificativas.yaml (amostra semeada "
+              f"{r['seed']}) · {r['sem_alvo']} sem alvo, fora do denominador\n")
+        print("  de onde sai a justificativa_tecnica:")
+        for nome, rotulo in (("trivial", "os 150 primeiros caracteres  <- a linha trivial (D-051)"),
+                             ("seletor", "melhor_trecho()              <- o seletor de D-086")):
+            a = r["acertos"][nome]
+            print(f"    {rotulo:56} {a}/{r['com_alvo']} = {a / r['com_alvo']:.0%}")
         for f in r["falhas"]:
             print(f"      x {f}")
         return 0

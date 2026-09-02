@@ -31,6 +31,7 @@ puxou aquela citação, que é o que `dor_origem` sabe desde D-043.
 
 from __future__ import annotations
 
+from src.agents.justificativa import melhor_trecho
 from src.state import (
     CitacaoRAG,
     Complexidade,
@@ -165,7 +166,12 @@ def node(state: EstadoAnalise) -> dict:
 
         recomendacoes.append(Recomendacao(
             tecnologias=[citacao.tecnologia],
-            justificativa_tecnica=citacao.trecho,
+            # NÃO É MAIS O CHUNK CRU (D-086). `citacao.trecho` é o chunk INTEIRO — mediana de
+            # 803 caracteres —, e o briefing imprime os 150 primeiros: o que o gerente lia era o
+            # COMEÇO do chunk, que neste corpus é quase sempre um título. `melhor_trecho` escolhe
+            # o span de maior densidade técnica dentro dele. Continua sendo citação literal da
+            # documentação, com `url_fonte` — não é prosa gerada, e segue verificável.
+            justificativa_tecnica=melhor_trecho(citacao.trecho),
             justificativa_negocio=NEGOCIO.get(citacao.tecnologia) or _negocio_de_fallback(
                 citacao, perfil.nome
             ),

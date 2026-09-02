@@ -2407,6 +2407,100 @@ escrito, e que o caso fora da régua — duas frases — passa.
 
 ---
 
+## D-086 — `justificativa_tecnica` deixa de ser o chunk cru: a régua primeiro, o seletor depois
+**Data:** 02/09/2026 · fecha **P-10** · abre **P-21**
+
+**O estado anterior:** `justificativa_tecnica = citacao.trecho` — o chunk **inteiro**, mediana de
+**803 caracteres**, do qual o briefing imprime os 150 primeiros. Então o que o gerente lia era *o
+começo do chunk*, e a estrutura deste corpus é `TÍTULO / conteúdo`: ele lia o título.
+
+**A medição de partida, sobre um run real (2 startups × 3 recomendações): 1 de 6 servia.** As outras
+cinco foram um case da **Writer**, um CTA (*"Join our ecosystem…"*), um menu (*"Learn More /
+- Documentation / - FAQs"*), um índice de links e prosa institucional.
+
+### A régua veio antes, e foi commitada antes
+
+`data/avaliacao/justificativas.yaml` — `random.sample(175, 30)`, `seed=20260902`, sobre a estratégia
+de produção. **Rotulado antes de o seletor existir e commitado em separado**, que é o que o torna
+teste em vez de espelho. 21 casos com alvo; os 9 sem alvo saem do denominador — punir o seletor por
+não achar o que não existe mede a amostra.
+
+**A linha trivial deste critério é *"os 150 primeiros caracteres"*, e ela não é fraca** — metade dos
+chunks começa por frase boa. É o `denso puro` deste critério (D-051), e o harness a recalcula do
+texto, não do meu rótulo.
+
+### Dois níveis, porque são dois defeitos empilhados
+
+**1. Nível de PASSAGEM (`nvidia_rag`).** Todo chunk de uma tecnologia compartilha a URL da página,
+então a deduplicação por URL decidia **qual texto representa aquela tecnologia** — por posição do
+reranker, que ordena por relevância à consulta, não por servir de justificativa. Vencia o chunk 81
+do NeMo (quatro linhas de case da Writer e do Arize) enquanto o chunk 58 da **mesma página** diz o
+que o NeMo faz. Deduplicar virou **escolher**. `TRECHOS_POR_DOR` 3 → 8, com **zero chamada de API a
+mais**: `reranquear` pontua a união inteira e só depois fatia por `top_n`.
+
+**2. Nível de SPAN (`recommendation`).** Mesmo na página certa, o campo era o chunk inteiro.
+`melhor_trecho` escolhe o bloco de linhas consecutivas de maior **densidade** de marcador técnico,
+com orçamento de 320 caracteres. Densidade e não contagem: dividir pelo comprimento faz uma frase
+curta e densa ganhar de uma página morna, que é o que se quer de uma justificativa.
+
+**O que o seletor NÃO faz: decidir relevância.** Quem escolhe a tecnologia continua sendo o
+cross-encoder, que tem régua (`e@k`, D-068). A heurística decide só o que sabe julgar — qual texto
+serve de justificativa. A posição do grupo vem do melhor colocado; **os scores acompanham o texto
+escolhido**, porque um score que descreve um chunk que ninguém vê não descreve nada.
+
+### Medido
+
+| | antes | depois |
+|---|---|---|
+| régua, linha trivial (150 primeiros) | — | **12/21 = 57%** |
+| régua, `melhor_trecho()` | — | **15/21 = 71%** |
+| justificativas que servem, num run de 2 startups | **1/6** | **4/6** |
+| tamanho do campo | chunk inteiro (mediana 803) | ≤ 320 |
+| `pytest` | 75 | **81** |
+| `avaliar_agentes` (classe · stack · confiança · elegível · precisão) | 3/7 · 6/7 · 0/6 · 6/6 · 49% | **idênticos** |
+
+**DUAS COISAS QUE PRECISAM ESTAR ESCRITAS, PORQUE SÃO CONTRA MIM:**
+
+1. **Eu afirmei um portão de "≥ 18/21" DEPOIS de ver o primeiro placar.** Ele nunca foi escrito nem
+   comunicado antes. O critério que estava de fato fixado, no plano aprovado, é *"o seletor só entra
+   se bater a linha trivial"* — e ele bate. Reivindicar alvo não registrado é a versão exata do
+   defeito que este projeto vigia desde D-055; fica registrado como erro cometido, não evitado.
+2. **Houve UMA revisão do seletor, declarada antes e limitada de propósito.** Ela acrescentou três
+   marcadores de convite observados nas falhas (`learn how`, `visit`, `watch`) e **não tocou nas
+   âncoras**. O placar não se moveu (15/21 nas duas medições) — mudou *quais* spans são escolhidos.
+   Três das seis falhas restantes (#34, #253, #285) são **âncora estreita minha**: o seletor escolheu
+   um span tecnicamente bom que não era a frase que eu tinha eleito. **Alargá-las depois de ver a
+   falha seria ajustar ao gabarito, então elas continuam contando como erro.** O 71% é, por isso,
+   um piso.
+
+### O que NÃO entrou, e por quê
+
+**A limpeza de "entulho de página, rodada 2" estava no plano e foi CANCELADA por evidência.** O plano
+mandava acrescentar `Learn More`, `Documentation`, `Getting Started Guide`, `Examples`, `FAQs` a
+`RUIDO_FRASE`. Inspecionados os **três** chunks do corpus que casam esses marcadores, **nenhum é
+entulho**: o 127 tem o parágrafo real sobre telemetria do Guardrails, o 180 são release notes com
+número medido (*"24,000 tokens per second"*, *"2.4x more Llama-70B throughput"*) e o 342 explica as
+três formas de instalar o Morpheus. E o casamento de `RUIDO_FRASE` é por **substring**: `documentation`
+mataria *"See the documentation for the quantization API"*. Era diagnóstico errado — o defeito nunca
+esteve no corpus, esteve em entregar o chunk inteiro. **Conteúdo que sai da limpeza nunca mais volta**,
+e esta teria saído por um sintoma cuja causa era outra.
+
+**Alternativa descartada — (b), o LLM redigir:** continua **aberta**, com o critério corrigido por
+D-084 (latência que o gerente sente, não minutos de vídeo), a decidir com a interface na frente.
+Depois de D-086 ela também ficou mais barata e melhor: o LLM receberia um span selecionado em vez de
+um chunk com título de case na frente.
+
+### P-21, aberta por esta sessão
+
+Das duas justificativas que **ainda não servem**, uma é de outro escopo: **NVIDIA Morpheus — spear
+phishing e digital fingerprinting — recomendado para a dor de PRIVACIDADE de uma healthtech.** Não é
+defeito de texto, é de **qual tecnologia**: a recuperação casa `privacy`/`security` sem saber o
+domínio. Nenhum seletor de trecho conserta isso, e nada mede relevância de recomendação hoje.
+
+**Reversível?** Sim. Os dois níveis são funções puras com teste, e `TRECHOS_POR_DOR` é uma constante.
+
+---
+
 ## Decisões pendentes
 
 | # | Decisão | Estado |
@@ -2420,7 +2514,7 @@ escrito, e que o caso fora da régua — duas frases — passa.
 | ~~P-08~~ | ~~Como o Postgres sobe para quem avaliar~~ | **D-017** — os dois |
 | **P-06** | **Framework de frontend** | aberta. É a única superfície pela qual alguém que não lê código julga o sistema. O escopo sai da pergunta de produto — o que o gerente precisa ver, e em que ordem, para abordar a startup no dia seguinte — não de um orçamento de esforço |
 | **P-09** | **Promover o juiz do Extractor?** | D-072 passou o critério; falta decidir a lacuna de recall (100% → 71-79%) |
-| **P-10** | **Régua do motor de recomendação** | **A saída que o usuário lê é a única sem instrumento.** O gabarito das 8 fixtures não tem campo de recomendação, então nada quebra quando ela vem errada — e ela vem: para dor de custo, a justificativa técnica sai como *"Join our ecosystem of startups, partners, and developers"* |
+| ~~P-10~~ | ~~Régua do motor de recomendação~~ | **D-086** — a régua existe (`--justificativas`, 30 chunks, amostra semeada, rotulada antes do seletor) e o seletor bate a linha trivial: **15/21 vs 12/21**. Num run real, justificativas que servem: **1/6 → 4/6**. A parte de RELEVÂNCIA da recomendação virou **P-21** |
 | **P-11** | **O `min()` da confiança** | 0/6 constante. Barato, mas exige critério fixado antes — uma tentativa já foi reprovada (D-059) |
 | ~~P-16~~ | ~~Julgamento semântico no Evidence Validator~~ | **medido e REPROVADO em D-075** — 4 de 5 alvos passam, o recall no Recommendation falha nas três execuções |
 | **P-17** | **`recommendation.py` trata `validada` como booleano** | **D-077: a gradação total foi aplicada e é INERTE** — flag desligada, `confianca` sem leitor, régua espelhando o código antigo. E o critério (recall ≥ 88% com precisão ≥ 80%) é inalcançável assim: admitir tudo dá 100%/49%. Falta a admissão PARCIAL, por `dores_enderecadas` e não por `confianca` |
@@ -2430,4 +2524,5 @@ escrito, e que o caso fora da régua — duas frases — passa.
 | **P-14** | **Quatro campos são calculados e nada os lê** | `estrategia_analise` e `exige_sinais_ia` (Query Planner), `score_recuperacao` (Retriever), `motivo_validacao` (Evidence Validator). Não é código morto — é capacidade anunciada e não entregue: a arquitetura publicada promete *"critérios de busca + estratégia de análise"*. Ou o subgrafo passa a lê-los, ou o diagrama para de prometê-los |
 | **P-15** | **Re-medir a abstenção do passo 8** | os 20-22/24 são do modelo morto; D-069 previu n=3 e não foi executado |
 | ~~P-20~~ | ~~O operador de borda da idade~~ | **D-085** — a borda (`idade == IDADE_MAXIMA`) vira **pendente** com a faixa impressa, não exclusão. Guardar o mês foi descartado: não consta em 6 das 8 fixtures |
+| **P-21** | **Relevância da tecnologia recomendada** | aberta por D-086. Morpheus (spear phishing, digital fingerprinting) recomendado para a dor de privacidade de uma healthtech: a recuperação casa `privacy`/`security` sem conhecer o domínio. **Nenhum seletor de trecho conserta isto** — é o motor de recomendação, e nada o mede hoje |
 | **P-19** | **O sweep do RAG (dimensão, banda de chunk, `k1`/`b`)** | **reaberta por D-078.** Estava cortado porque "o critério 2 já está no teto" — razão inválida. A razão candidata para manter o corte é outra e precisa ser dita: com 24 perguntas de gabarito, grade fina ajusta ao gabarito em vez de generalizar. O que joga contra o corte é `e@1 = 79%` (D-068): a primeira citação erra 1 vez em 5. Re-decidir junto com a base ampliada |
