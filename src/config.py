@@ -122,7 +122,7 @@ LLM = ConfigLLM(
     # output (HTTP 500). Este responde em ~650 ms e passa nos dois métodos.
     # `scripts/sondar_catalogo.py` refaz a sondagem inteira — o catálogo LISTA
     # modelos que não respondem, então a listagem nunca é a prova (D-070).
-    modelo=_env("LLM_MODEL", "nvidia/nemotron-3-nano-30b-a3b"),
+    modelo=_env("LLM_MODEL", "nvidia/nemotron-3.5-lightning-30b-a3b"),
     temperatura=float(_env("LLM_TEMPERATURE", "0.1")),
     # Teto POR TENTATIVA, não por chamada: o `ChatOpenAI` traz `max_retries=2` do LangChain,
     # que fica como está — 3 tentativas x 30 s = ~90 s de teto combinado por chamada, que é o

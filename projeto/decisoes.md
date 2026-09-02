@@ -2019,6 +2019,64 @@ sistema, e antecipá-lo não melhoraria nada. Recusada, e registrada aqui porque
 de falha esperado desta decisão.
 
 
+## D-079 — O quarto EOL, e a correção do achado de D-070: "listado mas morto" eram TRÊS coisas
+**Data:** 01/09/2026 · descoberto por rodar o smoke, não por ler o código
+
+**O fato:** `nvidia/nemotron-3-nano-30b-a3b` (o LLM de D-067) morreu às **09:00 UTC de 01/09**, e
+desta vez o fornecedor disse com todas as letras — é a primeira vez que este projeto captura a
+mensagem:
+
+```
+HTTP 410  {"title":"Gone","detail":"The model 'nvidia/nemotron-3-nano-30b-a3b' has reached
+           its end of life on 2026-09-01T09:00:00Z and is no longer available."}
+```
+
+**Decisão:** `LLM_MODEL` passa a `nvidia/nemotron-3.5-lightning-30b-a3b` — 1 vivo de 10 sondados,
+sucessor da mesma família, e passa na pergunta-armadilha de D-047 (abstém em `json_schema` **e**
+`function_calling`). Smoke de volta a **3/3**.
+
+**A CORREÇÃO DE D-070, e ela é o que vale mais aqui.** D-070 concluiu que *"o catálogo lista
+modelos que devolvem 404 — é vitrine, não inventário"*. Ler o **corpo** das respostas, e não só o
+status, mostra que a conclusão somava três coisas distintas:
+
+| assinatura | significado |
+|---|---|
+| `410` + `"end of life on <ISO>"` | **morte real**, anunciada, com data. Não volta |
+| `404` + `"Function '<uuid>': Not found for account"` | **entitlement**: o modelo existe e roda; a conta não alcança |
+| `404 page not found` (texto puro) | o nome não existe |
+
+Dos 9 que não serviam em 01/09, **1 era morte e 7 eram falta de acesso**. Contar juntos inflava o
+risco de EOL do projeto **por um fator de 7** — e decisão de arquitetura tomada sobre esse número
+seria tomada sobre ruído. A formulação correta é mais forte: **`GET /v1/models` devolve o catálogo
+GLOBAL, não o que a conta pode chamar.**
+
+**O que decide o acesso, medido em 19 sondagens:** **ser modelo próprio da NVIDIA é condição
+necessária, não suficiente.** Terceiros: 0 vivos em 12 (Mistral, Meta, Google, IBM, Microsoft, 01-ai,
+adept, ai21, aisingapore). Próprios: 3 vivos em 7 — e `nvidia/cosmos-reason2-8b` é próprio e está
+fora. Consequência prática: **candidato a substituto só vale a pena sondar entre os `owned_by:
+nvidia`.**
+
+**O que NÃO existe, e é o que mais importa saber: aviso prévio.** Medido nos dois canais possíveis —
+a listagem expõe só `id/object/created/owned_by`, sem campo de depreciação; e a resposta de um
+modelo **vivo** não traz `Sunset` nem `Deprecation` (RFC 8594). **Só a chamada real informa, e
+informa depois.** Logo a mitigação não é prever, é detectar rápido e trocar barato: 4 s de
+`smoke_nvidia.py` mais uma env var. **Rodar o smoke antes de gravar o vídeo e antes de entregar
+não é zelo — é a única defesa que existe.**
+
+**O instrumento foi atualizado junto:** `sondar_catalogo.py` classifica os três casos, extrai a data
+de EOL do corpo e imprime o aviso sobre a ausência de aviso prévio. Deixou de responder "morreu?" e
+passou a responder "por que não serve?".
+
+**Aberto, e não medido:** o modelo novo emite raciocínio dentro de `content` (`reasoning_content`
+espelhado). A saída estruturada passa, mas é mudança de comportamento — **toda medição de D-072,
+D-074 e D-075 foi feita no modelo morto e precisa ser refeita antes de valer** (vira o passo 1 da
+próxima sessão).
+
+**Reversível?** Uma env var, e é a quarta vez que isso se paga. O que mudou em relação às três
+anteriores: nenhuma sessão foi gasta reconstruindo — o provedor isolado em `src/config.py` (D-002)
+transformou EOL de fornecedor em troca de configuração.
+
+
 ## Decisões pendentes
 
 | # | Decisão | Estado |

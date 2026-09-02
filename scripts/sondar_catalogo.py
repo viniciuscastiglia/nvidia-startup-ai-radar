@@ -18,9 +18,30 @@ listados no catálogo deram **7 x HTTP 404 e 3 x 200**. Entre os 404 está o
 `nvidia/mistral-nemo-minitron-8b-8k-instruct`, que **D-064 recomendou por nome** como
 substituto do LLM morto, com base em ele aparecer na listagem.
 
-Consequência de método: o catálogo é uma vitrine, não um inventário. A única fonte de verdade
-sobre disponibilidade é uma chamada real — e é isso que este script automatiza, para que o
-quarto EOL custe 30 segundos em vez de uma sondagem manual.
+Consequência de método: a única fonte de verdade sobre disponibilidade é uma chamada real — e é
+isso que este script automatiza, para que o próximo EOL custe 30 segundos em vez de uma
+sondagem manual.
+
+A CORREÇÃO DE 01/09: "LISTADO MAS MORTO" ERA TRÊS COISAS SOMADAS (D-079)
+--------------------------------------------------------------------------
+D-070 concluiu que o catálogo "lista modelos mortos". Ler o CORPO das respostas, e não só o
+status, mostrou que a conclusão era grosseira demais: dos 9 que não serviam em 01/09, **1 era
+morte real e 8 eram falta de acesso da conta**. Contar as duas juntas inflava o risco de EOL
+do projeto por um fator de 8.
+
+A formulação correta, e ela é mais forte: **`GET /v1/models` devolve o catálogo GLOBAL, não o
+que a conta pode chamar.** Morte tem assinatura própria — HTTP 410 com a data no corpo — e é
+por isso que `_classificar()` existe.
+
+O QUE NÃO EXISTE, E É O QUE MAIS IMPORTA SABER
+------------------------------------------------
+**Não há aviso prévio por nenhum canal da API.** Medido em 01/09: a listagem expõe só
+`id/object/created/owned_by`, sem campo de depreciação; e a resposta de um modelo VIVO não
+traz `Sunset` nem `Deprecation` (RFC 8594). Só a chamada real informa, e informa **depois**.
+
+Portanto a mitigação não é prever — é **detectar rápido e trocar barato**: `smoke_nvidia.py`
+custa 4 segundos, e o provedor está atrás de env var (D-002). Rodar o smoke antes de gravar
+o vídeo e antes de entregar não é zelo, é a única defesa que existe.
 
 E RESPONDER TAMBÉM NÃO BASTA: O PROJETO PRECISA DE SAÍDA ESTRUTURADA
 ----------------------------------------------------------------------
@@ -85,8 +106,47 @@ def catalogo() -> list[str]:
     return sorted(m["id"] for m in r.json()["data"])
 
 
-def sondar_chat(modelo: str) -> tuple[bool, str, float | None]:
-    """Uma chamada real de 8 tokens. É o ÚNICO teste que distingue listado de vivo."""
+# OS TRÊS MOTIVOS DE UM MODELO NÃO SERVIR — medidos em 01/09, e são DIFERENTES (D-079)
+# ---------------------------------------------------------------------------------------
+# Até 01/09 este script tinha dois estados, `VIVO` e `morto`, e chamava de "morto" tudo que
+# desse >= 400. A medição do EOL de 01/09 mostrou que isso junta três coisas distintas:
+#
+#   EOL         HTTP 410 + corpo com a DATA:  "has reached its end of life on <ISO>"
+#               É morte de verdade, anunciada pelo fornecedor. Não volta.
+#   SEM ACESSO  HTTP 404 + corpo "Function '<uuid>': Not found for account '<id>'"
+#               O modelo EXISTE e está implantado; esta CONTA não alcança. Não é morte —
+#               é entitlement, e pode mudar com o plano sem o modelo mudar.
+#   INEXISTENTE HTTP 404 em texto puro ("404 page not found"). O nome não existe.
+#
+# Por que a distinção importa: contar entitlement como morte inflava o risco de EOL do
+# projeto por um fator de 8 na sondagem de 01/09 — 1 morte real contra 8 "sem acesso".
+# Decisão de arquitetura tomada sobre esse número seria tomada sobre ruído.
+EOL_MARCA = "end of life"
+SEM_ACESSO_MARCA = "not found for account"
+
+
+def _classificar(status: int, corpo: str) -> tuple[str, str]:
+    """(rótulo, detalhe) a partir do status e do CORPO — o corpo é quem distingue."""
+    baixo = corpo.lower()
+    if status == 410 or EOL_MARCA in baixo:
+        # A data vem no corpo: "...end of life on 2026-09-01T09:00:00Z and is no longer..."
+        data = ""
+        if EOL_MARCA in baixo:
+            resto = corpo[baixo.index(EOL_MARCA) + len(EOL_MARCA):].strip()
+            data = resto.split()[1][:10] if resto.startswith("on ") else resto.split()[0][:10]
+        return "EOL", f"EOL {data}".strip()
+    if SEM_ACESSO_MARCA in baixo:
+        return "SEM ACESSO", "conta sem direito"
+    if status == 404:
+        return "INEXISTENTE", "nome não existe"
+    return "FALHA", f"HTTP {status}"
+
+
+def sondar_chat(modelo: str) -> tuple[bool, str, str, float | None]:
+    """Uma chamada real de 8 tokens. É o ÚNICO teste que distingue listado de servível.
+
+    Devolve `(ok, rótulo, detalhe, ms)`. O rótulo é um dos quatro do bloco acima, ou `VIVO`.
+    """
     try:
         t0 = time.perf_counter()
         r = httpx.post(
@@ -102,10 +162,11 @@ def sondar_chat(modelo: str) -> tuple[bool, str, float | None]:
         )
         ms = (time.perf_counter() - t0) * 1000
         if r.status_code >= 400:
-            return False, f"HTTP {r.status_code}", None
-        return True, r.json()["choices"][0]["message"]["content"].strip()[:24], ms
+            rotulo, detalhe = _classificar(r.status_code, r.text)
+            return False, rotulo, detalhe, None
+        return True, "VIVO", r.json()["choices"][0]["message"]["content"].strip()[:24], ms
     except Exception as exc:  # noqa: BLE001
-        return False, f"{type(exc).__name__}", None
+        return False, "FALHA", f"{type(exc).__name__}", None
 
 
 def sondar_structured(modelo: str) -> dict[str, str]:
@@ -196,20 +257,39 @@ def main() -> int:
     print(f"\nCHAT — {len(alvos)} candidato(s) sondado(s) com chamada REAL")
     print("  (estar listado não é estar vivo — ver o docstring deste arquivo)")
     vivos: list[str] = []
+    por_rotulo: dict[str, list[str]] = {}
     for modelo in alvos:
-        ok, detalhe, ms = sondar_chat(modelo)
+        ok, rotulo, detalhe, ms = sondar_chat(modelo)
         listado = "listado" if modelo in listados else "NEM LISTADO"
         lat = f"{ms:.0f} ms" if ms else "—"
-        print(f"  {'VIVO ' if ok else 'morto'}  {modelo:48s} {detalhe:14s} {lat:>8s}  {listado}")
+        print(f"  {rotulo:11s} {modelo:48s} {detalhe:20s} {lat:>8s}  {listado}")
+        por_rotulo.setdefault(rotulo, []).append(modelo)
         if ok:
             vivos.append(modelo)
 
     print(f"\n  {len(vivos)} vivo(s) de {len(alvos)} sondado(s)")
+
+    # OS TRÊS MOTIVOS, SEPARADOS. Somá-los é o erro que D-079 corrige: só o bucket EOL é
+    # risco de fornecedor. `SEM ACESSO` é entitlement da conta e não diz nada sobre o modelo.
+    for rotulo, texto in (
+        ("EOL", "APOSENTADO pelo fornecedor — não volta, e a data está no corpo da resposta"),
+        ("SEM ACESSO", "existe e roda; ESTA CONTA não alcança. NÃO é morte — é entitlement"),
+        ("INEXISTENTE", "o nome não existe no serviço"),
+        ("FALHA", "erro de transporte ou status inesperado — reexecutar antes de concluir"),
+    ):
+        if por_rotulo.get(rotulo):
+            print(f"\n  {rotulo} ({len(por_rotulo[rotulo])}) — {texto}:")
+            for m in por_rotulo[rotulo]:
+                print(f"      {m}")
+
     fantasmas = [m for m in alvos if m in listados and m not in vivos]
     if fantasmas:
-        print(f"  {len(fantasmas)} LISTADO(S) MAS MORTO(S) — o catálogo é vitrine, não inventário:")
-        for m in fantasmas:
-            print(f"      {m}")
+        print(f"\n  {len(fantasmas)} LISTADO(S) MAS NÃO SERVÍVEL(EIS) — `GET /v1/models` é o")
+        print("  catálogo GLOBAL, não o que esta conta pode chamar (D-070, corrigido por D-079).")
+
+    print("\n  AVISO PRÉVIO: não existe. A listagem expõe só id/object/created/owned_by, e a")
+    print("  resposta viva não traz Sunset nem Deprecation (RFC 8594). Medido em 01/09 —")
+    print("  só a chamada real informa, e ela informa DEPOIS. Rodar antes de gravar e de entregar.")
 
     if args.structured and vivos:
         print("\nSAÍDA ESTRUTURADA — na q23, a pergunta-armadilha de D-047")
