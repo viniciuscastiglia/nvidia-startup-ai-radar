@@ -79,8 +79,8 @@ diversidade entre AI-native, AI-enabled e non-AI. Sem scraping. Com StartupBase 
    - **notícia** de Brazil Journal / NeoFeed / Startups.com.br (estágio, rodada, tamanho, data)
    - opcionalmente **blog de engenharia** (maturidade técnica) ou **perfil de founder**
 3. **`url_fonte` tem que ser real e resolver.** É o requisito de rastreabilidade do TAPI, e é
-   verificável pelo avaliador em segundos. Documento com URL inventada é falha direta no
-   critério 3 e mina a credibilidade de todo o projeto.
+   verificável por qualquer leitor em segundos. Uma `url_fonte` inventada destrói a única coisa que
+   o sistema promete: que toda conclusão aponta para o documento que a sustenta.
 4. **Incluir de propósito casos difíceis**, para que o classificador e o validator tenham o que
    fazer: pelo menos uma empresa **inelegível ao Inception** (consultoria de IA, cripto, ou
    empresa de capital aberto — ver as exclusões em `03-stack-nvidia.md`), pelo menos uma com
@@ -112,9 +112,10 @@ O outro vídeo linkado é *"NVIDIA Inception: Construindo o futuro da AI com uma
 - **Mais da metade são brasileiras**
 - No Brasil, o programa faz ponte com Cubo, Antler, Distrito, Instituto Caldeira e outros hubs
 
-> **Uso no vídeo (peso 20):** abrir falando da persona com nome, papel e números reais, e do
-> problema concreto dela — qualificar 1.600 startups na LatAm sem time para isso — enquadra o
-> projeto como ferramenta de trabalho, não exercício acadêmico. É diferencial barato e alto.
+> **Uso no vídeo:** abrir falando da persona com nome, papel e números reais, e do problema
+> concreto dela — qualificar 1.600 startups na LatAm sem time para isso — enquadra o projeto como
+> ferramenta de trabalho, não exercício acadêmico. É também o que mantém o escopo honesto: cada
+> decisão de produto pode ser checada contra o que essa pessoa realmente precisa.
 > A trajetória do Andrei (Cubo → ACE → NVIDIA) também explica por que o Cubo é a melhor fonte
 > de dados para o recorte deste projeto.
 

@@ -6,9 +6,9 @@ O TAPI manda o Startup Classifier Agent classificar cada empresa como
 **AI-native | AI-enabled | non-AI** e **nunca define o critério**.
 
 As três leituras de apoio da §8.1 do TAPI são exatamente essa definição. Quem ancorar o
-classificador nelas tem uma rubrica auditável e defensável na banca; quem não ancorar vai
-inventar heurística no chute. Os critérios 1 e 3 do barema (40 pontos) e o vídeo (20) dependem
-diretamente disso.
+classificador nelas tem uma rubrica auditável — dá para apontar, caso a caso, qual critério
+disparou; quem não ancorar inventa heurística no chute e fica sem como explicar um erro quando
+ele aparece. O Classifier, o Evidence Validator e o motor de recomendação dependem todos disso.
 
 Fontes:
 - Sequoia — *Services: the new software* — https://sequoiacap.com/article/services-the-new-software/
@@ -176,9 +176,9 @@ recomendação vem do **gap** entre dois eixos:
 - **AI-native + stack madura** = provavelmente já é membro do Inception ou já usa NVIDIA.
 - **non-AI** = não é prospect.
 
-> Implementar esses dois eixos separadamente, em vez de um rótulo único, é uma decisão de
-> arquitetura defensável e empurra o critério 3 do barema. O rótulo do TAPI continua sendo
-> emitido — mas a priorização da recomendação sai do gap.
+> Implementar esses dois eixos separadamente, em vez de um rótulo único, dá ao gerente o que ele
+> precisa para agir: um rótulo diz *o que a startup é*, o gap diz *o que oferecer a ela*. O rótulo
+> do TAPI continua sendo emitido — mas a priorização da recomendação sai do gap.
 
 ---
 

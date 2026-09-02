@@ -25,41 +25,54 @@ de que a frase fala. É a mesma classe de D-048 e do achado aberto de D-052 — 
 preciso julgamento de sujeito e domínio. É exatamente o que o juiz do Extractor faz, e é por isso
 que D-072 move a agulha.
 
-**E o buraco maior não é nenhum dos três: o critério 3 (motor de recomendação, 20 pontos) não tem
-régua.** O gabarito das 8 fixtures tem 9 campos e nenhum é sobre recomendação — a esperada existe só
-em prosa livre, em `perfil_alvo_nota`. Nada quebra se ela vier errada. É o mesmo estado que os
-agentes tinham antes de D-050. A saída real mostra o efeito: para dor de **custo**, a justificativa
-técnica sai como *"Join our ecosystem of startups, partners, and developers"*.
+**E o buraco maior não é nenhum dos três: o motor de recomendação não tem régua.** O gabarito das 8
+fixtures tem 9 campos e nenhum é sobre recomendação — a esperada existe só em prosa livre, em
+`perfil_alvo_nota`. Nada quebra se ela vier errada. É o mesmo estado que os agentes tinham antes de
+D-050. A saída real mostra o efeito: para dor de **custo**, a justificativa técnica sai como
+*"Join our ecosystem of startups, partners, and developers"* — e a recomendação é justamente o
+texto que o gerente lê primeiro e sobre o qual ele decide se aborda a startup.
 
 **Quatro dos nove agentes sem instrumento:** `query_planner` (stub, zero testes, zero régua),
 `retriever` (sem gabarito), `recommendation` (sem régua), `briefing` (só o teste de elegibilidade).
 
-## As decisões abertas, em ordem de quanto movem a nota
+## As decisões abertas, em ordem de quanto o defeito custa a quem usa
 
-1. **Ligar o juiz do Extractor?** (D-072) — precisão de dor 49% → 83-96%, custo de recall 100% →
-   71-79%. O critério de D-055 foi atendido; falta decidir a lacuna de recall, que D-055 nunca fixou.
-2. **Dar régua ao motor de recomendação** — 20 pontos sem instrumento. Curadoria: quais tecnologias
-   são esperadas e quais são proibidas, por fixture.
-3. **Consertar o `min()` da confiança** — 0/6 constante. Barato, mas exige critério fixado antes:
-   uma tentativa já foi reprovada em D-059.
-4. **`classe`** — o mais caro: curadoria de documentos ou reescrita da rubrica.
+1. **Dar régua ao motor de recomendação.** É a saída que o gerente lê e sobre a qual ele age, e hoje
+   nada quebra quando ela vem errada. Curadoria: quais tecnologias são esperadas e quais são
+   proibidas, por fixture. Sem isso, todo item abaixo é medido no meio do pipeline e ninguém sabe se
+   a ponta melhorou.
+2. **Ligar o juiz do Extractor?** (D-072) — precisão de dor 49% → 83-96%, custo de recall 100% →
+   71-79%. Está aqui porque a dor é o que alimenta a recomendação: dor falsa vira tecnologia
+   recomendada sem motivo, na frente do usuário. O critério de D-055 foi atendido; falta decidir a
+   lacuna de recall, que D-055 nunca fixou — e decidi-la sem a régua do item 1 é decidir no escuro.
+3. **`classe`** — erra 4 vezes, sempre `AI-native` → `AI-enabled`. É o rótulo de manchete do
+   briefing: errar aqui faz o gerente despriorizar exatamente a startup que ele deveria abordar.
+   O mais caro dos itens, e depende da base ampliada (D-060 mostrou que o gargalo não é a regra de
+   decisão).
+4. **Consertar o `min()` da confiança** — 0/6 constante. O campo aparece no briefing carregando
+   zero informação, o que é pior que não aparecer: o leitor supõe que significa algo. Barato de
+   mexer, mas exige critério fixado antes — uma tentativa já foi reprovada em D-059.
 5. **`estrategia_analise`** — o campo é calculado em `query_planner.py:58` e **nada o lê**, mas a
-   arquitetura publicada anuncia *"critérios de busca + estratégia de análise"*. Ou o subgrafo passa
-   a ler, ou o diagrama para de prometer. Exposição direta ao eliminatório nº 4.
+   arquitetura publicada anuncia *"critérios de busca + estratégia de análise"*. O diagrama promete
+   uma capacidade que o sistema não tem. Ou o subgrafo passa a ler, ou o diagrama para de prometer.
 6. **A tese aberta por D-072:** conclusões deste projeto sobre *"o LLM não dá conta"* foram medidas
    num modelo de **8B que morreu**. D-059 e D-060 reprovaram mudanças no Classifier e no Evidence
    Validator naquele mesmo modelo. São candidatas diretas a re-medição.
 
 ## Dívidas declaradas, com o achado escrito
 
-- **`README.md` está desatualizado e vale 10 pontos.** Diz *"Busca vetorial: a definir"*,
-  *"Embeddings e reranking: a definir"*, *"LLM: a definir"*, *"Como rodar: Em breve"*, e a árvore do
-  repositório não lista `src/`, `scripts/`, `data/` nem `tests/`. É o primeiro arquivo que o
-  avaliador abre. Decisão: fica para a M6, junto com o vídeo.
+- **`README.md` afirma coisas falsas hoje.** Não é "está incompleto": ele diz *"Busca vetorial: a
+  definir"*, *"Embeddings e reranking: a definir"*, *"LLM: a definir"* para coisas decididas há uma
+  semana (D-016, D-046, D-067, D-068), diz *"Como rodar: Em breve"* num repositório que roda, e a
+  árvore não lista `src/`, `scripts/`, `data/` nem `tests/`. Quem abrir para entender o sistema é
+  ativamente enganado. **A data de conserto continua na M6** — o README não é o sistema, e
+  antecipá-lo não melhora nada; o que muda é o critério de pronto: verdadeiro e suficiente para
+  alguém rodar sozinho.
 - **A abstenção do passo 8 não foi re-medida no modelo novo.** Os 20-22/24 são do modelo morto;
   D-069 previu n=3 e não foi executado.
 - **A M3 está em 8 das 30 empresas** (D-062).
-- **Interface web (P-06)** — 5 pontos, ainda não começada.
+- **Interface web (P-06)** — não começada, e é a única superfície pela qual alguém que não lê código
+  consegue julgar o sistema. O escopo é decisão de produto em aberto.
 
 ## Estado verificado em 31/08, depois da faxina
 

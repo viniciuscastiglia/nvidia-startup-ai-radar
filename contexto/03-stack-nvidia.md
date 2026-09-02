@@ -274,9 +274,9 @@ Gratuito, **sem taxa de inscrição, sem mensalidade e sem equity**. Sem deadlin
 - revendedores e distribuidores
 - **empresas de capital aberto**
 
-> Implementar esse filtro é um diferencial barato e alto: o sistema **recusar** recomendar
-> Inception para uma consultoria de IA — e explicar por quê — é exatamente o tipo de decisão
-> consciente que separa nível 2 de nível 4 no barema. A base de startups deveria conter ao menos
+> Implementar esse filtro é barato e vale muito: um sistema que recomenda o Inception para toda
+> startup que aparece é um sistema que não recomenda nada. O valor está na **recusa** — o gerente
+> só confia na lista se ela também exclui, e com motivo. A base de startups deveria conter ao menos
 > um caso inelegível para exercitar isso.
 
 ### Benefícios

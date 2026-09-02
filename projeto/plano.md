@@ -4,43 +4,46 @@
 
 ## Princípio que organiza tudo
 
-O barema não premia volume de features. Nível 2 ("cumpre o mínimo") em todos os critérios dá
-**50/100**; nível 3 ("bom, com decisões técnicas conscientes") dá **75**. A diferença entre os
-dois não está em entregar mais — está em **cada escolha ter uma razão articulada**.
+**O sistema tem um usuário real** — o gerente de Startups & VCs da NVIDIA Brasil, que precisa
+decidir quais startups abordar e com qual argumento. A pergunta que ordena a fila é sempre a mesma:
+**o que, hoje, faz este sistema falhar na mão dele?**
 
-E a distribuição de peso é contra-intuitiva:
+Três consequências para o cronograma:
 
-- **Núcleo de IA** (multiagente + RAG + recomendação) = **60 pontos**
-- **Comunicação** (vídeo 20 + repositório e documentação 10) = **30 pontos** — 30% da nota não é código
-- **Produto** (interface 5 + diferencial 5) = **10 pontos**
-
-O vídeo vale o mesmo que o sistema multi-agente inteiro. A interface vale um quarto do vídeo.
+- **Prazo é restrição, não objetivo.** Os dias são escassos e isso decide *quanto* cabe. Nunca
+  decide *o quê* por contagem de pontos.
+- **Não existe teto.** Nenhuma parte do sistema "já está pronta o bastante". O que encerra o
+  trabalho numa parte é custo/benefício de engenharia — escrito como decisão, não herdado.
+- **O pipeline inteiro é escopo.** Um pipeline com buraco não é um sistema: cada etapa ausente é um
+  ponto onde a conclusão final deixa de ter lastro.
 
 ## Sequência
 
 | Período | Foco | Por que nessa ordem |
 |---|---|---|
-| **22–25/08** | decisões de stack, esqueleto do grafo, fatia vertical com 5 startups | mata o risco do eliminatório "não executa" e revela erros de modelagem do estado cedo |
-| **26–30/08** | RAG NVIDIA completo: ingestão das 16 tecnologias, chunking semântico, busca híbrida, reranking, **avaliação** | 20 pontos e é a parte mais autocontida — dá para fechar sem depender do resto |
+| **22–25/08** | decisões de stack, esqueleto do grafo, fatia vertical com 5 startups | um sistema que não roda não pode ser medido, e o esqueleto revela erros de modelagem do estado cedo |
+| **26–30/08** | RAG NVIDIA completo: ingestão das 16 tecnologias, chunking semântico, busca híbrida, reranking, **avaliação** | é a parte mais autocontida — dá para fechar e medir sem depender do resto |
 | **29/08–02/09** | base de startups completa (30 a 50 empresas) | sobrepõe de propósito: é trabalho braçal que não bloqueia código |
-| **31/08–04/09** | profundidade nos agentes + motor de recomendação | 40 pontos; precisa da base populada para ter o que testar |
-| **04–06/09** | interface web | 5 pontos, mas a demo do vídeo depende dela |
+| **31/08–04/09** | profundidade nos agentes + motor de recomendação | é o miolo do produto, e precisa da base populada para ter o que medir |
+| **04–06/09** | interface web | é a única superfície que um não-engenheiro consegue avaliar, e a demo do vídeo depende dela |
 | **06–07/09** | README completo + **gravar o vídeo** | |
 | **08–09/09** | buffer, refinar o vídeo, entregar | |
 
 ## Regras duras
 
-1. **O vídeo é gravado até 07/09.** Vale 20 pontos, é eliminatório se faltar, e tem teto de
-   7 minutos — o que exige roteiro e provavelmente três tomadas. Deixar para o dia 09 é
-   apostar o projeto inteiro num dia.
+1. **O vídeo é gravado até 07/09.** É obrigatório, tem teto de 7 minutos — o que exige roteiro e
+   provavelmente três tomadas — e é a única forma de o trabalho ser visto por quem não vai clonar o
+   repositório. Deixar para o dia 09 é apostar o projeto inteiro num dia.
 2. **Um commit por decisão**, com o *porquê* na mensagem.
 3. **`projeto/decisoes.md` é atualizado no momento da decisão**, não no fim. Reconstituir o
    raciocínio no dia 08/09 é impossível — e é exatamente esse texto que vira o roteiro do vídeo
    e a seção de arquitetura do README.
-4. **Nada entra no repositório sem ser lido.** O eliminatório nº 4 é *"código integralmente
-   gerado sem compreensão"*.
+4. **Nada entra no repositório sem ser lido.** Código que entra sem ninguém entender por quê é
+   código que ninguém consegue evoluir nem depurar depois — e este repositório vai ser mantido
+   além da entrega.
 5. **Escopo é fixo, profundidade é variável.** Se o tempo apertar, cortar profundidade de um
-   agente — nunca deixar um entregável de fora. Entregável ausente é nível 0 no critério.
+   agente — nunca deixar um entregável de fora. Um pipeline com buraco não é um sistema: a
+   conclusão final perde o lastro exatamente na etapa que faltou.
 
 ## Marcos e critérios de pronto
 
@@ -51,7 +54,8 @@ fechadas e registradas (D-001 a D-024).
 **M2 — 30/08 · O RAG responde com citação**
 As 16 tecnologias NVIDIA ingeridas, busca híbrida funcionando, reranking aplicado, resposta
 saindo com citação da fonte. **Mais um harness de avaliação** — é o passo 9 do pipeline que o
-TAPI pede e que quase ninguém entrega; é o que sustenta nível 4 no critério 2.
+TAPI pede, e sem ele o RAG é infalsificável: não há como saber se uma mudança melhorou ou piorou
+a recuperação.
 
 **M3 — 02/09 · A base está pronta**
 30 a 50 startups, 3+ documentos cada, `url_fonte` real e resolvendo, diversidade entre
@@ -65,7 +69,8 @@ funcionando — o sistema recusa recomendar o programa para quem não se qualifi
 
 **M5 — 06/09 · A demo é apresentável**
 Interface que permite consultar, ver as empresas, ver as recomendações e exportar o briefing.
-Alvo é "funcional e limpa", não "impressionante".
+O escopo é decisão de produto em aberto (P-06): o que o gerente precisa ver, em que ordem, e o que
+o briefing precisa mostrar para ele conseguir abordar a startup no dia seguinte.
 
 **M6 — 07/09 · O vídeo está gravado**
 Até 7 minutos: arquitetura dos agentes, sistema RAG, demonstração funcional pela interface.
@@ -81,17 +86,31 @@ Até 7 minutos: arquitetura dos agentes, sistema RAG, demonstração funcional p
 | **M5** interface | não começada |
 | **M6** README + vídeo | README desatualizado; vídeo não gravado |
 
-**O que a realidade fez com esta tabela, e vale mais que o placar:** a M2 fechou adiantada e a M3
-travou. O sumidouro previsto no risco nº 3 era o certo — mas ele não consumiu tempo, foi
-**despriorizado** três vezes seguidas por EOL de stack. Três das oito sessões foram gastas
-reconstruindo a stack de recuperação, não construindo o produto.
+**O que a realidade fez com esta tabela:** a M2 fechou adiantada e a M3 travou. O sumidouro previsto
+no risco nº 3 era o certo — mas ele não consumiu tempo, foi **despriorizado** três vezes seguidas
+por EOL de stack. Três das oito sessões foram gastas reconstruindo a stack de recuperação, não
+construindo o produto.
 
-**Onde a sessão marginal rende, hoje:** o critério 3 (motor de recomendação, 20 pontos) **não tem
-régua** — o gabarito das 8 fixtures não tem campo de recomendação, então nada quebra se ela vier
-errada. É o mesmo estado que os agentes tinham antes de D-050. Depois disso, a M3 e o vídeo.
+**Onde o sistema falha hoje, em ordem de quanto o defeito custa a quem usa:**
 
-**Não rende mais:** o critério 2 está em nível 4 e para lá. O sweep de dimensão, banda de chunk e
-`k1`/`b` continua **cortado**, e o corte é decisão.
+1. **A recomendação sai sem lastro e nada quebra.** O motor não tem régua — o gabarito das 8
+   fixtures não tem campo de recomendação. E o defeito já é visível na saída: para dor de **custo**,
+   a justificativa técnica sai como *"Join our ecosystem of startups, partners, and developers"*.
+   É o texto que o gerente lê primeiro, e é o que o faria fechar a aba. Mesmo estado que os agentes
+   tinham antes de D-050.
+2. **A base não discrimina.** 8 startups, 7 delas com profundidade técnica zero. A régua satura e o
+   gargalo de vocabulário do Classifier (P-12) é insolúvel nesse tamanho.
+3. **A primeira citação do RAG erra 1 vez em 5.** `e@1 = 79%` em produção (D-068): em 21% das
+   perguntas o chunk mais bem colocado **não contém a âncora**. `r@3` e `e@3` estão altos, então a
+   resposta certa quase sempre está no pool — mas quem lê a primeira citação e para ali é servido
+   errado com frequência.
+4. **O vídeo.** Sem ele o trabalho não é visível para ninguém, e a data-limite é 07/09.
+
+**O sweep do RAG (dimensão, banda de chunk, `k1`/`b`) continua cortado, e o corte volta a ser
+decisão aberta.** Ele foi mantido cortado enquanto a razão era "o critério 2 já está no teto" — teto
+de nota não é razão de engenharia, e o item 3 acima mostra que havia o que melhorar. A razão que
+pode sustentar o corte é outra e precisa ser dita: com 24 perguntas de gabarito, uma grade fina
+provavelmente ajusta ao gabarito em vez de generalizar. Re-decidir junto com a ampliação da base.
 
 ## Riscos identificados
 
@@ -102,7 +121,7 @@ errada. É o mesmo estado que os agentes tinham antes de D-050. Depois disso, a 
 | **A M3 não acontecer.** 8 de 30 empresas, e ela foi adiada três vezes | timebox de 3h com piso em 20, duas camadas: só as 8 atuais têm gabarito, as demais entram como dado (D-062). 3-4 escolhidas adversarialmente compram caso real para a régua de exclusão |
 | ~~Estado do grafo mal modelado~~ | **não se materializou.** D-008 e D-009 seguraram: nenhuma sessão precisou refatorar os nós por causa do estado |
 | Vídeo deixado para o fim | data-limite 07/09 tratada como inegociável |
-| Perder pontos por não conseguir defender uma decisão | log de decisões atualizado na hora + sessões de arguição (ver `guia-de-trabalho.md`) |
+| Uma decisão virar inexplicável e, com isso, irrevisável | log de decisões atualizado na hora + sessões de arguição (ver `guia-de-trabalho.md`) |
 
 ## Questões a levar para a liga
 
@@ -110,4 +129,4 @@ O TAPI não responde:
 - qual o **canal de submissão** e o formato da entrega
 - se a entrega é **individual ou em grupo** (a linguagem sugere individual)
 
-Vale perguntar cedo — o eliminatório nº 1 é entrega fora do prazo *sem alinhamento prévio*.
+Vale perguntar cedo — entrega fora do prazo só é aceita com alinhamento prévio.
