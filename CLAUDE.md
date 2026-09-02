@@ -74,6 +74,12 @@ Quem não entende o que construiu não consegue evoluir nem depurar. Ao implemen
 - **Subagentes: evitar neste projeto.** Eles começam sem contexto e devolvem resultado pronto —
   código que entra sem ninguém entender por quê é código que ninguém consegue evoluir depois.
   Ver `projeto/guia-de-trabalho.md`.
+- **RODE O SISTEMA. Leitura de código não substitui execução (D-083).** Toda sessão que mexe em
+  comportamento roda `python -m src.graph` **antes de fechar**, e olha a saída — não o traceback.
+  Medido em 02/09: duas sessões de auditoria estática não acharam nenhum dos três defeitos que uma
+  execução achou em uma hora — um bug que descartava a palavra "IA" da busca, entulho de página
+  indexado, e a justificativa técnica citando a empresa errada. **Os três eram invisíveis no código
+  e óbvios na saída.**
 
 ## Arquitetura alvo (LangGraph — obrigatório pelo TAPI)
 

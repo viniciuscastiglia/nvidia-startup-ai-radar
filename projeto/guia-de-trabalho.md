@@ -52,6 +52,27 @@ pasta `contexto/` carregam sozinhos, sessão nova já começa quente — fechar 
 **Commit por decisão, com o porquê na mensagem.**
 O histórico do git vira material de defesa.
 
+### Rodar o sistema, sempre — e olhar a SAÍDA
+
+**A regra:** toda sessão que mexe em comportamento executa `python -m src.graph "..."` antes de
+fechar, e **lê o briefing que sai** — não confere se o processo terminou sem erro.
+
+**A evidência que a criou, medida em 02/09.** Duas sessões inteiras de auditoria estática — leitura
+de código, `grep`, conferência contra a spec — declararam o sistema mapeado. Uma execução achou três
+defeitos em uma hora, e nenhum deles era detectável lendo:
+
+| defeito | por que a leitura não pegava |
+|---|---|
+| `query_planner` descartava **"ia" e "ai"** (`len(t) > 2`) | a linha está correta em qualquer leitura isolada. O bug é a interação entre o filtro e o vocabulário do domínio |
+| entulho de página indexado (formulário, widget de CMS) | o pipeline de limpeza está certo; o que faltava era ver **o que sobrou** no banco |
+| `justificativa_tecnica` citando a empresa errada | `justificativa_tecnica=citacao.trecho` é uma atribuição correta. O defeito só existe no **conteúdo** que chega ali |
+
+**O padrão:** os três estavam em código que passa em revisão, com teste verde, e produziam saída
+**confiante e errada**. Nenhum quebrava nada — e é exatamente por isso que só a saída os denuncia.
+
+**O corolário prático:** um `pytest` verde não é evidência de que o sistema funciona; é evidência de
+que não regrediu naquilo que já se sabia testar. **A saída é o instrumento.**
+
 ### O que evitar
 
 **Não pedir o sistema inteiro de uma vez.**

@@ -2245,6 +2245,45 @@ têm palavra de vitrine no caminho de seção, e não são os ofensores. Logo n�
 **Reversível?** As três, sim. A 1 e a 3 são dados; a 2 é uma lista de marcadores e uma re-ingestão.
 
 
+## D-083 — Rodar o sistema vira regra, porque a leitura de código falhou três vezes no mesmo dia
+**Data:** 02/09/2026 · muda o método de trabalho, **zero comportamento**
+
+**Decisão:** toda sessão que mexe em comportamento executa `python -m src.graph` antes de fechar e
+**lê a saída**. Entra no `CLAUDE.md`, que é carregado em toda sessão, e no `guia-de-trabalho.md`.
+
+**A evidência, e ela é do mesmo dia.** As sessões de 31/08 e 01/09 auditaram o sistema por leitura —
+código, `grep`, conferência contra a spec — e produziram uma fila de trabalho. A revisão de 02/09
+rodou o grafo **uma vez** e achou três defeitos que nenhuma das duas tinha visto:
+
+1. **`query_planner` descartava "ia" e "ai"** — filtro `len(t) > 2`, em **dois** lugares. A consulta
+   `"startups de IA"` saía com `palavras_chave=[]` e o sistema imprimia um briefing confiante sobre
+   uma fatia alfabética da base (D-081).
+2. **Entulho de página indexado** — 272 tokens de markup de um chatbot da Adobe, recuperáveis (D-082).
+3. **`justificativa_tecnica` citando outra empresa** — case da Iguazio ao recomendar para a
+   Doutor-AI (D-082).
+
+**Por que a leitura não pegava, e é isto que generaliza:** nas três, **cada linha está correta
+isoladamente.** `len(t) > 2` é um filtro razoável; o pipeline de limpeza faz o que promete;
+`justificativa_tecnica=citacao.trecho` é a atribuição óbvia. O defeito mora na **interação** entre a
+regra e o dado real — e dado real só aparece rodando. Os três produziam saída **confiante e errada**,
+sem exceção e sem teste vermelho: `pytest` estava em 53/53 com os três presentes.
+
+**O corolário:** suíte verde não é evidência de que o sistema funciona, é evidência de que não
+regrediu naquilo que já se sabia testar. **A saída é o instrumento.**
+
+**Alternativa descartada: exigir teste novo para cada defeito, em vez de execução.** É o reflexo
+certo depois do fato e não ajuda antes dele — nenhum dos três seria escrito como teste por quem não
+sabia que existiam. O teste fixa o que já se descobriu; a execução é o que descobre.
+
+**Alternativa descartada: rodar só antes de entregar.** Concentra a descoberta no dia em que não há
+tempo de corrigir. Por isso a regra é **por sessão**, e o plano final põe um portão de execução em
+todos os dias de 03 a 07/09.
+
+**Reversível?** É método, não código. O que a torna difícil de abandonar é o custo medido do
+contrário: três defeitos de produto, dois deles no campo que o usuário lê primeiro, passando por
+duas auditorias.
+
+
 ## Decisões pendentes
 
 | # | Decisão | Estado |
