@@ -1661,6 +1661,26 @@ como **não medido**, não como pior.
 material é ser produto comercial com SLA e não catálogo de preview — mas a lição das três mortes é que
 **componente hospedado é passivo do entregável**, e trocar de hospedeiro não zera isso. O provedor
 `nenhum` é o que limita o estrago.
+### Re-medida em 02/09, depois da re-ingestão de D-082 — e a resposta é "não mudou nada"
+
+D-082 tirou 2 chunks do corpus (177 → 175) e deixou uma dúvida por escrito: *"`e@1 = 79%` é de um
+corpus com entulho dentro"*. Re-rodada `avaliar_rag.py` sobre os 175:
+
+| motor | 28/08 (177 chunks) | 02/09 (175 chunks) |
+|---|---|---|
+| denso · lexical · rerank_denso | idênticos | **idênticos** |
+| **rerank sobre híbrida — produção** | 95/100/100 · 79/95/95 | **95/100/100 · 79/95/95** |
+| híbrido sem rerank | 79 / 79 / **79** (e@1/e@3/e@5) | **74** / 79 / **84** |
+
+**O caminho de produção não se moveu em nenhuma das seis colunas.** A dúvida de D-082 fica
+respondida: os dois chunks removidos eram entulho real, mas nunca ocuparam posição que o gabarito
+medisse. O único braço que mexeu é o **híbrido sem rerank**, que troca uma pergunta em e@1 por uma
+em e@5 — e ele não é produção.
+
+**O que isto NÃO diz:** nada sobre o passo 8. A abstenção depende do LLM, mudou de modelo em 01/09
+e é medida por `--geracao` — **P-15 continua aberta**, e a metade barata (esta) só provou que a
+recuperação não precisava dela.
+
 **O teto da trial é pior que a documentação, e isso decide o roteiro do vídeo.** Medido em 28/08: o
 429 chega na **4ª** chamada sequencial, `retry-after` vem **ausente**, e a janela de recuperação é de
 **~26 s**. Por isso `src/rag/rerank.py` tem limitador proativo (`COHERE_REQ_POR_MIN`, default 10) e
