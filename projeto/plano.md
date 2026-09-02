@@ -28,9 +28,26 @@ auditoria estática não acharam o bug do `query_planner`, o entulho no corpus, 
 
 ---
 
-## 2. Inventário completo — todo item aberto tem destino
+## 2. Os cinco critérios ELIMINATÓRIOS — nenhum é ponto, todos são porta
 
-### 2.1 FAZER — 12 itens, cada um com dia
+Isto não estava no plano até 02/09 e é o que mais importa: falhar em qualquer um destes anula o
+resto do trabalho, independente de qualidade.
+
+| eliminatório (TAPI, p.10) | coberto por | risco hoje |
+|---|---|---|
+| Entrega fora do prazo sem alinhamento | §3.3 item 4 — **o canal de submissão não é conhecido** | **ABERTO** |
+| Ausência do vídeo | 07/09, portão inegociável | controlado |
+| **Projeto que não executa e cujo vídeo não demonstra funcionamento real** | o TAPI exige a demo **pela interface web** — logo a interface **não é os 5 pontos do critério 4, é a porta do eliminatório** | **ALTO** — zero byte hoje |
+| **Código integralmente gerado sem compreensão: o candidato precisa explicar as decisões de arquitetura do próprio projeto** | §4.1, novo | **ALTO** — 82 decisões, e D-080/081/082 saíram hoje de uma sessão com IA |
+| Plágio | autoria própria, decisões registradas com alternativa | controlado |
+
+> **A releitura que muda a ordem do plano:** a interface deixou de ser "a superfície que um
+> não-engenheiro julga" e passou a ser **pré-requisito do vídeo**, que é pré-requisito da entrega.
+> Por isso a regra de corte de 05/09 sacrifica README e profundidade — nunca a interface.
+
+## 3. Inventário completo — todo item aberto tem destino
+
+### 3.1 FAZER — 13 itens, cada um com dia
 
 | item | o que é | dia | pronto quando |
 |---|---|---|---|
@@ -44,10 +61,11 @@ auditoria estática não acharam o bug do `query_planner`, o entulho no corpus, 
 | **P-13** | exclusão por menção de terceiro — **2/7 falso positivo** medido | **05/09** | falso positivo cai, falso negativo (7/7) não regride |
 | **P-14** | 4 campos calculados que ninguém lê — capacidade anunciada e não entregue | **06/09** | ou o subgrafo os lê, ou o diagrama e o README param de prometê-los |
 | **README** | diz "a definir" para decisões tomadas e "Em breve" para como rodar | **06/09** | alguém clona e roda sozinho, sem perguntar nada |
+| **Diagramas `.mmd`** | são de 23/08 e nunca foram regenerados; entram em "Repositório e documentação" e P-14 diz que prometem campos sem leitor | **06/09** | `python scripts/diagramas.py` roda e o resultado bate com o grafo compilado |
 | **Roteiro do vídeo** | ≤ 7 min, exige ensaio | **06/09** | roteiro escrito e uma tomada de teste feita |
 | **Gravar o vídeo** | obrigatório. Único prazo imóvel | **07/09** | arquitetura + RAG + demo funcional gravados |
 
-### 2.2 ACEITAR — 4 itens, com a justificativa que vai para a defesa
+### 3.2 ACEITAR — 4 itens, com a justificativa que vai para a defesa
 
 Não são esquecimento. São escopo fechado por escrito, e cada um tem a razão pronta:
 
@@ -58,17 +76,37 @@ Não são esquecimento. São escopo fechado por escrito, e cada um tem a razão 
 | **P-19** — sweep do RAG | Com **24 perguntas** de gabarito, uma grade fina ajusta ao gabarito em vez de generalizar. **Esta é a razão válida** — a antiga ("o critério 2 está no teto") foi anulada por D-078. A re-medição do corpus novo (2.1) fica; o sweep não |
 | **P-09** — promover o juiz | **Medir não é promover** (D-078). Promover a 5 dias do vídeo obriga a revalidar classifier, validator e recommendation a jusante. O número entra no log e na defesa; a promoção é um segundo ato, e ele não tem dia |
 
-### 2.3 DECIDIR — 3 itens, e são seus
+### 3.3 DECIDIR — 6 itens, e são seus
 
 | # | decisão | por que só você decide | prazo |
 |---|---|---|---|
 | **1** | **A chave do Grok** | Único caminho fora do `build.nvidia.com`, que já matou 4 modelos. Pré-autorizado pela liga desde 28/08 (D-067). **O bloqueio é a chave, não o código** | **hoje** |
 | **2** | **P-10: qual das três opções** | muda o que o vídeo mostra — ver §4 | **hoje** |
 | **3** | **P-06: escopo da interface** | sai de "o que o gerente precisa ver", não de esforço. A decidir **na frente do briefing real**, em 04/09 | **04/09** |
+| **4** | **Canal de submissão e formato da entrega** · **individual ou em grupo?** | O TAPI **não responde** nenhuma das duas, e "entrega fora do prazo sem alinhamento prévio" é **eliminatório**. Não saber o canal em 09/09 é perder por logística, com o projeto pronto | **hoje** |
+| **5** | **Executam o projeto na avaliação, e com chave de quem?** | a conta gratuita não alcança **nenhum** modelo de terceiros (0 vivos em 12), e o catálogo aposentou o LLM em 01/09 sem aviso | esta semana |
+| **6** | **O reranker da NVIDIA saiu do ar; migramos para o Cohere**, que o próprio TAPI recomenda (§5.3) — confirmam que é aceitável? | muda a conformidade declarada | esta semana |
 
 ---
 
-## 3. O passo a passo, dia a dia
+## 4. O passo a passo, dia a dia
+
+### 4.1 — Arguição diária: 20 minutos, todo dia, do 03 ao 06
+
+**Por que isto é um item do plano e não um conselho:** *"código integralmente gerado sem
+compreensão"* é **eliminatório**, e é o critério que mais se degrada quando o ritmo aperta. O
+projeto tem **82 decisões**, e três nasceram hoje numa sessão assistida por IA.
+
+**O mecanismo, ao fim de cada dia, antes do portão:** pegar o que mudou naquele dia e responder,
+**sem abrir o arquivo**: *o que eu mudei, por quê, e qual alternativa eu descartei e por qual
+motivo.* O que não sair fluente volta para `decisoes.md` reescrito com as próprias palavras — o log
+existe para isso (D-078), e o texto dele **é o roteiro do vídeo**.
+
+**Prioridade de revisão**, se o tempo apertar: D-007 (topologia) · D-040 (`json_schema`) ·
+D-046 (embedder) · D-068 (rerank e ablação) · D-072 (o juiz) · D-079/D-080 (EOL e latência) ·
+D-081/D-082 (o que mudou hoje). São as que um avaliador pergunta primeiro.
+
+### 4.2 — Os dias
 
 ### 03/09 — os dois defeitos que o gerente sente na cara
 
@@ -126,7 +164,7 @@ Refinar o vídeo, revisar a entrega, **rodar o smoke de novo antes de entregar**
 
 ---
 
-## 4. A decisão de hoje: P-10
+## 5. A decisão de hoje: P-10
 
 De onde sai a `justificativa_tecnica`. As três opções, com custo medido:
 
@@ -142,7 +180,7 @@ De onde sai a `justificativa_tecnica`. As três opções, com custo medido:
 
 ---
 
-## 5. Riscos, e o que já não é risco
+## 6. Riscos, e o que já não é risco
 
 | risco | estado |
 |---|---|
@@ -154,16 +192,17 @@ De onde sai a `justificativa_tecnica`. As três opções, com custo medido:
 | ~~Confundir lento com morto~~ | **fechado em D-080** — era real: o smoke reportava `FALHOU` para um modelo vivo |
 | ~~Créditos insuficientes~~ · ~~Estado mal modelado~~ | não se materializaram |
 
-## 6. O que ainda pode aparecer — e como isso está limitado
+## 7. O que ainda pode aparecer — e como isso está limitado
 
 Seria desonesto prometer que nada novo aparece. O que dá para fazer é **limitar onde**:
 
-- **Não vai aparecer em item conhecido:** os 11 P e as 8 dívidas estão todos em §2, com destino.
+- **Não vai aparecer em item conhecido:** os 11 P e as dívidas estão todos em §3, com destino, e os
+  cinco eliminatórios estão em §2 com o risco de cada um nomeado.
 - **Pode aparecer na saída**, porque a saída só se conhece rodando — foi assim que os três defeitos
   de hoje surgiram. **Contramedida: o grafo roda em todo portão diário**, de 03 a 07/09. Um defeito
   achado em 03/09 tem 4 dias de correção; um achado em 06/09 tem um, e por isso a ordem dos dias põe
   produto antes de documentação.
 - **Pode aparecer no fornecedor**, sem aviso prévio — é medido que não existe (D-079). Contramedida:
   smoke antes de gravar e antes de entregar, e o provedor isolado em `config.py`.
-- **O que NÃO tem contramedida** é o item 1 de §2.3. Se o modelo morrer e não houver segundo
+- **O que NÃO tem contramedida** é o item 1 de §3.3. Se o modelo morrer e não houver segundo
   provedor, não há plano B. É por isso que a chave é a decisão de hoje.
