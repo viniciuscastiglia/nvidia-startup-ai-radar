@@ -55,6 +55,10 @@ plano tinha fechado horas antes.
 
 ## Decisões que dependem do Vinícius
 
-Em `plano.md` §3.3. As que continuam abertas e **não foram tocadas hoje**:
-**a chave do 2º provedor de LLM** (único risco sem contramedida), **quem escolhe as 22 empresas da
-base**, e **o canal de submissão** — que é eliminatório por logística.
+Em `plano.md` §3.3. **O item 1 caiu em 02/09 (D-087):** alinhado com a liga, a morte do
+modelo não pontua contra — o fallback do Grok **não entra**, e a hora vai para a base e a interface.
+O risco real mudou de componente: o LLM tem zero chamada no grafo; quem ficou sem plano B é o
+**embedder**.
+
+Continuam abertas: **quem escolhe as 22 empresas da base** e **o canal de submissão** — este é
+eliminatório por logística, não por qualidade, e é o único que ninguém consegue consertar em 09/09.

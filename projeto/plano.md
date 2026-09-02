@@ -87,7 +87,7 @@ Não são esquecimento. São escopo fechado por escrito, e cada um tem a razão 
 
 | # | decisão | por que só você decide | prazo |
 |---|---|---|---|
-| **1** | **A chave do Grok** | Único caminho fora do `build.nvidia.com`, que já matou 4 modelos. Pré-autorizado pela liga desde 28/08 (D-067). **O bloqueio é a chave, não o código** | **hoje** |
+| ~~**1**~~ | ~~A chave do Grok~~ | **RESOLVIDO em 02/09 (D-087).** Alinhado com a liga: se o modelo morrer não é problema — a avaliação olha a arquitetura. **O fallback não entra**, e a hora vai para a base e a interface. O risco real muda de componente: o LLM tem zero chamada no grafo; quem não tem plano B é o **embedder** | ✅ |
 | **2** | **P-10: qual das três opções** | muda o que o vídeo mostra — ver §4 | **hoje** |
 | **3** | **P-06: escopo da interface** | sai de "o que o gerente precisa ver", não de esforço. A decidir **na frente do briefing real**, em 04/09 | **04/09** |
 | **4** | **Canal de submissão e formato da entrega** · **individual ou em grupo?** | O TAPI **não responde** nenhuma das duas, e "entrega fora do prazo sem alinhamento prévio" é **eliminatório**. Não saber o canal em 09/09 é perder por logística, com o projeto pronto | **hoje** |
@@ -145,6 +145,11 @@ técnica cita empresa alheia. *Se P-10 não fechar hoje, ele empurra a base — 
 ### 04/09 — interface, parte 1
 
 **Antes de escolher framework:** rodar o grafo e ler o briefing inteiro. **P-06 sai daí.**
+
+> **Opção nova para o escopo (D-087):** expor o **passo 8** — a caixa de pergunta à base NVIDIA.
+> Era passivo enquanto o EOL do LLM era risco pontuado; deixou de ser. Ela **recusa responder quando
+> não sabe** (23/24 = 96%, D-040) e mostra a fonte quando sabe — é a cena que melhor demonstra
+> engenharia de RAG, e é o único lugar do sistema onde o LLM aparece.
 Depois: esqueleto + consulta + lista de empresas com classificação.
 
 **PORTÃO 04/09:** dá para digitar uma consulta e ver empresas na tela.
@@ -210,7 +215,8 @@ De onde sai a `justificativa_tecnica`. As três opções, com custo medido:
 
 | risco | estado |
 |---|---|
-| **Fornecedor único de LLM** — 4 EOLs em 3 meses, **0 vivos de 10** hoje | **NÃO MITIGADO. O maior aberto.** `src/config.py` já isola o provedor; falta a chave. **Ação sua, hoje** |
+| ~~Fornecedor único de **LLM**~~ | **ACEITO POR ALINHAMENTO (D-087).** A liga declarou que a morte do modelo não pontua contra. E o LLM tem **zero chamada no caminho do grafo** — três flags `False` por medição |
+| **Fornecedor único do EMBEDDER** | **este é o que sobrou sem plano B.** Está em toda consulta (`busca.py:122`), e trocá-lo invalida os 381 vetores — não é chave, é `reembedar.py` mais re-medir a régua inteira (D-046). Contramedida única: `smoke_nvidia.py` antes de gravar e de entregar |
 | **Interface escorregar e não haver demo** | **ativo, ponto único de falha.** Mitigado por: começar em 04/09, portão diário, e a regra de corte de 05/09 |
 | **A base não chegar a 30** | ativo. Mitigado pela ordem por setor faltante + timebox |
 | **Trial do Cohere** (1.000/mês, 10 req/min) | conhecido. Cena do vídeo com `MAX_STARTUPS` baixo |

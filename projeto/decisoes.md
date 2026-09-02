@@ -2540,6 +2540,51 @@ domínio. Nenhum seletor de trecho conserta isso, e nada mede relevância de rec
 
 ---
 
+## D-087 — O segundo provedor de LLM NÃO será construído, e o risco real muda de componente
+**Data:** 02/09/2026 · alinhamento com a liga, relatado pelo Vinícius · fecha o item 1 de `plano.md` §3.3
+
+**O que foi alinhado:** apresentada a arquitetura à liga — os dois subgrafos e o papel de cada
+agente —, o ponto do catálogo perecível foi levantado. A resposta: **se o modelo morrer, não é
+problema grave**, porque a avaliação olha **como a arquitetura foi construída**, e o provedor é
+*"só uma linha de chave de API"*.
+
+**Decisão: o fallback (Grok, pré-autorizado em D-067) NÃO entra.** A hora que ele custaria vai para
+a base e para a interface. **Alternativa descartada — construí-lo mesmo assim:** seria seguro contra
+um risco que quem avalia declarou não pontuar, num projeto em que a interface ainda tem zero byte e
+é **pré-requisito do eliminatório nº 3**. Escolher blindagem sobre entregável a 5 dias do vídeo é
+priorizar por medo, não por defeito.
+
+**E A FRASE DA LIGA ESTÁ CERTA — PARA O LLM. É ONDE ELA NÃO SE APLICA QUE IMPORTA.** Verificado no
+código em 02/09, e esta é a parte que muda o que se defende:
+
+| componente | está no caminho do grafo? | contramedida | "só uma chave"? |
+|---|---|---|---|
+| **LLM** (`src/llm.py`) | **NÃO.** `USAR_JUIZ_LLM`, `JULGAR_SUSTENTACAO` e `CONFIANCA_DA_EVIDENCIA` são `False` **por medição** (D-056, D-059, D-075), e o grafo nunca chama `responder()` | não precisa | **sim** |
+| **Cohere rerank** | sim, passo 7 | **existe e é medida**: `RERANK_PROVEDOR=nenhum` degrada para a híbrida, número a número (D-068) | quase |
+| **Embedder** | **SIM, em toda consulta** — `busca.py:122`, dentro de `buscar_denso_bruto` | **NENHUMA** | **NÃO** — troca o espaço vetorial e invalida os 381 vetores; é `reembedar.py` mais re-medir a régua inteira (D-046) |
+
+**A folga veio no componente que já não carregava peso.** O que sobrou sem plano B é o **embedder**,
+e ele é o único cuja morte para o sistema em vez de degradá-lo. Isto não é motivo para construir
+nada hoje — é o que se responde quando perguntarem qual é o risco, e é resposta melhor que
+*"temos fallback"*.
+
+**Consequência de produto, e ela é positiva: o passo 8 fica mais seguro de expor na interface.**
+`responder()` é o único lugar em que o LLM apareceria numa demo, e era isso que o tornava arriscado.
+Com o risco de EOL declarado como não-pontuado, a caixa de pergunta à base NVIDIA vira **candidata a
+cena do vídeo** em vez de passivo: ela recusa responder quando não sabe — **23/24 = 96%** medido hoje,
+com o único erro no lado seguro (D-040) — e mostra a fonte quando sabe. Entra em **P-06** como opção.
+
+**O que esta decisão NÃO cobre, e fica dito:** o alinhamento é sobre a **morte do modelo**. O
+eliminatório nº 3 do TAPI — *"projeto que não executa e cujo vídeo não demonstra funcionamento
+real"* — continua escrito na especificação e continua valendo. Por isso **`smoke_nvidia.py` antes de
+gravar e antes de entregar continua sendo regra** (D-079): ele custa 4 segundos e cobre os três
+componentes, não só o que a liga dispensou.
+
+**Reversível?** Trivialmente — `src/config.py` já isola o provedor; o que não foi feito é escrever
+as ~30 linhas do segundo.
+
+---
+
 ## Decisões pendentes
 
 | # | Decisão | Estado |
