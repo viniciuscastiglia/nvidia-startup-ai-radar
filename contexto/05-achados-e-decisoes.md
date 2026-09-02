@@ -59,8 +59,10 @@ outros 13 dão os casos AI-enabled e non-AI), notícias grátis para volume, vag
 sinal. Estratégia detalhada em `04-ecossistema-br.md` §3.
 
 **A decidir:** quantas startups (30 é o mínimo, 80 o teto) e quanto do tempo dos 18 dias alocar
-nisso. Base pequena e bem curada provavelmente vale mais que base grande e rasa — o barema avalia
-a qualidade do raciocínio sobre os dados, não o tamanho do dataset.
+nisso. Base pequena e bem curada vale mais que base grande e rasa — mas há um piso, e ele não é
+opinião: **uma base pequena demais não discrimina.** Com 8 fixtures a régua satura, e o gargalo de
+vocabulário do Classifier fica insolúvel porque não há variedade linguística suficiente para o
+modelo separar os casos (P-12).
 
 ### 4.2 Provedor de LLM e de embeddings — **RESOLVIDA** (D-012, D-067)
 NVIDIA NIM via build.nvidia.com, API OpenAI-compatible, provedor atrás de env var (D-002).
@@ -91,7 +93,8 @@ As alternativas, com o estado real de cada uma:
   x86_64 de quem avalia, mais 27 pacotes e 1,1-2,3 GB de pesos. **Registrado como não medido, não
   como pior** (D-068)
 - **Provedor `nenhum`** — degradação graciosa: sem chave, o passo 7 sai do caminho e a resposta
-  vira a ordem da híbrida, que sozinha faz 95% r@1. É a metade executável do eliminatório nº 3
+  vira a ordem da híbrida, que sozinha faz 95% r@1. Quem clona o repositório sem chave de rerank
+  ainda vê o sistema funcionar em vez de receber um stack trace
 
 ### 4.4 Banco vetorial
 Qdrant é o recomendado; ChromaDB, Pinecone e pgvector são explicitamente permitidos.
@@ -101,21 +104,28 @@ Qdrant é o recomendado; ChromaDB, Pinecone e pgvector são explicitamente permi
 Decidir junto com a implementação do passo 6 do pipeline RAG (busca híbrida vetorial + BM25).
 
 ### 4.5 Frontend
-Livre, e vale **5 pontos**. O risco real é gastar dias aqui e perder pontos nos critérios de 20.
-Mas atenção: **o vídeo (peso 20) exige demonstrar o projeto funcionando pela interface web** —
-ou seja, a interface precisa ser boa o bastante para o demo não parecer quebrado. O alvo é
-"funcional e limpa", não "impressionante".
+Livre. É a **única superfície pela qual alguém que não lê código consegue julgar o sistema** — e o
+vídeo exige demonstrar o projeto funcionando por ela. O erro fácil é gastar dias em polimento
+enquanto a saída que a interface exibe continua sem lastro; o erro oposto é entregar uma tela que
+mostra o trabalho bom de um jeito que parece quebrado.
 
-### 4.6 Diferencial (peso 5) — **REFORMULADO** (D-070)
+O que decide o escopo não é orçamento de esforço, é a pergunta de produto: **o que o gerente
+precisa ver, em que ordem, para conseguir abordar a startup no dia seguinte?** Decisão em aberto
+(P-06).
+
+### 4.6 O que este projeto sabe e quase ninguém sabe — **REFORMULADO** (D-070)
 **A formulação original não sobreviveu aos fatos.** Ela era *"rodar o RAG inteiro na própria stack
 NVIDIA — NeMo Retriever para embedding **e reranking**"*. O reranking do NeMo **não existe mais**
 (D-064), e o que resta rodando na stack NVIDIA é o embedding e o LLM dos agentes.
 
-**O Diferencial passa a ser o que o projeto de fato mediu e ninguém mede:** a **volatilidade de
-catálogo do fornecedor**, com instrumento versionado (`scripts/sondar_catalogo.py`). Três EOLs em
-três meses, com data e método; a constatação de que `GET /v1/models` **lista modelos que devolvem
-404**; e um sistema que continuou rodando através dos três, porque o provedor está isolado em
-`src/config.py` e nenhum agente conhece a NVIDIA. Ver D-070.
+**O que o projeto de fato mediu, e que quase ninguém mede:** a **volatilidade de catálogo do
+fornecedor**, com instrumento versionado (`scripts/sondar_catalogo.py`). Três EOLs em três meses,
+com data e método; a constatação de que `GET /v1/models` **lista modelos que devolvem 404**; e um
+sistema que continuou rodando através dos três, porque o provedor está isolado em `src/config.py` e
+nenhum agente conhece a NVIDIA. Ver D-070.
+
+Isso não vale por ser incomum — vale porque **muda decisão de arquitetura**: é a medição que
+justifica o custo de manter provedor isolado atrás de env var em vez de chamar o SDK direto.
 
 **Candidatos secundários, todos já mapeados no contexto:**
 - Filtro de **elegibilidade do Inception** no Briefing Agent — o sistema recusar recomendar o
@@ -127,26 +137,25 @@ três meses, com data e método; a constatação de que `GET /v1/models` **lista
 
 ---
 
-## 5. Onde os pontos realmente estão
+## 5. O que ordena o trabalho
 
-Recapitulando a matemática do barema, porque ela deve guiar a alocação dos 18 dias:
+**Não é a aritmética do barema.** Esta seção já foi uma recapitulação dos pesos por critério, com a
+instrução de que ela *"deve guiar a alocação dos 18 dias"* — e era a instrução errada, porque peso
+de critério mede o que a avaliação valoriza e não diz nada sobre onde o sistema está quebrado
+(D-078). A tabela de pesos continua registrada como especificação em `01-tapi.md`.
 
-- **Núcleo de IA (critérios 1+2+3) = 60 pontos**
-- **Comunicação (vídeo 20 + repo/docs 10) = 30 pontos** — 30% da nota não é código
-- **Produto (interface 5 + diferencial 5) = 10 pontos**
+O que ordena está no `CLAUDE.md` §"O que ordena o trabalho": **o defeito, medido pelo custo que ele
+impõe a quem ia usar o sistema.**
 
-Nível 2 ("cumpre o mínimo") em tudo dá **50/100**. Nível 3 ("bom, com decisões técnicas
-conscientes") dá **75**. A diferença entre 50 e 75 não está em entregar mais features — está em
-cada escolha técnica ter uma razão articulada.
+Três práticas que a versão antiga desta seção acertava, e que sobrevivem com outra razão:
 
-**Implicações práticas:**
-- O vídeo de 7 minutos merece preparação real, não gravação de última hora. Vale o mesmo que o
-  sistema multi-agente inteiro
-- O README merece as decisões de arquitetura escritas, com as alternativas descartadas
-- Cada decisão tomada durante a implementação deve ser registrada na hora, enquanto o motivo
-  está fresco — é o material do vídeo e do repositório
-- **Eliminatório nº 4** — "código integralmente gerado sem compreensão": o Vinícius precisa
-  conseguir explicar cada decisão. Ver a seção "Como trabalhar neste projeto" no `CLAUDE.md`
+- **O vídeo de 7 minutos merece preparação real.** Não por valer 20 — porque é a única forma de o
+  trabalho ser visto por quem não vai clonar o repositório.
+- **O README leva as decisões de arquitetura, com as alternativas descartadas.** Não para render no
+  critério 7 — porque quem clona precisa saber por que o sistema é assim antes de mexer nele.
+- **Cada decisão é registrada na hora.** Não como material de defesa — porque decisão sem
+  alternativa registrada não é revisável, e reconstituir o motivo depois produz justificativa em vez
+  de razão.
 
 ---
 

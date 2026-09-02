@@ -19,59 +19,63 @@ wrappers de LLM?
 **Entrega:** implementação própria, seguindo o TAPI em `TAPI Processo Seletivo.md`.
 **Prazo: 09/09/2026 às 23:59.**
 
-## Barema — nota = Σ peso × (nível/4), níveis 0 a 4
+## O que ordena o trabalho
 
-| # | Critério | Peso |
-|---|---|---|
-| 1 | Sistema multiagente com LangGraph | 20 |
-| 2 | RAG NVIDIA com reranking | 20 |
-| 3 | Motor de recomendação | 20 |
-| 4 | Interface web | **5** |
-| 5 | **Vídeo de apresentação** | **20** |
-| 6 | Diferencial do projeto | 5 |
-| 7 | Repositório e documentação | 10 |
+Este sistema tem **um usuário real**: o gerente de Startups & VCs da NVIDIA Brasil, que precisa
+decidir quais startups abordar e com qual argumento. E este repositório tem um **segundo leitor
+real**: quem o abre para entender ou rodar — um colega, ou o próprio Vinícius daqui a seis meses.
 
-Níveis: 0 não entregue · 1 insuficiente · 2 cumpre o mínimo · 3 bom, com decisões técnicas
-conscientes · 4 excelente, supera o esperado.
+> **A pergunta que ordena a fila: o que, hoje, faz este sistema falhar na mão de quem ia usar
+> de verdade?**
 
-**Leitura estratégica — onde os pontos realmente estão:**
-- Núcleo de IA (1+2+3) = **60** · Comunicação (vídeo + repo/docs) = **30** · Produto (interface +
-  diferencial) = **10**
-- O **vídeo vale o mesmo que o sistema multi-agente inteiro** e 4x a interface
-- A **interface web é o Entregável 4 mas vale 5 pontos** — não investir uma semana nela
-- Nível 2 em tudo = 50/100. Nível 3 em tudo = 75. A diferenciação está em subir de "cumpre o
-  requisito" para "decisões técnicas conscientes"
+Três regras saem daí:
 
-## Critérios eliminatórios
+1. **Não existe teto.** Uma parte do sistema estar boa nunca é razão para parar de melhorá-la. A
+   razão para parar é sempre custo/benefício de engenharia — e ela vai escrita como decisão.
+2. **A prioridade sai do defeito, não do peso.** O que ordena a fila é a gravidade do defeito para
+   quem usa o sistema.
+3. **Documenta-se para o leitor que não é você.** A alternativa descartada é registrada porque em
+   seis meses ninguém lembra por quê — e porque decisão sem alternativa registrada não é revisável.
 
-1. Entrega fora do prazo sem alinhamento prévio
-2. Ausência do vídeo de apresentação
-3. Projeto que não executa **e** cujo vídeo não demonstra funcionamento real
-4. **Código integralmente gerado sem compreensão** — o candidato precisa explicar as decisões de
-   arquitetura do próprio projeto
-5. Plágio de outro projeto
+**Prazo é restrição; qualidade é o objetivo.** A escassez de tempo ordena o *quanto* se faz. Ela
+nunca ordena o *quê* por contagem de pontos.
+
+## Restrições da entrega
+
+O case é avaliado por barema. A tabela de pesos mora em `contexto/01-tapi.md` — é registro da
+especificação, e é lá que ela fica, porque peso de critério não é bom critério de priorização.
+Aqui ficam as restrições duras, que são requisitos de verdade:
+
+1. **Prazo:** 09/09/2026 às 23:59; fora dele só com alinhamento prévio
+2. **O vídeo é obrigatório** — e a razão que importa é que um sistema que ninguém consegue ver não
+   existe
+3. **O projeto tem de executar**, e o vídeo tem de demonstrar funcionamento real
+4. **Quem constrói precisa entender o que construiu.** Quem não entende cada peça não consegue
+   evoluir, depurar nem defender o sistema
+5. Autoria própria
 
 O TAPI é explícito: *"O uso de IA como ferramenta de desenvolvimento é permitido e esperado.
 O que se avalia é a capacidade de tomar e defender decisões técnicas."*
 
 ## Como trabalhar neste projeto
 
-O eliminatório nº 4 define o modo de trabalho. Ao implementar qualquer coisa:
+Quem não entende o que construiu não consegue evoluir nem depurar. Ao implementar qualquer coisa:
 
 - **Explique a decisão antes de escrever o código.** Por que LangGraph e não uma chain simples,
   por que esse chunking, por que reranking cross-encoder e não bi-encoder, por que esse estado no
-  grafo. O Vinícius precisa defender isso numa banca.
-- **Ofereça a alternativa que foi descartada e o motivo.** É isso que vira resposta pronta quando
-  o avaliador perguntar "por que não X?".
+  grafo. Uma escolha sem razão articulada não é escolha — é acidente que ninguém consegue revisar.
+- **Ofereça a alternativa que foi descartada e o motivo.** É o que torna a decisão reversível: sem
+  ela, revisitar a escolha em duas semanas custa refazer a análise inteira.
 - **Nada de código mágico.** Se uma escolha só se justifica por conveniência, diga isso.
 - **Fixe o critério ANTES de medir.** É a disciplina que fez D-055, D-058 e D-072 valerem. Uma
   medição cujo alvo é decidido depois do placar não é medição.
 - **Medir não é promover.** Registrar um resultado e mudar produção são dois atos.
 - Português nas explicações e na documentação.
-- **Subagentes: evitar neste projeto.** Eles começam sem contexto e devolvem resultado pronto, que
-  é o oposto do eliminatório nº 4. Ver `projeto/guia-de-trabalho.md`.
+- **Subagentes: evitar neste projeto.** Eles começam sem contexto e devolvem resultado pronto —
+  código que entra sem ninguém entender por quê é código que ninguém consegue evoluir depois.
+  Ver `projeto/guia-de-trabalho.md`.
 
-## Arquitetura alvo (LangGraph — obrigatório, é o único nome citado no barema)
+## Arquitetura alvo (LangGraph — obrigatório pelo TAPI)
 
 ```
 Consulta do usuário
@@ -121,8 +125,9 @@ Consulta do usuário
 >   `retry-after` vem ausente, recuperação de ~26 s. Por isso `src/rag/rerank.py` tem limitador
 >   proativo e retry. **Para o vídeo: ~2-3 min só de rerank num run completo** — a cena é uma
 >   consulta com `MAX_STARTUPS` baixo, não o run inteiro (D-068).
-> - **O Diferencial não é "usar a stack NVIDIA"** — é ter medido uma propriedade do fornecedor que
->   ninguém mede, com instrumento versionado (D-070).
+> - **O que este projeto sabe e quase ninguém sabe** não é "usamos a stack NVIDIA" — é a
+>   volatilidade de catálogo do fornecedor, medida com instrumento versionado (D-070). Vale porque
+>   muda decisão de arquitetura: é o que justifica o provedor isolado em `src/config.py`.
 
 ## O que está medido, e onde
 
@@ -222,7 +227,7 @@ Para avaliar sem Postgres local: `docker compose up -d` (porta 5433) e ajustar `
 | `projeto/decisoes.md` | **sempre que uma decisão for tomada** — escrever na hora. É o material de defesa, o roteiro do vídeo e a seção de arquitetura do README |
 | `projeto/plano.md` | sequência dos 18 dias, marcos e riscos |
 | `projeto/guia-de-trabalho.md` | método de trabalho e manutenção desta documentação |
-| `contexto/01-tapi.md` | precisar do requisito exato: schema, os 7 campos do output, pipeline de 9 passos, regras do vídeo |
+| `contexto/01-tapi.md` | precisar do requisito exato: schema, os 7 campos do output, pipeline de 9 passos, regras do vídeo, tabela do barema |
 | `contexto/02-rubrica-ai-native.md` | for mexer no Extractor, no Classifier ou no Evidence Validator — é a rubrica que o TAPI não fornece |
 | `contexto/03-stack-nvidia.md` | for mexer na base de conhecimento ou no motor de recomendação |
 | `contexto/04-ecossistema-br.md` | for popular a base de startups ou precisar de `url_fonte` legítimo |

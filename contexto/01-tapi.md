@@ -101,7 +101,7 @@ Consulta do usuário
 
 1. **`conteudo_texto` é não estruturado de propósito.** É sobre ele que o Extractor, o Classifier
    e o Evidence Validator devem trabalhar. Estruturar demais na base mata o trabalho dos agentes —
-   e o avaliador percebe.
+   e a régua passa a medir a curadoria da base, não a capacidade dos agentes.
 2. **Rastreabilidade é requisito duro.** *"Toda conclusão do sistema sobre uma startup precisa
    apontar para o documento que a sustenta."* Aparece duas vezes no documento (§5.2 e §5.5).
 
@@ -174,6 +174,10 @@ Detalhamento técnico de cada uma em `03-stack-nvidia.md`.
 
 ## Barema
 
+> **Registro da especificação, não guia de priorização.** Está aqui porque o TAPI tem barema e o
+> repositório registra o TAPI fielmente. O que ordena o trabalho está no `CLAUDE.md` §"O que ordena
+> o trabalho", e não é peso de critério: é o defeito do sistema para quem vai usá-lo.
+
 Nota de 0 a 100. Soma ponderada: **pontuação = peso × (nível / 4)**.
 
 | Nível | Significado |
@@ -203,7 +207,7 @@ Nota de 0 a 100. Soma ponderada: **pontuação = peso × (nível / 4)**.
   arquitetura do próprio projeto
 - Plágio de outro projeto
 
-### Sobre o vídeo (peso 20 — igual ao sistema multi-agente inteiro)
+### Sobre o vídeo
 Duração **máxima de 7 minutos**. O aluno deve:
 - explicar como realizou a **arquitetura dos seus agentes**
 - explicar o **sistema RAG**
