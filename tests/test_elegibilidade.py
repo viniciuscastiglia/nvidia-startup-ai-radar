@@ -175,3 +175,99 @@ def test_briefing_imprime_a_evidencia_da_exclusao():
     assert "NÃO ELEGÍVEL" in texto
     assert "https://exemplo.test/vaga" in texto, "motivo de exclusão impresso sem a fonte"
     assert trecho[:60] in texto, "motivo de exclusão impresso sem o trecho literal"
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# P-13 — EXCLUSÃO POR MENÇÃO vs. POR IDENTIDADE (D-085)
+#
+# Estes testes NÃO duplicam `exclusoes.yaml`. A régua mede o filtro nos 14 casos curados; aqui
+# ficam os casos que a régua **não tem** e que são exatamente onde o desenho pode falhar em
+# silêncio — sobretudo o par de duas frases, que é o que separa "veto por frase" de "veto global".
+# ─────────────────────────────────────────────────────────────────────────────
+from src.agents.briefing import IDADE_MAXIMA  # noqa: E402
+
+
+def test_mencao_de_consultoria_de_terceiro_nao_exclui():
+    """O caso real que fechou P-13: a Axenya, prospect de maior prioridade da base, era recusada
+    porque a home dela diz "Integramos consultoria". Ela USA consultoria; não é uma."""
+    r = elegibilidade(_startup(), _perfil(
+        "Integramos consultoria, dados e operação clínica em uma única plataforma."
+    ))
+    assert r.elegivel, r.motivos_exclusao
+
+
+def test_identidade_de_consultoria_continua_excluindo():
+    """O par mínimo do teste acima. Sozinho, o anterior é satisfeito apagando a regra inteira."""
+    r = elegibilidade(_startup(), _perfil("A Deal é uma consultoria de IA para empresas."))
+    assert not r.elegivel
+    assert any("consultoria" in m for m in r.motivos_exclusao)
+
+
+def test_identidade_numa_frase_e_terceiro_em_OUTRA_continua_excluindo():
+    """**O TESTE QUE O DESENHO EXISTE PARA PASSAR, E QUE `exclusoes.yaml` NÃO COBRE.**
+
+    Todo caso da régua é uma frase só, então um veto GLOBAL sobre o trecho inteiro marcaria
+    14/14 e pareceria correto. Trecho de evidência é parágrafo, não sentença — e uma consultoria
+    que mencione clientes na frase seguinte escaparia do filtro, em silêncio, que é o modo de
+    falha que D-057 chama de assimétrico.
+
+    O escopo de frase é a parte do desenho que generaliza; a lista de marcadores é a parte que
+    foi ajustada aos casos. Este teste guarda a primeira.
+    """
+    r = elegibilidade(_startup(), _perfil(
+        "Somos uma consultoria de IA. Nossos clientes são bancos e seguradoras."
+    ))
+    assert not r.elegivel, "veto global: a menção numa frase apagou a identidade da outra"
+    assert any("consultoria" in m for m in r.motivos_exclusao)
+
+
+def test_identidade_na_segunda_frase_tambem_exclui():
+    """Espelho do anterior — a ordem das frases não pode importar."""
+    r = elegibilidade(_startup(), _perfil(
+        "Entre os clientes estão bancos e seguradoras. Somos uma consultoria de IA."
+    ))
+    assert not r.elegivel, r.motivos_exclusao
+
+
+def test_desenvolvimento_terceirizado_continua_excluindo():
+    """A única colisão entre as duas listas: `EXCLUSOES` tem "desenvolvimento terceirizado" e o
+    marcador `terceirizad` teria anulado o próprio termo que deveria fazer excluir. Ele ficou
+    FORA de `MARCADORES_DE_TERCEIRO` por isso, e este teste é a rede."""
+    r = elegibilidade(_startup(), _perfil("Somos uma casa de desenvolvimento terceirizado."))
+    assert not r.elegivel, r.motivos_exclusao
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# P-20 — A BORDA DA IDADE (D-085)
+# `date.today().year - ano_fundacao` tem precisão de ANO; a regra é "menos de 10 anos". A faixa
+# de 12 meses só cruza o limite quando `idade == IDADE_MAXIMA`, e ali a resposta é "não sei".
+# ─────────────────────────────────────────────────────────────────────────────
+
+def _idade(anos: int) -> int:
+    from datetime import date
+    return date.today().year - anos
+
+
+def test_idade_na_borda_vira_pendente_e_nao_exclusao():
+    """Laura Networks, fundada em 2016: entre 9,7 e 10,7 anos. Os dois lados da regra são
+    alcançáveis, e decidir exclusão ali é fingir precisão que o dado não tem."""
+    from datetime import date
+    r = elegibilidade(_startup(ano_fundacao=date.today().year - IDADE_MAXIMA), _perfil("texto"))
+    assert r.elegivel, r.motivos_exclusao
+    assert any("idade na borda" in p for p in r.requisitos_nao_verificados), \
+        "a borda saiu do denominador sem virar pauta da conversa"
+
+
+def test_um_ano_acima_da_borda_continua_excluindo():
+    """O par mínimo: `idade > IDADE_MAXIMA` significa idade real >= 10,x — não há dúvida."""
+    from datetime import date
+    r = elegibilidade(_startup(ano_fundacao=date.today().year - IDADE_MAXIMA - 1), _perfil("t"))
+    assert not r.elegivel
+    assert any("idade" in m for m in r.motivos_exclusao)
+
+
+def test_um_ano_abaixo_da_borda_passa_sem_pendencia_de_idade():
+    from datetime import date
+    r = elegibilidade(_startup(ano_fundacao=date.today().year - IDADE_MAXIMA + 1), _perfil("t"))
+    assert r.elegivel
+    assert not any("idade na borda" in p for p in r.requisitos_nao_verificados)

@@ -82,10 +82,68 @@ EXCLUSOES = {
 }
 IDADE_MAXIMA = 10   # o programa exige menos de 10 anos de existência
 
+# O VETO DE TERCEIRO — P-13, ABERTA DESDE 25/08 (D-052 achado 3), FECHADA EM 02/09 (D-085)
+# -----------------------------------------------------------------------------------------
+# O filtro acima excluía por MENÇÃO, não por identidade: bastava o termo aparecer em qualquer
+# evidência. Medido, o estrago era de 5 em 7 — e rodando o grafo em 02/09 a **Axenya**, o prospect
+# de maior prioridade da base, saía `NÃO ELEGÍVEL` porque a home dela diz *"Integramos consultoria,
+# dados e operação clínica"*. Numa ferramenta cujo trabalho é achar startups para o Inception.
+#
+# O SINAL QUE SEPARA OS CASOS JÁ ESTAVA ESCRITO — pelo curador, nas notas de `exclusoes.yaml`:
+# *"o sujeito é um PARCEIRO"*, *"a empresa é CLIENTE de consultoria"*, *"quem revende é o CLIENTE"*,
+# *"USO, não identidade"*. É sempre a mesma pergunta: **de quem a frase está falando.**
+#
+# O QUE FAZ ISTO GENERALIZAR NÃO É A LISTA DE PALAVRAS — É O ESCOPO DE FRASE.
+# O veto vale só dentro da frase em que o termo ocorre. É o que separa
+#     "Somos uma consultoria. Nossos clientes são bancos."   -> EXCLUI (duas frases)
+# de
+#     "Contratamos uma consultoria externa."                 -> passa  (uma frase)
+# Um veto global sobre o trecho inteiro erraria o primeiro caso, e trecho de evidência é
+# parágrafo, não sentença. `tests/test_elegibilidade.py` guarda exatamente esse par.
+#
+# POR QUE VETO E NÃO ÂNCORA DE IDENTIDADE (`somos|é uma <termo>`): a própria régua chama a âncora
+# de *"armadilha do desenho recomendado"* e planta o contra-exemplo — *"Como **nossa consultoria**
+# de IA para empresas gera resultados"*, identidade por possessivo, que a âncora perde. E há uma
+# razão estrutural, que é a assimetria de D-057: um veto só **remove** exclusão, então o lado do
+# falso NEGATIVO — o silencioso, o que não aparece em lugar nenhum — não pode regredir por
+# construção. Uma âncora reescreve os dois lados de uma vez.
+#
+# `terceirizad` NÃO ESTÁ NA LISTA, DE PROPÓSITO: `EXCLUSOES["consultoria"]` contém
+# `"desenvolvimento terceirizado"`, e o marcador anularia o próprio termo que ele deveria deixar
+# passar. Foi a única colisão entre as duas listas, e está verificada uma a uma.
+MARCADORES_DE_TERCEIRO = [
+    # (1) o SUJEITO da frase é outra empresa
+    "nossos clientes", "seus clientes", "entre os clientes", "dos clientes",
+    "parceria com", "parceiro", "parceira",
+    # (2) a empresa é CONSUMIDORA do que o termo nomeia
+    "contrata",            # contratamos, contratou, contratada — prefixo, como `revend` (D-071)
+    "integramos", "integrou",
+    # (3) o que o termo nomeia é declaradamente DE FORA
+    "externa", "externo", "de terceiros",
+]
+
+# `;` entra junto de `.!?` porque em texto institucional a enumeração com ponto e vírgula separa
+# sujeitos tanto quanto o ponto final. Quebra de linha também: o texto vem de página HTML limpa,
+# onde cada item de lista é uma linha e cada linha é uma afirmação independente.
+_FIM_DE_FRASE = re.compile(r"[.!?;\n]+")
+
 
 def _ocorre(termo: str, texto: str) -> bool:
     """Fronteira de palavra NO INÍCIO do termo. Ver o comentário de `EXCLUSOES`."""
     return re.search(rf"\b{re.escape(termo)}", texto) is not None
+
+
+def _fala_de_terceiro(termo: str, texto: str) -> bool:
+    """A ocorrência do termo está numa frase que fala de OUTRA empresa? Ver `MARCADORES_DE_TERCEIRO`.
+
+    Devolve `True` quando TODA ocorrência do termo cai em frase com marcador de terceiro. Basta uma
+    ocorrência limpa para o veto não valer: uma consultoria que também menciona parceiros continua
+    sendo excluída pela frase em que ela se descreve.
+    """
+    frases = [f for f in _FIM_DE_FRASE.split(texto) if _ocorre(termo, f)]
+    return bool(frases) and all(
+        any(_ocorre(m, f) for m in MARCADORES_DE_TERCEIRO) for f in frases
+    )
 
 
 def elegibilidade(analise_startup, perfil) -> Elegibilidade:
@@ -101,21 +159,52 @@ def elegibilidade(analise_startup, perfil) -> Elegibilidade:
     # `list[Evidencia]`, contra a invariante do repositório.
     todas = [e for a in (perfil.afirmacoes if perfil else []) for e in a.evidencias]
     for rotulo, termos in EXCLUSOES.items():
+        # O VETO DE TERCEIRO ENTRA AQUI, E NÃO DENTRO DE `_ocorre` (D-085): `_ocorre` responde
+        # "o termo está no texto?", que é pergunta lexical e é usada também pelo veto. Quem
+        # responde "e a frase fala da própria empresa?" é `_fala_de_terceiro`, e são duas
+        # perguntas. Juntá-las numa função só faria o veto se aplicar a si mesmo.
         achou = next(
-            ((termo, ev) for termo in termos for ev in todas if _ocorre(termo, ev.trecho.lower())),
+            ((termo, ev) for termo in termos for ev in todas
+             if _ocorre(termo, ev.trecho.lower())
+             and not _fala_de_terceiro(termo, ev.trecho.lower())),
             None,
         )
         if achou:
             termo, ev = achou
-            motivos.append(f"exclusão por '{rotulo}': o termo {termo!r} aparece nos documentos")
+            motivos.append(
+                f"exclusão por '{rotulo}': o termo {termo!r} aparece nos documentos "
+                f"falando da própria empresa"
+            )
             evidencias.append(ev)
 
+    # A BORDA DA IDADE — P-20, ABERTA POR D-082, FECHADA EM 02/09 (D-085)
+    # `date.today().year - ano_fundacao` tem precisão de ANO, e o programa exige "menos de 10
+    # anos". Com ano só, a idade real cai numa faixa de 12 meses — a Laura Networks, fundada em
+    # 2016, tem hoje entre 9,7 e 10,7 anos — e essa faixa cruza o limite EXATAMENTE quando
+    # `idade == IDADE_MAXIMA`. Decidir exclusão ali é fingir uma precisão que o dado não tem, e o
+    # custo é assimétrico: exclui-se do funil uma empresa que pode ser elegível, em silêncio.
+    #
+    # Fora da borda não há dúvida nenhuma: `idade > 10` significa real >= 10,x (exclui com certeza)
+    # e `idade < 10` significa real <= 9,x (passa com certeza). Só o empate é indeterminado, e ele
+    # vira PENDENTE — o mesmo idioma que o gabarito já usa (`elegivel: [true, false]`): sai do
+    # denominador em vez de premiar ou punir uma precisão inexistente.
+    #
+    # Alternativa descartada — guardar o MÊS de fundação: resolveria de verdade, mas o mês não
+    # consta nos documentos de 6 das 8 fixtures. Preenchê-lo por inferência é exatamente o que
+    # D-021 barrou nas fixtures do seed.
     if analise_startup.ano_fundacao:
         idade = date.today().year - analise_startup.ano_fundacao
-        if idade >= IDADE_MAXIMA:
+        if idade > IDADE_MAXIMA:
             motivos.append(
                 f"exclusão por idade: fundada em {analise_startup.ano_fundacao}, {idade} anos "
                 f"(o programa exige menos de {IDADE_MAXIMA})"
+            )
+        elif idade == IDADE_MAXIMA:
+            pendentes.append(
+                f"idade na borda: fundada em {analise_startup.ano_fundacao}, entre "
+                f"{IDADE_MAXIMA - 1} e {IDADE_MAXIMA} anos — o documento dá o ano, não o mês. "
+                f"Confirmar a data exata antes de descartar (o programa exige menos de "
+                f"{IDADE_MAXIMA})"
             )
 
     # Requisitos que a base não tem como provar. NÃO excluem — viram pauta da conversa.

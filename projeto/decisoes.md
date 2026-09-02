@@ -2328,6 +2328,85 @@ consulta; `CLAUDE.md` é o que está na mesa sem ninguém procurar.
 
 ---
 
+## D-085 — O filtro do Inception recusava quem devia entrar: menção vira identidade, e a borda de idade sai do denominador
+**Data:** 02/09/2026 · fecha **P-13** (aberta desde 25/08) e **P-20** (aberta em 02/09)
+
+**Como apareceu:** rodando o grafo (D-083). As duas empresas da consulta saíram
+`NVIDIA Inception: NÃO ELEGÍVEL` — numa ferramenta cujo trabalho é achar startups para o Inception.
+A **Axenya**, prospect de maior prioridade da base, porque a home dela diz *"Integramos consultoria,
+dados e operação clínica"*. A **Laura Networks**, porque *"fundada em 2016, 10 anos"*.
+
+**Por que isto passou na frente de P-10 na fila:** a justificativa mal escolhida **degrada** a
+saída, e o gerente ainda tem a URL para clicar. Um `NÃO ELEGÍVEL` errado **inverte a decisão** — e
+ele não tem como saber que está errado. É a pergunta do `CLAUDE.md` aplicada literalmente.
+
+### P-13 — o veto de terceiro
+
+`elegibilidade()` excluía se **qualquer** termo aparecesse em **qualquer** evidência. Medido:
+falso positivo **2/7**. Os cinco erros tinham o mesmo defeito — o termo descreve **outra empresa**.
+
+**O sinal já estava escrito, pelo curador, nas notas de `exclusoes.yaml`:** *"o sujeito é um
+PARCEIRO"*, *"a empresa é CLIENTE de consultoria"*, *"quem revende é o CLIENTE"*, *"USO, não
+identidade"*. Implementar o princípio que a régua já documentava não é ajustar ao gabarito.
+
+**A decisão: veto por marcador de terceiro, com ESCOPO DE FRASE.** O casador lexical não muda; o
+que entra é `_fala_de_terceiro`, que anula a ocorrência quando **toda** frase em que o termo aparece
+tem marcador de terceiro. Basta uma frase limpa para o veto não valer.
+
+**O escopo de frase é a parte que generaliza; a lista de marcadores é a parte ajustada aos casos —
+e essa distinção é a honestidade desta decisão.** Todo caso de `exclusoes.yaml` é uma frase só, então
+um veto **global** sobre o trecho marcaria 14/14 e pareceria igualmente correto. Trecho de evidência
+é **parágrafo**: com veto global, *"Somos uma consultoria de IA. Nossos clientes são bancos."*
+escaparia do filtro, em silêncio — o modo de falha assimétrico de D-057. Esse par não está na régua
+e está em `tests/test_elegibilidade.py`, nos dois sentidos de ordem das frases.
+
+**Alternativa descartada — âncora de identidade (`somos|é uma <termo>`):** a régua a chama de
+*"armadilha do desenho recomendado"* e planta o contra-exemplo, *"Como **nossa consultoria** de IA
+para empresas gera resultados"* — identidade por possessivo, que a âncora perde. E há razão
+estrutural: um veto só **remove** exclusão, então o falso negativo não pode regredir por construção;
+uma âncora reescreve os dois lados de uma vez.
+
+**Alternativa descartada — olhar só `setor` e `descricao_curta`:** move a decisão do documento para
+o curador, contra *"nada é afirmado sem evidência"* — e nas empresas novas da M3 esses campos são
+preenchidos por quem escreve a fixture.
+
+**A colisão que quase passou:** `terceirizad` era marcador natural e ficaria **anulando**
+`EXCLUSOES["consultoria"] = [… "desenvolvimento terceirizado" …]`. Ficou fora, com teste.
+
+### P-20 — a borda da idade
+
+`date.today().year - ano_fundacao` tem precisão de **ano**; a regra é *"menos de 10 anos"*. A idade
+real cai numa faixa de 12 meses, e a faixa cruza o limite **exatamente** quando
+`idade == IDADE_MAXIMA`. Fora dali não há dúvida: `> 10` é real ≥ 10,x; `< 10` é real ≤ 9,x.
+
+**Decisão:** `>` exclui · `==` vira **pendente**, com a faixa impressa (*"entre 9 e 10 anos — o
+documento dá o ano, não o mês"*) · `<` passa. Mesmo idioma do gabarito (`elegivel: [true, false]`):
+sai do denominador em vez de fingir precisão. **Alternativa descartada — guardar o mês:** não consta
+nos documentos de 6 das 8 fixtures, e inferi-lo é o que D-021 barrou.
+
+### Medido, com o critério fixado ANTES
+
+O portão declarado antes de escrever o código foi *"falso positivo ≥ 6/7, falso negativo 7/7 sem
+regressão"*.
+
+| | antes | depois |
+|---|---|---|
+| `--exclusoes` falso **negativo** (o silencioso) | 7/7 | **7/7** |
+| `--exclusoes` falso **positivo** (o que aparece no briefing) | 2/7 | **7/7** |
+| `avaliar_agentes.py` · `elegivel` | 4/6 + 1 amb | **6/6** + 1 amb |
+| `pytest` | 67 | **75** |
+| `classe` · `stack` · `confianca` · precisão/recall de dor | 3/7 · 6/7 · 0/6 · 49%/100% | **idênticos** |
+| grafo, Axenya | `NÃO ELEGÍVEL` por 'consultoria' | **ELEGÍVEL** |
+| grafo, Laura Networks | `NÃO ELEGÍVEL` por idade | **ELEGÍVEL**, borda como pendente |
+
+**A ressalva que vai junto do número:** são **14 casos**, 8 deles sintéticos. Que o veto generalize é
+**hipótese**, não medição. O que está medido é que ele implementa o princípio que o curador já tinha
+escrito, e que o caso fora da régua — duas frases — passa.
+
+**Reversível?** Sim, as duas: uma lista de marcadores e um operador de comparação.
+
+---
+
 ## Decisões pendentes
 
 | # | Decisão | Estado |
@@ -2347,8 +2426,8 @@ consulta; `CLAUDE.md` é o que está na mesa sem ninguém procurar.
 | **P-17** | **`recommendation.py` trata `validada` como booleano** | **D-077: a gradação total foi aplicada e é INERTE** — flag desligada, `confianca` sem leitor, régua espelhando o código antigo. E o critério (recall ≥ 88% com precisão ≥ 80%) é inalcançável assim: admitir tudo dá 100%/49%. Falta a admissão PARCIAL, por `dores_enderecadas` e não por `confianca` |
 | ~~P-18~~ | ~~`src/llm.py` sem `timeout`~~ | **D-076** — `LLM_TIMEOUT=30` por tentativa, `max_retries=2` do SDK mantido: ~90 s de teto combinado |
 | **P-12** | **`classe`: vocabulário ou curadoria?** | D-060 mostrou que o gargalo não é a regra de decisão. Exige base ampliada |
-| **P-13** | **Exclusão por menção vs. identidade** | D-052 achado 3, aberto desde 25/08. Axenya e Freedom recusadas por citação de terceiro |
+| ~~P-13~~ | ~~Exclusão por menção vs. identidade~~ | **D-085** — veto de terceiro com escopo de frase. Falso positivo 2/7 → **7/7**, falso negativo 7/7 sem regressão |
 | **P-14** | **Quatro campos são calculados e nada os lê** | `estrategia_analise` e `exige_sinais_ia` (Query Planner), `score_recuperacao` (Retriever), `motivo_validacao` (Evidence Validator). Não é código morto — é capacidade anunciada e não entregue: a arquitetura publicada promete *"critérios de busca + estratégia de análise"*. Ou o subgrafo passa a lê-los, ou o diagrama para de prometê-los |
 | **P-15** | **Re-medir a abstenção do passo 8** | os 20-22/24 são do modelo morto; D-069 previu n=3 e não foi executado |
-| **P-20** | **O operador de borda da idade no filtro do Inception** | aberta por D-082. `date.today().year - ano_fundacao` com `>= 10` decide exclusão sobre dado que só tem precisão de ANO: a Laura, fundada em 2016, tem entre 9,7 e 10,7 anos hoje e os dois lados da regra são alcançáveis. Ou a borda vira `pendente` em vez de exclusão, ou a base passa a guardar mês |
+| ~~P-20~~ | ~~O operador de borda da idade~~ | **D-085** — a borda (`idade == IDADE_MAXIMA`) vira **pendente** com a faixa impressa, não exclusão. Guardar o mês foi descartado: não consta em 6 das 8 fixtures |
 | **P-19** | **O sweep do RAG (dimensão, banda de chunk, `k1`/`b`)** | **reaberta por D-078.** Estava cortado porque "o critério 2 já está no teto" — razão inválida. A razão candidata para manter o corte é outra e precisa ser dita: com 24 perguntas de gabarito, grade fina ajusta ao gabarito em vez de generalizar. O que joga contra o corte é `e@1 = 79%` (D-068): a primeira citação erra 1 vez em 5. Re-decidir junto com a base ampliada |
