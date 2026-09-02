@@ -182,15 +182,24 @@ Refinar o vídeo, revisar a entrega, **rodar o smoke de novo antes de entregar**
 
 De onde sai a `justificativa_tecnica`. As três opções, com custo medido:
 
-| opção | custo | efeito no vídeo |
-|---|---|---|
-| **(a) escolher melhor entre os `k` já recuperados** — o mais técnico por densidade de marcador, não o topo do reranker | ~2 h, determinístico | **nenhum** — continua instantâneo |
-| **(b) o LLM redige a partir das passagens** — o que a M4 previa | ~51 s **por recomendação** | **inviabiliza demo ao vivo**: 5 startups × 3 recs ≈ **12 min**, e o vídeo tem 7 |
-| **(c) filtrar depoimento por marcador de texto** | ~1 h | frágil: D-082 mostrou que **não há assinatura estrutural** — os chunks vivem sob breadcrumbs genéricos |
+> **A tabela abaixo foi recomparada em 02/09 (D-084).** A versão anterior tinha uma coluna
+> *"efeito no vídeo"* e concluía contra (b) porque *"12 min e o vídeo tem 7"*. Isso é D-078 com
+> outra roupa: uma restrição de entrega ocupando o lugar da função objetivo. **A régua abaixo é a
+> certa — e ela continua valendo depois de 07/09, que é o teste.**
 
-> **Recomendação: (a) em produção, (b) atrás de flag e medida se sobrar tempo.** (a) cabe no dia e
-> serve ao vídeo. (b) fica registrada como caminho com o custo medido — que é, por si só, defesa
-> melhor que tê-la implementado sem régua.
+| critério | **(a) determinístico** | **(b) o LLM redige** | (c) filtro de depoimento |
+|---|---|---|---|
+| conserta o defeito medido | sim | sim | parcial |
+| **latência que o gerente sente ao clicar** | nenhuma | ~51 s por recomendação; ~2,5 min mesmo para **uma** startup | nenhuma |
+| **robustez** — hoje o grafo roda com **zero chamada de LLM em produção**, e foi isso que o fez sobreviver ao 4º EOL | preserva | põe o **único modelo vivo de 10** no caminho do campo que o gerente lê primeiro | preserva |
+| **reversibilidade** | é **pré-requisito** de (b): alimentar o LLM com depoimento produz depoimento bem escrito | aditiva, cabe atrás de flag depois | — |
+| custo | ~2 h · **zero API extra** (o rerank já pontua a união inteira) | ~2 h | ~1 h |
+| ressalva | heurística: precisa de instrumento antes | — | **frágil**: D-082 mostrou que não há assinatura estrutural |
+
+> **Recomendação: (a), e ela não compete com (b) — precede.** (a) conserta um defeito; (b) é
+> funcionalidade sobre um campo já correto. **O argumento que de fato pesa contra (b) é o
+> fornecedor único**, e a coluna do vídeo o estava escondendo. (b) fica **aberta**, com o critério
+> certo: a latência que o gerente sente, decidida com a interface na frente.
 
 ---
 

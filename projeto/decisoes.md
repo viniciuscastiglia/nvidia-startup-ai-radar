@@ -2284,6 +2284,50 @@ contrário: três defeitos de produto, dois deles no campo que o usuário lê pr
 duas auditorias.
 
 
+## D-084 — "efeito no vídeo" sai do lugar de critério de decisão técnica
+**Data:** 02/09/2026 · muda o método de trabalho, **zero comportamento** · levantado pelo Vinícius
+
+**A decisão:** impacto no vídeo **não ordena decisão técnica**. Ele é restrição de entrega — como o
+prazo — e restrição diz *quanto* se faz, nunca *o quê*. Entra no `CLAUDE.md`, ao lado de D-083.
+
+**A evidência, e ela está escrita no próprio plano.** `plano.md` §5 comparava as três opções de
+P-10 numa tabela cujas colunas eram *"custo"* e ***"efeito no vídeo"***, e concluía contra a opção
+(b) porque *"5 startups × 3 recs ≈ 12 min, e o vídeo tem 7"*. A sessão de hoje repetiu a régua sem
+questioná-la ao apresentar a decisão.
+
+**Por que é o mesmo erro de D-078, com outra roupa.** D-078 tirou o barema do lugar de função
+objetivo — *"peso de critério não é bom critério de priorização"*. A cadeira ficou vazia e **o
+vídeo sentou nela cinco dias depois**. O padrão é o mesmo: um artefato de avaliação ocupando o
+lugar do que ordena o trabalho, que é o defeito na mão de quem usa o sistema.
+
+**O custo concreto, e não é purismo:** uma razão justificada pelo vídeo **vence em 07/09**. Depois
+de gravar, a decisão fica sem fundamento. E na arguição — que é eliminatória — *"não cabia nos 7
+minutos"* é resposta fraca, enquanto *"o gerente esperaria 12 minutos por um briefing"* é forte.
+Mesmo número, prazo de validade diferente.
+
+**O que muda quando P-10 é recomparada sem o vídeo**, e é aqui que se vê que a correção tem dente:
+
+| critério | (a) determinístico | (b) o LLM redige |
+|---|---|---|
+| conserta o defeito medido | sim | sim |
+| **latência que o gerente sente ao clicar** | nenhuma | ~51 s por recomendação; ~2,5 min mesmo para uma startup |
+| **robustez** — hoje o grafo roda com zero chamada de LLM em produção, e foi isso que o fez sobreviver ao 4º EOL | preserva | põe o único modelo vivo de 10 no caminho do campo que o gerente lê primeiro |
+| **reversibilidade** | é pré-requisito de (b): alimentar o LLM com depoimento de marketing produz depoimento bem escrito | aditiva, cabe atrás de flag depois |
+
+**A conclusão não muda — a força e a validade mudam.** Sob o vídeo, (b) era *"inviável"*. Sob
+latência de produto, (b) é *"cara e exigiria UI assíncrona"*: pior, não impossível. E o argumento
+que de fato pesa contra (b) não era nenhum dos dois — **é o fornecedor único**, que estava
+enterrado na tabela. Uma régua errada não estava só exagerando: estava escondendo o argumento bom.
+
+**Alternativa descartada — registrar só em `decisoes.md`, sem tocar no `CLAUDE.md`.** O arquivo já
+tem 17 KB e é carregado em toda sessão, então cada linha nova custa. O que decide contra é que
+**D-078 já estava no log e não segurou**: o erro voltou em cinco dias, por outra porta. Log é
+consulta; `CLAUDE.md` é o que está na mesa sem ninguém procurar.
+
+**Reversível?** É método, não código.
+
+---
+
 ## Decisões pendentes
 
 | # | Decisão | Estado |

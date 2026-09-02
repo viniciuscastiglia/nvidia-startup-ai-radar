@@ -80,6 +80,12 @@ Quem não entende o que construiu não consegue evoluir nem depurar. Ao implemen
   execução achou em uma hora — um bug que descartava a palavra "IA" da busca, entulho de página
   indexado, e a justificativa técnica citando a empresa errada. **Os três eram invisíveis no código
   e óbvios na saída.**
+- **"Efeito no vídeo" NÃO é critério de decisão técnica (D-084).** O vídeo é restrição de entrega,
+  como o prazo: restrição diz *quanto* se faz, nunca *o quê*. Uma razão justificada pelo vídeo
+  **vence em 07/09** — e na arguição, *"não cabia nos 7 minutos"* é resposta fraca. A régua é
+  sempre: **defeito para quem usa · latência que o usuário sente · robustez · reversibilidade.**
+  É D-078 (o barema fora da função objetivo) com outra roupa — voltou em 5 dias por outra porta,
+  e escondeu o argumento bom contra P-10(b), que era o fornecedor único.
 
 ## Arquitetura alvo (LangGraph — obrigatório pelo TAPI)
 
