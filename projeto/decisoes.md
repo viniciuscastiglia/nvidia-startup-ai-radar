@@ -906,8 +906,27 @@ nada sai sem fonte anexada — mas *qual* trecho sustenta *qual* afirmação ain
 **O que NÃO foi medido:** fidelidade da prosa ao contexto. Exigiria LLM-as-judge ou anotação humana,
 e as duas trazem uma régua que também precisaria ser validada. Declarado como não medido em vez de
 alegado.
-**Instrumento:** a acurácia de abstenção (faixa de 20-22 de 24, em 3 execuções) foi medida no LLM
-que morreu em 27/08. **Não re-medida** no modelo atual — é dívida declarada em D-069.
+**Instrumento — RE-MEDIDO EM 02/09, e a dívida de D-069 está paga (fecha P-15).** A faixa de
+**20-22/24** era do LLM que morreu em 27/08. No modelo atual (`nemotron-3.5-lightning-30b-a3b`) e no
+corpus pós-D-082 (175 chunks):
+
+| | modelo morto (3 execuções) | **02/09, modelo atual** |
+|---|---|---|
+| respondeu, das que têm resposta | — | **18/19** |
+| absteve, das que NÃO têm | — | **5/5** |
+| **acurácia de abstenção** | 20-22 / 24 | **23/24 = 96%** |
+
+**O único erro está no lado seguro, e isso importa mais que o número.** A q09 foi **abstenção
+indevida**, não alucinação: o modelo recusou porque *"os trechos contêm informações sobre detecção de
+comportamento anômalo e digital fingerprinting, mas não mencionam o uso de GPU para essa finalidade"*
+— leitura defensável do que as passagens de fato dizem. Para um sistema cuja promessa inteira é
+*"nada é afirmado sem evidência"*, errar para o lado de não responder é o modo de falha certo.
+
+**O que isto NÃO revoga:** a refutação acima continua de pé. A q23 alucinou uma vez em 25/08, e uma
+execução limpa não desfaz um contraexemplo — a defesa segue sendo *"o método reduz a frequência"*, não
+*"o método impede"*. E `indices_citados` continua sendo o ponto fraco: nesta execução as 18 respostas
+citaram a fonte certa, o que é bom sinal e **não** é medição de fidelidade da prosa, que segue
+declarada como não medida.
 
 ---
 
@@ -2542,7 +2561,7 @@ domínio. Nenhum seletor de trecho conserta isso, e nada mede relevância de rec
 | **P-12** | **`classe`: vocabulário ou curadoria?** | D-060 mostrou que o gargalo não é a regra de decisão. Exige base ampliada |
 | ~~P-13~~ | ~~Exclusão por menção vs. identidade~~ | **D-085** — veto de terceiro com escopo de frase. Falso positivo 2/7 → **7/7**, falso negativo 7/7 sem regressão |
 | **P-14** | **Quatro campos são calculados e nada os lê** | `estrategia_analise` e `exige_sinais_ia` (Query Planner), `score_recuperacao` (Retriever), `motivo_validacao` (Evidence Validator). Não é código morto — é capacidade anunciada e não entregue: a arquitetura publicada promete *"critérios de busca + estratégia de análise"*. Ou o subgrafo passa a lê-los, ou o diagrama para de prometê-los |
-| **P-15** | **Re-medir a abstenção do passo 8** | os 20-22/24 são do modelo morto; D-069 previu n=3 e não foi executado |
+| ~~P-15~~ | ~~Re-medir a abstenção do passo 8~~ | **D-040, re-medida em 02/09** — **23/24 = 96%** no modelo atual e no corpus pós-D-082, contra 20-22/24 do modelo morto. O único erro é abstenção indevida, não alucinação |
 | ~~P-20~~ | ~~O operador de borda da idade~~ | **D-085** — a borda (`idade == IDADE_MAXIMA`) vira **pendente** com a faixa impressa, não exclusão. Guardar o mês foi descartado: não consta em 6 das 8 fixtures |
 | **P-21** | **Relevância da tecnologia recomendada** | aberta por D-086. Morpheus (spear phishing, digital fingerprinting) recomendado para a dor de privacidade de uma healthtech: a recuperação casa `privacy`/`security` sem conhecer o domínio. **Nenhum seletor de trecho conserta isto** — é o motor de recomendação, e nada o mede hoje |
 | **P-19** | **O sweep do RAG (dimensão, banda de chunk, `k1`/`b`)** | **reaberta por D-078.** Estava cortado porque "o critério 2 já está no teto" — razão inválida. A razão candidata para manter o corte é outra e precisa ser dita: com 24 perguntas de gabarito, grade fina ajusta ao gabarito em vez de generalizar. O que joga contra o corte é `e@1 = 79%` (D-068): a primeira citação erra 1 vez em 5. Re-decidir junto com a base ampliada |

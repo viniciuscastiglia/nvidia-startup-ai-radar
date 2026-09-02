@@ -40,8 +40,9 @@ plano tinha fechado horas antes.
 - **`avaliar_rag.py` rodou** (02/09): o caminho de **produção não se moveu em nenhuma das seis
   colunas** depois da re-ingestão de D-082. A dúvida *"`e@1=79%` é de um corpus com entulho
   dentro"* está respondida — os 2 chunks removidos nunca ocuparam posição que o gabarito medisse.
-  Registrado dentro de **D-068**. **`--geracao` (P-15) está rodando** e é o que falta: a abstenção
-  do passo 8 depende do LLM, que trocou em 01/09.
+  Registrado dentro de **D-068**. **`--geracao` rodou e FECHA P-15:** a abstenção do passo 8 dá
+  **23/24 = 96%** no modelo atual (era 20-22/24 no modelo morto), e o único erro é **abstenção
+  indevida**, não alucinação — o lado seguro.
 - **`--juiz` (D-072)** segue não coletado. Não bloqueia nada: P-09 é ACEITAR no plano.
 - **A base continua em 8.** `"fintechs"` e `"agro"` devolvem zero — confirmado no banco.
 

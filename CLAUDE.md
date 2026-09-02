@@ -159,7 +159,7 @@ Nenhum número vive aqui: números envelhecem e este arquivo é carregado em tod
 |---|---|---|
 | ablação do RAG (r@k, e@k, os 5 motores) | **D-068** | `python scripts/avaliar_rag.py` |
 | régua dos agentes (trivial × casador × juiz) | **D-072** | `python scripts/avaliar_agentes.py` |
-| abstenção do passo 8 | **D-040** — *do modelo morto, ver P-15* | `--geracao` |
+| abstenção do passo 8 | **D-040** — re-medida em 02/09 no modelo atual | `--geracao` |
 | filtro do Inception (falso positivo E negativo) | **D-085** | `--exclusoes` |
 | `justificativa_tecnica`: seletor × os 150 primeiros | **D-086** | `--justificativas` |
 
