@@ -93,35 +93,14 @@ não desobedece nada — não há recomendação a seguir ali.
 7. **A base.** Ver a tensão não resolvida abaixo.
 8. **`classe` 3/7** — depende da base, ou de a re-medição do item 1 virar D-060.
 
-## O que eu considero FRÁGIL no plano — é aqui que a revisão rende
+## Os pontos fracos do plano — em envelope lacrado
 
-**Escrito por quem fez o plano, para ser contestado.**
+A lista do que quem fez o plano considera frágil está em **`projeto/revisao-pontos-cegos.md`**, e
+**não deve ser aberta antes de você ter escrito a sua própria.** O motivo está no arquivo: lista
+entregue antes da análise não informa a revisão, substitui ela.
 
-- **O maior risco estrutural: interface e vídeo em sessões consecutivas, sem folga entre elas.** Se a
-  interface escorregar, não há demo — e o vídeo é o único prazo imóvel. **É ponto único de falha
-  colado no prazo**, e nenhuma outra parte do plano tem essa forma.
-- **A tensão do volume não está resolvida, está escondida.** D-062 fixou timebox de 3h com piso em
-  20. Eu "corrigi" para 30 startups / 90 documentos por argumento de spec. Mas 22 novas × 3
-  documentos com `url_fonte` real e verificada em 3h é otimista. **Se render 20, a correção só trocou
-  "abaixo do alvo" por "estouro de timebox".** Precisa ser decidido de verdade, não herdado.
-- **A sessão de re-medição pode comer a sessão inteira.** São ~200 chamadas, e o modelo novo **emite
-  raciocínio dentro do `content`** — pode exigir ajuste de prompt antes de qualquer medição valer.
-  A alternativa é aceitar o pipeline determinístico e gastar o tempo na base e na interface.
-- **`query_planner`: vale uma sessão?** A alternativa de 10 minutos é tirar a promessa do diagrama.
-  Fazer o agente de verdade é melhor — mas é a única peça do plano cujo custo eu não estimei sobre
-  nada.
-- **P-06 não está decidida** e a interface tem uma sessão. Escopo não decidido mais prazo curto é a
-  combinação que estoura.
-- **Só existe UM fornecedor de LLM, e o Grok está parado há quatro dias.** D-067 registrou, em 28/08,
-  que o Grok *"foi sugerido pela liga e está pré-autorizado"* e que **não foi descartado por mérito —
-  não foi testado, porque a chave não existia**. Desde então o modelo escolhido morreu e a conta se
-  provou sem acesso a **nenhum** modelo de terceiros (0 vivos em 12).
-  **Isto tem a mesma forma do episódio do Cohere:** lá, a lição não foi "obedeça o TAPI" — foi que a
-  opção recomendada também era a mais robusta, e depender de um fornecedor só custou uma migração sob
-  pressão. Uma cadeia de fallback **entre modelos da NVIDIA** não resolve: não protege contra
-  entitlement nem contra o tier inteiro. **A cadeia certa é entre PROVEDORES**, `src/config.py` já
-  isola o provedor, e o segundo provedor já está pré-autorizado. **O bloqueio é a chave, não o
-  código.**
+Esse arquivo também abre com **o que eu não verifiquei** — os limites da auditoria de 01/09. Esse
+bloco pode ser lido a qualquer momento: ele diz onde procurar, não o que encontrar.
 
 ## Dívidas declaradas
 

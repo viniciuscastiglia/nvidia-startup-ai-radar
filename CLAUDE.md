@@ -229,6 +229,7 @@ Para avaliar sem Postgres local: `docker compose up -d` (porta 5433) e ajustar `
 | Arquivo | Abrir quando |
 |---|---|
 | `projeto/sessao-atual.md` | **no início de qualquer sessão** — o que está aberto e as decisões pendentes |
+| `projeto/revisao-pontos-cegos.md` | **envelope lacrado da revisão do plano** — abre com os limites da auditoria (pode ler sempre) e fecha com a lista de quem fez o plano, que só deve ser lida DEPOIS de você ter escrito a sua |
 | `projeto/decisoes.md` | **sempre que uma decisão for tomada** — escrever na hora. É o material de defesa, o roteiro do vídeo e a seção de arquitetura do README |
 | `projeto/plano.md` | sequência dos 18 dias, marcos e riscos |
 | `projeto/guia-de-trabalho.md` | método de trabalho e manutenção desta documentação |
