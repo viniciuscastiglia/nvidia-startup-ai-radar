@@ -15,10 +15,11 @@
 | verificação | resultado |
 |---|---|
 | `smoke_nvidia.py` | **3/3 (1 LENTO)** — o chat responde HTTP 200, mediana **51 s**, faixa 17–88 s |
-| `pytest -q` | **67 passed** (era 53) |
-| `python -m src.graph` | roda ponta a ponta, ~2 min, **zero chamada de LLM em produção** |
-| `avaliar_agentes.py` | `classe 3/7 · stack 6/7 · confianca 0/6 · elegivel 4/6+1amb · precisão 49% · recall 100%` |
-| `avaliar_agentes.py --exclusoes` | `7/7` falso negativo · `2/7` falso positivo |
+| `pytest -q` | **81 passed** (era 53 em 01/09, 67 no início de 02/09) |
+| `python -m src.graph` | roda ponta a ponta, **as duas empresas ELEGÍVEIS**, zero chamada de LLM em produção |
+| `avaliar_agentes.py` | `classe 3/7 · stack 6/7 · confianca 0/6 · elegivel **6/6**+1amb · precisão 49% · recall 100%` |
+| `avaliar_agentes.py --exclusoes` | `7/7` falso negativo · **`7/7`** falso positivo (era 2/7 — D-085) |
+| `avaliar_agentes.py --justificativas` | linha trivial `12/21` · seletor **`15/21`** (D-086) |
 | corpus RAG | **175 chunks** estruturais (era 177) · 16 tecnologias · gabarito de 24 perguntas |
 | base | **8 startups**, 24 documentos · `ano_fundacao` em 6 de 8 |
 | catálogo NVIDIA | **0 vivos de 10** sondados · o modelo de produção é o único que responde |
@@ -53,14 +54,15 @@ resto do trabalho, independente de qualidade.
 
 | item | o que é | dia | pronto quando |
 |---|---|---|---|
-| **P-10** | `justificativa_tecnica` sai de chunk cru: hoje entrega *"Join our ecosystem…"* e um case da **Writer**. É o primeiro campo que o gerente lê | **03/09** | nenhuma das 3 recomendações de um run cita empresa que não é a analisada |
+| ~~**P-10**~~ | **FEITO em 02/09 (D-086).** Régua rotulada antes do seletor; seletor `15/21` vs trivial `12/21`; num run real, justificativas que servem **1/6 → 4/6**. O case da Writer sumiu | ~~03/09~~ | ✅ |
 | **Base 8 → 30** | `"fintechs"` e `"agro"` devolvem **zero**. 27% do piso do TAPI | **03/09** | as duas consultas devolvem resultado; `seed.py --verificar-urls` passa |
 | **P-15 + `avaliar_rag`** | o corpus mudou em D-082 — `e@1=79%` é de um corpus com entulho dentro | **03/09** (background) | tabela nova registrada, com a ressalva de denominador |
 | **P-06 + interface** | zero byte. Única superfície que um não-engenheiro julga | **04–05/09** | consultar → ver → recomendações com evidência → exportar |
 | **Testes ausentes** | **três** módulos sem teste: `extractor.py` (249 linhas, primeiro nó, alimenta todos), `rag/geracao.py` (**o passo 8 do TAPI**, onde mora a abstenção de D-040) e `db.py` (o SQL da recuperação) | **05/09** | os três com teste; a abstenção do passo 8 coberta |
 | **P-11** | `confianca` é **0/6 constante** — campo do briefing com zero informação | **05/09** | ou promove o braço de D-059 (2/6), ou o campo para de ser impresso |
-| **P-20** | idade na borda: Laura tem 9,7–10,7 anos e a regra usa só o ano | **05/09** | borda vira `pendente`, não exclusão |
-| **P-13** | exclusão por menção de terceiro — **2/7 falso positivo** medido | **05/09** | falso positivo cai, falso negativo (7/7) não regride |
+| **P-21** | **novo (D-086):** Morpheus (spear phishing) recomendado para a dor de **privacidade** de uma healthtech. Não é texto, é **qual tecnologia** — e nada mede relevância de recomendação | **05/09** | ou ganha régua, ou vira ACEITAR escrito |
+| ~~**P-20**~~ | **FEITO em 02/09 (D-085).** A borda vira `pendente` com a faixa impressa | ~~05/09~~ | ✅ |
+| ~~**P-13**~~ | **FEITO em 02/09 (D-085).** Veto de terceiro com escopo de frase: falso positivo **2/7 → 7/7**, falso negativo 7/7 sem regressão | ~~05/09~~ | ✅ |
 | **P-14** | 4 campos calculados que ninguém lê — capacidade anunciada e não entregue | **06/09** | ou o subgrafo os lê, ou o diagrama e o README param de prometê-los |
 | **README** | diz "a definir" para decisões tomadas e "Em breve" para como rodar | **06/09** | alguém clona e roda sozinho, sem perguntar nada |
 | **Diagramas `.mmd`** | são de 23/08 e nunca foram regenerados; entram em "Repositório e documentação" e P-14 diz que prometem campos sem leitor | **06/09** | `python scripts/diagramas.py` roda e o resultado bate com o grafo compilado |
@@ -115,8 +117,9 @@ D-081/D-082 (o que mudou hoje). São as que um avaliador pergunta primeiro.
 
 ### 03/09 — os dois defeitos que o gerente sente na cara
 
-**Manhã · P-10.** Implementar a opção escolhida em §4. Ao fim, **rodar o grafo** e conferir a
-`justificativa_tecnica` das três recomendações de duas startups diferentes.
+**Manhã · P-10 FOI FEITA EM 02/09 (D-086), junto de P-13 e P-20 (D-085).** A manhã fica livre.
+Use-a no item mais barato que sobrou: **`avaliar_rag.py` e `--geracao` sobre o corpus pós-D-082**
+(P-15) — `e@1 = 79%` ainda é de um corpus com entulho dentro.
 
 **Tarde · base para 30.** Ordem **obrigatória**: fintech → agro → demais setores.
 D-062 já dá a estrutura: as 8 atuais mantêm gabarito, as 22 novas entram **como dado**, com
