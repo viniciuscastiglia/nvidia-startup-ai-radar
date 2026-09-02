@@ -125,6 +125,15 @@ D-062 já dá a estrutura: as 8 atuais mantêm gabarito, as 22 novas entram **co
 
 **Background (não ocupa ninguém):** `avaliar_rag.py`, `--geracao`, `--sustentacao`.
 
+**30 minutos, no fim do dia · O TESTE DE CLONE LIMPO — antecipado de 06/09.**
+`git clone` numa pasta nova, ambiente do zero, `.env` só com o que o `.env.example` documenta,
+`init_db.sql`, `seed.py`, `ingerir_nvidia.py`, `python -m src.graph`. **Anotar cada passo em que
+foi preciso saber algo que não está escrito.**
+
+> **Por que hoje e não em 06/09:** *"projeto que não executa"* é **eliminatório**, e este é o
+> último risco do plano sem limite conhecido. Achado em 03/09 tem 4 dias de conserto; em 06/09
+> tem um. É a regra da §7 aplicada a ela mesma.
+
 **PORTÃO 03/09:** o grafo roda; `"fintechs AI-native"` devolve resultado; nenhuma justificativa
 técnica cita empresa alheia. *Se P-10 não fechar hoje, ele empurra a base — não a interface.*
 
