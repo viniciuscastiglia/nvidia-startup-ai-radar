@@ -1,0 +1,223 @@
+# A RÉGUA DA `justificativa_tecnica` — P-10 (D-086)
+#
+# POR QUE ELA EXISTE, E POR QUE VEM ANTES DO SELETOR
+# ----------------------------------------------------
+# A tabela de pendências dizia, literalmente: *"a saída que o usuário lê é a única sem
+# instrumento"*. `justificativa_tecnica` é um dos 7 campos obrigatórios do TAPI e o primeiro que o
+# gerente lê — e nada quebrava quando ela vinha errada. Rodando o grafo em 02/09, ela saiu como
+# case da **Writer**, como CTA (*"Join our ecosystem…"*) e como menu (*"Learn More / - Documentation
+# / - FAQs"*). Anedota não é medição, e corrigir sem régua é ajustar ao último exemplo visto.
+#
+# ESTE ARQUIVO FOI ROTULADO **ANTES** DE O SELETOR EXISTIR, e é isso que o torna um teste em vez de
+# um espelho. A amostra é `random.sample(175, 30)` com `seed=20260902`, sobre a estratégia de
+# produção (`estrutural-v1`) — não é escolha de chunk a dedo.
+#
+# O QUE SE MEDE, E CONTRA QUAL LINHA TRIVIAL
+# -------------------------------------------
+# Hoje `justificativa_tecnica = citacao.trecho`: o chunk INTEIRO, mediana de 803 caracteres, do
+# qual o briefing imprime os 150 primeiros. Então a linha trivial deste critério é
+# **"os 150 primeiros caracteres do chunk"** — e ela não é fraca: metade dos chunks começa por uma
+# frase boa. Sem ela na tabela, qualquer número do seletor pareceria vitória (D-051).
+#
+# AS CINCO CATEGORIAS, FIXADAS ANTES DE ROTULAR
+#   serve                — afirma um fato verificável SOBRE A TECNOLOGIA: o que faz, como, com
+#                          que números, componentes ou requisitos
+#   case_de_terceiro     — o sujeito é OUTRA empresa (Writer, Iguazio, CrowdStrike, bunq…).
+#                          É o defeito nomeado em D-082
+#   navegacao            — rótulo de link, índice, listagem de vídeo, "Learn More About X"
+#   cta                  — convite a agir: join, contact, apply, activate, purchase, download
+#   marketing_generico   — prosa institucional sem fato verificável
+#   nao_serve            — fato, mas não sobre adoção (governança de repo, ferramenta legada)
+#
+# `ancoras` é a lista de trechos que um span CORRETO precisa conter — mais de um quando o chunk tem
+# mais de uma passagem boa, no mesmo idioma de `elegivel: [true, false]` do gabarito das fixtures:
+# aceitar as duas é mais honesto que eleger uma por gosto. `ancoras: null` significa **o chunk
+# inteiro não serve** — e esses casos saem do denominador, porque punir o seletor por não achar o
+# que não existe mede a amostra, não o seletor.
+#
+# `nota_prefixo` registra o que a linha trivial entrega hoje. É documentação, NÃO é pontuada — o
+# harness recalcula a linha trivial do texto, para que o número não dependa do meu rótulo.
+
+amostra:
+  fonte: chunks_nvidia · estrategia estrutural-v1
+  n_corpus: 175
+  n: 30
+  seed: 20260902
+  orcamento_span: 320   # caracteres — 2-3 frases é justificativa; 842 é despejo de documento
+
+casos:
+
+  - chunk: 5
+    tecnologia: NVIDIA Inception
+    ancoras: null
+    nota_prefixo: case_de_terceiro
+    nota: as 4 linhas são spotlight de membro — Iguazio e Vortex. Nenhuma fala da tecnologia.
+
+  - chunk: 6
+    tecnologia: NVIDIA Inception
+    ancoras: null
+    nota_prefixo: marketing_generico
+    nota: showcase + 6 eventos com cidade + VC Alliance. 18 linhas, zero fato técnico.
+
+  - chunk: 9
+    tecnologia: NVIDIA Inception
+    ancoras: ["Inception is free"]
+    nota_prefixo: serve
+    nota: FAQ de custo — fato verificável, e a linha trivial já o alcança.
+
+  - chunk: 34
+    tecnologia: NVIDIA NIM
+    ancoras: ["combines the ease of use and operational simplicity of managed APIs"]
+    nota_prefixo: serve
+
+  - chunk: 40
+    tecnologia: NVIDIA NIM
+    ancoras: null
+    nota_prefixo: navegacao
+    nota: índice de casos de uso; as descrições são marketing ("Enhance customer experiences").
+
+  - chunk: 58
+    tecnologia: NVIDIA NeMo
+    ancoras: ["agent-first, open suite of libraries", "integrates with existing AI tools"]
+    nota_prefixo: serve
+
+  - chunk: 74
+    tecnologia: NVIDIA NeMo
+    ancoras: null
+    nota_prefixo: case_de_terceiro
+    nota: CrowdStrike, Dell e Deloitte. Três cases, nada da tecnologia.
+
+  - chunk: 81
+    tecnologia: NVIDIA NeMo
+    ancoras: null
+    nota_prefixo: case_de_terceiro
+    nota: >-
+      O CASO QUE ABRIU P-10. Writer e Arize. A linha do Arize cita NeMo Customizer/Evaluator/
+      Guardrails, mas o sujeito continua sendo o Arize — é exatamente o defeito de D-082.
+
+  - chunk: 130
+    tecnologia: NeMo Guardrails
+    ancoras: ["licensed under the Apache License"]
+    nota_prefixo: nao_serve
+    nota: abre em governança de repo e fecha em bibtex; a licença é o único fato de adoção.
+
+  - chunk: 172
+    tecnologia: TensorRT-LLM
+    ancoras: null
+    nota_prefixo: navegacao
+    nota: >-
+      índice de blogs. Os títulos nomeiam técnicas reais (speculative decoding, disaggregated
+      serving) mas não AFIRMAM nada — é a diferença entre citar um título e citar um fato.
+
+  - chunk: 180
+    tecnologia: TensorRT-LLM
+    ancoras: ["24,000 tokens per second", "2.4x more Llama-70B throughput",
+              "6.7x faster Llama-70B over A100", "improves throughput by 60%"]
+    nota_prefixo: serve
+    nota: release notes com número medido — a densidade técnica mais alta da amostra.
+
+  - chunk: 183
+    tecnologia: TensorRT-LLM
+    ancoras: ["collects anonymous telemetry data by default"]
+    nota_prefixo: serve
+
+  - chunk: 185
+    tecnologia: TensorRT-LLM
+    ancoras: ["quantized (e.g., FP8, FP4)", "datacenter scale distributed inference serving"]
+    nota_prefixo: serve
+
+  - chunk: 212
+    tecnologia: RAPIDS / CUDA-X Data Science
+    ancoras: ["miniforge", "conda create -n rapids"]
+    nota_prefixo: serve
+    nota: comando de instalação — verificável por execução, que é o grau máximo.
+
+  - chunk: 214
+    tecnologia: RAPIDS / CUDA-X Data Science
+    ancoras: null
+    nota_prefixo: navegacao
+    nota: >-
+      as linhas com número (bunq 100x, Capital One 100x, TGen 10h->3min) são CASE DE CLIENTE.
+      Número não basta: o sujeito tem de ser a tecnologia. É a armadilha desta amostra.
+
+  - chunk: 250
+    tecnologia: CUDA Toolkit
+    ancoras: null
+    nota_prefixo: navegacao
+    nota: listagem de vídeo com duração.
+
+  - chunk: 252
+    tecnologia: CUDA Toolkit
+    ancoras: ["CUDA containers are available to download from NGC"]
+    nota_prefixo: cta
+
+  - chunk: 253
+    tecnologia: CUDA Toolkit
+    ancoras: ["Nsight Compute and Nsight System"]
+    nota_prefixo: navegacao
+
+  - chunk: 262
+    tecnologia: NVIDIA Riva
+    ancoras: ["convert spoken words into text"]
+    nota_prefixo: serve
+
+  - chunk: 263
+    tecnologia: NVIDIA Riva
+    ancoras: ["streaming ASR model with multimodal retrieval-augmented generation",
+              "ultra-low-latency streaming model for real-time automatic speech"]
+    nota_prefixo: navegacao
+
+  - chunk: 282
+    tecnologia: NVIDIA Omniverse
+    ancoras: ["provides libraries, APIs, services, and agent-ready tools"]
+    nota_prefixo: serve
+
+  - chunk: 285
+    tecnologia: NVIDIA Omniverse
+    ancoras: ["Cosmos is a world model (WFM) development platform"]
+    nota_prefixo: nao_serve
+    nota: abre em ferramenta DEPRECIADA — o pior lugar possível para uma recomendação.
+
+  - chunk: 303
+    tecnologia: NVIDIA Isaac
+    ancoras: ["cuMotion is an NVIDIA CUDA-accelerated library"]
+    nota_prefixo: cta
+
+  - chunk: 313
+    tecnologia: NVIDIA Healthcare (ex-Clara)
+    ancoras: ["GPU-accelerated pipelines for drug discovery",
+              "2x faster biofoundation model training"]
+    nota_prefixo: serve
+
+  - chunk: 317
+    tecnologia: NVIDIA Healthcare (ex-Clara)
+    ancoras: ["real-time runtime for building GPU-accelerated systems"]
+    nota_prefixo: serve
+
+  - chunk: 318
+    tecnologia: NVIDIA Healthcare (ex-Clara)
+    ancoras: ["GPU-accelerated implementations of BWA-MEM", "Over 100x faster analysis"]
+    nota_prefixo: serve
+
+  - chunk: 341
+    tecnologia: NVIDIA Morpheus
+    ancoras: ["available as open-source software on GitHub",
+              "Helm charts, Jupyter Notebooks"]
+    nota_prefixo: cta
+
+  - chunk: 343
+    tecnologia: NVIDIA Morpheus
+    ancoras: null
+    nota_prefixo: navegacao
+    nota: dois ponteiros de sessão de evento ("Watch…", "Explore…").
+
+  - chunk: 356
+    tecnologia: NVIDIA AI Enterprise
+    ancoras: ["brings together microservices, frameworks, and libraries",
+              "distilled from DeepSeek-R1"]
+    nota_prefixo: cta
+
+  - chunk: 358
+    tecnologia: NVIDIA AI Enterprise
+    ancoras: ["provide support for each step in the", "full-stack validated design"]
+    nota_prefixo: serve
