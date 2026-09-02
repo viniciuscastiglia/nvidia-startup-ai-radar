@@ -9,6 +9,31 @@
 **Documento de estudo:** [Anatomia do Radar](https://claude.ai/code/artifact/dc527bde-f149-49f8-87a5-3105197cc2e2)
 **Mapa e plano:** [O que falta no Radar](https://claude.ai/code/artifact/7e6e13e8-e7b5-4f5a-a2ae-85ff247eb007)
 
+## A BIFURCAÇÃO que a próxima sessão precisa resolver
+
+Tudo o mais no plano depende disto, e ainda não está escrito em decisão nenhuma:
+
+> **Este projeto é um pipeline determinístico, ou um sistema multi-agente com julgamento por LLM?**
+
+Hoje ele é **determinístico** — nenhum dos 8 agentes chama LLM em produção. Isso não foi preguiça:
+foi medido quatro vezes (D-056 empatou; D-059, D-060 e D-075 reprovaram). **Mas as quatro medições
+foram feitas em modelos que não existem mais** — três no 8B, três no `nemotron-3-nano` que morreu em
+01/09. E D-072 é o precedente que assusta: **o mesmo juiz que empatou no 8B PASSOU no modelo
+seguinte.**
+
+Os dois desfechos são bons, e são bons de formas diferentes:
+
+- **Se o LLM ganhar no modelo novo:** o Entregável 1 ("sistema multi-agente") deixa de ser topologia
+  e passa a ser julgamento; `classe` pode se resolver por flag em vez de por curadoria de base; e o
+  juiz do Extractor sai da gaveta.
+- **Se perder de novo:** o projeto ganha uma afirmação rara e forte — *"julgamento por LLM foi
+  testado em três gerações de modelo, contra linha de base trivial e com critério fixado antes, e
+  perdeu nas três"*. Isso é mais defensável que qualquer arquitetura.
+
+**O que não é aceitável é não saber** — e hoje não se sabe, porque o instrumento que produziu a
+resposta morreu. Custo estimado: ~200 chamadas. Risco: o modelo novo **emite raciocínio dentro do
+`content`**, o que pode exigir ajuste de prompt antes de qualquer número valer.
+
 ## Estado verificado em 01/09, no fim da sessão
 
 | verificação | resultado |
@@ -35,6 +60,11 @@
 os **7 campos obrigatórios** do output, anotados um a um em `state.py:316` · as **16 tecnologias** ·
 os **9 passos** do RAG, incluindo o passo 9 · os **8 agentes** registrados no grafo · diversidade de
 perfis (4/3/1) · rastreabilidade com `url_fonte` verificada.
+
+**Conformidade com as tecnologias recomendadas do TAPI: 4 de 4** (verificado em 01/09 no documento
+original, §5.3). pgvector — alternativa explicitamente permitida a Qdrant · PostgreSQL · `bm25s` ·
+**Cohere `rerank-v3.5`**. **O TAPI não recomenda LLM nenhum**, então a escolha do modelo dos agentes
+não desobedece nada — não há recomendação a seguir ali.
 
 **As três lacunas, todas dentro do escopo:**
 
@@ -82,9 +112,16 @@ perfis (4/3/1) · rastreabilidade com `url_fonte` verificada.
   nada.
 - **P-06 não está decidida** e a interface tem uma sessão. Escopo não decidido mais prazo curto é a
   combinação que estoura.
-- **Falta a cadeia de fallback em `src/llm.py`.** Ele aceita um modelo só. Uma lista ordenada que
-  caísse para o próximo em 410/404 transformaria o quinto EOL em degradação em vez de quebra. É a
-  conclusão arquitetural de quatro EOLs e não está no plano.
+- **Só existe UM fornecedor de LLM, e o Grok está parado há quatro dias.** D-067 registrou, em 28/08,
+  que o Grok *"foi sugerido pela liga e está pré-autorizado"* e que **não foi descartado por mérito —
+  não foi testado, porque a chave não existia**. Desde então o modelo escolhido morreu e a conta se
+  provou sem acesso a **nenhum** modelo de terceiros (0 vivos em 12).
+  **Isto tem a mesma forma do episódio do Cohere:** lá, a lição não foi "obedeça o TAPI" — foi que a
+  opção recomendada também era a mais robusta, e depender de um fornecedor só custou uma migração sob
+  pressão. Uma cadeia de fallback **entre modelos da NVIDIA** não resolve: não protege contra
+  entitlement nem contra o tier inteiro. **A cadeia certa é entre PROVEDORES**, `src/config.py` já
+  isola o provedor, e o segundo provedor já está pré-autorizado. **O bloqueio é a chave, não o
+  código.**
 
 ## Dívidas declaradas
 
@@ -96,12 +133,14 @@ perfis (4/3/1) · rastreabilidade com `url_fonte` verificada.
   o sistema.
 - **Os números de D-072, D-074 e D-075 não valem** até serem refeitos no modelo vivo.
 
-## Perguntas para a liga, se houver contato
+## Perguntas para a liga — a primeira virou BLOQUEANTE
 
-1. O reranker hospedado da NVIDIA saiu do ar e o projeto migrou para o Cohere, que o próprio TAPI
+1. **A chave do Grok.** É a única pergunta que desbloqueia trabalho: o Grok foi sugerido pela própria
+   liga e está pré-autorizado, e é o **único caminho fora do `build.nvidia.com`** — o catálogo que já
+   matou quatro modelos e não avisa. Pedir agora; se sair, é uma sessão curta.
+2. Vocês vão **executar** o projeto na avaliação, e com chave de quem? O catálogo aposentou o LLM em
+   01/09 sem aviso prévio de nenhum tipo, e a conta gratuita não alcança nenhum modelo de terceiros.
+3. O reranker hospedado da NVIDIA saiu do ar e o projeto migrou para o Cohere, que o próprio TAPI
    recomenda — confirmam que é aceitável?
-2. Vocês vão **executar** o projeto na avaliação, e com chave de quem? **Importa mais do que
-   parecia:** o catálogo aposentou o LLM em 01/09 sem aviso prévio de nenhum tipo, e a conta gratuita
-   não alcança nenhum modelo de terceiros (0 vivos em 12 sondados).
-3. Aviso de que o catálogo lista modelos que a conta não pode chamar, e que o EOL só é descoberto
-   por chamada real, depois do fato.
+4. Aviso de que o catálogo lista modelos que a conta não pode chamar, e que o EOL só é descoberto por
+   chamada real, depois do fato.
