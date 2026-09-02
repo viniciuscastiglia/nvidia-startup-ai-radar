@@ -160,7 +160,8 @@ Nenhum número vive aqui: números envelhecem e este arquivo é carregado em tod
 | ablação do RAG (r@k, e@k, os 5 motores) | **D-068** | `python scripts/avaliar_rag.py` |
 | régua dos agentes (trivial × casador × juiz) | **D-072** | `python scripts/avaliar_agentes.py` |
 | abstenção do passo 8 | **D-040** — *do modelo morto, ver P-15* | `--geracao` |
-| filtro do Inception (falso positivo E negativo) | **D-071** | `--exclusoes` |
+| filtro do Inception (falso positivo E negativo) | **D-085** | `--exclusoes` |
+| `justificativa_tecnica`: seletor × os 150 primeiros | **D-086** | `--justificativas` |
 
 **A linha de base trivial é obrigatória em toda tabela de agente** (D-051) — é o `denso puro` deste
 critério, e sem ela 49% de precisão parece bom em vez de "17 pontos acima de emitir tudo".
@@ -205,6 +206,7 @@ python scripts/avaliar_agentes.py --validar    # gabarito, evidência literal, t
 python scripts/avaliar_agentes.py --baseline   # a linha trivial, obrigatória na tabela
 python scripts/avaliar_agentes.py              # extrator + classificador + validador (zero API)
 python scripts/avaliar_agentes.py --exclusoes  # filtro do Inception: falso positivo E negativo
+python scripts/avaliar_agentes.py --justificativas  # o seletor do trecho técnico vs. os 150 primeiros
 python scripts/avaliar_agentes.py --juiz       # LIGA o juiz do Extractor — ~52 chamadas
 python scripts/avaliar_agentes.py --rubrica    # braço REPROVADO (D-060)
 python scripts/avaliar_agentes.py --confianca-diagnostico  # braço REPROVADO (D-059)
@@ -259,6 +261,7 @@ Para avaliar sem Postgres local: `docker compose up -d` (porta 5433) e ajustar `
 | `scripts/avaliar_agentes.py` | a régua dos agentes: o que se conta e por que a linha trivial existe |
 | `data/avaliacao/gabarito.yaml` | as 24 perguntas do RAG, com documento-fonte esperado |
 | `data/avaliacao/exclusoes.yaml` | a régua do filtro do Inception, com os dois lados medidos separados |
+| `data/avaliacao/justificativas.yaml` | a régua da `justificativa_tecnica` — 30 chunks de amostra semeada, rotulados **antes** do seletor |
 | `data/nvidia/fontes.yaml` | manifesto curado das 16 fontes do RAG |
 
 `TAPI Processo Seletivo.md` é a fonte original — não editar.

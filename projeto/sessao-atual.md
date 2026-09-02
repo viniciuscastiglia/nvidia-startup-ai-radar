@@ -1,62 +1,56 @@
-# Pauta corrente — 02/09, fim da sessão de revisão do plano
+# Pauta corrente — 02/09, fim da sessão de execução
 
 > Único arquivo de sessão do repositório. Guarda **o que está aberto**, não o que já aconteceu —
 > isso está em `decisoes.md` e no git.
 >
-> **O PLANO DOS DIAS FINAIS ESTÁ FECHADO e mora em `projeto/plano.md`.** Ele é a fonte única do
-> que falta: todo item aberto tem destino (FAZER com dia · ACEITAR com justificativa · DECIDIR).
-> **Comece por ele.** Este arquivo só diz onde a última sessão parou.
-> Visão visual: [Os últimos sete dias](https://claude.ai/code/artifact/b6d37462-6743-43c1-ac6d-da5a15af7839).
+> **O plano dos dias finais mora em `projeto/plano.md`** e continua sendo a fonte do que falta.
+> Este arquivo só diz onde a última sessão parou.
 
-## O que a sessão de 02/09 fez
+## O que a sessão de 02/09 (execução) fez
 
-Revisão do plano que **rodou o sistema** em vez de lê-lo. Três defeitos que duas sessões de
-auditoria estática não tinham achado, todos corrigidos e medidos:
+A sessão **rodou o grafo antes de tocar em código** (D-083) — e a saída reordenou a fila que o
+plano tinha fechado horas antes.
 
-- **D-080** — o `smoke_nvidia.py` chamava **lento de morto**. O modelo escolhido em D-079 não
-  morreu: responde HTTP 200 com mediana de **51 s** (17-88 s). `LLM_TIMEOUT` 30 → 120, e o smoke
-  ganhou o estado `LENTO`, separado de `FALHOU`. **Ler `LENTO` como EOL teria aberto uma migração
-  desnecessária a 5 dias do vídeo.**
-- **D-081** — o `query_planner` descartava **"ia" e "ai"** (filtro `len > 2`), em **dois lugares**.
-  `"startups de IA"` saía com `palavras_chave=[]` e o sistema imprimia um briefing confiante sobre
-  uma fatia alfabética da base. `discrimina()` mata o silêncio. 14 testes novos; suíte 53 → 67.
-- **D-082** — a `justificativa_tecnica` saía como case de **outra empresa**. Inception filtrado da
-  recomendação (mas **mantido no corpus**: 4 perguntas do gabarito dependem dele), entulho de página
-  removido (177 → 175 chunks), `ano_fundacao` de 3 → 6 de 8. **P-20** aberta.
+- **D-084 — "efeito no vídeo" sai do lugar de critério técnico.** Levantado pelo Vinícius: o
+  `plano.md` §5 comparava as opções de P-10 numa tabela cuja coluna era *"efeito no vídeo"*. É
+  **D-078 com outra roupa** — o barema saiu da função objetivo e o vídeo sentou na cadeira vazia
+  em 5 dias. Recomparado por defeito · latência sentida · fornecedor único · reversibilidade,
+  apareceu o argumento que a coluna escondia: o **fornecedor único**. Entrou no `CLAUDE.md`.
+- **D-085 — o filtro do Inception recusava quem devia entrar.** Fecha **P-13** (aberta desde 25/08)
+  e **P-20**. As duas empresas do run saíam `NÃO ELEGÍVEL`; a Axenya, prospect de maior prioridade
+  da base, por *"Integramos consultoria"*. Veto de terceiro **com escopo de frase** — é o escopo,
+  não a lista de palavras, que generaliza. Falso positivo **2/7 → 7/7**, falso negativo 7/7 sem
+  regressão.
+- **D-086 — a `justificativa_tecnica` deixa de ser o chunk cru.** Fecha **P-10**, abre **P-21**.
+  A régua foi rotulada e **commitada antes do seletor**. Seletor **15/21** contra linha trivial
+  **12/21**; num run real, justificativas que servem **1/6 → 4/6**.
 
-## Estado verificado em 02/09
+## Estado verificado em 02/09, fim da sessão
 
 | verificação | resultado |
 |---|---|
-| `smoke_nvidia.py` | **3/3 (1 LENTO)** — chat 51 s de mediana, embedding 607 ms, rerank 263 ms |
-| `pytest -q` | **67 passed** |
-| `python -m src.graph` | roda ponta a ponta, ~2 min, **zero chamada de LLM em produção** |
-| `avaliar_agentes.py` | `classe 3/7 · stack 6/7 · confianca 0/6 · elegivel 4/6+1amb · 49%/100%` |
-| `--exclusoes` | `7/7` falso negativo · `2/7` falso positivo |
-| `--rubrica` / `--confianca-diagnostico` | **4/7** e **2/6** — idênticos a D-060 e D-059 |
+| `pytest -q` | **81 passed** (era 67 no início do dia) |
+| `python -m src.graph` | roda ponta a ponta, **as duas empresas ELEGÍVEIS**, zero LLM em produção |
+| `avaliar_agentes.py` | `classe 3/7 · stack 6/7 · confianca 0/6 · elegivel 6/6+1amb · 49%/100%` |
+| `--exclusoes` | **7/7** falso negativo · **7/7** falso positivo |
+| `--justificativas` | trivial **12/21** · seletor **15/21** |
 
 ## O que ficou pendurado
 
-- **`--juiz` (D-072) rodou >1 h em background e não foi coletado.** É a bifurcação
-  determinístico × julgamento por LLM. **Não bloqueia nada**: P-09 já está classificada como
-  ACEITAR no plano — *medir não é promover*, e promover a 5 dias do vídeo exigiria revalidar todo o
-  subgrafo a jusante. Se der vontade de refazer: `avaliar_agentes.py --juiz`, ~52 chamadas, ~45 min.
-- **`--sustentacao` e `--geracao` não rodaram.** `--geracao` **precisa** rodar depois da
-  re-ingestão de D-082, junto com `avaliar_rag.py` — `e@1 = 79%` é de um corpus com entulho dentro.
+- **`avaliar_rag.py` e `--geracao` continuam sem rodar depois de D-082.** `e@1 = 79%` é de um
+  corpus com entulho dentro. **P-15 segue aberta** — é o item mais barato que sobrou.
+- **`--juiz` (D-072)** segue não coletado. Não bloqueia nada: P-09 é ACEITAR no plano.
+- **A base continua em 8.** `"fintechs"` e `"agro"` devolvem zero — confirmado no banco.
 
-## A correção de premissa que a sessão trouxe
+## O que esta sessão comprou de método
 
-A fila anterior mandava *"re-medir o que foi medido em modelo morto"* e listava quatro braços.
-**Dois deles nunca precisaram:** `--rubrica` e `--confianca-diagnostico` são **zero API** e foram
-reproduzidos hoje idênticos a D-060 e D-059. A morte do modelo nunca os tocou.
-
-## A regra que esta sessão comprou
-
-> **Leitura de código não substitui execução.** Duas sessões de auditoria estática não acharam
-> nenhum dos três defeitos acima. Uma execução achou os três em uma hora.
-> **Toda sessão que mexe em comportamento roda o grafo antes de fechar.**
+> **Duas vezes no mesmo dia a execução achou o que a leitura não acharia** — e a segunda vez foi
+> contra o próprio plano: o item "entulho de página, rodada 2" foi **cancelado por evidência**,
+> porque os três chunks que casavam os marcadores tinham conteúdo bom dentro. O diagnóstico estava
+> errado; o defeito nunca esteve no corpus.
 
 ## Decisões que dependem do Vinícius
 
-Estão em `plano.md` §3.3, com prazo. As duas de hoje: **a chave do Grok** (único risco sem
-contramedida) e **P-10** (de onde sai a `justificativa_tecnica`).
+Em `plano.md` §3.3. As que continuam abertas e **não foram tocadas hoje**:
+**a chave do 2º provedor de LLM** (único risco sem contramedida), **quem escolhe as 22 empresas da
+base**, e **o canal de submissão** — que é eliminatório por logística.
