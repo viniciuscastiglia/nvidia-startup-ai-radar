@@ -2,12 +2,16 @@
 
 **Uma entrada por decisão, escrita no momento em que ela é tomada.**
 
-Este arquivo tem três usos, e é por isso que ele é o hábito de maior alavancagem do projeto:
+**Para que serve:** para que a decisão continue **revisável**. Uma escolha sem a alternativa
+descartada ao lado não é revisável — daqui a duas semanas, mudar de ideia custa refazer a análise
+inteira, e a tendência vira manter a escolha por inércia. Este arquivo é também a camada de
+referência do projeto: o `CLAUDE.md` não guarda número nenhum e aponta para cá; **60 docstrings em
+`src/` e `scripts/` citam D-0NN**. Apagar uma entrada quebra ponteiro.
 
-- **Eliminatório nº 4** do barema — *"o candidato precisa explicar as decisões de arquitetura do
-  próprio projeto"*
-- **Vídeo** (peso 20) — é o roteiro pronto
-- **Repositório e documentação** (peso 10) — vira a seção de arquitetura do README
+**Para quem se escreve:** para quem abrir o repositório sem ter estado na sessão — inclusive você
+daqui a seis meses. Não para uma plateia que vai avaliar. A diferença tem consequência de forma:
+**quem escreve para ser avaliado escreve a defesa inteira; quem escreve para o leitor futuro
+escreve a decisão.** Ver D-078.
 
 ## Formato
 
@@ -21,15 +25,20 @@ Este arquivo tem três usos, e é por isso que ele é o hábito de maior alavanc
 **Revisto:** o que uma medição posterior derrubou. Só quando existe.
 ```
 
-O campo **Alternativas descartadas** é o mais importante: é literalmente a pergunta que o
-avaliador vai fazer.
+O campo **Alternativas descartadas** é o mais importante: sem ele a decisão não tem como ser
+revisitada sem refazer a análise do zero.
 
-## A regra de manutenção (D-073)
+## A regra de manutenção (D-073, D-078)
 
 **Este arquivo guarda a decisão, não o caderno de laboratório.** Um número só fica se ele é verdade
 sobre o sistema que roda hoje; se o instrumento que o produziu morreu, fica a **conclusão** em uma
 linha, e só quando ela sobrevive ao instrumento. O histórico completo está no git — que é o que
 garante o append-only, não o tamanho do arquivo.
+
+**Disciplina de tamanho (D-078).** Uma entrada normal cabe em ~15 linhas: decisão, alternativa,
+motivo, reversibilidade. Passar muito disso é sinal de que se está narrando o percurso em vez de
+registrar o resultado — e o percurso já está no git. O teste é direto: **corta tudo que o leitor
+futuro não precisa para decidir se mantém ou reverte a escolha.**
 
 ---
 
@@ -1454,6 +1463,12 @@ com o argumento — a regra 5 do `plano.md`: *"corte o número de empresas, não
 **Alternativas descartadas:** 25 e 20 — as duas economizam 1-2h e as duas exigem justificar no README
 por que o requisito não foi cumprido. **O texto de justificativa carrega mais risco que as 2h que ele
 economiza**, num critério que vale 10 pontos e é lido por quem também leu o TAPI.
+**Revisto (D-078):** o argumento acima é de perda de nota, e ele não se sustenta mais. **A decisão
+continua sendo 30, por uma razão melhor:** 8 fixtures **não discriminam**. A régua satura, e o
+gargalo de vocabulário do Classifier (P-12) é insolúvel nesse tamanho porque não há variedade
+linguística suficiente para separar os casos — D-060 já mostrou que o gargalo não é a regra de
+decisão. O piso de 30 deixa de ser obediência ao requisito e vira o tamanho mínimo em que a
+medição significa alguma coisa.
 
 ---
 
@@ -1773,46 +1788,31 @@ referências cruzadas a `D-0NN` em `src/`, `tests/`, `scripts/` e na documentaç
 ---
 
 ## D-074 — O critério do julgamento semântico no Evidence Validator, fixado ANTES do código
-**Data:** 31/08/2026 · escrito antes de a primeira linha ser alterada · **APROVADO em 31/08, alvos CONGELADOS**
+**Data:** 31/08/2026 · escrito antes de a primeira linha ser alterada · **alvos CONGELADOS**
+· **medido em D-075: REPROVOU**
 
-**O que está sendo decidido.** Mover a pergunta *"a evidência SUSTENTA a afirmação?"* para o
-**Evidence Validator**, que marca `validada=False` em vez de deletar — em vez de mantê-la no juiz
-do Extractor, que descarta o candidato e a dor nunca nasce.
+**Decisão:** mover a pergunta *"a evidência SUSTENTA a afirmação?"* para o **Evidence Validator**,
+que marca `validada=False`, em vez de mantê-la no juiz do Extractor, que **deleta** o candidato.
 
-**O defeito, medido em 31/08 e não suposto:** o Extractor emite 34 dores sobre as 8 fixtures e
-**10 estão erradas**. O Evidence Validator **não barra nenhuma**: 0 de 10, e a confiança de uma dor
-errada é indistinguível da de uma certa (erradas: 4 baixa / 4 media / 2 alta; certas: 4 / 5 / 3).
-Ele mede a **espessura da evidência** — quantos tipos de documento, quão recente — e nunca o salto
-da evidência para a conclusão. A frase *"monitoramento do sistema fotovoltaico"* é fonte impecável
-para uma conclusão errada.
+**O defeito, medido e não suposto:** o Extractor emite 34 dores sobre as 8 fixtures e **10 estão
+erradas**. O Evidence Validator **não barra nenhuma** (0/10), e a confiança de uma dor errada é
+indistinguível da de uma certa. Ele mede a **espessura da evidência** — quantos tipos de documento,
+quão recente — e nunca o salto da evidência para a conclusão. *"Monitoramento do sistema
+fotovoltaico"* é fonte impecável para uma conclusão errada.
 
-**É a terceira vez que este projeto encontra a mesma forma.** D-035: *relevância não é
-responsibilidade* — um trecho pode ser perfeitamente relevante e não conter a resposta. Aqui:
-***não contradizer não é sustentar***. As 10 dores erradas não são contraditas pela evidência; são
-**neutras** em relação a ela. Por isso uma checagem de *contradição* pegaria zero — a que funciona
-é de *sustentação*, que é a que o juiz já faz.
+**A forma, pela terceira vez neste projeto:** D-035 achou que *relevância não é responsividade*.
+Aqui: ***não contradizer não é sustentar***. As 10 dores erradas não são contraditas pela evidência
+— são **neutras** em relação a ela, e por isso uma checagem de *contradição* pegaria zero.
 
-**Por que no Validator e não no Extractor** — três argumentos, e o terceiro é o mais forte:
-1. `validada` hoje é **estruturalmente `True`**: o único caminho para `False` é "nenhuma
-   evidência", e o Extractor nunca cria dor sem evidência. Medido: **34 de 34 passam**. A linha
-   `validadas = [d for d in ... if d.validada]` no `recommendation.py` é um portão que nunca fecha.
-2. Põe o desenho de **D-010** para funcionar pela primeira vez: *"o Validator anota e rebaixa, quem
-   barra é o Recommendation"* está no repositório desde o dia 1 e nunca operou, porque a camada 1
-   nunca conseguia dizer não.
-3. **O juiz do Extractor viola o princípio da própria D-010** — ele DELETA o candidato. D-010 diz,
-   com todas as letras: *"ausência de sinal ≠ sinal negativo. Nada é DELETADO, só rebaixado."*
-**A hipótese que isso abre, e é a razão de a decisão valer a pena:** o juiz custa recall (100% →
-71-79%) **porque deleta**. Se a dor sobrevive marcada, a informação não é destruída — e o recall do
-perfil não cai. **Hipótese, não medição.**
+**Por que no Validator e não no Extractor:** `validada` era **estruturalmente `True`** (o único
+caminho para `False` era "nenhuma evidência", que o Extractor nunca produz — 34/34 passavam), então
+o filtro em `recommendation.py` era um portão que nunca fechava. E o juiz do Extractor viola D-010,
+que diz com todas as letras *"ausência de sinal ≠ sinal negativo; nada é DELETADO, só rebaixado"*.
 
-### PRÉ-CONDIÇÃO — sem isto a medição mede zero
+**A hipótese que motivou a decisão:** o juiz custa recall (100% → 71-79%) **porque deleta**; se a
+dor sobreviver marcada, a informação não é destruída. *(Refutada em D-075.)*
 
-`avaliar_agentes.py:489` faz `emitidas = {d.dor for d in perfil.dores_observadas}` e **não olha
-`validada`**. Com a dor sobrevivendo marcada, o placar não se move. **A régua tem que separar
-`emitida` de `validada` ANTES de qualquer mudança de comportamento**, e a linha de base tem que ser
-re-medida nas duas colunas. Isso não é preparação: é o passo 0.
-
-### A linha de base e o TETO, medidos em 31/08
+### A linha de base e o TETO — a medição durável desta entrada
 
 | braço | precisão | recall | discrim | proibidas |
 |---|---|---|---|---|
@@ -1822,86 +1822,43 @@ re-medida nas duas colunas. Isso não é preparação: é o passo 0.
 | juiz no Extractor, deleta (D-072) | 83-96% | **71-79%** | 6-8/8 | 1-2 |
 | **TETO — julgamento perfeito** | **100%** | **100%** | **6/8** | **0** |
 
-**O controle barato é obrigatório na tabela, e ele é constrangedor.** `observabilidade` e
-`dependencia_fornecedor` causam **7 dos 10 erros**; apagar os dois é mudança de 8 caracteres e faz
-**69%** — acima dos 64% que D-055 fixou como alvo para o juiz. **A barra de D-055 está queimada:
-qualquer critério novo se fixa contra 69%, não contra 49%.** (Apagar os gatilhos não é a solução —
-mataria uma das 8 dores do TAPI para sempre e seria ajuste a 8 fixtures. É linha de controle, como
-`--truncar-pool` em D-037.)
+**Dois achados desta tabela sobrevivem a qualquer braço futuro:**
 
-**E o teto proíbe uma guarda de D-058.** Com julgamento **perfeito** a discriminação cai para
-**6/8**: duas fixtures passam a emitir o mesmo conjunto quando os erros somem. **O 8/8 de hoje é em
-parte artefato dos erros.** Guardar em 8/8 vetaria um juiz perfeito — é literalmente o erro de
-D-060 (*"fixar a margem sem calcular o teto é fixar um número, não um critério"*), evitado desta vez
-porque o teto foi calculado antes.
+1. **A barra de D-055 está queimada.** `observabilidade` e `dependencia_fornecedor` causam 7 dos 10
+   erros; apagá-los é mudança de 8 caracteres e dá **69%** — acima dos 64% que D-055 fixou como alvo.
+   Qualquer critério novo se fixa contra 69%, não contra 49%. (Apagar não é solução: mataria uma das
+   8 dores do TAPI e seria ajuste a 8 fixtures. É linha de controle, como `--truncar-pool` em D-037.)
+2. **O 8/8 de discriminação de hoje é em parte artefato dos erros.** Com julgamento perfeito ela cai
+   para **6/8**. Guardar em 8/8 vetaria um juiz perfeito — o erro de D-060, evitado por calcular o
+   teto antes.
 
-### Os alvos
+### Os alvos congelados
 
 | métrica | onde | alvo |
 |---|---|---|
 | **precisão de dor** | o que chega ao Recommendation | **≥ 80% nas três execuções** |
-| **recall no PERFIL** | `perfil.dores_observadas` | **= 100%, exato** — se cair, algo foi deletado e o desenho falhou |
-| **recall no Recommendation** | depois do filtro `validada` | **≥ 79%** — não pode custar mais recall que o juiz que deleta |
+| **recall no PERFIL** | `perfil.dores_observadas` | **= 100%, exato** |
+| **recall no Recommendation** | depois do filtro `validada` | **≥ 79%** |
 | dores proibidas | o que chega ao Recommendation | **≤ 2 nas três execuções** |
 
-**Por que 80% e não 64%:** o controle barato é determinístico em 69%, e o espalhamento do juiz entre
-execuções é de ~13 pontos. Uma barra em 80% exige que **a pior execução** supere o controle por 11
-pontos — margem maior do que a variação entre execuções consegue fabricar.
+**Por que 80% e não 64%:** o controle é determinístico em 69% e o espalhamento entre execuções é de
+~13 pontos; 80% exige que a **pior** execução supere o controle por 11 pontos — mais do que a
+variação consegue fabricar. **Por que o recall aparece em dois lugares:** é a lacuna que D-055
+deixou e que D-060 e D-072 reencontraram — *fixar a barra sem nomear tudo que pode se mover*. A
+separação perfil × recommendation é justamente o que distingue "rebaixar" de "deletar".
 
-**Por que o recall aparece em DOIS lugares:** é a lacuna que D-055 deixou e que D-060 e D-072
-encontraram de novo — *fixar a barra sem nomear todas as métricas que podem se mover*. Terceira vez;
-aqui ela é fechada por construção, e a separação perfil × recommendation é justamente o que
-distingue "rebaixar" de "deletar".
+**Guardas (veto, não alvo):** `maturidade ≥ 6/7` · `elegivel ≥ 5/7` · `motivo_exclusao ≥ 5/7` ·
+evidência literal 100% · `pytest` verde · **discriminação ≥ 6/8** · **`classe ≥ 2/7`** — guardada em
+2/7 e não 3/7 porque D-060 mediu que o gargalo dela é **vocabulário**, e vetar por um defeito que
+esta mudança não causa nem conserta seria vetar pelo motivo errado.
 
-### As guardas — não são alvo, são veto
+**Pré-condição (passo 0):** a régua tinha de separar `emitida` de `validada` antes de qualquer
+mudança de comportamento — `avaliar_agentes.py` contava só as emitidas, e o placar não se moveria.
 
-`maturidade_stack ≥ 6/7` · `elegivel ≥ 5/7` · `motivo_exclusao ≥ 5/7` · `evidência literal 100%` ·
-`pytest` verde · **`discriminação ≥ 6/8`** (não 8/8 — ver o teto) · **`classe ≥ 2/7`**.
-
-**`classe` é guardada em 2/7 e isso precisa ser dito em voz alta:** o juiz já a piora de 3/7 para
-2-3/7, e D-060 mediu que o gargalo dela é **vocabulário**, não regra de decisão — três das quatro
-fixtures `AI-native` não têm um único marcador de profundidade técnica. Guardar em 3/7 vetaria por
-um defeito que esta mudança não causa e não pode consertar. Guardar em 2/7 é aceitar a perda
-conhecida sem deixá-la crescer em silêncio.
-
-**Se qualquer guarda cair, a mudança sai — mesmo que o alvo tenha passado** (D-058, lição de D-048).
-
-### A ordem de medição, e o motivo é atribuição
-
-| passo | o que muda | o que fica atribuído |
-|---|---|---|
-| 0 | a régua separa `emitida` de `validada` | a linha de base nas duas colunas |
-| 0b | apagar os dois gatilhos piores | a linha de controle barata (69%) |
-| 1 | **só** o Evidence Validator julga sustentação | o delta desta decisão, isolado |
-| 2 | comparar com o juiz que deleta (D-072) | qual COLOCAÇÃO é melhor, não se a pergunta funciona |
-
-O passo 2 não re-mede se a pergunta funciona — **D-072 já provou que funciona**. Ele responde a
-pergunta que sobrou: deletar ou rebaixar.
-
-### O que fazer se empatar
-
-1. **Empate ou derrota: não entra em produção.** Vira achado medido, com o número, atrás de flag —
-   o destino de `USAR_JUIZ_LLM` (D-056), `CONFIANCA_DA_EVIDENCIA_DO_DIAGNOSTICO` (D-059) e
-   `RUBRICA_EM_DEGRAUS` (D-060).
-2. **Um ajuste de prompt só**, declarado como único antes de rodar. D-056: *"um ajuste é correção;
-   três é sobreajuste com outro nome."*
-3. **O gabarito não muda para o sistema passar.** Um valor só se altera com argumento escrito a
-   partir de `contexto/02`, **nunca a partir do resultado medido**, e commitado antes da medição.
-4. **A régua não muda depois do passo 0.** Ela é instrumento; mexer nela depois de ver o placar é a
-   versão sofisticada de mexer no gabarito.
-
-**Custo estimado:** ~34 chamadas de LLM por execução (uma por dor), × 3 execuções = ~100. Não toca o
-Cohere, então o teto de 10 req/min não entra. Cabe no orçamento.
-
-**Reversível?** Fácil — nasce atrás de flag, como as três anteriores.
-
-
----
+**Reversível?** Fácil — nasce atrás de flag.
 
 ## D-075 — O julgamento de sustentação foi medido, REPROVA no recall, e a colocação não muda nada
 **Data:** 31/08/2026 · alvo fixado em D-074 · ~102 chamadas em 3 execuções · **REPROVADA, fica atrás de flag**
-
-**O resultado, contra os alvos congelados em D-074:**
 
 | | exec 1 | exec 2 | exec 3 | alvo | |
 |---|---|---|---|---|---|
@@ -1911,67 +1868,41 @@ Cohere, então o teto de 10 req/min não entra. Cabe no orçamento.
 | discriminação | 7/8 | 6/8 | 7/8 | ≥ 6/8 | passa |
 | dores proibidas | 2 | 2 | 0 | ≤ 2 | passa |
 
-Guardas: `maturidade 6/7` · `elegivel 5/7` · `motivo_exclusao 5/7` · `classe 3/7` — todas seguraram.
-**Quatro dos cinco alvos passam nas três execuções; um falha nas três.** Pela regra 1 de D-074,
-`JULGAR_SUSTENTACAO = False`. É o quarto braço que o próprio critério deste projeto reprova, depois
-de D-056, D-059 e D-060.
+Todas as guardas seguraram. **Quatro dos cinco alvos passam nas três execuções; um falha nas três.**
+Pela regra de D-074, `JULGAR_SUSTENTACAO = False`. É o quarto braço que o critério deste projeto
+reprova, depois de D-056, D-059 e D-060.
 
-### O passo 2 respondeu, e é o achado que vale mais que o placar
+### O achado que vale mais que o placar: o custo é da PERGUNTA, não da colocação
 
-| | juiz no Extractor (**deleta**) | validator (**rebaixa**) |
-|---|---|---|
-| precisão | 83-96% (D-072) | 81-100% |
-| recall | 71-79% | 71-75% |
-| dores proibidas | 1-2 | 0-2 |
-| discriminação | 6-8/8 | 6-7/8 |
+Rebaixar (Validator) e deletar (juiz do Extractor) saem **metricamente indistinguíveis** — precisão
+81-100% contra 83-96%, recall 71-75% contra 71-79%. O prompt foi reusado **literalmente**
+(`INSTRUCAO` e `CRITERIO_DOR` importados do Extractor) exatamente para tornar a atribuição válida:
+com prompt idêntico, a diferença observada é atribuível à colocação — e ela é nula.
 
-**Metricamente indistinguíveis.** O prompt foi reusado LITERALMENTE (`INSTRUCAO` e `CRITERIO_DOR`
-importados do Extractor) exatamente para permitir esta conclusão: com prompt idêntico, a diferença
-observada é atribuível à colocação — e ela é nula.
-
-**Logo o custo de recall é da PERGUNTA, não da colocação.** Perguntar *"a evidência sustenta?"*
-custa ~25% das dores certas em qualquer ponto do pipeline. Isto refuta a hipótese que motivou D-074:
-*"o juiz custa recall porque DELETA; se a dor sobreviver marcada, a informação não é destruída"*.
-Ela está **meio certa e meio errada**, e a régua de duas colunas mostra exatamente onde: o recall do
-**perfil** fica em 100% — nada é deletado, o desenho funciona —, mas o Recommendation filtra por
-`validada` e a perda reaparece idêntica. **A colocação mudou onde a informação sobrevive, não se o
-Recommendation a enxerga.**
+**Isso refuta a hipótese que motivou D-074.** Perguntar *"a evidência sustenta?"* custa ~25% das
+dores certas em qualquer ponto do pipeline. A régua de duas colunas mostra exatamente onde a
+hipótese acerta e onde erra: o recall do **perfil** fica em 100% — nada é deletado, o desenho
+funciona —, mas o Recommendation filtra por `validada` e a perda reaparece idêntica. **A colocação
+mudou onde a informação sobrevive, não se o Recommendation a enxerga.**
 
 ### O que fica em produção, porque não é métrica
 
-**O `validada` deixou de ser portão morto**, e isso vale independentemente da reprovação. Antes: o
-único caminho para `False` era "nenhuma evidência", o Extractor nunca cria dor sem evidência, e **34
-de 34 passavam**. A régua agora mede as duas colunas e **imprime sozinha** quando elas coincidem —
-o portão que não filtra virou saída do instrumento em vez de defeito escondido no código (passo 0).
+**`validada` deixou de ser portão morto.** A régua agora mede as duas colunas e **imprime sozinha**
+quando elas coincidem — o portão que não filtra virou saída do instrumento em vez de defeito
+escondido no código.
 
-### O que a medição abriu, e é a próxima hipótese
+### O que a medição abriu
 
-Se o custo é da pergunta e não da colocação, o lugar de atacá-lo é o **consumidor**:
-`recommendation.py` trata `validada` como **booleano** e descarta. D-010 diz outra coisa — *"o
-Validator anota e rebaixa; quem barra é o Recommendation"* — e "rebaixar" admite gradação que um
-`if d.validada` joga fora. Uma dor não-sustentada podia entrar como sinal fraco em vez de sumir.
-**Não medido, e é hipótese nova: exige critério próprio, fixado antes.**
+Se o custo é da pergunta, o lugar de atacá-lo é o **consumidor**: `recommendation.py` trata
+`validada` como booleano e descarta, enquanto D-010 manda *rebaixar*. Virou P-17 — e D-077 mediu.
 
-### Nota de operação, medida nas três execuções
-
-`src/llm.py` **não configura `timeout`**, e o `ChatOpenAI` sem timeout espera para sempre. Medido:
-p50 de **6,9s** e p90 de 12,2s, contra chamadas isoladas de **307,6s · 310,1s · 312,6s · 322,6s**.
-Elas **não são do mesmo prompt** — Laura/observabilidade numa execução, Deal/custo,
-Doutor-AI/privacidade e Maritaca/custo em outra —, e a duração quase idêntica em prompts diferentes
-é assinatura de travamento do lado do servidor com liberação em ~5 min, não de conteúdo.
-
-Consequência: uma execução deste braço leva **~4 min no caso bom e ~20 min quando a cauda aparece**.
-Isso o desqualifica para demonstração ao vivo, mesmo que um dia passe no placar.
-
-**O timeout NÃO foi adicionado durante a medição**, e a omissão é decisão: D-074 regra 4 fixa que a
-régua não muda depois do passo 0. Uma chamada que estoura cai no caminho de degradação e volta
-`validada=True`, o que move o placar — mudar isso entre execuções invalidaria as três. Entra depois,
-como decisão própria, e a escolha do valor não é óbvia: um timeout curto transforma indisponibilidade
-em veredito de sustentação.
+**Nota de operação:** as três execuções expuseram chamadas isoladas de ~310 s contra p50 de 6,9 s,
+com duração quase idêntica em prompts diferentes — assinatura de travamento do servidor, não de
+conteúdo. O `timeout` **não** foi adicionado durante a medição, porque D-074 fixa que a régua não
+muda depois do passo 0; entrou depois, como D-076.
 
 **Reversível?** É flag. `avaliar_agentes.py --sustentacao` liga; `--sustentacao` com `--juiz` é
 recusado, porque a mesma pergunta em dois pontos paga duas vezes e não atribui.
-
 
 ## D-076 — O `timeout` do LLM sai do literal e vira configuração (P-18)
 **Data:** 31/08/2026 · fecha a nota de operação de D-075 · **PROMOVIDA**
@@ -2002,48 +1933,90 @@ inventar números que ninguém mediu.
 
 ## D-077 — A gradação de `validada` no Recommendation está aplicada e é INERTE — em três camadas
 **Data:** 31/08/2026 · critério fixado ANTES: recall (recommendation) ≥ 88% com precisão ≥ 80%
-· **NÃO PROMOVIDA — P-17 continua aberta**
+· **NÃO PROMOVIDA — código REVERTIDO, P-17 continua aberta**
 
-O código de P-17 está em `src/agents/recommendation.py`: a dor não-sustentada deixa de ser
-descartada e entra como sinal fraco, com `confianca` rebaixada para `baixa` numa cópia
-(`model_copy`, porque `perfil.dores_observadas` é estado compartilhado do grafo). Sintaxe válida.
-**E não move nada.** Três camadas, e cada uma sozinha já basta:
+O código de P-17 fazia a dor não-sustentada entrar como sinal fraco, com `confianca` rebaixada numa
+cópia. Sintaxe válida, **e não move nada.** Três camadas, e cada uma sozinha já basta:
 
-**1. Em produção o novo ramo nunca executa.** `JULGAR_SUSTENTACAO = False` desde D-075, e sem o juiz
-o único caminho para `validada=False` é "nenhuma evidência" — que o Extractor nunca produz. 34 de 34
-passam. A régua confirma: `precisão 49%/49% · recall 100%/100% · discriminação 8/8 · proibidas
-10/10`, e o próprio instrumento imprime *"as duas colunas são IDÊNTICAS"*.
-
-**2. A `confianca` rebaixada não tem leitor.** A justificativa da mudança era *"impede que a dor
-fraca assuma prioridade alta"*. Ela não impede: `_prioridade()` recebe `diagnostico.confianca` —
-a confiança do DIAGNÓSTICO —, nunca a da dor. Nenhuma outra linha do módulo lê `d.confianca`. O
-rebaixamento é escrito numa cópia que ninguém consulta.
-
-**3. A régua não mede este consumidor.** `scripts/avaliar_agentes.py:507` replica o filtro
-(`{d.dor for d in dores if d.validada}`) em vez de chamar `recommendation.node()`. O espelho é do
-código de ontem: mesmo com o juiz ligado, a coluna `validada` reportaria o comportamento ANTIGO.
+1. **Em produção o ramo novo nunca executa.** `JULGAR_SUSTENTACAO = False` desde D-075, e sem o juiz
+   o único caminho para `validada=False` é "nenhuma evidência", que o Extractor nunca produz. A
+   régua confirma e o próprio instrumento imprime *"as duas colunas são IDÊNTICAS"*.
+2. **A `confianca` rebaixada não tem leitor.** `_prioridade()` recebe `diagnostico.confianca` — a do
+   DIAGNÓSTICO —, nunca a da dor, e nenhuma outra linha do módulo lê `d.confianca`.
+3. **A régua não mede este consumidor.** `avaliar_agentes.py` replica o filtro em vez de chamar
+   `recommendation.node()`, então ela espelha o código de ontem. **Esta camada é defeito vivo do
+   instrumento**, independente de P-17.
 
 ### O achado que vale mais que as três: o critério é inalcançável por este mecanismo
 
-Se as três camadas fossem resolvidas, `validadas` passaria a conter TODA dor observada — o portão
-`validada` sai inteiro do caminho do Recommendation — e a coluna `validada` colapsa sobre a coluna
-`emitida` **por construção**. O par medido vira **recall 100% · precisão 49%**: passa nos 88% e
-falha nos 80%, e falha por desenho, não por ajuste. Admitir toda dor não-sustentada é exatamente
-desfazer o que o juiz comprava (81-100% de precisão em D-075), pelo preço que ele cobrava.
+Se as três camadas fossem resolvidas, `validadas` passaria a conter TODA dor observada e a coluna
+`validada` colapsaria sobre `emitida` **por construção**. O par vira **recall 100% · precisão 49%**:
+passa nos 88% e falha nos 80%, e falha por desenho, não por ajuste. Admitir toda dor não-sustentada
+desfaz exatamente o que o juiz comprava (81-100% de precisão em D-075), pelo preço que ele cobrava.
 
-**Logo o critério de P-17 exige admissão PARCIAL, e o eixo não é `confianca`.** A separação que
-D-063 já instalou é a que serve: a dor fraca pode entrar em `evidencias` (lastro secundário) sem
-entrar em `dores_enderecadas` (o que o briefing DECLARA e a régua conta). Não medido; é a próxima
-hipótese, e continua exigindo critério fixado antes.
+**Logo P-17 exige admissão PARCIAL, e o eixo não é `confianca`.** A separação que D-063 já instalou
+é a que serve: a dor fraca pode entrar em `evidencias` (lastro secundário) sem entrar em
+`dores_enderecadas` (o que o briefing DECLARA e a régua conta). Não medido; exige critério fixado
+antes.
 
-**Alternativa descartada:** mexer em `_prioridade()` junto, para que a `confianca` da dor passasse a
-ter leitor. Rejeitada agora porque mudaria o instrumento e o objeto na mesma sessão — a régua de
-prioridade não existe, e D-074 regra 4 vale aqui também.
+**Alternativa descartada:** mexer em `_prioridade()` junto, para dar leitor à `confianca` da dor.
+Rejeitada porque mudaria o instrumento e o objeto na mesma sessão, e a régua de prioridade não
+existe.
 
-**O código foi REVERTIDO; o achado fica.** `recommendation.py` volta byte a byte a c0c6f44. Uma
-lista que não filtra nada, dentro do arquivo cuja história inteira (D-020, D-063) é sobre listas que
-PARECIAM filtrar, é dívida disfarçada de progresso — e o achado desta decisão não precisa dela para
-existir. O que sobrevive em produção desta sessão é só D-076.
+**Por que reverter em vez de deixar desligado:** uma lista que não filtra nada, dentro do arquivo
+cuja história inteira (D-020, D-063) é sobre listas que PARECIAM filtrar, é dívida disfarçada de
+progresso — e o achado não precisa do código para existir. `recommendation.py` voltou byte a byte a
+c0c6f44.
+
+## D-078 — O barema sai do lugar de função objetivo
+**Data:** 01/09/2026 · muda documentação e comentário, **zero comportamento**
+
+**Decisão:** o que ordena o trabalho deste projeto passa a ser **o defeito do sistema, medido pelo
+custo que ele impõe a quem ia usá-lo** — o gerente de Startups & VCs da NVIDIA Brasil, e quem abre
+o repositório para entender ou rodar. O barema continua registrado como especificação em
+`contexto/01-tapi.md` e sai de todo arquivo que decide prioridade.
+
+**O defeito que isso corrige estava escrito, não era clima:** `plano.md` mandava parar de melhorar
+o RAG — *"Não rende mais: o critério 2 está em nível 4 e para lá"* — e `sessao-atual.md` ordenava a
+fila *"em ordem de quanto movem a nota"*. O `CLAUDE.md`, carregado em toda sessão, abria com "onde
+os pontos realmente estão", o que reinjetava a priorização por peso a cada sessão nova.
+
+**A prova de que a bússola estava errada é imediata:** sob a pergunta nova, o RAG tem `e@1 = 79%`
+(D-068) — **a primeira citação não contém a âncora uma vez em cinco**. É defeito que o usuário
+sente, e era invisível para um placar que já marcava teto.
+
+**Três mecanismos, e o segundo é o que deformava o texto:**
+1. o barema decidindo o que se constrói e **quando se para**
+2. **o avaliador como destinatário** — *"alternativas descartadas é literalmente a pergunta que o
+   avaliador vai fazer"*. Quem escreve para ser avaliado escreve a defesa inteira; quem escreve
+   para o leitor futuro escreve a decisão. É a causa do inchaço deste log
+3. "nível 4" como teto — chegou a docstring de produção (`nvidia_rag.py`, `fusao.py`,
+   `avaliar_agentes.py`)
+
+**Alternativa descartada: reescrever o histórico deste arquivo**, para que as 77 decisões
+parecessem sempre orientadas a produto. Rejeitada porque é fabricar registro — o mesmo defeito,
+invertido. Muda só o que governa o futuro: o cabeçalho, a tabela de pendências, e as três entradas
+que eram caderno de laboratório. Argumento vivo que se apoiava no barema é **re-argumentado**, não
+editado — ver a linha `Revisto:` de D-062.
+
+**Medido antes de decidir quanto cortar do log:** 68 das 77 decisões são citadas de fora dele —
+**60 pelo código-fonte**, 30 pelo `CLAUDE.md`, que não guarda número e aponta para cá. O log é
+camada de referência, não decoração: **cortar por volume quebraria ponteiro.** O que sobrava era
+tamanho de entrada, não número de entradas: D-074, D-075 e D-077 somavam 247 linhas, todas órfãs,
+todas registrando trabalho que não deixou traço no sistema. Comprimidas para 154, com decisão,
+achado sobrevivente e alternativa preservados.
+
+**O que NÃO muda:** o TAPI continua sendo especificação de cliente — LangGraph, os 9 passos, os 7
+campos, 30-50 startups, o vídeo, o prazo. O método de trabalho sobrevive inteiro (explicar antes de
+codar, alternativa registrada, nada entra sem ser lido, subagentes evitados): muda **a razão**, não
+a prática — e sobreviver à troca de razão é a prova de que ele era bom. **Prazo continua sendo
+restrição**, e ordena o *quanto*; nunca o *quê*.
+
+**Reversível?** Fácil e quase irrelevante — não há código envolvido. O que não é reversível de graça
+é o hábito: o viés reapareceu **dentro desta mesma sessão**, na proposta de antecipar o README
+"como prova visível de que a virada é real". Mesmo mecanismo, outra plateia — o README não é o
+sistema, e antecipá-lo não melhoraria nada. Recusada, e registrada aqui porque a recaída é o modo
+de falha esperado desta decisão.
 
 
 ## Decisões pendentes
@@ -2057,9 +2030,9 @@ existir. O que sobrevive em produção desta sessão é só D-076.
 | ~~P-05~~ | ~~Topologia do grafo~~ | **D-007** — subgrafo de análise + fan-out por `Send` |
 | ~~P-07~~ | ~~Gerenciamento de dependências~~ | **D-004** — conda + `requirements.txt` pinado |
 | ~~P-08~~ | ~~Como o Postgres sobe para quem avaliar~~ | **D-017** — os dois |
-| **P-06** | **Framework de frontend** | aberta. Vale 5 pontos; alvo é funcional e limpo |
+| **P-06** | **Framework de frontend** | aberta. É a única superfície pela qual alguém que não lê código julga o sistema. O escopo sai da pergunta de produto — o que o gerente precisa ver, e em que ordem, para abordar a startup no dia seguinte — não de um orçamento de esforço |
 | **P-09** | **Promover o juiz do Extractor?** | D-072 passou o critério; falta decidir a lacuna de recall (100% → 71-79%) |
-| **P-10** | **Régua do motor de recomendação** | **20 pontos sem instrumento.** O gabarito das 8 fixtures não tem campo de recomendação |
+| **P-10** | **Régua do motor de recomendação** | **A saída que o usuário lê é a única sem instrumento.** O gabarito das 8 fixtures não tem campo de recomendação, então nada quebra quando ela vem errada — e ela vem: para dor de custo, a justificativa técnica sai como *"Join our ecosystem of startups, partners, and developers"* |
 | **P-11** | **O `min()` da confiança** | 0/6 constante. Barato, mas exige critério fixado antes — uma tentativa já foi reprovada (D-059) |
 | ~~P-16~~ | ~~Julgamento semântico no Evidence Validator~~ | **medido e REPROVADO em D-075** — 4 de 5 alvos passam, o recall no Recommendation falha nas três execuções |
 | **P-17** | **`recommendation.py` trata `validada` como booleano** | **D-077: a gradação total foi aplicada e é INERTE** — flag desligada, `confianca` sem leitor, régua espelhando o código antigo. E o critério (recall ≥ 88% com precisão ≥ 80%) é inalcançável assim: admitir tudo dá 100%/49%. Falta a admissão PARCIAL, por `dores_enderecadas` e não por `confianca` |
@@ -2068,3 +2041,4 @@ existir. O que sobrevive em produção desta sessão é só D-076.
 | **P-13** | **Exclusão por menção vs. identidade** | D-052 achado 3, aberto desde 25/08. Axenya e Freedom recusadas por citação de terceiro |
 | **P-14** | **Quatro campos são calculados e nada os lê** | `estrategia_analise` e `exige_sinais_ia` (Query Planner), `score_recuperacao` (Retriever), `motivo_validacao` (Evidence Validator). Não é código morto — é capacidade anunciada e não entregue: a arquitetura publicada promete *"critérios de busca + estratégia de análise"*. Ou o subgrafo passa a lê-los, ou o diagrama para de prometê-los |
 | **P-15** | **Re-medir a abstenção do passo 8** | os 20-22/24 são do modelo morto; D-069 previu n=3 e não foi executado |
+| **P-19** | **O sweep do RAG (dimensão, banda de chunk, `k1`/`b`)** | **reaberta por D-078.** Estava cortado porque "o critério 2 já está no teto" — razão inválida. A razão candidata para manter o corte é outra e precisa ser dita: com 24 perguntas de gabarito, grade fina ajusta ao gabarito em vez de generalizar. O que joga contra o corte é `e@1 = 79%` (D-068): a primeira citação erra 1 vez em 5. Re-decidir junto com a base ampliada |
