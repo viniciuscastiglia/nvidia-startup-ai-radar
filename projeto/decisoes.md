@@ -2077,6 +2077,64 @@ anteriores: nenhuma sessão foi gasta reconstruindo — o provedor isolado em `s
 transformou EOL de fornecedor em troca de configuração.
 
 
+## D-080 — A QUARTA assinatura: vivo, porém acima do relógio — e o smoke chamava isso de morte
+**Data:** 02/09/2026 · descoberto por rodar o smoke na revisão do plano, não por ler o código
+
+**O fato, medido:** `nvidia/nemotron-3.5-lightning-30b-a3b` — escolhido ontem por D-079 — **não
+morreu**. Ele responde HTTP 200 e ficou lento. `smoke_nvidia.py` imprimia
+`chat completion [FALHOU] ReadTimeout` e fechava em **2/3**.
+
+| sonda | resultado |
+|---|---|
+| nome inexistente | HTTP 404 em 0,4 s |
+| `nemotron-3-nano` (morto, D-079) | HTTP 410 em 0,4 s, com a data no corpo |
+| **o modelo de produção** | **HTTP 200**, primeiro token em 27–68 s |
+| 8 chamadas reais por `src/llm.py` | **0 falhas**, mediana **51 s**, faixa 17–88 s |
+
+O transporte está intacto — o 404 e o 410 voltam em 0,4 s. O que estourou foi o relógio.
+
+**A correção do catálogo de D-079.** As três assinaturas (410 = morte · 404+uuid = entitlement ·
+404 puro = inexistente) descrevem só respostas que CHEGAM. Faltava a quarta, e ela é a única que
+não tem status HTTP próprio: **vivo, porém acima do relógio.** Um timeout deixa de ser conclusão e
+passa a ser gatilho de `diagnosticar_chat()`, que sonda o transporte antes do modelo e classifica
+pela resposta real.
+
+**Por que isto era o defeito mais caro em aberto:** o `CLAUDE.md` manda rodar o smoke antes de
+gravar o vídeo e antes de entregar, e o chama de *"a única defesa que existe"*. Lido pela doutrina
+de ontem, o resultado de hoje seria **um quinto EOL** — e a conduta seria migrar de modelo a 5 dias
+do vídeo, sem que nada tivesse morrido. **O instrumento que existe para detectar morte estava
+produzindo morte falsa.**
+
+**Três mudanças:**
+1. **`LLM_TIMEOUT` 30 → 120.** Com 30 s, **5 de 8 chamadas estouram a primeira tentativa** e só
+   completam pelo `max_retries=2`: uma chamada de 88 s é 30 (falha) + 30 (falha) + ~28 (sucesso).
+   O timeout curto não protegia de nada — **triplicava o relógio e escondia a latência real atrás
+   de retries silenciosos**. Revisa o "~90 s de teto combinado" de D-076, cujo raciocínio estava
+   certo para uma latência que deixou de valer.
+2. **O smoke ganha o estado `LENTO`**, separado de `PASSOU` e de `FALHOU`. Conta como capacidade OK
+   — a capacidade existe — e imprime a conduta: *"NÃO é EOL, não migre o modelo."* Volta a 3/3.
+3. **`diagnosticar_chat()` reusa `_classificar` de `sondar_catalogo.py`.** Duas definições de
+   "morto" no mesmo repositório divergem — é o argumento de D-059 contra duplicar verdade.
+
+**O que mais foi medido junto, e retira um risco em aberto de D-079:** o modelo emite raciocínio
+dentro do `content` **no caminho cru** (`"Here's a thinking process:"`), mas
+`with_structured_output(method="json_schema")` devolve só o schema, validado. **O caminho de
+produção não é afetado**, e o smoke agora anota isso onde a confusão aconteceria.
+
+**Alternativa descartada: trocar o modelo.** É o reflexo que quatro EOLs em três meses
+construíram, e aqui ele estaria errado — não há substituto (0 vivos de 10 na sondagem de hoje) e
+não há nada a substituir. **Migrar por timeout mal lido teria gasto uma sessão para piorar o
+sistema.** É o custo exato que este registro existe para evitar da próxima vez.
+
+**Alternativa descartada: fazer `LENTO` reprovar o smoke** (código de saída ≠ 0). Rejeitada porque
+o smoke é porteiro de gravação e entrega: reprovar uma capacidade que funciona convida a ignorar o
+instrumento, que é como um alarme perde a função.
+
+**Reversível?** Sim, e barato — uma env var e um estado a mais no relatório. O que não é reversível
+é a lição de método: **"o instrumento falhou" e "a coisa medida falhou" são afirmações diferentes,
+e o smoke não sabia dizer qual das duas estava fazendo.**
+
+
 ## Decisões pendentes
 
 | # | Decisão | Estado |

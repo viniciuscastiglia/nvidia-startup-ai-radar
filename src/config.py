@@ -116,18 +116,27 @@ _API_KEY = _env("LLM_API_KEY") or _env("NVIDIA_API_KEY")
 LLM = ConfigLLM(
     base_url=_env("LLM_BASE_URL", "https://integrate.api.nvidia.com/v1"),
     api_key=_API_KEY,
-    # Escolhido em 28/08 por ELIMINAÇÃO MEDIDA, não por preferência (D-067): dos 10
-    # candidatos do catálogo sondados com chamada real, 7 deram 404, 1 alternou
-    # HTTP 400 com timeout de 300 s, 1 responde em ~35 s e quebra no structured
-    # output (HTTP 500). Este responde em ~650 ms e passa nos dois métodos.
+    # Escolhido em 01/09 por ELIMINAÇÃO MEDIDA, não por preferência (D-079): 1 vivo de 10
+    # sondados, e passa na pergunta-armadilha de D-047 nos dois métodos.
     # `scripts/sondar_catalogo.py` refaz a sondagem inteira — o catálogo LISTA
     # modelos que não respondem, então a listagem nunca é a prova (D-070).
+    #
+    # LATÊNCIA, MEDIDA EM 02/09 (D-080): mediana 51 s, faixa 17-88 s, em 8 chamadas reais pelo
+    # caminho de produção. A versão anterior deste comentário dizia "responde em ~650 ms" — era
+    # verdade em 01/09 e ficou falsa em 24 h. É a razão de `LLM_TIMEOUT` ter subido para 120, e
+    # a razão de o smoke ter passado a distinguir LENTO de MORTO: com 30 s, 5 de 8 chamadas
+    # estouravam a primeira tentativa e o instrumento chamava isso de falha.
     modelo=_env("LLM_MODEL", "nvidia/nemotron-3.5-lightning-30b-a3b"),
     temperatura=float(_env("LLM_TEMPERATURE", "0.1")),
     # Teto POR TENTATIVA, não por chamada: o `ChatOpenAI` traz `max_retries=2` do LangChain,
-    # que fica como está — 3 tentativas x 30 s = ~90 s de teto combinado por chamada, que é o
-    # limite aceito. Está aqui e não no `src/llm.py` porque tudo que o cliente lê vem daqui.
-    timeout=float(_env("LLM_TIMEOUT", "30")),
+    # que fica como está. Está aqui e não no `src/llm.py` porque tudo que o cliente lê vem daqui.
+    #
+    # 30 -> 120 EM 02/09 (D-080), E O MOTIVO É MEDIÇÃO, NÃO PRECAUÇÃO. Com 30 s, 5 de 8 chamadas
+    # reais estouram a PRIMEIRA tentativa e só completam pelo retry: a mediana medida foi 51 s,
+    # faixa 17-88 s, e uma chamada de 88 s é 30 (falha) + 30 (falha) + ~28 (sucesso). O timeout
+    # curto não protegia de nada — ele TRIPLICAVA o relógio de cada chamada lenta e escondia a
+    # latência real atrás de retries silenciosos. Com 120 s cada chamada é uma tentativa só.
+    timeout=float(_env("LLM_TIMEOUT", "120")),
 )
 
 EMBEDDING = ConfigEmbedding(

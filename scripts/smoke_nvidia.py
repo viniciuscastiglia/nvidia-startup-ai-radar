@@ -20,6 +20,22 @@ O QUE ESTE SCRIPT PROVA ALÉM DE "RESPONDE 200"
   Isso não é curiosidade: a base RAG da NVIDIA é em inglês e os perfis das startups em
   português. Se o crosslingual não funcionasse, a arquitetura inteira do RAG mudaria.
 - rerank: qual dos paths candidatos do endpoint de ranking realmente responde
+
+POR QUE ESTE SCRIPT DISTINGUE **LENTO** DE **MORTO** (D-080)
+-------------------------------------------------------------
+D-079 catalogou tres assinaturas de "nao serve": 410 = morte anunciada, 404 com uuid =
+entitlement, 404 texto puro = nome inexistente. Em 02/09 apareceu a QUARTA, e ela nao estava
+no catalogo: **vivo, porem acima do relogio**. O modelo de producao respondia HTTP 200 com o
+primeiro token entre 27 e 68 s, e este smoke — que rodava com TIMEOUT=60 fixo — imprimia
+`[FALHOU] ReadTimeout`, a MESMA palavra que usa para morte.
+
+O custo do erro e assimetrico e por isso ele importa: o CLAUDE.md manda rodar este script antes
+de gravar o video e antes de entregar, e o chama de "a unica defesa que existe". Ler um timeout
+como EOL faz abrir uma migracao de modelo desnecessaria a poucos dias da entrega.
+
+Entao um timeout aqui **nunca mais e conclusao** — e gatilho de `diagnosticar_chat()`, que
+classifica pela resposta real do endpoint. E o estado LENTO existe separado de FALHOU: a
+capacidade esta la, o relogio e que nao esta.
 """
 
 from __future__ import annotations
@@ -37,6 +53,12 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from src.config import EMBEDDING, LLM, RERANK, tem_credencial  # noqa: E402
 
 TIMEOUT = 60.0
+# O chat usa o teto da PRODUCAO, nao um numero proprio: um smoke mais impaciente que o sistema
+# reprova o que o sistema aceita. Piso de 60 s para o caso de alguem baixar LLM_TIMEOUT.
+TIMEOUT_CHAT = max(LLM.timeout, 60.0)
+# Acima disto a chamada passa, mas o estado vira LENTO: e o sinal de que o endpoint degradou
+# antes de morrer. 10 s e folgado para um prompt de uma frase — o normal medido e sub-segundo.
+LATENCIA_ESPERADA_MS = 10_000.0
 RESULTADOS: list[dict] = []
 
 
@@ -51,9 +73,16 @@ def cosseno(a: list[float], b: list[float]) -> float:
     return num / (na * nb) if na and nb else 0.0
 
 
-def registrar(nome: str, ok: bool, ms: float | None, detalhe: str) -> None:
-    RESULTADOS.append({"nome": nome, "ok": ok, "ms": ms, "detalhe": detalhe})
-    marca = "PASSOU" if ok else "FALHOU"
+def registrar(nome: str, estado: bool | str, ms: float | None, detalhe: str) -> None:
+    """`estado` e True/False (compatibilidade) ou o literal "LENTO".
+
+    LENTO conta como capacidade OK no placar e no codigo de saida — a capacidade existe. O que
+    ele nao faz e passar despercebido: aparece na tabela do relatorio e no rodape.
+    """
+    marca = {True: "PASSOU", False: "FALHOU", "LENTO": "LENTO "}[estado]
+    ok = estado is not False
+    RESULTADOS.append({"nome": nome, "ok": ok, "estado": marca.strip(),
+                       "ms": ms, "detalhe": detalhe})
     lat = f"{ms:.0f} ms" if ms is not None else "—"
     print(f"  [{marca}] {nome}  ({lat})")
     for linha in detalhe.splitlines():
@@ -63,6 +92,69 @@ def registrar(nome: str, ok: bool, ms: float | None, detalhe: str) -> None:
 # ─────────────────────────────────────────────────────────────────────────────
 # 1. CHAT COMPLETION
 # ─────────────────────────────────────────────────────────────────────────────
+def diagnosticar_chat() -> tuple[str, str]:
+    """POR QUE UM TIMEOUT NAO E MAIS UMA CONCLUSAO (D-080).
+
+    Chamado so quando a chamada principal falha. Faz duas sondas baratas e devolve
+    `(rotulo, detalhe)`, onde o rotulo e um dos de D-079 mais os dois que faltavam:
+
+        TRANSPORTE  nem a sonda de CONTROLE respondeu -> rede ou credencial, nao o modelo
+        VIVO-LENTO  HTTP 200 chega, so que depois do relogio -> a QUARTA assinatura
+
+    A sonda de controle vem primeiro de proposito: sem ela, "o modelo nao responde" e
+    indistinguivel de "nada responde", e a conclusao erraria de alvo.
+    """
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from sondar_catalogo import _classificar   # UMA definicao de "morto" no repositorio
+
+    try:
+        httpx.post(
+            f"{LLM.base_url}/chat/completions",
+            headers=cabecalhos(LLM.api_key),
+            json={"model": "modelo/inexistente-sonda-de-controle",
+                  "messages": [{"role": "user", "content": "x"}], "max_tokens": 1},
+            timeout=15.0,
+        )
+    except Exception as exc:  # noqa: BLE001
+        return ("TRANSPORTE",
+                f"nem a sonda de controle respondeu ({type(exc).__name__}). O problema esta na "
+                f"rede ou na credencial — NAO ha evidencia sobre o modelo.")
+
+    try:
+        t0 = time.perf_counter()
+        with httpx.stream(
+            "POST",
+            f"{LLM.base_url}/chat/completions",
+            headers=cabecalhos(LLM.api_key),
+            json={"model": LLM.modelo, "temperature": 0, "max_tokens": 8, "stream": True,
+                  "messages": [{"role": "user", "content": "Responda apenas: ok"}]},
+            timeout=TIMEOUT_CHAT * 2,
+        ) as r:
+            if r.status_code >= 400:
+                return _classificar(r.status_code, r.read().decode("utf-8", "replace"))
+            for linha in r.iter_lines():
+                if linha.strip():
+                    return ("VIVO-LENTO",
+                            f"HTTP 200 — primeiro token em {(time.perf_counter() - t0):.0f} s. "
+                            f"O modelo esta VIVO; o que estourou foi o relogio, nao o catalogo.")
+            return ("VAZIO", "HTTP 200 e nenhum token — endpoint degradado, mas nao aposentado.")
+    except Exception as exc:  # noqa: BLE001
+        return ("FALHA", f"{type(exc).__name__} tambem no streaming — reexecutar antes de concluir.")
+
+
+# As quatro assinaturas que NAO sao morte, e o que fazer com cada uma. Existe para que quem le a
+# saida do smoke as 2 da manha nao precise abrir D-079 nem este arquivo.
+CONDUTA = {
+    "EOL": "MORTE REAL, anunciada com data. Trocar LLM_MODEL — e so isto justifica migracao.",
+    "SEM ACESSO": "entitlement: o modelo roda, esta conta nao alcanca. NAO e morte.",
+    "INEXISTENTE": "o nome nao existe no catalogo. Erro de digitacao ou de versao.",
+    "VIVO-LENTO": "NAO MIGRE. Subir LLM_TIMEOUT, ou aceitar a latencia e planejar o video com ela.",
+    "VAZIO": "endpoint degradado. Reexecutar antes de concluir qualquer coisa.",
+    "TRANSPORTE": "olhe rede e credencial ANTES de olhar o modelo.",
+    "FALHA": "inconclusivo — reexecutar.",
+}
+
+
 def teste_chat() -> None:
     print("\n1. CHAT COMPLETION — endpoint OpenAI-compatible")
     payload = {
@@ -82,24 +174,53 @@ def teste_chat() -> None:
             f"{LLM.base_url}/chat/completions",
             headers=cabecalhos(LLM.api_key),
             json=payload,
-            timeout=TIMEOUT,
+            timeout=TIMEOUT_CHAT,
         )
         ms = (time.perf_counter() - t0) * 1000
-        r.raise_for_status()
+        if r.status_code >= 400:
+            rotulo, detalhe = diagnosticar_chat()
+            estado = "LENTO" if rotulo in ("VIVO-LENTO", "VAZIO") else False
+            registrar("chat completion", estado, None,
+                      f"modelo: {LLM.modelo}\nHTTP {r.status_code}\n"
+                      f"diagnostico: {rotulo} — {detalhe}\n-> {CONDUTA[rotulo]}")
+            return
         dados = r.json()
         texto = dados["choices"][0]["message"]["content"].strip()
         uso = dados.get("usage", {})
+        # O modelo de 01/09 em diante emite o RACIOCINIO dentro do `content` no caminho cru
+        # (D-079). Quem le "resposta: Here's a thinking process" sem saber disso conclui que o
+        # modelo quebrou. Nao quebrou — e o caminho de PRODUCAO nao e afetado, porque
+        # `with_structured_output(method="json_schema")` devolve so o schema (medido em 02/09).
+        vaza_raciocinio = texto[:400].lower().startswith(("here's a thinking", "here is a thinking",
+                                                          "<think", "thinking process"))
+        nota_raciocinio = (
+            "\nNOTA: o `content` cru comeca com o raciocinio do modelo. Isto e esperado (D-079) "
+            "e NAO afeta a producao — `json_schema` devolve so o schema."
+        ) if vaza_raciocinio else ""
+        lento = ms > LATENCIA_ESPERADA_MS
+        aviso = (
+            f"\nLENTO: {ms / 1000:.0f} s contra ~{LATENCIA_ESPERADA_MS / 1000:.0f} s esperados. "
+            f"A capacidade EXISTE — isto nao e EOL.\n"
+            f"-> {CONDUTA['VIVO-LENTO']}"
+        ) if lento else ""
         registrar(
             "chat completion",
-            True,
+            "LENTO" if lento else True,
             ms,
             f"modelo: {LLM.modelo}\n"
             f"tokens: {uso.get('prompt_tokens', '?')} prompt + "
             f"{uso.get('completion_tokens', '?')} completion\n"
-            f"resposta: {texto[:160]}",
+            f"resposta: {texto[:160]}{nota_raciocinio}{aviso}",
         )
     except Exception as exc:  # noqa: BLE001
-        registrar("chat completion", False, None, f"{type(exc).__name__}: {exc}")
+        # AQUI ESTAVA O DEFEITO DE D-080: um ReadTimeout virava "[FALHOU]", a mesma palavra
+        # usada para morte. Agora ele so ABRE o diagnostico.
+        rotulo, detalhe = diagnosticar_chat()
+        estado = "LENTO" if rotulo in ("VIVO-LENTO", "VAZIO") else False
+        registrar("chat completion", estado, None,
+                  f"modelo: {LLM.modelo}\n"
+                  f"a chamada direta falhou: {type(exc).__name__} (teto {TIMEOUT_CHAT:.0f} s)\n"
+                  f"diagnostico: {rotulo} — {detalhe}\n-> {CONDUTA[rotulo]}")
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -289,7 +410,7 @@ def escrever_relatorio() -> Path:
     for res in RESULTADOS:
         lat = f"{res['ms']:.0f} ms" if res["ms"] is not None else "—"
         linhas.append(
-            f"| {res['nome']} | {'passou' if res['ok'] else 'falhou'} | {lat} | "
+            f"| {res['nome']} | {res.get('estado', 'PASSOU').lower()} | {lat} | "
             f"`{modelos.get(res['nome'], '')}` |"
         )
     linhas += ["", "## Detalhes", ""]
@@ -315,8 +436,15 @@ def main() -> int:
 
     destino = escrever_relatorio()
     passou = sum(1 for r in RESULTADOS if r["ok"])
+    lentos = [r["nome"] for r in RESULTADOS if r.get("estado") == "LENTO"]
     print("\n" + "=" * 78)
-    print(f"{passou}/{len(RESULTADOS)} capacidades OK  ·  relatório em {destino.relative_to(Path.cwd())}")
+    ressalva = f"  ({len(lentos)} LENTO: {', '.join(lentos)})" if lentos else ""
+    print(f"{passou}/{len(RESULTADOS)} capacidades OK{ressalva}  ·  "
+          f"relatório em {destino.relative_to(Path.cwd())}")
+    if lentos:
+        # LENTO nao derruba o codigo de saida: a capacidade existe. Mas quem le precisa saber
+        # que o numero de latencia do video vai sair daqui, e que isto NAO e EOL (D-080).
+        print("LENTO = a capacidade existe e o relógio estourou. NÃO é EOL, não migre o modelo.")
     print("=" * 78)
     return 0 if passou == len(RESULTADOS) else 1
 
