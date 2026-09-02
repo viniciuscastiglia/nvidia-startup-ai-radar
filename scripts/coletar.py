@@ -12,8 +12,8 @@ pipeline de coleta automatizada na web". Esta ferramenta não é isso, e a difer
 Todas as decisões de curadoria — qual empresa, qual página, qual trecho, qual tipo de
 documento — continuam humanas. Este script não escreve no banco e não é chamado por nenhum
 agente em tempo de execução. Ele existe para que `conteudo_texto` seja o texto REAL da
-página, e não uma paráfrase — o que é requisito de credibilidade: o avaliador abre a
-`url_fonte` e compara.
+página, e não uma paráfrase: quem abrir a `url_fonte` tem de encontrar lá o trecho que o sistema
+citou. Paráfrase quebra a rastreabilidade sem que nada acuse.
 
 USO
 ---

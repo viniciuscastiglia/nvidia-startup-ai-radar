@@ -1,12 +1,12 @@
-"""A RÉGUA DOS AGENTES — o que o `avaliar_rag.py` é para o critério 2, este arquivo é para os
-critérios 1 e 3 (40 pontos do barema).
+"""A RÉGUA DOS AGENTES — o que o `avaliar_rag.py` é para o RAG, este arquivo é para o pipeline de
+análise e para o motor de recomendação.
 
 POR QUE ELE EXISTE, E POR QUE VEM ANTES DO EXTRACTOR COM LLM
 --------------------------------------------------------------
 Até 25/08 a base tinha 3 startups e as 3 eram `perfil_alvo: AI-native`. Um classificador que
 devolvesse `"AI-native"` incondicionalmente passava em 3 de 3 — não havia número capaz de
 distinguir um Extractor com LLM do casador de substring que está lá desde a sessão 01. O RAG
-chegou a nível 4 porque teve régua desde o primeiro dia; os agentes não tinham nenhuma, e
+melhorou de verdade porque teve régua desde o primeiro dia; os agentes não tinham nenhuma, e
 escrever o agente antes da régua é o erro que a revisão da sessão 03 achou em dois lugares.
 
 O GABARITO MORA NA FIXTURE (D-051)

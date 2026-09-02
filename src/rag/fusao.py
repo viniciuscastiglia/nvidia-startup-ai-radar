@@ -16,8 +16,8 @@ vira grade cheia.
 
 POR QUE RRF É O DE PRODUÇÃO
 ----------------------------
-O argumento não é "é o default do Elastic e do Qdrant" (embora seja, e isso resolva a pergunta na
-banca em uma frase). O argumento é medido e é nosso: **D-033 provou que a magnitude do score denso
+O argumento não é "é o default do Elastic e do Qdrant" — isso é conforto, não razão. O argumento é
+medido e é nosso: **D-033 provou que a magnitude do score denso
 não é calibrada.** A q20, que não tem resposta na base, recuperou com 0,4813 — mais alto que o
 pior acerto verdadeiro do gabarito, 0,2934. Uma fusão que consome magnitude consome um sinal que
 já sabemos ser não confiável. RRF só olha posição, e é invariante a isso.

@@ -17,9 +17,9 @@
 POR QUE ASSIM E NÃO UM GRAFO LINEAR DE 8 NÓS
 ---------------------------------------------
 O TAPI justifica LangGraph por "estado, transições condicionais, checkpoints, retry e
-intervenção humana". Um grafo linear usaria zero disso — seria uma chain de prompts com
-sintaxe de grafo, o que é nível 2 no critério 1. Esta topologia usa quatro recursos que uma
-chain não tem, e cada um resolve um problema concreto:
+intervenção humana". Um grafo linear usaria zero disso — seria uma chain de prompts vestida de
+grafo, pagando a complexidade do LangGraph sem receber nada em troca. Esta topologia usa quatro
+recursos que uma chain não tem, e cada um resolve um problema concreto:
 
   Send            uma startup por chamada de LLM. Com lote, o prompt cresce com N e a
                   extração degrada; e o retry só existiria no nível do nó.

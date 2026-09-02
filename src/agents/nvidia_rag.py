@@ -8,8 +8,8 @@ A CONSULTA É MONTADA DO RÓTULO DA DOR + DAS EVIDÊNCIAS + DA STACK, E ISSO É 
 `contexto/03` §4 diz que a dor é a chave de junção com a tabela de tecnologias, e o stub
 implementava isso literalmente: um `dict` de oito dores para oito tecnologias. O problema do
 dicionário não é ser simples — é que ele **não usa a base de conhecimento**. Com ele, as 16
-páginas ingeridas, chunkadas e indexadas não mudariam uma vírgula da recomendação, e o critério 2
-do barema viraria decorativo.
+páginas ingeridas, chunkadas e indexadas não mudariam uma vírgula da recomendação: o RAG inteiro
+seria enfeite, e a recomendação continuaria sendo um mapeamento fixo escrito à mão.
 
 **A primeira versão de D-042 trocou o dicionário por uma constante disfarçada, e a revisão da
 sessão 03 mediu isso.** Ela usava `DorObservada.texto`, que o Extractor preenche com um template

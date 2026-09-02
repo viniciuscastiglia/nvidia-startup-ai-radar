@@ -2,8 +2,8 @@
 
 POR QUE ISTO É UM SCRIPT VERSIONADO E NÃO UM `curl` DESCARTÁVEL
 ---------------------------------------------------------------
-1. É evidência reproduzível: o avaliador roda e vê os mesmos números.
-2. É a fonte dos números de latência que vão para o vídeo.
+1. É evidência reproduzível: qualquer pessoa roda e vê os mesmos números.
+2. É a fonte dos números de latência do sistema — inclusive os que vão para o vídeo.
 3. É o teste de regressão de "os créditos ainda funcionam" ao longo dos 18 dias.
 
 POR QUE HTTP CRU E NÃO `langchain-openai` AQUI

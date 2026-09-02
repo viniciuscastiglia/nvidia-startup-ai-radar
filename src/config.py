@@ -94,7 +94,7 @@ class ConfigRerank:
     POR QUE `nenhum` NÃO É UMA LINHA A MAIS NO HARNESS DE ABLAÇÃO
     A tabela de `avaliar_rag.py` JÁ tem a linha sem rerank: são os motores `denso` e `hibrido`.
     O provedor `nenhum` não existe para medir nada — existe para que quem clonar o repositório
-    sem chave nenhuma consiga rodar, que é a metade executável do eliminatório nº 3.
+    sem chave nenhuma consiga rodar, em vez de receber um stack trace na primeira consulta.
 
     O endpoint de ranking da NVIDIA NÃO é o mesmo path do chat/embedding — por isso `url`
     completa em vez de base_url + sufixo fixo. O Cohere tem path próprio e não usa `url`.

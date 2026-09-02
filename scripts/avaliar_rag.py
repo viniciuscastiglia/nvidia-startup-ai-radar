@@ -1,8 +1,8 @@
 """Passo 9 do pipeline RAG do TAPI: avaliação de qualidade. Ver D-030, D-031 e D-037.
 
-O TAPI chama este passo de "o mais ignorado, e o que mais separa nível 2 de nível 4 no
-critério 2". Ele existe desde a sessão 02 porque sem instrumento as decisões de chunking e
-dimensão seriam argumento em vez de medida (D-031).
+Sem este passo o RAG é infalsificável: não há como saber se uma mudança de chunking, de dimensão
+ou de fusão melhorou ou piorou a recuperação. Ele existe desde a sessão 02 exatamente por isso —
+sem instrumento, essas decisões seriam argumento em vez de medida (D-031).
 
 AS MÉTRICAS
 -----------

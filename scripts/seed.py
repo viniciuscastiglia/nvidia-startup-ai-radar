@@ -2,7 +2,7 @@
 
 POR QUE YAML VERSIONADO E NÃO INSERT NA MÃO
 --------------------------------------------
-O avaliador precisa conseguir reproduzir a base. Um `INSERT` colado no psql não é
+Quem clona o repositório precisa conseguir reproduzir a base. Um `INSERT` colado no psql não é
 reproduzível e não aparece no diff de forma legível; um YAML por startup aparece.
 
 POR QUE IDEMPOTENTE
@@ -21,8 +21,8 @@ Na prática o seed vira, de graça, um conjunto rotulado de avaliação.
 VERIFICAÇÃO DE URL
 ------------------
 `--verificar-urls` faz uma requisição em cada `url_fonte` e falha se alguma não resolver.
-O TAPI trata rastreabilidade como requisito duro e o avaliador confere URL em segundos —
-isso transforma "a URL tem que ser real" de promessa em teste.
+Rastreabilidade é a única coisa que o sistema promete sobre toda conclusão que emite, e uma URL
+quebrada a desfaz inteira — isso transforma "a URL tem que ser real" de promessa em teste.
 """
 
 from __future__ import annotations

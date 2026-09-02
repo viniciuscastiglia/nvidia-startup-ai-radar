@@ -96,7 +96,7 @@ class Evidencia(BaseModel):
     """O span exato que sustenta uma afirmação — não o documento inteiro.
 
     Guardar o trecho e não só o `documento_id` é o que permite ao briefing citar
-    literalmente, e ao avaliador conferir a citação sem abrir o banco.
+    literalmente, e a qualquer leitor conferir a citação sem abrir o banco.
     """
 
     documento_id: int

@@ -56,7 +56,8 @@ COMPLEXIDADE: dict[str, Complexidade] = {
 # e depois que `nvidia_rag` passou a consultar o RAG de verdade (24/08), chegam aqui tecnologias
 # fora desta tabela. O fallback abaixo é derivado das DORES observadas, que o nó já tem em mãos:
 # formulaico e visivelmente de stub, mas nunca vazio — `justificativa_negocio` é um dos 7 campos
-# obrigatórios do TAPI, e campo obrigatório vazio é nível 0 no critério, não "quase lá".
+# obrigatórios do TAPI, e um briefing que chega ao usuário com esse campo vazio não é "quase lá":
+# é uma recomendação que ele não consegue levar para dentro da conversa com a startup.
 # Escrever as outras 11 à mão seria curadoria; na M4 este texto sai do LLM com o perfil na frente.
 NEGOCIO = {
     "NVIDIA NIM": ("Reduz o custo por token e tira a empresa da dependência de um fornecedor "
