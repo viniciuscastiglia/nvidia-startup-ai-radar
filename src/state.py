@@ -173,6 +173,20 @@ class PlanoDeBusca(BaseModel):
     max_startups: int = 5
     estrategia_analise: str = ""   # sem consumidor — P-14
 
+    def discrimina(self) -> bool:
+        """Existe ALGUM critério que estreite a base? (D-081)
+
+        Sem nenhum, `SQL_BUSCAR` cai em `tsq = ''` com todos os filtros nulos e devolve os
+        `max_startups` primeiros em ordem alfabética — e o briefing os apresenta como
+        resultado, sem nada na saída que denuncie a diferença entre isso e um acerto.
+        **O modo de falha não era o resultado errado; era o resultado errado indistinguível
+        do certo.** Quem chama isto tem de dizer ao usuário quando for `False`.
+        """
+        return bool(
+            self.setores or self.estagios or self.localizacoes or self.palavras_chave
+            or self.porte_min_time is not None or self.porte_max_time is not None
+        )
+
 
 class StartupRef(BaseModel):
     """Saída do Retriever: a empresa mais os documentos que serão analisados."""

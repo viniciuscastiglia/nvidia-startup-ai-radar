@@ -2135,6 +2135,61 @@ instrumento, que é como um alarme perde a função.
 e o smoke não sabia dizer qual das duas estava fazendo.**
 
 
+## D-081 — O radar de startups de IA descartava a palavra "IA", e o briefing não dava sinal
+**Data:** 02/09/2026 · achado por rodar o grafo na revisão do plano · **bug de correção, em dois lugares**
+
+**O fato:** `query_planner.py` filtrava os tokens da consulta por `len(t) > 2`. **"ia" e "ai" têm
+dois caracteres.** A consulta-bandeira do produto saía sem o termo que a define:
+
+| consulta | `palavras_chave` antes | depois |
+|---|---|---|
+| `"startups de IA"` | **`[]`** | `['ia']` |
+| `"quais empresas usam AI"` | **`[]`** | `['ai']` |
+| `"startups brasileiras de saúde usando IA"` | `['saúde']` | `['saúde', 'ia']` |
+
+**O modo de falha é pior que o bug.** Com a lista vazia, `SQL_BUSCAR` cai em `tsq = ''`, todos os
+filtros ficam nulos, e a consulta devolve os `max_startups` primeiros **em ordem alfabética** — que
+o briefing então imprime sob o mesmo cabeçalho de um resultado legítimo. Não havia exceção, não
+havia aviso, e a saída era indistinguível de um acerto. **Medido:** a consulta devolvia
+`Laura Networks`, que não casa "ia" em **nenhum** dos seus três documentos; depois da correção ela
+sai, e entram as que casam.
+
+**O bug estava em DOIS lugares, e achar só um teria sido pior que não achar nenhum.**
+`db._para_tsquery` tinha o mesmo `len > 2`. Corrigir só o Query Planner faria "ia" entrar no plano
+e morrer na montagem do tsquery — com a consulta *parecendo* consertada e o teste do plano passando.
+
+**A correção, e ela é conceitual:** um filtro de TAMANHO estava fazendo o trabalho de uma lista de
+STOPWORDS. Funciona para "de"/"em"/"os" e falha exatamente nas siglas, que são curtas e são o sinal
+mais denso que uma consulta técnica carrega. Os dois filtros passam a ter razões distintas:
+
+- **Query Planner** — decisão semântica: o piso vira `len > 1` e quem decide o que é palavra vazia
+  é `VAZIAS`, que ganhou as funcionais de dois caracteres (`de`, `do`, `da`, `em`, `no`, `na`, …).
+- **`_para_tsquery`** — sanitização sintática: descarta fragmento vazio do split, e nada mais.
+
+**A segunda correção é a que impede a próxima:** `PlanoDeBusca.discrimina()` responde *"existe algum
+critério que estreite a base?"*. O Retriever registra em `erros` e o **Briefing anuncia no
+cabeçalho** — não no rodapé, e não só no caso zero, porque o caso perigoso é justamente aquele em
+que o sistema devolve cinco empresas. **O defeito nunca foi o resultado errado; foi o resultado
+errado ser indistinguível do certo.**
+
+**Alternativa descartada: pôr "ia"/"ai" numa lista branca** e manter `len > 2`. É de duas linhas e
+teria funcionado hoje. Rejeitada porque não corrige a causa — a próxima sigla de duas letras que
+importe (`ml`, `nl`, `cv`, `dl`) cai no mesmo buraco, e uma lista branca de tokens mágicos é
+exatamente o "código mágico" que o método deste repositório proíbe.
+
+**Alternativa descartada: fazer plano sem critério devolver zero startups.** Seria honesto e é
+tentador, mas trata `"me mostre as empresas da base"` como erro quando é pedido legítimo. Devolver
+**com o aviso** preserva o caso de uso e mata o silêncio, que era o defeito real.
+
+**Rede nova:** `tests/test_query_planner.py`, 14 testes — o agente estava entre os **dois sem
+nenhum teste** (o outro é o `extractor`), e a régua dos agentes também não o cobre. Suíte: 53 → 67.
+
+**O que isto diz sobre a revisão de 01/09:** a fila tinha `query_planner` em 6º de 8, descrito como
+lacuna de completude — *"sem teste e sem régua"*, `estrategia_analise` constante morta. Era um bug
+de correção na primeira pergunta que o usuário faz. **Nenhuma leitura de código o encontrou em duas
+sessões; uma execução o encontrou em um minuto.**
+
+
 ## Decisões pendentes
 
 | # | Decisão | Estado |

@@ -39,10 +39,15 @@ def _para_tsquery(palavras: list[str]) -> str:
     vinda de LLM pode conter qualquer coisa. `plainto_tsquery` seria mais seguro mas junta tudo
     com AND, o que é restritivo demais para uma consulta exploratória.
     """
+    # O MESMO `len > 2` do Query Planner vivia aqui, e este era o segundo lugar do bug de
+    # D-081: consertar só lá deixaria "ia" entrar no plano e morrer aqui, com a consulta
+    # parecendo consertada. Os dois filtros existem por razões DIFERENTES e só um era
+    # stopword — este é SANITIZAÇÃO: descarta fragmento vazio ou de um caractere que sobra
+    # do split. Remoção de palavra vazia é decisão semântica e mora no Query Planner.
     limpos = []
     for p in palavras:
         for termo in re.split(r"\W+", p, flags=re.UNICODE):
-            if len(termo) > 2:
+            if len(termo) > 1:
                 limpos.append(termo.lower())
     return " | ".join(dict.fromkeys(limpos))   # dedup preservando ordem
 

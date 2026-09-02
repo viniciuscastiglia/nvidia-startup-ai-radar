@@ -226,6 +226,14 @@ def node(state: EstadoRadar) -> dict:
     if plano := state.get("plano"):
         L.append(f"  Critérios: setores={plano.setores or '—'} · "
                  f"palavras-chave={plano.palavras_chave[:6]}")
+        # D-081: o caso silencioso. `palavras-chave=[]` já estava impresso acima e não dizia
+        # nada a ninguém — o relatório seguia idêntico ao de uma recuperação bem-sucedida.
+        # Um resultado sem lastro tem de se anunciar na primeira tela, não no rodapé.
+        if not plano.discrimina():
+            L += ["",
+                  "  *** ATENÇÃO: esta consulta não produziu NENHUM critério de busca. ***",
+                  "  As empresas abaixo são uma fatia arbitrária da base — não um resultado",
+                  "  de recuperação. Refaça a consulta nomeando setor, estágio ou tecnologia."]
 
     # Caso zero: o briefing é alcançado mesmo sem nenhum fan-out (D-023). Um relatório que
     # diz POR QUE não encontrou é resposta; terminar sem relatório é o sistema não responder.
