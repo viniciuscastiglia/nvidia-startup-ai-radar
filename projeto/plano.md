@@ -47,7 +47,7 @@ resto do trabalho, independente de qualidade.
 
 ## 3. Inventário completo — todo item aberto tem destino
 
-### 3.1 FAZER — 15 itens, cada um com dia
+### 3.1 FAZER — 16 itens, cada um com dia
 
 | item | o que é | dia | pronto quando |
 |---|---|---|---|
@@ -63,6 +63,7 @@ resto do trabalho, independente de qualidade.
 | **README** | diz "a definir" para decisões tomadas e "Em breve" para como rodar | **06/09** | alguém clona e roda sozinho, sem perguntar nada |
 | **Diagramas `.mmd`** | são de 23/08 e nunca foram regenerados; entram em "Repositório e documentação" e P-14 diz que prometem campos sem leitor | **06/09** | `python scripts/diagramas.py` roda e o resultado bate com o grafo compilado |
 | **Docstrings mentem** | `query_planner`, `briefing` e `recommendation` ainda se declaram **"STUB DA SESSÃO 01"**. Dois são escolhas deliberadas e medidas, não trabalho inacabado — e um avaliador que lê "STUB" conclui projeto incompleto | **06/09** | nenhum módulo se declara stub sem ser um |
+| **As 16 fontes do RAG não estão cacheadas** | `ingerir_nvidia.py` **baixa ao vivo** das 16 URLs. Se uma mudar ou sair do ar até a avaliação, o corpus de quem clonar **não é o corpus medido** — e o gabarito de 24 perguntas aponta URL e frase-âncora específicas, então `avaliar_rag.py` quebra na mão do avaliador | **06/09** | cache em `data/nvidia/cache/`, com `--refetch` para atualizar. Clone limpo reproduz o corpus medido sem depender da rede |
 | **`.env.example` incompleto** | `COHERE_REQ_POR_MIN` é lido por `config.py` e **não está documentado** — quem tem chave paga não descobre que pode subir o teto de 10 req/min | **06/09** | toda env var lida está documentada |
 | **Roteiro do vídeo** | ≤ 7 min, exige ensaio | **06/09** | roteiro escrito e uma tomada de teste feita |
 | **Gravar o vídeo** | obrigatório. Único prazo imóvel | **07/09** | arquitetura + RAG + demo funcional gravados |
@@ -206,5 +207,12 @@ Seria desonesto prometer que nada novo aparece. O que dá para fazer é **limita
   produto antes de documentação.
 - **Pode aparecer no fornecedor**, sem aviso prévio — é medido que não existe (D-079). Contramedida:
   smoke antes de gravar e antes de entregar, e o provedor isolado em `config.py`.
+- **Verificado mecanicamente em 02/09, e limpo:** os 9 passos do pipeline têm módulo · 16
+  tecnologias no manifesto e 16 no banco · os 7 campos obrigatórios existem em `Recomendacao` ·
+  57 dependências pinadas, nenhum import faltando · `seed.py` é auto-contido (`conteudo_texto`
+  inline nas fixtures), então **clone limpo semeia a base sem `data/raw/`**, que é gitignored.
+- **NÃO verificado, e fica registrado como tal:** ninguém leu `src/` inteiro (3.783 linhas) — o que
+  foi lido saiu do que a execução apontou; e ninguém rodou um clone limpo em máquina nova. **O
+  critério "alguém clona e roda sozinho" só vale depois de 06/09, quando for de fato executado.**
 - **O que NÃO tem contramedida** é o item 1 de §3.3. Se o modelo morrer e não houver segundo
   provedor, não há plano B. É por isso que a chave é a decisão de hoje.
