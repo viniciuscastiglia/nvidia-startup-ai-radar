@@ -3,7 +3,9 @@ site: https://freedom.ai/
 setor: automação corporativa
 estagio: null
 localizacao: null
-ano_fundacao: null
+ano_fundacao: 2024   # LITERAL: "Criada entre setembro de 2024 e janeiro de 2025" —
+                     # o documento dá um INTERVALO. Fica o ano de início, que é o mais velho
+                     # dos dois e portanto o conservador para um teste de idade máxima.
 tamanho_time: null
 descricao_curta: Multiagentes de IA sob medida que assumem tarefas repetitivas em vendas, finanças, RH
   e operações de médias e grandes empresas.

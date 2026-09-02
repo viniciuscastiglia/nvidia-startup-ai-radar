@@ -2190,6 +2190,61 @@ de correção na primeira pergunta que o usuário faz. **Nenhuma leitura de cód
 sessões; uma execução o encontrou em um minuto.**
 
 
+## D-082 — O que o gerente lê primeiro era entulho de página, case de outra empresa e o próprio programa
+**Data:** 02/09/2026 · três correções que saíram de UMA execução do grafo
+
+**O sintoma, na saída real:** a `justificativa_tecnica` — um dos 7 campos obrigatórios do TAPI e o
+primeiro que o gerente lê — vinha de `citacao.trecho`, o chunk recuperado **cru**. Rodando o grafo,
+ela saiu como um case da **Iguazio** ao recomendar Inception à Doutor-AI e à Laura Networks.
+
+**Três causas distintas, e a fila as tratava como uma só.** A fila e P-10 diagnosticavam o defeito
+como *"`justificativa_negocio` precisa sair do LLM"*. Medido, era outro campo e outras causas:
+
+**1. O Inception é o PROGRAMA, não uma tecnologia a adotar.** Saía como recomendação de verdade —
+*"prioridade media · complexidade media · ação: agendar conversa técnica sobre NVIDIA Inception"* —
+no mesmo briefing que já traz `NVIDIA Inception: ELEGÍVEL` logo acima. `NAO_SAO_TECNOLOGIA` em
+`nvidia_rag.py` filtra na saída do nó.
+**Alternativa descartada: tirar a página do corpus.** Era o plano inicial e teria quebrado a régua:
+**quatro das 24 perguntas do gabarito dependem dela** — q10 (`"10 years"`, que é a regra de idade da
+M4), q11 (`"free program"`) e as provas de ausência q21 e q24. A distinção é de **papel**: fonte de
+conhecimento sim, produto a recomendar não. Por isso a lista mora no nó, não em `fontes.yaml`.
+
+**2. Entulho de página indexado.** `limpar_linhas` mata menu por TAMANHO e não alcança
+consentimento, formulário e widget, que vêm em prosa longa. Estavam no índice: o chunk 324 era 272
+tokens de markup de um chatbot da Adobe (`FAB BUTTON`, `AEM HTTPS`, `@author vpanapaku`), e o 15
+era formulário de manutenção. `descartar_boilerplate` filtra por MARCADOR observado, **por linha e
+nunca por chunk** — dos 7 chunks que casavam "cookie|Sign In|Apply Now", **só 3 eram entulho**, e um
+filtro por chunk teria apagado *"Inception is a free program that guides AI startups…"*, que é
+conteúdo bom e fonte provável da q11. **A sujeira era a linha, não o chunk.** Corpus: 177 → 175.
+Só no caminho HTML: num README, `<a href` dentro de bloco de código é conteúdo.
+
+**3. `ano_fundacao` ausente em 5 de 8 — e a auditoria de 22/08 tinha ERRADO em três.** A doutrina
+das fixtures é boa (*"só entra o que aparece literalmente"*); a aplicação falhou. Varrendo os
+documentos por frase de fundação: Axenya *"Fundada em 2020"*, Laura *"Em 2016, ele **fundou** a
+Laura"* — a fixture afirmava que 2016 era "início de operação, não fundação", e o verbo da frase é
+"fundou" — e Freedom *"Criada entre setembro de 2024 e janeiro de 2025"*. Deal e RD Station seguem
+`null` **de propósito**, com a razão já registrada nas próprias fixtures. 3 → 6 de 8.
+
+**O caso de borda que isso revelou, e é achado de método:** Laura fundada em 2016 faz 10 anos em
+2026, e a regra é *"menos de 10 anos"*. O documento dá o **ano**, não o mês — a idade real está
+entre 9,7 e 10,7. `elegibilidade()` faz `date.today().year - ano_fundacao` e exclui em `>= 10`, o
+que é **decisão de precisão sobre dado que não a sustenta**. O gabarito passou a
+`elegivel: [true, false]`, o idioma que a base já usava em `confianca`: sai do denominador em vez de
+premiar ou punir uma precisão inexistente. Efeito na régua: `elegivel` 5/7 → **4/6 + 1 ambíguo**,
+sem nenhuma reprovação nova. O operador de borda vira **P-20**.
+
+**O QUE NÃO FOI RESOLVIDO, e ficou MEDIDO:** rodando de novo depois das três correções, a
+`justificativa_tecnica` ainda sai como *"Join our ecosystem of startups, partners, and developers"*
+(NVIDIA Healthcare) e como *"Writer / Startup Pens Generative AI Success Story With NVIDIA NeMo"* —
+**o case de outra empresa, de novo, em duas tecnologias que não são o Inception.** Ou seja: o padrão
+é do CORPUS inteiro, não daquela página. E **não há assinatura estrutural para pegá-lo** — esses
+chunks vivem sob breadcrumbs genéricos (`NVIDIA NeMo > NVIDIA NeMo`), enquanto só 2 chunks da base
+têm palavra de vitrine no caminho de seção, e não são os ofensores. Logo não é filtro de higiene:
+**é a decisão de projeto P-10**, e ela agora tem o mecanismo medido em vez de um sintoma anedótico.
+
+**Reversível?** As três, sim. A 1 e a 3 são dados; a 2 é uma lista de marcadores e uma re-ingestão.
+
+
 ## Decisões pendentes
 
 | # | Decisão | Estado |
@@ -2212,4 +2267,5 @@ sessões; uma execução o encontrou em um minuto.**
 | **P-13** | **Exclusão por menção vs. identidade** | D-052 achado 3, aberto desde 25/08. Axenya e Freedom recusadas por citação de terceiro |
 | **P-14** | **Quatro campos são calculados e nada os lê** | `estrategia_analise` e `exige_sinais_ia` (Query Planner), `score_recuperacao` (Retriever), `motivo_validacao` (Evidence Validator). Não é código morto — é capacidade anunciada e não entregue: a arquitetura publicada promete *"critérios de busca + estratégia de análise"*. Ou o subgrafo passa a lê-los, ou o diagrama para de prometê-los |
 | **P-15** | **Re-medir a abstenção do passo 8** | os 20-22/24 são do modelo morto; D-069 previu n=3 e não foi executado |
+| **P-20** | **O operador de borda da idade no filtro do Inception** | aberta por D-082. `date.today().year - ano_fundacao` com `>= 10` decide exclusão sobre dado que só tem precisão de ANO: a Laura, fundada em 2016, tem entre 9,7 e 10,7 anos hoje e os dois lados da regra são alcançáveis. Ou a borda vira `pendente` em vez de exclusão, ou a base passa a guardar mês |
 | **P-19** | **O sweep do RAG (dimensão, banda de chunk, `k1`/`b`)** | **reaberta por D-078.** Estava cortado porque "o critério 2 já está no teto" — razão inválida. A razão candidata para manter o corte é outra e precisa ser dita: com 24 perguntas de gabarito, grade fina ajusta ao gabarito em vez de generalizar. O que joga contra o corte é `e@1 = 79%` (D-068): a primeira citação erra 1 vez em 5. Re-decidir junto com a base ampliada |

@@ -13,7 +13,10 @@ site: https://lauranetworks.com/
 setor: saúde
 estagio: seed
 localizacao: Curitiba, PR
-ano_fundacao: null   # NÃO consta nos documentos: '2016' aparece como início de operação, não fundação
+ano_fundacao: 2016   # LITERAL: "Em 2016, ele FUNDOU a Laura, empresa curitibana de
+                     # tecnologia" — gazzconecta. A nota anterior dizia que 2016 era "início
+                     # de operação, não fundação"; o verbo da frase é "fundou". Erro de
+                     # curadoria corrigido em 02/09, com o trecho acima como prova.
 tamanho_time: null   # NÃO consta: os '80' eram PLANO de contratação para 2021, não efetivo
 descricao_curta: Robô cognitivo que monitora prontuários hospitalares e alerta equipes médicas sobre risco
   de sepse e deterioração clínica.
@@ -26,7 +29,7 @@ gabarito:
   classe: AI-native
   maturidade_stack: null        # NÃO MEDIDO — ver a nota
   confianca: [baixa, media]     # AMBÍGUO de propósito — ver a nota
-  elegivel: true
+  elegivel: [true, false]       # AMBÍGUO por PRECISÃO — ver a nota de idade
   motivo_exclusao: null
   dores_esperadas: [escalabilidade]
   dores_proibidas: [governanca, observabilidade, dependencia_fornecedor]
@@ -39,6 +42,15 @@ gabarito:
     infraestrutura. Pela regra 4 de contexto/02 §6, ausência de sinal técnico NÃO é prova de
     stack imatura: é ausência de informação. Um gabarito que escrevesse `baixa` aqui estaria
     premiando o sistema por adivinhar. Fica fora do denominador e aparece na coluna própria.
+
+    `elegivel: [true, false]` — AMBIGUIDADE DE PRECISÃO, não de julgamento, e é de um tipo
+    novo nesta base. Fundada em 2016, a empresa faz 10 anos em 2026, e a regra do Inception é
+    "menos de 10 anos". Só que o documento dá o ANO, não o mês: a idade real está entre 9,7 e
+    10,7 anos, e os dois lados da regra são alcançáveis. `elegibilidade()` calcula
+    `date.today().year - ano_fundacao` e exclui em `>= 10`, o que é uma escolha defensável
+    sobre dado que não a sustenta. Escrever `false` aqui premiaria o sistema por uma precisão
+    que ele não tem; escrever `true` puniria a leitura conservadora. Fica ambíguo, sai do
+    denominador, e a decisão sobre o operador de borda vira P-20.
 
     `confianca: [baixa, media]` — a divergência é real e a régua existe para torná-la visível.
     A curadoria de 22/08 escreveu "confiança BAIXA" olhando para a notícia mais rica ser de 2021

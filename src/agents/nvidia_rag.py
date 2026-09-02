@@ -61,6 +61,26 @@ from src.state import CitacaoRAG, DorObservada, EstadoAnalise
 # 8 produtos para uma seed é ruído. Um funil largo aqui vira ruído lá.
 TRECHOS_POR_DOR = 3
 
+# O QUE ESTÁ NA BASE DE CONHECIMENTO MAS NÃO É COISA PARA A STARTUP ADOTAR (D-082).
+#
+# O Inception é o PROGRAMA que o gerente está vendendo — o objetivo da conversa, não uma
+# tecnologia que resolve uma dor. Sem esta lista ele saía como recomendação de verdade:
+#
+#     1. NVIDIA Inception · prioridade media · complexidade media · dores: custo
+#        ação: "Agendar conversa técnica sobre NVIDIA Inception com o time de engenharia"
+#
+# ...enquanto o mesmo briefing já traz a seção `NVIDIA Inception: ELEGÍVEL` logo acima. E como
+# a página é landing de marketing, os trechos que ela oferecia como `justificativa_tecnica` eram
+# *Member Spotlight Stories* — cases de OUTRAS empresas. Medido em 02/09: a justificativa técnica
+# para recomendar Inception à Doutor-AI e à Laura Networks era um case da Iguazio.
+#
+# POR QUE FILTRAR AQUI E NÃO TIRAR DO CORPUS: o corpus precisa dele. Quatro das 24 perguntas do
+# gabarito dependem dessa página — q10 ("10 years", que é a regra de elegibilidade da M4), q11
+# ("free program"), e as duas provas de ausência q21 e q24. Tirar a fonte consertaria o briefing
+# e quebraria a régua. A distinção é de PAPEL: fonte de conhecimento, sim; produto a recomendar,
+# não. Por isso a lista mora no nó que produz recomendação, não em `fontes.yaml`.
+NAO_SAO_TECNOLOGIA = {"NVIDIA Inception"}
+
 
 def consulta_da_dor(dor: DorObservada, stack: list[str]) -> str:
     """Rótulo da dor + a linguagem literal da startup + a stack. Ver o docstring do módulo."""
@@ -106,6 +126,8 @@ def node(state: EstadoAnalise) -> dict:
             # esperado (custo e latência levam as duas ao NIM). Repetir a citação inflaria a
             # aparência de evidência sem acrescentar fonte nenhuma.
             if citacao is None or citacao.url_fonte in vistos:
+                continue
+            if citacao.tecnologia in NAO_SAO_TECNOLOGIA:
                 continue
             vistos.add(citacao.url_fonte)
             citacoes.append(citacao)

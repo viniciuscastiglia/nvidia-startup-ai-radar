@@ -21,6 +21,63 @@ import re
 RUIDO_HTML = ["script", "style", "nav", "header", "footer", "aside", "form", "noscript", "svg"]
 
 
+# BOILERPLATE QUE SOBREVIVE AO FILTRO DE LINHAS CURTAS, PORQUE TEM FORMA DE PROSA (D-082).
+#
+# `limpar_linhas` mata menu residual por TAMANHO — funciona para "Get Started", "Products".
+# Não alcança banner de consentimento, formulário de sessão e vazamento de widget de CMS, que
+# vêm em frases longas e pontuadas. Achado rodando o grafo em 02/09: o chunk 324 (NVIDIA
+# Healthcare) era 272 tokens de markup de um chatbot da Adobe, indexado e recuperável, e o
+# chunk 15 (Inception) era formulário de manutenção. Isso chegava ao briefing como
+# `justificativa_tecnica` — o primeiro campo que o gerente lê.
+#
+# É lista de marcadores, não regra geral, e isso é deliberado: cada entrada foi OBSERVADA no
+# corpus real, como `RUIDO_HTML` e como a heurística de linhas curtas. Uma regra genérica que
+# pegasse isto pegaria conteúdo junto — e o docstring do módulo avisa que conteúdo que sai aqui
+# nunca mais volta.
+RUIDO_FRASE = (
+    # sessão e formulário (visto em Inception, AI Enterprise, Healthcare)
+    "not you?", "clear form", "welcome back.", "log out", "wcm mode cookie",
+    "your privacy choices", "please share your contact details",
+    # vazamento de CMS/widget — instrução para quem MONTA a página, não para quem a lê
+    # (visto em Healthcare: markup do assistente da Adobe embutido no HTML)
+    "aem https", "inject web client", "fab button", "modal backdrop", "chat modal",
+    "see console for details", "before bc initializes", "powered by adobe",
+    "close button (external",
+)
+
+
+def descartar_boilerplate(texto: str) -> str:
+    """Tira as linhas de `RUIDO_FRASE` e as réguas de `=` que separam blocos de widget.
+
+    Opera por LINHA, nunca por chunk, e a razão é medida: dos 7 chunks que casavam
+    "cookie|Sign In|Apply Now" em 02/09, só 3 eram entulho. Um filtro por chunk teria apagado
+    o chunk 1 — *"Inception is a free program that guides AI startups…"* —, que é conteúdo bom
+    e é fonte provável da q11 do gabarito. **A sujeira é a linha, não o chunk.**
+    """
+    saida = []
+    for linha in texto.split("\n"):
+        baixo = linha.strip().lower()
+        if any(m in baixo for m in RUIDO_FRASE):
+            continue
+        # Régua de separação de bloco de widget: `====================`. RUN consecutivo, e não
+        # contagem total — a primeira versão usava `count("=") >= 8` e pegava, por acidente, uma
+        # URL cheia de parâmetros. Regra que acerta pelo motivo errado quebra na próxima página.
+        if "=" * 8 in baixo:
+            continue
+        # Bloco de comentário de CSS/JS que vazou para o texto. Só no caminho HTML isto é seguro:
+        # o extrator devolve `<li>` como texto sem bullet, então linha aberta por `*` não é lista
+        # — é `* @author vpanapaku`, `* NV-breadcrumb component template.` (NVIDIA Healthcare).
+        if baixo.startswith("*"):
+            continue
+        # Markup que sobreviveu à remoção de tags: no corpus real sobra CTA inteiro
+        # (`<center><a href="…" class="cta--scnd">See All</a></center>`, CUDA Toolkit). Linha com
+        # atributo de HTML é marcação, não conteúdo — o texto útil dela já foi extraído antes.
+        if "<a href" in baixo or "<center" in baixo or 'class="' in baixo:
+            continue
+        saida.append(linha)
+    return re.sub(r"\n{3,}", "\n\n", "\n".join(saida)).strip()
+
+
 def limpar_linhas(texto: str) -> str:
     """Descarta linha de uma ou duas palavras que não termina em pontuação.
 

@@ -55,7 +55,12 @@ from typing import Literal
 import tiktoken
 from bs4 import BeautifulSoup
 
-from src.rag.limpeza import RUIDO_HTML, limpar_linhas, normalizar_markdown
+from src.rag.limpeza import (
+    RUIDO_HTML,
+    descartar_boilerplate,
+    limpar_linhas,
+    normalizar_markdown,
+)
 
 # tiktoken é o tokenizer da OpenAI, NÃO o do NeMo Retriever. É aproximação deliberada: serve
 # para dimensionar a banda, e a banda carrega margem por causa disso. Medi em 23/08 que o
@@ -246,7 +251,11 @@ def secoes_de_html(html: str) -> list[_Secao]:
     percorrer(raiz)
 
     for s in acc.secoes:
-        s.corpo = limpar_linhas(s.corpo)     # filtro de menu residual: só HTML
+        # Dois filtros, duas sujeiras: `limpar_linhas` mata menu por TAMANHO, e
+        # `descartar_boilerplate` mata consentimento/formulário/widget por MARCADOR — esses vêm
+        # em prosa longa e passavam pelo primeiro (D-082). SÓ HTML, os dois: num README, um
+        # `<a href` dentro de bloco de código é conteúdo.
+        s.corpo = descartar_boilerplate(limpar_linhas(s.corpo))
     return [s for s in acc.secoes if s.titulo or s.corpo.strip()]
 
 
@@ -438,7 +447,8 @@ def chunk_fixo(
     controle já teria metade do tratamento que ele existe para comparar.
     """
     texto = (normalizar_markdown(bruto) if meta.formato == "markdown"
-             else limpar_linhas("\n".join(s.corpo for s in secoes_de_html(bruto))))
+             else descartar_boilerplate(
+                 limpar_linhas("\n".join(s.corpo for s in secoes_de_html(bruto)))))
 
     passo = max(1, int(tamanho * (1 - sobreposicao)))
     chunks: list[Chunk] = []

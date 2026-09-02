@@ -38,8 +38,10 @@ gabarito:
     de luz) e `observabilidade` por "monitoramento" (monitoramento do equipamento, incluso na
     assinatura). Nenhuma das duas é dor de infraestrutura de IA; as duas são features do produto.
 
-    `elegivel: true` com `ano_fundacao: 2018` — o único caso da base com ano de fundação que
-    aparece LITERALMENTE no documento ("Cleantech brasileira · desde 2018", na home). Oito anos,
+    `elegivel: true` com `ano_fundacao: 2018` — literal no documento ("Cleantech brasileira ·
+    desde 2018", na home). Deixou de ser "o único caso da base" em 02/09: a varredura por
+    frase de fundação achou Axenya (2020), Laura (2016) e Freedom (2024), que a auditoria de
+    22/08 havia marcado como ausentes. Oito anos,
     dentro do limite de dez. Elegível ao Inception e mesmo assim fora do funil por ser non-AI:
     são dois filtros independentes, e esta fixture é a que prova que eles não se confundem.
 documentos:
