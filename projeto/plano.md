@@ -75,6 +75,10 @@ o briefing precisa mostrar para ele conseguir abordar a startup no dia seguinte.
 **M6 — 07/09 · O vídeo está gravado**
 Até 7 minutos: arquitetura dos agentes, sistema RAG, demonstração funcional pela interface.
 
+> **O estado abaixo é de 31/08 e a auditoria de 01/09 o revisou.** O estado corrente, a fila e —
+> principalmente — **o que quem fez o plano considera frágil nele** estão em `sessao-atual.md`.
+> O plano dos dias finais está em revisão (D-078, D-079).
+
 ## Estado em 31/08 — 9 dias da entrega, 7 do vídeo
 
 | marco | estado |

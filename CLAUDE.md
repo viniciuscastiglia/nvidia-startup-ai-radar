@@ -98,7 +98,7 @@ Consulta do usuário
 
 | Camada | Escolha | Decisão |
 |---|---|---|
-| LLM dos agentes | `nvidia/nemotron-3-nano-30b-a3b` — 1 utilizável de 10 sondados | D-067 |
+| LLM dos agentes | `nvidia/nemotron-3.5-lightning-30b-a3b` — 1 vivo de 10 sondados | D-079 |
 | Embeddings | `nvidia/llama-nemotron-embed-vl-1b-v2`, `dimensions=1024` | D-014, D-046 |
 | Reranking | Cohere `rerank-v3.5` (provedor via env: `cohere`/`nvidia`/`nenhum`) | D-068 |
 | Vetores | pgvector no mesmo Postgres | D-016 |
@@ -116,9 +116,14 @@ Consulta do usuário
 > A stack de recuperação já morreu **três vezes em três meses** — 18/05, 25/08 e 27/08/2026, sempre
 > com HTTP 410/404. Detalhe e datas em **D-013, D-046, D-064**. Consequências operacionais:
 >
-> - **`GET /v1/models` NÃO é prova de nada (D-070).** 9 dos 10 candidatos mortos estavam listados,
->   inclusive o que D-064 recomendou por nome. **Só chamada real conta:**
->   `python scripts/sondar_catalogo.py --structured`. O catálogo encolhe entre execuções.
+> - **`GET /v1/models` é o catálogo GLOBAL, não o que a conta pode chamar (D-070, corrigido por
+>   D-079).** Um `404` ali é quase sempre **entitlement**, não morte; morte tem assinatura própria —
+>   **HTTP 410 com a data de EOL no corpo**. `sondar_catalogo.py` separa os três casos. E **ser modelo
+>   próprio da NVIDIA é condição necessária, não suficiente**: terceiros deram 0 vivos em 12.
+> - **NÃO EXISTE AVISO PRÉVIO (D-079).** Nem campo na listagem, nem header `Sunset`/`Deprecation`.
+>   Só a chamada real informa, e informa depois. **Rodar `smoke_nvidia.py` antes de gravar o vídeo e
+>   antes de entregar é a única defesa que existe** — são 4 segundos, e o quarto EOL passou 13 horas
+>   despercebido por ninguém ter rodado.
 > - **Env var não protege o embedder.** Trocar o modelo muda o espaço vetorial e invalida os 381
 >   vetores — é `scripts/reembedar.py` mais re-medir a régua inteira (D-046).
 > - **O teto da trial do Cohere é pior que a documentação:** o 429 chega na 4ª chamada sequencial,

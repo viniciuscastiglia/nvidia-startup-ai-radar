@@ -1,90 +1,107 @@
-# Pauta corrente — sessão 09
+# Pauta corrente — fecha a sessão 09, abre a revisão do plano final
 
 > Este é o único arquivo de sessão do repositório. Ele guarda **o que está aberto**, não o que já
-> aconteceu — o que aconteceu está em `decisoes.md` e no git. Fechamento de sessão anterior não
-> entra aqui: vira decisão no log, ou não vale registro.
+> aconteceu — o que aconteceu está em `decisoes.md` e no git.
+>
+> **A próxima sessão é uma REVISÃO DO PLANO em plan mode.** A seção "o que eu considero frágil"
+> lista o que quem fez o plano acha que não se sustenta — é por ali que a revisão rende mais.
 
 **Documento de estudo:** [Anatomia do Radar](https://claude.ai/code/artifact/dc527bde-f149-49f8-87a5-3105197cc2e2)
+**Mapa e plano:** [O que falta no Radar](https://claude.ai/code/artifact/7e6e13e8-e7b5-4f5a-a2ae-85ff247eb007)
 
-## O diagnóstico do núcleo (levantado em 28/08)
+## Estado verificado em 01/09, no fim da sessão
 
-Três causas concretas, e duas são a mesma classe de erro:
+| verificação | resultado |
+|---|---|
+| `smoke_nvidia.py` | **3/3** — chat (modelo novo), embedding 676 ms, rerank Cohere 1177 ms |
+| `pytest -q` | **53 passed**, 168 s |
+| `avaliar_agentes.py` | `precisão 49% · recall 100% · discriminação 8/8 · proibidas 10` — bate com D-074 |
+| `avaliar_agentes.py --exclusoes` | `7/7` falso negativo · `2/7` falso positivo — bate com D-071 |
+| ponteiros `D-NNN` | zero quebrados |
 
-1. **`confianca` 0/6 é constante, não impreciso.** `evidence_validator.py:122` faz `min()` sobre as
-   confianças das afirmações: uma afirmação fraca derruba o diagnóstico inteiro, e quanto mais
-   evidência o sistema junta, pior fica. **O agente piora quanto melhor trabalha.**
-2. **Os gatilhos de dor casam o domínio do PRODUTO, não o da IA.** `observabilidade` responde por 5
-   das 10 dores proibidas, e o que dispara é *"monitoramento do **sistema fotovoltaico**"*
-   (SunnyHUB), *"**dashboards** que mensuram a qualidade do atendimento"* (Doutor-AI). Nenhum fala
-   de instrumentação de IA.
-3. **`classe` erra 4 vezes, todas na mesma direção** — `AI-native` → `AI-enabled`. Gargalo de
-   vocabulário: 7 das 8 fixtures têm profundidade técnica zero.
+## O que mudou nesta sessão
 
-**O padrão que liga 2, 3 e a exclusão da Axenya por `consultoria`:** todos casam palavra sem checar
-de que a frase fala. É a mesma classe de D-048 e do achado aberto de D-052 — detector léxico onde é
-preciso julgamento de sujeito e domínio. É exatamente o que o juiz do Extractor faz, e é por isso
-que D-072 move a agulha.
+- **D-078** — o barema saiu do lugar de função objetivo. O que ordena o trabalho passou a ser o
+  defeito do sistema para quem vai usá-lo. Documentação, método e 11 docstrings reescritos; log
+  comprimido em três entradas; **zero mudança de comportamento**.
+- **D-079** — **quarto EOL**: `nemotron-3-nano-30b-a3b` morreu às 09:00 UTC de 01/09, com aviso
+  formal do fornecedor no corpo do 410. Trocado por `nemotron-3.5-lightning-30b-a3b`. E o achado de
+  D-070 foi **corrigido**: "listado mas morto" eram três coisas somadas — 1 morte real contra 7
+  entitlement, o que inflava o risco de EOL do projeto por um fator de 7.
 
-**E o buraco maior não é nenhum dos três: o motor de recomendação não tem régua.** O gabarito das 8
-fixtures tem 9 campos e nenhum é sobre recomendação — a esperada existe só em prosa livre, em
-`perfil_alvo_nota`. Nada quebra se ela vier errada. É o mesmo estado que os agentes tinham antes de
-D-050. A saída real mostra o efeito: para dor de **custo**, a justificativa técnica sai como
-*"Join our ecosystem of startups, partners, and developers"* — e a recomendação é justamente o
-texto que o gerente lê primeiro e sobre o qual ele decide se aborda a startup.
+## A auditoria contra a spec — feita em 01/09
 
-**Quatro dos nove agentes sem instrumento:** `query_planner` (stub, zero testes, zero régua),
-`retriever` (sem gabarito), `recommendation` (sem régua), `briefing` (só o teste de elegibilidade).
+**Completo e conferido item a item:** schema mínimo (9 campos em `startups`, 7 em `documentos`) ·
+os **7 campos obrigatórios** do output, anotados um a um em `state.py:316` · as **16 tecnologias** ·
+os **9 passos** do RAG, incluindo o passo 9 · os **8 agentes** registrados no grafo · diversidade de
+perfis (4/3/1) · rastreabilidade com `url_fonte` verificada.
 
-## As decisões abertas, em ordem de quanto o defeito custa a quem usa
+**As três lacunas, todas dentro do escopo:**
 
-1. **Dar régua ao motor de recomendação.** É a saída que o gerente lê e sobre a qual ele age, e hoje
-   nada quebra quando ela vem errada. Curadoria: quais tecnologias são esperadas e quais são
-   proibidas, por fixture. Sem isso, todo item abaixo é medido no meio do pipeline e ninguém sabe se
-   a ponta melhorou.
-2. **Ligar o juiz do Extractor?** (D-072) — precisão de dor 49% → 83-96%, custo de recall 100% →
-   71-79%. Está aqui porque a dor é o que alimenta a recomendação: dor falsa vira tecnologia
-   recomendada sem motivo, na frente do usuário. O critério de D-055 foi atendido; falta decidir a
-   lacuna de recall, que D-055 nunca fixou — e decidi-la sem a régua do item 1 é decidir no escuro.
-3. **`classe`** — erra 4 vezes, sempre `AI-native` → `AI-enabled`. É o rótulo de manchete do
-   briefing: errar aqui faz o gerente despriorizar exatamente a startup que ele deveria abordar.
-   O mais caro dos itens, e depende da base ampliada (D-060 mostrou que o gargalo não é a regra de
-   decisão).
-4. **Consertar o `min()` da confiança** — 0/6 constante. O campo aparece no briefing carregando
-   zero informação, o que é pior que não aparecer: o leitor supõe que significa algo. Barato de
-   mexer, mas exige critério fixado antes — uma tentativa já foi reprovada em D-059.
-5. **`estrategia_analise`** — o campo é calculado em `query_planner.py:58` e **nada o lê**, mas a
-   arquitetura publicada anuncia *"critérios de busca + estratégia de análise"*. O diagrama promete
-   uma capacidade que o sistema não tem. Ou o subgrafo passa a ler, ou o diagrama para de prometer.
-6. **A tese aberta por D-072:** conclusões deste projeto sobre *"o LLM não dá conta"* foram medidas
-   num modelo de **8B que morreu**. D-059 e D-060 reprovaram mudanças no Classifier e no Evidence
-   Validator naquele mesmo modelo. São candidatas diretas a re-medição.
+1. **Volume: 24 documentos contra os 90-240 que o TAPI pede.** 8 startups de 30-80, cada uma com
+   exatamente o mínimo de 3 documentos. É 27% do piso.
+2. **`query_planner` é o único agente sem teste E sem régua.** 63 linhas de casamento de substring,
+   e `estrategia_analise` é uma **string literal constante** que nada lê — enquanto o TAPI nomeia
+   *"…e define a estratégia de análise"* como responsabilidade dele.
+3. **Nenhum dos 8 agentes chama LLM em produção.** `USAR_JUIZ_LLM = False`,
+   `JULGAR_SUSTENTACAO = False`, e `nvidia_rag` faz só recuperação. Cada escolha é *medida*
+   (D-056 empatou; D-059, D-060 e D-075 reprovaram) — **mas todas as medições estão em dois modelos
+   mortos**, e D-072 é o precedente de que a conclusão vira no modelo seguinte.
 
-## Dívidas declaradas, com o achado escrito
+## A fila, em ordem de quanto o defeito custa a quem usa
 
-- **`README.md` afirma coisas falsas hoje.** Não é "está incompleto": ele diz *"Busca vetorial: a
-  definir"*, *"Embeddings e reranking: a definir"*, *"LLM: a definir"* para coisas decididas há uma
-  semana (D-016, D-046, D-067, D-068), diz *"Como rodar: Em breve"* num repositório que roda, e a
-  árvore não lista `src/`, `scripts/`, `data/` nem `tests/`. Quem abrir para entender o sistema é
-  ativamente enganado. **A data de conserto continua na M6** — o README não é o sistema, e
-  antecipá-lo não melhora nada; o que muda é o critério de pronto: verdadeiro e suficiente para
-  alguém rodar sozinho.
-- **A abstenção do passo 8 não foi re-medida no modelo novo.** Os 20-22/24 são do modelo morto;
-  D-069 previu n=3 e não foi executado.
-- **A M3 está em 8 das 30 empresas** (D-062).
-- **Interface web (P-06)** — não começada, e é a única superfície pela qual alguém que não lê código
-  consegue julgar o sistema. O escopo é decisão de produto em aberto.
+1. **Re-medir o que foi medido em modelo morto.** `--juiz` (D-072), `--rubrica` (D-060),
+   `--confianca-diagnostico` (D-059), `--geracao` (P-15). Decide se o sistema é determinístico por
+   medição ou multi-agente com julgamento. **Os dois são defensáveis; não saber não é.**
+2. **Régua do motor de recomendação (P-10)** + a régua passar a chamar `recommendation.node()` em vez
+   de espelhar o filtro por fora. As **sete regras de exemplo do TAPI** são gabarito pronto.
+3. **P-17, o eixo de admissão** — com as duas colunas novas e critério fixado antes. Ver a conta em
+   D-077: admitir tudo dá 100%/49%, e o recall só se move se a régua contar em outro lugar.
+4. **`justificativa_negocio` sai do LLM** — hoje vem de tabela cobrindo 5 de 16 tecnologias.
+5. **O `min()` da `confianca`** — 0/6 constante: um campo no briefing carregando zero informação.
+6. **`query_planner` + P-14.**
+7. **A base.** Ver a tensão não resolvida abaixo.
+8. **`classe` 3/7** — depende da base, ou de a re-medição do item 1 virar D-060.
 
-## Estado verificado em 31/08, depois da faxina
+## O que eu considero FRÁGIL no plano — é aqui que a revisão rende
 
-`pytest -q` → **53 passed, 0 failed** em 179 s. É a primeira vez que a suíte inteira passa desde o
-EOL de 27/08. `smoke_nvidia.py` → **3/3**: chat 1808 ms, embedding 592 ms, rerank Cohere 1193 ms.
-A régua dos agentes bate linha por linha com D-072 e o filtro do Inception com D-071 — nenhuma
-remoção da faxina mexeu em placar.
+**Escrito por quem fez o plano, para ser contestado.**
+
+- **O maior risco estrutural: interface e vídeo em sessões consecutivas, sem folga entre elas.** Se a
+  interface escorregar, não há demo — e o vídeo é o único prazo imóvel. **É ponto único de falha
+  colado no prazo**, e nenhuma outra parte do plano tem essa forma.
+- **A tensão do volume não está resolvida, está escondida.** D-062 fixou timebox de 3h com piso em
+  20. Eu "corrigi" para 30 startups / 90 documentos por argumento de spec. Mas 22 novas × 3
+  documentos com `url_fonte` real e verificada em 3h é otimista. **Se render 20, a correção só trocou
+  "abaixo do alvo" por "estouro de timebox".** Precisa ser decidido de verdade, não herdado.
+- **A sessão de re-medição pode comer a sessão inteira.** São ~200 chamadas, e o modelo novo **emite
+  raciocínio dentro do `content`** — pode exigir ajuste de prompt antes de qualquer medição valer.
+  A alternativa é aceitar o pipeline determinístico e gastar o tempo na base e na interface.
+- **`query_planner`: vale uma sessão?** A alternativa de 10 minutos é tirar a promessa do diagrama.
+  Fazer o agente de verdade é melhor — mas é a única peça do plano cujo custo eu não estimei sobre
+  nada.
+- **P-06 não está decidida** e a interface tem uma sessão. Escopo não decidido mais prazo curto é a
+  combinação que estoura.
+- **Falta a cadeia de fallback em `src/llm.py`.** Ele aceita um modelo só. Uma lista ordenada que
+  caísse para o próximo em 410/404 transformaria o quinto EOL em degradação em vez de quebra. É a
+  conclusão arquitetural de quatro EOLs e não está no plano.
+
+## Dívidas declaradas
+
+- **`README.md` afirma coisas falsas hoje** — diz *"a definir"* para LLM, embeddings, busca vetorial
+  e reranking, todos decididos (D-016, D-046, D-068, D-079), e *"Em breve"* para como rodar. A árvore
+  não lista `src/`, `scripts/`, `data/` nem `tests/`. Conserto na M6; critério de pronto é
+  **verdadeiro e suficiente para alguém rodar sozinho**.
+- **Interface web (P-06)** — não começada, e é a única superfície pela qual quem não lê código julga
+  o sistema.
+- **Os números de D-072, D-074 e D-075 não valem** até serem refeitos no modelo vivo.
 
 ## Perguntas para a liga, se houver contato
 
 1. O reranker hospedado da NVIDIA saiu do ar e o projeto migrou para o Cohere, que o próprio TAPI
    recomenda — confirmam que é aceitável?
-2. Vocês vão **executar** o projeto na avaliação, e com chave de quem?
-3. Aviso de que o catálogo de preview aposentou modelos em 18/05, 25/08 e 27/08, e que ele **lista**
-   modelos que devolvem 404.
+2. Vocês vão **executar** o projeto na avaliação, e com chave de quem? **Importa mais do que
+   parecia:** o catálogo aposentou o LLM em 01/09 sem aviso prévio de nenhum tipo, e a conta gratuita
+   não alcança nenhum modelo de terceiros (0 vivos em 12 sondados).
+3. Aviso de que o catálogo lista modelos que a conta não pode chamar, e que o EOL só é descoberto
+   por chamada real, depois do fato.
