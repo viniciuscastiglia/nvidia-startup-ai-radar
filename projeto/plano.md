@@ -47,7 +47,7 @@ resto do trabalho, independente de qualidade.
 
 ## 3. Inventário completo — todo item aberto tem destino
 
-### 3.1 FAZER — 13 itens, cada um com dia
+### 3.1 FAZER — 15 itens, cada um com dia
 
 | item | o que é | dia | pronto quando |
 |---|---|---|---|
@@ -55,13 +55,15 @@ resto do trabalho, independente de qualidade.
 | **Base 8 → 30** | `"fintechs"` e `"agro"` devolvem **zero**. 27% do piso do TAPI | **03/09** | as duas consultas devolvem resultado; `seed.py --verificar-urls` passa |
 | **P-15 + `avaliar_rag`** | o corpus mudou em D-082 — `e@1=79%` é de um corpus com entulho dentro | **03/09** (background) | tabela nova registrada, com a ressalva de denominador |
 | **P-06 + interface** | zero byte. Única superfície que um não-engenheiro julga | **04–05/09** | consultar → ver → recomendações com evidência → exportar |
-| **Teste do `extractor`** | 249 linhas, primeiro nó do subgrafo, alimenta todos. Sem arquivo de teste | **05/09** | `tests/test_extractor.py` cobrindo recorte literal e perfil |
+| **Testes ausentes** | **três** módulos sem teste: `extractor.py` (249 linhas, primeiro nó, alimenta todos), `rag/geracao.py` (**o passo 8 do TAPI**, onde mora a abstenção de D-040) e `db.py` (o SQL da recuperação) | **05/09** | os três com teste; a abstenção do passo 8 coberta |
 | **P-11** | `confianca` é **0/6 constante** — campo do briefing com zero informação | **05/09** | ou promove o braço de D-059 (2/6), ou o campo para de ser impresso |
 | **P-20** | idade na borda: Laura tem 9,7–10,7 anos e a regra usa só o ano | **05/09** | borda vira `pendente`, não exclusão |
 | **P-13** | exclusão por menção de terceiro — **2/7 falso positivo** medido | **05/09** | falso positivo cai, falso negativo (7/7) não regride |
 | **P-14** | 4 campos calculados que ninguém lê — capacidade anunciada e não entregue | **06/09** | ou o subgrafo os lê, ou o diagrama e o README param de prometê-los |
 | **README** | diz "a definir" para decisões tomadas e "Em breve" para como rodar | **06/09** | alguém clona e roda sozinho, sem perguntar nada |
 | **Diagramas `.mmd`** | são de 23/08 e nunca foram regenerados; entram em "Repositório e documentação" e P-14 diz que prometem campos sem leitor | **06/09** | `python scripts/diagramas.py` roda e o resultado bate com o grafo compilado |
+| **Docstrings mentem** | `query_planner`, `briefing` e `recommendation` ainda se declaram **"STUB DA SESSÃO 01"**. Dois são escolhas deliberadas e medidas, não trabalho inacabado — e um avaliador que lê "STUB" conclui projeto incompleto | **06/09** | nenhum módulo se declara stub sem ser um |
+| **`.env.example` incompleto** | `COHERE_REQ_POR_MIN` é lido por `config.py` e **não está documentado** — quem tem chave paga não descobre que pode subir o teto de 10 req/min | **06/09** | toda env var lida está documentada |
 | **Roteiro do vídeo** | ≤ 7 min, exige ensaio | **06/09** | roteiro escrito e uma tomada de teste feita |
 | **Gravar o vídeo** | obrigatório. Único prazo imóvel | **07/09** | arquitetura + RAG + demo funcional gravados |
 

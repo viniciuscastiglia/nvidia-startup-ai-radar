@@ -124,6 +124,11 @@ Consulta do usuário
 >   Só a chamada real informa, e informa depois. **Rodar `smoke_nvidia.py` antes de gravar o vídeo e
 >   antes de entregar é a única defesa que existe** — são 4 segundos, e o quarto EOL passou 13 horas
 >   despercebido por ninguém ter rodado.
+> - **EXISTE UMA QUARTA ASSINATURA, E ELA NÃO É MORTE: `LENTO` (D-080).** O modelo responde HTTP
+>   200 acima do relógio — mediana medida de **51 s**, faixa 17-88 s. As três assinaturas de D-079
+>   descrevem só respostas que CHEGAM; um **timeout não é conclusão**. O smoke separa os casos e
+>   imprime a conduta. **`LENTO` NÃO justifica trocar de modelo** — em 02/09, lê-lo como EOL teria
+>   aberto uma migração desnecessária a 5 dias do vídeo.
 > - **Env var não protege o embedder.** Trocar o modelo muda o espaço vetorial e invalida os 381
 >   vetores — é `scripts/reembedar.py` mais re-medir a régua inteira (D-046).
 > - **O teto da trial do Cohere é pior que a documentação:** o 429 chega na 4ª chamada sequencial,
@@ -152,7 +157,7 @@ critério, e sem ela 49% de precisão parece bom em vez de "17 pontos acima de e
 
 - **8 startups** em `data/seed/*.yaml`, 24 documentos, `url_fonte` verificadas. **Não é a M3
   (30-50)** — é o subconjunto que serve de gabarito aos agentes (D-050, D-062).
-- **16 tecnologias NVIDIA**, 177 chunks estruturais + 204 de controle, gabarito de **24 perguntas**
+- **16 tecnologias NVIDIA**, 175 chunks estruturais + 202 de controle, gabarito de **24 perguntas**
   (19 com resposta, 5 sem). **Os 9 passos do pipeline do TAPI estão fechados.**
 
 ## Comandos
