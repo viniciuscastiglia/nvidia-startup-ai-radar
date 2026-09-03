@@ -1,0 +1,417 @@
+# Produzindo Certo
+# Coletado em 2026-09-03. Todo `conteudo_texto` é o texto REAL da página em `url_fonte`,
+# fatiado do que `scripts/coletar.py` extraiu — não é paráfrase.
+#
+# CAMADA "DADO" (D-062): esta fixture NÃO tem bloco `gabarito:` nem `perfil_alvo`, e a
+# ausência É a decisão. As 8 fixtures originais são a régua dos critérios 1 e 3; anotar
+# esta aqui seria medir o classificador contra rótulos escritos na mesma sessão que leu
+# os mesmos documentos — calibrar contra o próprio gabarito.
+#
+# CAMPOS ESTRUTURADOS: só ficam preenchidos os que aparecem LITERALMENTE nos documentos.
+# `null` faz o Briefing reportar "requisito não verificado", que é correto; um valor
+# plausível e errado não reporta nada e ainda corrompe o filtro de elegibilidade.
+#
+# TEASER RECORTADO: os veículos injetam chamada de OUTRA empresa no meio e no fim da
+# matéria. Cada documento abaixo declara em `_corte` as linhas do arquivo coletado que
+# entraram e as que foram removidas por citarem terceiro.
+nome: Produzindo Certo
+site: https://www.produzindocerto.com.br/
+setor: agro — rastreabilidade socioambiental
+estagio: null
+localizacao: null
+ano_fundacao: null
+tamanho_time: null
+descricao_curta: Plataforma que avalia o desempenho ambiental e social de propriedades rurais combinando
+  visita técnica presencial com análise remota de dados e imagens, para estruturar cadeias de fornecimento
+  e finanças verdes.
+fonte_descoberta: agfeed.com.br — cobertura de ESG e rastreabilidade no agro
+coletado_em: '2026-09-03'
+documentos:
+- tipo: noticia
+  titulo: Produzindo Certo colhe R$ 20,7 milhões em rodada com grandes nomes do investimento agtech
+  url_fonte: https://agfeed.com.br/agtech/produzindo-certo-colhe-r-207-milhoes-em-rodada-com-grandes-nomes-do-investimento-agtech/
+  data_publicacao: null
+  conteudo_texto: 'no seu e-mail
+
+    Produzindo Certo colhe R$ 20,7 milhões em rodada com grandes nomes do investimento agtech
+
+    Em um dos maiores aportes do setor no ano, agtech fecha rodada liderada por Arar Capital e SP Ventures,
+    com participação de The Yield Lab, SLC Ventures e Agroven, para ampliar atuação e acelerar expansão
+    da agropecuária regenerativa
+
+    Italo Bertão Filho
+
+    Aline e Charton Locks, respectivamente CEO e COO da Produzindo Certo
+
+    Foram quase dois anos de conversas com investidores - e não apenas do Brasil. E a espera rendeu bons
+    frutos.
+
+    Nesta sexta-feira, dia 24 de outubro, a agtech Produzindo Certo anuncia oficialmente o fechamento
+    de sua primeira rodada de investimentos, com a captação de R$ 20,7 milhões para acelerar suas operações.
+
+    “No fim, a rodada acabou levando mais tempo do que eu achei que tomaria”, disse Aline Locks, CEO da
+    companhia, ao
+
+    . Mas o resultado compensou a espera, aferindo mais que o dobro dos R$ 10 milhões pretendidos quando
+    iniciou o processo com um road show na Europa, em junho de 2023.
+
+    O aporte, um dos maiores realizados em agtechs brasileiras este ano, contou com nomes expressivos
+    do agro e do venture capital no País. A liderança é das gestoras
+
+    e SP Ventures, que foram seguidas por
+
+    The Yield Lab Latam
+
+    - braço de investimentos da SLC Agrícola -, e
+
+    .
+
+    “Essa rodada vem muito no sentido de acelerar a Produzindo Certo. A gente não precisava desse recurso
+    para que a empresa existisse, continuasse. O que ela está fazendo, está funcionando. Mas a gente quer
+    ir além e, por isso, fizemos essa rodada”, avalia Charton Locks, diretor de operações da agtech.
+
+    Assim, de acordo com a empresa, os recursos serão direcionados para três frentes: reforço da área
+    de tecnologia, fortalecimento dos times comercial e de marketing, e expansão de produtos e operações.
+
+    A Produzindo Certo opera na estruturação de cadeias sustentáveis de fornecedores e oferece serviços
+    de consultoria, gestão e verificação de sustentabilidade socioambiental para produtores rurais e empresas.
+
+    Esse trabalho é executado com auxílio de uma plataforma própria, que avalia o desempenho ambiental
+    e social das propriedades, combinando visitas técnicas presenciais com análises remotas baseadas em
+    dados e imagens.
+
+    Para os produtores, a Produzindo Certo presta serviços de diagnóstico completo, permitindo visualizar
+    de forma estruturada a situação socioambiental das fazendas e identificar pontos de melhoria.
+
+    Já para as empresas, a agtech presta serviços de mapeamento e o monitoramento contínuo de suas cadeias
+    de fornecimento, assegurando que os produtos adquiridos venham de propriedades que adotem boas práticas
+    agrícolas e atendam a critérios de sustentabilidade.
+
+    Hoje, a agtech possui contratos com 40 empresas, em geral grandes companhias do agro, como
+
+    , além de empresas do setor financeiro, como
+
+    , companhia de seguros do Banco do Brasil, e cooperativas como a
+
+    , de Rio Verde (GO).
+
+    Ao todo, a Produzindo Certo acumula 10,7 mil propriedades cadastradas na plataforma e 8,6 milhões
+    de hectares monitorados, contribuindo ainda para a conservação de mais de 3,5 milhões de hectares
+    de vegetação nativa nas fazendas.
+
+    Para Charton Locks, a rodada de investimento representa um amadurecimento da Produzindo Certo.
+
+    Depois de anos estruturando uma base sólida de dados sobre sustentabilidade no campo, o desafio agora
+    é transformar essa informação em valor para o produtor.
+
+    “O agricultor que reduz emissões, sequestra carbono ou preserva biodiversidade já gera ativos ambientais
+    valiosos, mas eles ainda não são capitalizados”, explica o executivo.
+
+    Por isso, a Produzindo Certo recentemente resolveu “empacotar” resultados ambientais e traduzi-los
+    em produtos: o Reg.IA, focado em desenvolver a produção de soja e milho produzidos com técnicas de
+    agricultura regenerativa, e o Bov.IS, voltado à promoção da pecuária sustentável, processo que envolve
+    intensificação da quantidade do gado no campo e recuperação de pastagens.
+
+    O Reg.IA é mais antigo e foi lançado em agosto do ano passado, contando com parceiros de peso como
+
+    e, mais recentemente, com a BrasilSeg.
+
+    O projeto acaba de completar sua primeira safra e na largada apresentou resultados positivos, com
+    a produção de 149,1 mil toneladas de soja regenerativa e 9,2 mil toneladas de milho regenerativo na
+    safrinha, com uma pegada de 66% menor que a média nacional da soja e 83% em comparação com a média
+    do milho.
+
+    Já o Bov.IS, voltado à pecuária, recém começou seus trabalhos, com o objetivo de alcançar 45 pecuaristas
+    dos estados de Mato Grosso e Pará, trabalhando com 125 mil hectares de pastagens e com a expectativa
+    de recuperar e intensificar pelo menos 5 mil hectares.
+
+    Charton Locks diz que outros projetos poderão vir, ainda que seja econômico nos detalhes. “Agora,
+    com o investimento, é possível que a gente possa fazer para mais soja, milho e carne, e também para
+    outras coisas”, diz Locks. “Acho que a gente vai ter outras conversas logo mais para falar de novos
+    produtos”, despista.
+
+    Em relação à tecnologia, ele diz que o próximo passo é integrar a IA dentro da plataforma. “Estamos
+    entendendo como ser mais eficientes para apresentar a informação de sustentabilidade e tornar mais
+    fácil o uso da ferramenta, tanto por produtores quanto pelos clientes da Produzindo Certo”, diz Locks.
+
+    “Isso, por consequência, acaba passando pela inteligência artificial, criando modelos para que nossos
+    clientes consigam acessar os dados de uma maneira muito mais fácil e simples, sem necessidade de grandes
+    tutoriais, e também o produtor, como que ele consegue interagir com os dados da sua fazenda de uma
+    maneira mais natural”, complementa ele.
+
+    O time da agtech, que hoje soma 90 pessoas, considerando profissionais dentro do escritório e em campo,
+    também pode crescer, ainda que não seja necessariamente a meta da rodada.
+
+    A internacionalização da startup, já iniciada, é uma das metas para o futuro. A Produzindo Certo está
+    presente hoje na Argentina, Paraguai, Colômbia e México, e hoje está conversando com empresas com
+    operações na África, ainda que não tenha nenhum negócio fechado até aqui. "Estamos otimistas que,
+    no ano que vem, vai sair", diz Charton Locks.
+
+    Sustentabilidade na prática
+
+    Foi o espírito prático da Produzindo Certo que chamou a atenção da gestora Arar Capital, criada pela
+    Baraúna Investimentos, family office de famílias tradicionais do agro paulista, como Biagi e Rodas,
+    fazendo com que a casa se interessasse em investir na agtech.
+
+    “Na nossa visão, a Produzindo Certo foi a primeira empresa que tem endereçado de uma maneira muito
+    prática a temática da sustentabilidade no agro”, afirma Paulo Ciampolini, sócio da Arar.
+
+    “Por ser uma empresa que tem uma liderança que conhece o agro de verdade, eles conseguem entender
+    a dor do produtor, ao mesmo tempo em que conseguem trazer esse conceito de rastreabilidade, certificação,
+    gerando valor de forma muito prática”, complementa o sócio da Arar.
+
+    Ciampolini já conhecia a empresa há cerca de três anos e se aproximou da agtech por ter um investidor
+    da gestora que é cliente da Produzindo Certo.
+
+    Vendo de perto o trabalho dos diretores da empresa, Ciampolini não teve dúvidas de que o trabalho
+    da agtech era sério.
+
+    “O Charton e a Aline Locks são ‘máquinas’, são muito bons. E também muito preocupados com a sustentabilidade
+    do negócio”, afirma.
+
+    E também foi percebendo que a linha de atuação da startup também estava em sintonia com as teses da
+    Arar. “Sustentabilidade é algo que não tem mais volta, é vento à favor. Não tem mais como o cara que
+    compra soja ou qualquer commodity desconsiderar a origem, de onde veio, quem produziu, de que jeito
+    produziu. Essa é uma tendência muito forte e a Produzindo Certo está inserida nessa cadeia”, avalia
+    Ciampolini.
+
+    Silvio Passos, fundador e presidente do Agroven, também viu um alinhamento das operações da empresa
+    com o clube de investimentos formado por uma rede de empresários e famílias do agronegócio.
+
+    “A Produzindo Certo está alinhada com o propósito da nossa rede de líderes em gerar riqueza para os
+    brasileiros e saúde para o planeta", disse.
+
+    Para Kieran Gartlan, managing partner do The Yield Lab Latam, a agtech representa o tipo de solução
+    que o fundo pretende escalar na interseção entre tecnologia, sustentabilidade e impacto real no campo.
+
+    "A Produzindo Certo transforma dados em confiança, conectando produtores, empresas e investidores
+    que acreditam no futuro regenerativo do agro brasileiro”, afirmou.
+
+    “Investir na Produzindo Certo é apostar na vanguarda do agronegócio sustentável brasileiro, conectando
+    produtores rurais a mercados exigentes e garantindo a resiliência e valorização da cadeia produtiva
+    a longo prazo”, complementou Alexandre Stephan, sócio da SP Ventures.
+
+    Desafios de primeira viagem
+
+    O reconhecimento dos investidores soa como música aos ouvidos dos Locks, que enfrentaram vários desafios
+    justamente durante o roadshow em busca de investidores.
+
+    “Desafios de marinheiros de primeira viagem”, brinca Charton Locks, já mais tranquilo após vários
+    percalços.
+
+    No primeiro road show na Europa, Locks percebeu que muitos investidores estrangeiros tinham dificuldade
+    em compreender a complexidade do Brasil e a dinâmica do agronegócio brasileiro.
+
+    "Foi um aprendizado enorme e acho que isso ajudou a gente a ajustar muita coisa do nosso discurso,
+    do pitch. Voltamos e começamos a conversar com diversos fundos para tentar achar o sócio perto do
+    ideal, que combinasse com nossa visão de propósito e futuro", recorda Aline Locks.
+
+    Em alguns casos, ela lembra que foi necessário, por exemplo, firmar posição em relação à metodologia
+    da agtech, que trabalha com visitas em campo para fazer a análise da situação socioambiental das fazendas
+    - um diferencial em um mercado em que têm surgido outras soluções apenas com monitoramento remoto.
+
+    "Quando você fala que a metodologia também envolve visita de campo, são pelo menos algumas horas de
+    reuniões para poder justificar o porquê disso", afirma.
+
+    Aline Locks ressalta que, embora seja possível identificar remotamente práticas ilegais, como desmatamento
+    ou trabalho escravo, essa análise apenas separa quem comete crimes de quem não comete.
+
+    “Para eu falar que é sustentável, regenerativo, tem uma avaliação mais profunda que precisa ser feita.
+    Como vou avaliar a questão social dos trabalhadores, das propriedades, de cima, do satélite? É impossível
+    fazer isso apenas de forma remota.”
+
+    A Produzindo Certo foi criada em 2019 e é um “spin-off” da ONG Aliança da Terra, criada em 2004 pelo
+    pecuarista John Carter para ajudar produtores a regularizarem sua situação ambiental. Para criar maior
+    impacto, deixando de depender apenas de doações, um dos programas da entidade foi transformada em
+    empresa, permitindo a elaboração de projetos visando lucro. A ideia, como se vê, tem se mostrado sustentável.
+
+    Produzindo Certo levanta R$ 20,7 milhões em rodada com capital de SP Ventures, Arar Capital, Rhe Yield
+    Lab, Agroven e SLC Ventures
+
+    Recursos serão usados para fortalecer tecnologia, marketing e produtos voltados à agricultura regenerativa
+    e pecuária sustentável
+
+    Com 8,6 milhões de hectares monitorados, a agtech conecta mais de 10 mil produtores e empresas em
+    cadeias mais rastreáveis e responsáveis
+
+    Com "bioprecisão", EarthOptics supera 600 mil hectares analisados no Brasil e foca em crescer 50%
+
+    A estratégia da Rainforest Alliance para deixar sua marca no café e no cacau no Brasil
+
+    AgLíderes: A revolução verde (e lucrativa) do Grupo Roncador, segundo o CEO Pelerson Penido
+
+    rodada de captação,
+
+    The Yield Lab'
+- tipo: noticia
+  titulo: Produzindo Certo abre rodada de captação em busca de aporte de R$ 10 milhões
+  url_fonte: https://agfeed.com.br/esg/produzindo-certo-abre-rodada-de-captacao-em-busca-de-aporte-de-r-10-milhoes/
+  data_publicacao: null
+  conteudo_texto: 'no seu e-mail
+
+    Produzindo Certo abre rodada de captação em busca de aporte de R$ 10 milhões
+
+    Agtech, que faz ponte entre produtores sustentáveis e grandes empresas, inicia road show para atrair
+    investidores estrangeiros de olho na pauta ESG
+
+    Aline Locks, CEO da Produzindo Certo
+
+    Grandes corporações brasileiras e globais estão cada vez mais atentas à origem das matérias primas
+    que utilizam em suas linhas de produção. Na outra ponta, os produtores rurais procuram cada vez mais
+    formas de preservar e até ajudar o meio ambiente, mantendo ou até ganhando produtividade.
+
+    A Produzindo Certo é uma agtech que tenta ligar estes dois interesses. A empresa, que tem origem em
+    uma ONG, tem como clientes grandes corporações que querem ter como fornecedores produtores rurais
+    com responsabilidade socioambiental.
+
+    Nesta terça-feira, 6 de junho,, a fundadora e CEO da empresa, Aline Locks, embarca para a Europa com
+    o objetivo de apresentar a empresa para os investidores de lá. “O objetivo é conseguir R$ 10 milhões
+    em aportes, que pretendemos investir em tecnologia e na operação”, diz Locks.
+
+    A empresa aproveitará a oportunidade de ser uma das participantes do road show Brazilian Agritech
+    Briefing – que começa esta semana na Europa, com eventos em Londres, Berlim e Haia – para abrir uma
+    rodada de captação, a primeira feita pela Produzindo Certo.
+
+    A companhia teve origem na ONG Aliança da Terra. Em 2020, os fundadores da organização entenderam
+    que, para ampliar seu alcance e causar maior impacto na transformação da produção rural em uma atividade
+    mais responsável, precisavam ampliar também sua atuação e a relação com outras empresas.
+
+    "Percebemos que era preciso ter um olha econômico para a sustentabilidade no agronegócio, com soluções
+    que parassem em pé", diz Aline. Então, transformaram um dos projetos da ONG em uma empresa a parte
+    – a Aliança da Terra permanece ativa, mas com foco em ações de prevenção e combate a incêndios florestais,
+    além de projetos de preservação ambiental.
+
+    Desde 2020 com o nome Produzindo Certo, a empresa tem investido no aprimoramento de um sistema de
+    avaliação sobre a sustentabilidade socioambiental das propriedades rurais, para as quais oferece assistência
+    técnica para detectar os riscos e melhorar a gestão dos produtores.
+
+    Na outra ponta, a empresa fornece a grandes empresas a base de dados com estas propriedades. Ali,
+    essas companhias podem ter uma visão clara do status socioambiental de sua cadeia de fornecedores,
+    garantindo que os produtos adquiridos são originados em propriedades que adotam boas práticas.
+
+    Podem, também, desenvolver programas para levar assistência técnica a essas propriedades, incentivando-as
+    a aprimorar seu desempenho e, assim, qualificar-se a conquistar melhores mercados e, eventualmente,
+    melhores preços e outros benefícios vinculados à produção responsável.
+
+    Atualmente, a Produzindo Certo tem quase 7 mil propriedades com cadastro ativo na sua plataforma,
+    com área monitorada superior a 7 milhões de hectares. Segundo a companhia, são mais de 3 milhões de
+    hectares de vegetação nativa preservada.
+
+    Estas terras não estão só no Brasil. A CEO conta que a Produzindo Certo monitora terras em vários
+    países da América Latina. "Estamos iniciando agora na Argentina, inclusive".
+
+    Nos últimos meses a empresa tem feito investimentos na área tecnológica. Reforçou o time de TI e implantou
+    um novo sistema digital para Plataforma Produzindo Certo, com um dashboard que permite acompanhamento
+    mais claro da evolução dos produtores nos critérios analisados pela empresa.
+
+    Aline explica que a plataforma tem protocolos que somam 88 itens avaliados em cada fazenda, para se
+    chegar à avaliação final, em que o produtor recebe um escore que varia de zero a 100.
+
+    "A avaliação vai além dos dados colhidos automaticamente em fontes públicas. Fazemos questão de manter
+    técnicos de campo que visitam as propriedades, entrevistam o dono, os funcionários", conta a CEO.
+
+    Na ponta das empresas, a lista de clientes passa por gigantes como ADM, Bayer, Philip Morris, Comigo,
+    entre outras. Aline destaca, por exemplo, a parceria com a Unilever. "Eles só compram soja de produtores
+    que estão cadastrados na nossa plataforma", diz Locks.
+
+    Segundo ela, a Produzindo Certo tem hoje entre 30 e 40 grandes corporações na carteira, que vão de
+    cooperativas agrícolas até bancos.
+
+    Com sua experiência atuando neste segmento, Locks ressalta que o agronegócio brasileiro é um dos mais
+    sustentáveis do mundo. "O produtor não quer ter problemas, não quer sofrer com embargos", afirma.
+
+    A CEO da Produzindo Certo afirma que a legislação brasileira é uma das mais robustas do mundo, quando
+    se trata de proteção ambiental. "Quando fizemos as avaliações na Argentina, vimos que grande parte
+    das exigências para certificação são lei no Brasil".
+
+    Para ela, é necessário maior segurança jurídica. "As leis ambientais mudam muito, são muito complexas.
+    Acredito que no Brasil, a prioridade deve ser a restauração de terras, são dezenas de milhares de
+    hectares disponíveis", afirma.
+
+    Além da rodada de captação, outro movimento que está em estudo pela empresa para captar recursos é
+    uma operação no mercado financeiro. A Produzindo Certo já participou da montagem do primeiro CRA Verde
+    realizado de forma coletiva por produtores rurais, com captação de R$ 63 milhões.'
+- tipo: site
+  titulo: Produzindo Certo — sustentabilidade socioambiental no campo
+  url_fonte: https://www.produzindocerto.com.br/
+  data_publicacao: null
+  conteudo_texto: 'Tenha uma rede
+
+    verificada e reforce
+
+    com a produção
+
+    Conheça as nossas soluções
+
+    para a sua empresa
+
+    Informações, análises, notícias e conteúdo de qualidade, especialmente para empresas, produtores e
+    consumidores engajados com o agro responsável.
+
+    Eco Invest na prática: como capital, produtividade e sustentabilidade se conectaram no projeto da
+    Adecoagro
+
+    João Victor Lima: o engenheiro florestal que usou a experiência no exterior para conectar o produtor
+    argentino às boas práticas
+
+    Calendário do Agro | Setembro 2026
+
+    O que pensam os investidores do agro? Radar AgTech aponta tendências para inovação, sustentabilidade
+    e rastreabilidade
+
+    Agricultura regenerativa entra na era da comprovação: o que falta para transformar ambição em resultado
+
+    Fazenda Monte Alegre Pindaíbas e Produzindo Certo: parceria de uma década para a geração de valor
+    no campo
+
+    Sustentabilidade como infraestrutura do novo crédito rural
+
+    Plano Safra 2026/27: entenda o que mudou e como a Produzindo Certo prepara a sua propriedade para
+    as novas exigências
+
+    EUA oficializam pagamento por práticas regenerativas: o que o decreto de Trump significa para o produtor
+    brasileiro
+
+    Raízes Coletor: o aplicativo da Produzindo Certo que coloca a conformidade socioambiental na palma
+    da mão do produtor
+
+    Natasha Sales: a especialista em sustentabilidade que descobriu o amor pelo Cerrado olhando da janela
+    do carro
+
+    Calendário do Agro | Agosto 2026
+
+    O que fazemos
+
+    Transformamos as cadeias do agronegócio, fornecendo transparência e aproximando empresas e produtores
+    rurais comprometidos com os mais rigorosos padrões socioambientais.
+
+    Há 17 anos, aliamos assistência técnica de campo ao uso de tecnologias para ajudarmos produtores rurais
+    a se adequarem às melhores práticas socioambientais e os conectamos com grandes empresas do agro que
+    buscam uma cadeia de fornecedores responsável.
+
+    Plataforma Produzindo Certo
+
+    Com a Plataforma Produzindo Certo, empresas têm acesso a visão completa e detalhada da sua rede de
+    fornecimento e produtores rurais conseguem acompanhar de perto a situação socioambiental das suas
+    propriedades.
+
+    propriedades ativas na Plataforma Produzindo Certo
+
+    de vegetação nativa preservada
+
+    Já faz parte? Baixe o app Eu Produzo Certo
+
+    e tenha a sustentabilidade da sua fazenda
+
+    na palma da mão.
+
+    Conheça nossas soluções, empresas e parceiros que se uniram a Produzindo Certo na construção de uma
+    agro cada vez mais responsável.
+
+    e Certificação ->
+
+    Finanças Verdes ->
+
+    Regularização e Desenvolvimento
+
+    Agricultura Familiar ->'

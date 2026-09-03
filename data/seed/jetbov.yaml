@@ -1,0 +1,535 @@
+# JetBov
+# Coletado em 2026-09-03. Todo `conteudo_texto` é o texto REAL da página em `url_fonte`,
+# fatiado do que `scripts/coletar.py` extraiu — não é paráfrase.
+#
+# CAMADA "DADO" (D-062): esta fixture NÃO tem bloco `gabarito:` nem `perfil_alvo`, e a
+# ausência É a decisão. As 8 fixtures originais são a régua dos critérios 1 e 3; anotar
+# esta aqui seria medir o classificador contra rótulos escritos na mesma sessão que leu
+# os mesmos documentos — calibrar contra o próprio gabarito.
+#
+# CAMPOS ESTRUTURADOS: só ficam preenchidos os que aparecem LITERALMENTE nos documentos.
+# `null` faz o Briefing reportar "requisito não verificado", que é correto; um valor
+# plausível e errado não reporta nada e ainda corrompe o filtro de elegibilidade.
+#
+# TEASER RECORTADO: os veículos injetam chamada de OUTRA empresa no meio e no fim da
+# matéria. Cada documento abaixo declara em `_corte` as linhas do arquivo coletado que
+# entraram e as que foram removidas por citarem terceiro.
+nome: JetBov
+site: https://jetbov.com/
+setor: agro — pecuária digital
+estagio: null
+localizacao: null
+ano_fundacao: null
+tamanho_time: null
+descricao_curta: Plataforma de gestão de pecuária de corte vendida por franquias agtech, com 4.073 fazendas
+  e 13 milhões de cabeças; lançou um app que a própria empresa chama de "ChatGPT da pecuária", com predição
+  sobre a base acumulada.
+fonte_descoberta: agfeed.com.br — cobertura de pecuária digital
+coletado_em: '2026-09-03'
+documentos:
+- tipo: noticia
+  titulo: A veterana JetBov entra na era da IA para acompanhar a aceleração da pecuária digital
+  url_fonte: https://agfeed.com.br/agtech/a-veterana-jetbov-entra-na-era-da-ia-para-acompanhar-a-aceleracao-da-pecuaria-digital/
+  data_publicacao: null
+  conteudo_texto: 'no seu e-mail
+
+    A veterana JetBov entra na era da IA para acompanhar a aceleração da pecuária digital
+
+    Há nove anos no mercado, a agtech já atravessou várias fases da digitalização do setor, que demorou
+    mais que a agricultura a adotar a tecnologia. Agora, vê o mercado ganhando tração e busca um novo
+    fôlego para se manter nessa maratona
+
+    Luiz Fernando Sá
+
+    Xisto Alves, fundador e CEO da JetBov
+
+    Quando Xisto Alves deu os primeiros passos para a criação da JetBov, ainda não se falava em digitalização
+    na pecuária. Foram-se nove anos, o quadro já mudou um tanto, mas o segmento ainda tem muito a caminhar
+    para se igualar, em nível tecnológico, ao que aconteceu, por exemplo, na agricultura.
+
+    Por isso, mesmo depois de tanto tempo e com mais de 4 mil propriedades rurais ativas e mais de 11
+    milhões de cabeças de gado tendo passado pela plataforma da empresa, com clientes no Brasil, Uruguai,
+    Paraguai, Bolívia, Peru, Angola, Moçambique e Portugal, o empreendedor ainda considera que comanda
+    uma startup.
+
+    “Em função do potencial do setor e considerando o tamanho do mercado, principalmente aqui no Brasil,
+    ainda somos sim uma startup”, afirma. “A grande maioria das fazendas está num processo de digitalização,
+    não tem um software de gestão, não tem um processo digital de controle”.
+
+    A JetBov é uma das veteranas do ecossistema AgTech no Brasil. Criada em 2015, atravessou várias fases
+    e já recebeu mais de R$ 8,2 milhões em rodadas de investimento, desde que passou pelo processo de
+    aceleração na Ace Ventures.
+
+    Primeiro, recebeu aportes de investidores anjo, depois de fundos de venture capital, como a SP Ventures,
+    e até de clientes que decidiram apostar no negócio. A rodada mais recente aconteceu no ano passado,
+    através da plataforma EqSeed.
+
+    Os recursos foram integralmente aplicados em desenvolvimento, segundo Alves. E se mostraram suficientes
+    para fazer a empresa superar o chamado “vale da morte” das startups e acompanhar o amadurecimento
+    de um mercado que, quando a empresa surgiu, parecia ainda não estar pronto para demandar seus serviços.
+
+    Hoje, o empreendedor acredita que o cenário mudou. “A pecuária está atrás porque começou mais tarde,
+    comparado com a agricultura” ele diz. E cita o consultor Maurício Palma Nogueira, sócio da Athena
+    Agro, criador do Rally da Pecuária e colunista do
+
+    , para reforçar sua tese de que chegou a hora da pecuária digital.
+
+    “Recentemente, participei de um evento com o Maurício e ele falou: ‘A pecuária está numa aceleração
+    maior do que foi na agricultura’. A tendência é que, rapidamente, alcance o mesmo nível de uso de
+    tecnologia”, acredita.
+
+    Para Xisto Alves, a aceleração, que permitiu um crescimento de 40% ao ano nesta década, é fruto de
+    uma pressão do mercado, que tem exigido dos pecuaristas esforços no sentido de reduzir o tempo dos
+    ciclos de cria, recria e engorda, até o momento do abate. E isso só acontecerá com otimização da produção,
+    gerando produtividade e rentabilidade através do aumento de arrobas por hectare.
+
+    “A tecnologia é o meio para que os produtores possam melhorar a sua gestão”, diz Alves. “Com as decisões
+    baseadas em dados, é possível impactar na lucratividade, na eficiência de produção de carne por hectare”.
+
+    Foi pela busca desses dados que Xisto Alves iniciou a jornada da JetBov, que agora entra na era da
+    inteligência artificial. A empresa acaba de lançar um novo aplicativo, o terceiro de sua prateleira,
+    com a pretensão de que ele funcione como um “Chat GPT da Pecuária”.
+
+    Segundo Alves, a ideia é que o pecuarista possa utilizá-lo para “conversar” com a ferramenta em busca
+    de respostas para questões relacionados ao manejo de seu rebanho e da gestão de sua propriedade.
+
+    Ainda em fase beta, por enquanto o aplicativo JetBov Gestor consegue atuar em três funções. Uma é
+    gerar relatórios a partir da plataforma da JetBov. “Ao invés de ter que ir para o computador, basta
+    pedir, no próprio celular, para ele gerar, por exemplo, aquele relatório de inventário de animais
+    por sexo. O aplicativo traz o gráfico e o produtor pode compartilhar pelo WhatsApp e tudo”, explica.
+
+    A partir dessa análise, o gestor pode solicitar para a IA criar tarefas para quem está no campo, que
+    serão recebidas pelo funcionário com acesso ao aplicativo JetBov no pasto.
+
+    A terceira função do aplicativo permite acessar a base de conhecimento acumulada pela JetBov, com
+    conhecimento zootécnico ou sobre o próprio software, para ajudar com dúvidas.
+
+    “Mais do que ser uma ferramenta para facilitar o acesso, a gente acredita que a inteligência artificial
+    vai ter um papel também de predição de informações”, diz. “Ela monitora tudo que está acontecendo
+    e vai apontar problemas antes de eles acontecerem ou oportunidades que possam ser trabalhadas, não
+    de maneira reativa, mas de maneira proativa”.
+
+    O novo aplicativo está disponível para clientes da JetBov que são assinantes dos pacotes mais completos
+    de serviços da empresa. Alves prevê que ele vai evoluir rapidamente e que os modelos preditivos estarão
+    acessíveis até o final de 2025.
+
+    “Nos próximos 12, 18 meses isso vai ser uma realidade”, afirma.
+
+    A JetBov já passou por diferentes fases até chegar à era da IA. Nos primeiros anos, o foco estava
+    na coleta de dados e, segundo o próprio Xisto Alves, foi um momento de muito aprendizado até entender
+    o rumo correto a dar ao negócio.
+
+    “Passamos por um processo de incubação, com apoio de universidade, aceleradora, tudo. Desse período
+    a gente trouxe muita metodologia para entender mais profundamente quais eram as dores do produtor”,
+    diz.
+
+    A primeira conclusão foi entender que era importante ter um único foco, que acabou sendo a pecuária
+    de corte, “que já é grande o suficiente para a gente atacar exclusivamente e fazer algo que realmente
+    seja muito relevante”.
+
+    Depois disso, foi compreender a infinidade de variáveis da atividade. Segundo Alves, “tem tanta coisa
+    acontecendo ali que é inviável ter isso de uma maneira confiável e precisa no caderno de campo, e
+    também que chegasse rápido no decisor”.
+
+    O primeiro alvo da empresa, entãom foi criar um produto digital que substituísse o caderno de campo,
+    permitindo a coleta de informações, e que funcionasse offline. O resultado foi o primeiro aplicativo,
+    o JetBov de Campo, lançado em 2016, quando a empresa começou a vender sua plataforma de gestão.
+
+    A partir daí, uma das maiores preocupações da empresa foi integrar à plataforma o crescente número
+    de equipamentos geradores de dados que começavam a surgir, de bastões de identificação por rádio-frequência
+    a balanças eletrônicas.
+
+    “Hoje já tem mais de 40 modelos diferentes de equipamentos e, sempre que sai um novo, as empresas
+    já nos procuram para a gente testar e deixar ele pronto para se comunicar com o aplicativo”, diz.
+
+    Então, segundo Alves, a empresa passou a olhar mais para aspectos gerenciais, econômicos e financeiros
+    dentro do ambiente web, permitindo ao pecuaristas desde a importação de uma nota fiscal, quando ele
+    compra o insumo, fazendo do controle de estoque ao apuramento do custo de produção por animal.
+
+    “A gente começou a oferecer um nível de decisão muito maior com essas informações, para criar análises
+    e personalizar toda a gestão”, conta.
+
+    No ano passado, o segundo aplicativo trouxe essas informações para o universo mobile, com uma interface
+    mais visual para gestão de manejo de pasto. Assim, o pecuarista passou a ter dois aplicativos de coleta,
+    um para o curral outro para o pasto.
+
+    A aceleração da digitalização na pecuária, de acordo com o empreendedor, está diretamente relacionada
+    ao avanço da conectividade no campo. “Hoje isso deixou de ser uma barreira”, afirma.
+
+    “Agora a gente está mais em um momento de ampliação da conectividade para a utilização de novos equipamentos,
+    novos sensores, hardwares que vão estar coletando mais dados de produção”.
+
+    O que ainda falta, na visão de Xisto Alves, é a mudança de visão de alguns pecuaristas que, no sei
+    entender, “não conheceram melhor o que é fazer uma gestão moderna da pecuária e estão ainda em um
+    paradigma mais tradicional, mais extrativista”. Mas, para quem já viveu tantas mudanças, é só uma
+    questão de tempo.'
+- tipo: noticia
+  titulo: JetBov lança "franquias agtech" para escalar venda de plataforma de gestão pecuária
+  url_fonte: https://agfeed.com.br/agtech/jetbov-lanca-franquias-agtech-para-escalar-venda-de-plataforma-de-gestao-pecuaria/
+  data_publicacao: null
+  conteudo_texto: 'no seu e-mail
+
+    JetBov lança "franquias agtech" para escalar venda de plataforma de gestão pecuária
+
+    Novo sistema de comercialização faz parte de estratégia da empresa de aumentar presença de seus serviços
+    ao redor do Brasil
+
+    Italo Bertão Filho
+
+    Quando a agtech JetBov surgiu no mercado, há quase dez anos, a digitalização da pecuária de corte
+    – uma das operações mais complexas e tradicionais do agronegócio – ainda era um território praticamente
+    inexplorado.
+
+    Atualmente, o cenário é bem diferente. A agtech contabiliza que mais de 10 milhões de cabeças de gado
+    passaram pela sua plataforma, que conta com 4 mil propriedades ativas e uma operação que ultrapassou
+    o Brasil e está em outros sete países ao redor do mundo.
+
+    Agora, a empresa fundada por Xisto Alves está ampliando suas operações para aumentar a capilaridade
+    de seu software com um sistema de franquias, que está em atividade desde o fim do ano passado, mas
+    está sendo lançado oficialmente agora, segundo a empresa informou em primeira mão ao AgFeed.
+
+    Já foram lançadas cinco unidades JetBov nas cidades de Boa Vista (RR), Marabá (PA), Marília (SP),
+    Maringá (PR) e Vilhena (RO). Outras três franquias devem ser inauguradas ainda no primeiro semestre
+    deste ano.
+
+    No sistema, cada franqueado entra com um investimento inicial – que a JetBov prefere não revelar —
+    para comercializar os serviços, implantar a plataforma, dar suporte técnico e realizar eventos utilizando
+    a marca da agtech.
+
+    O perfil desses franqueados são empresas de consultoria agropecuária. A preferência por esse tipo
+    de empresa foi proposital, na avaliação de Xisto Alves, para manter o nível de qualidade dos serviços
+    prestados pela JetBov.
+
+    “Somos bem rigorosos na seleção, porque a gente entende que tem que ser consultorias realmente que
+    possam levar essa parte mais estratégica para dentro da fazenda. O mais importante no sistema é a
+    qualificação, o franqueado tem que atender a esses requisitos”, afirma.
+
+    Além disso, Alves destaca que o interesse das consultorias em participar desse tipo de formatação
+    vem acontecendo de forma natural.
+
+    “As empresas de consultoria que têm pessoal e estrutura já tinham uma importância significativa na
+    própria gestão de alguns pecuaristas que usavam o sistema JetBov. E algumas delas já usavam o nosso
+    sistema para atender aos próprios clientes”, afirma.
+
+    A ideia é que os franqueados tenham retorno com a venda dos serviços, a partir de um percentual da
+    assinatura que é paga pelos pecuaristas ao assinarem os produtos da empresa.
+
+    A JetBov tem quatro planos, começando a partir de R$ 99,90 no pacote mais básico. “Enquanto o cliente
+    permanece na plataforma, o parceiro também recebe uma parte dessa recorrência”, afirma Alves.
+
+    Como a agtech também está presente em clientes de fora do Brasil, em países como Paraguai, Uruguai,
+    Bolívia, Peru, Moçambique, Angola e Portugal, há a possibilidade de internacionalizar o sistema de
+    franquias, mas, enquanto a operação está no começo, a JetBov quer concentrar o projeto no Brasil.
+
+    O sistema de franqueados é uma evolução de um programa de parceiros que a JetBov vem implementando
+    desde 2021 e que utiliza o modelo de marketing digital de indicação.
+
+    Nesse sistema, os parceiros indicam a utilização da plataforma pelos pecuaristas, e ganham um percentual
+    em cima da venda, que é feita pela empresa.
+
+    “A gente começou a perceber que muitos técnicos, muitas pessoas que estão ligadas à pecuária, e de
+    alguma forma atendem o produtor vendendo equipamentos, sistema de identificação animal, serviços,
+    parte reprodutiva, ou gestão, nos procuravam e se interessavam pela plataforma. porque viam que era
+    complementar ao produto que estavam oferecendo”, explica Xisto Alves.
+
+    Hoje são 270 parceiros dentro desse programa. Conforme o projeto foi avançando, a JetBov percebeu
+    que havia também uma oportunidade de escalar comercialmente seu produto, a partir de empresas de consultoria
+    agropecuária que já estavam utilizando a plataforma.
+
+    “Identificamos que havia uma forma de como a gente poderia criar um sistema, uma rede de parceiros,
+    que não seriam somente aqueles que indicam o JetBov, de forma mais pontual, mas que pudessem atuar
+    como uma extensão da empresa”, afirma Xisto Alves.
+
+    Para coordenar o projeto, a JetBov contratou recentemente um novo diretor comercial, Josias de Souza.
+
+    A agtech também utilizou parte dos R$ 1,74 milhão que arrecadou entre o fim de 2023 e o começo de
+    2024 em uma rodada do tipo crowdfunding na plataforma EqSeed.
+
+    “O objetivo dessa captação era investir nesse modelo de criação de novos canais de distribuição do
+    software”, afirma o CEO da JetBov.
+
+    Para este ano, Xisto Alves não projeta a abertura de uma nova rodada de investimentos.
+
+    Desde que foi criada, a JetBov já conseguiu captar cerca de R$ 8,2 milhões no mercado em diferentes
+    rodadas de investimento.'
+- tipo: site
+  titulo: JetBov — gestão de pecuária de corte
+  url_fonte: https://jetbov.com/
+  data_publicacao: null
+  conteudo_texto: 'Faça parte do
+
+    grupo dos pecuaristas que mais crescem
+
+    Teste Agora o NOVO APP JetBov de Curral
+
+    Faça parte do
+
+    grupo dos pecuaristas que mais crescem
+
+    Conheça o NOVO APP | JetBov de Curral
+
+    “SERÁ QUE O JETBOV
+
+    SERVE PARA MINHA FAZENDA?
+
+    Depende.
+
+    Se sua fazenda atua com
+
+    gado de corte
+
+    , então sim, a plataforma de gestão da JetBov pode te ajudar a conseguir melhores resultados.
+
+    Controle todas as etapas do ciclo reprodutivo de forma simples e intuitiva, ajudando na seleção para
+    descarte e índices zootécnicos.
+
+    Acelere o desempenho na recria de forma inteligente. Tenha em mãos as informações para tomar as decisões
+    corretas, no momento certo.
+
+    Controle os custos de nutrição, à pasto ou no confinamento. Ajudamos a tornar sua propriedade mais
+    eficiente e rentável.
+
+    “SERÁ QUE O JETBOV
+
+    SERVE PARA MINHA FAZENDA?
+
+    Depende.
+
+    Se sua fazenda atua com
+
+    gado de corte
+
+    , então sim, a plataforma de gestão da JetBov pode te ajudar a conseguir melhores resultados.
+
+    Controle todas as etapas do ciclo reprodutivo de forma simples e intuitiva, ajudando na seleção para
+    descarte e índices zootécnicos.
+
+    Acelere o desempenho na recria de forma inteligente. Tenha em mãos as informações para tomar as decisões
+    corretas, no momento certo.
+
+    Controle os custos de nutrição, à pasto ou no confinamento. Ajudamos a tornar sua propriedade mais
+    eficiente e rentável.
+
+    melhorar agora mesmo os resultados
+
+    da minha fazenda!
+
+    melhorar agora mesmo os resultados
+
+    da minha fazenda!
+
+    OS 4 PILARES DA METODOLOGIA
+
+    JETBOV DE GESTÃO
+
+    MANEJO DE CAMPO
+
+    Coletando os dados rapidamente e com chances mínimas de erro, suas estratégias serão muito mais assertivas.
+
+    MANEJO DE CURRAL
+
+    Planeje e agende manejos e separação de animais no curral, seja para descarte, vender, etc.
+
+    Dê entrada em notas fiscais, cadastros básicos, supervisão de atividades, etc., e tenha uma melhor
+    noção da saúde financeira de sua fazenda.
+
+    Analise os dados do seu rebanho e de sua fazenda de maneira ágil e visual, para melhores tomadas de
+    decisão e planos de ação mais assertivos.
+
+    OS 4 PILARES DA METODOLOGIA
+
+    JETBOV DE GESTÃO
+
+    MANEJO DE CAMPO
+
+    Coletando os dados rapidamente e com chances mínimas de erro, suas estratégias serão muito mais assertivas.
+
+    MANEJO DE CURRAL
+
+    Planeje e agende manejos e separação de animais no curral, seja para descarte, vender, etc.
+
+    Dê entrada em notas fiscais, cadastros básicos, supervisão de atividades, etc., e tenha uma melhor
+    noção da saúde financeira de sua fazenda.
+
+    Analise os dados do seu rebanho e de sua fazenda de maneira ágil e visual, para melhores tomadas de
+    decisão e planos de ação mais assertivos.
+
+    Converse com um especialista
+
+    para conhecer nossa metodologia
+
+    Fale com um especialista
+
+    Converse com um especialista
+
+    para conhecer nossa metodologia
+
+    Fale com um especialista
+
+    Tenho interesse!
+
+    Já no primeiro manejo ficamos impressionados. A média do número de animais manejados em um dia aumentou
+    em 42% e o retrabalho – que antes era um problema enorme – praticamente não existe mais.
+
+    Murilo de Barros Trindade
+
+    FITAGRO / Aquidauana, MS
+
+    Eu sabia os números que eu queria alcançar, porém eu não sabia quais eram os números que eu estava
+    obtendo naquela época. O único modo de descobrir era começar a controlar, e com a JetBov eu consigo
+    fazer isso muito bem.
+
+    Marcos Vinicios Dalmass
+
+    Não escondo que sou entusiasta da JetBov, e devido ao nosso redirecionamento da gestão em 2016, junto
+    com os resultados obtidos com os dados arquivados, temos angariado elogios e passamos a ser referência
+    em eficiência de gestão, ficando no TOP 10 na retrospectiva da safra 22/23 do Programa Fazenda Nota
+    10! Esse reconhecimento em grande parte se deve ao sistema.
+
+    Delmo Vinícius Guerra Cabral
+
+    Fazenda Copacabana / AC
+
+    Já no primeiro manejo ficamos impressionados. A média do número de animais manejados em um dia aumentou
+    em 42% e o retrabalho – que antes era um problema enorme – praticamente não existe mais.
+
+    Murilo de Barros Trindade
+
+    FITAGRO / Aquidauana, MS
+
+    Eu sabia os números que eu queria alcançar, porém eu não sabia quais eram os números que eu estava
+    obtendo naquela época. O único modo de descobrir era começar a controlar, e com a JetBov eu consigo
+    fazer isso muito bem.
+
+    Marcos Vinicios Dalmass
+
+    Não escondo que sou entusiasta da JetBov, e devido ao nosso redirecionamento da gestão em 2016, junto
+    com os resultados obtidos com os dados arquivados, temos angariado elogios e passamos a ser referência
+    em eficiência de gestão, ficando no TOP 10 na retrospectiva da safra 22/23 do Programa Fazenda Nota
+    10! Esse reconhecimento em grande parte se deve ao sistema.
+
+    Delmo Vinícius Guerra Cabral
+
+    Fazenda Copacabana / AC
+
+    Faça parte você também
+
+    da nossa história de sucesso!
+
+    Fale com um consultor
+
+    Faça parte você também
+
+    da nossa história de sucesso!
+
+    Fale com um consultor
+
+    A JETBOV ESTÁ
+
+    GANHANDO O MUNDO
+
+    A JETBOV ESTÁ
+
+    GANHANDO O MUNDO
+
+    Coloque sua fazenda na
+
+    elite da pecuária!
+
+    Quero receber uma ligação
+
+    Coloque sua fazenda na
+
+    elite da pecuária!
+
+    Quero receber uma ligação
+
+    QUAL É O SEU PERFIL DE PECUARISTA?
+
+    TEMOS O PLANO IDEAL PARA VOCÊ!
+
+    Não importa se a pecuária é sua atividade principal ou se é apenas uma atividade secundária. A plataforma
+    de gestão da JetBov vai fazer toda a diferença na produtividade do seu rebanho e nos resultados da
+    sua fazenda!
+
+    Tenha registros de informações como o ganho de peso individual, controle sanitário, nutrição, perdas
+    e muito mais.
+
+    Compartilhe informações em tempo real da sua fazenda com os sócios, gestores, consultores, etc de
+    maneira segura e prática.
+
+    Tenha o controle do que está acontecendo em várias fazendas ao mesmo tempo, com informações centralizadas
+    e seguras.
+
+    QUAL É O SEU PERFIL DE PECUARISTA?
+
+    TEMOS O PLANO IDEAL PARA VOCÊ!
+
+    Não importa se a pecuária é sua atividade principal ou se é apenas uma atividade secundária. A plataforma
+    de gestão da JetBov vai fazer toda a diferença na produtividade do seu rebanho e nos resultados da
+    sua fazenda!
+
+    Tenha registros de informações como o ganho de peso individual, controle sanitário, nutrição, perdas
+    e muito mais.
+
+    Compartilhe informações em tempo real da sua fazenda com os sócios, gestores, consultores, etc de
+    maneira segura e prática.
+
+    Tenha o controle do que está acontecendo em várias fazendas ao mesmo tempo, com informações centralizadas
+    e seguras.
+
+    Confira os nossos
+
+    planos e preços
+
+    !
+
+    Veja nossos planos
+
+    Confira os nossos
+
+    planos e preços
+
+    !
+
+    Veja nossos planos
+
+    Faça parte do grupo de
+
+    pecuaristas que mais crescem
+
+    !
+
+    Fale com um consultor
+
+    Faça parte do grupo de
+
+    pecuaristas que mais crescem
+
+    !
+
+    Fale com um consultor
+
+    para a gente!
+
+    (47) 9 9600-7326 / (47) 3512-0023
+
+    Rua São Paulo, 305. Bloco F, Sala 03. Bairro Bucarein. Joinville, SC.
+
+    para a gente!
+
+    (47) 9 9600-7326 / (47) 3512-0023
+
+    Rua São Paulo, 305. Bloco F, Sala 03. Bairro Bucarein. Joinville, SC.
+
+    Aceleração:
+
+    Somos Associados:
+
+    Apoio Técnico e Científico:
+
+    Aceleração:
+
+    Somos Associados:
+
+    Apoio Técnico e Científico:'

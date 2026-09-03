@@ -1,0 +1,531 @@
+# Teachy
+# Coletado em 2026-09-03. Todo `conteudo_texto` é o texto REAL da página em `url_fonte`,
+# fatiado do que `scripts/coletar.py` extraiu — não é paráfrase.
+#
+# CAMADA "DADO" (D-062): esta fixture NÃO tem bloco `gabarito:` nem `perfil_alvo`, e a
+# ausência É a decisão. As 8 fixtures originais são a régua dos critérios 1 e 3; anotar
+# esta aqui seria medir o classificador contra rótulos escritos na mesma sessão que leu
+# os mesmos documentos — calibrar contra o próprio gabarito.
+#
+# CAMPOS ESTRUTURADOS: só ficam preenchidos os que aparecem LITERALMENTE nos documentos.
+# `null` faz o Briefing reportar "requisito não verificado", que é correto; um valor
+# plausível e errado não reporta nada e ainda corrompe o filtro de elegibilidade.
+#
+# TEASER RECORTADO: os veículos injetam chamada de OUTRA empresa no meio e no fim da
+# matéria. Cada documento abaixo declara em `_corte` as linhas do arquivo coletado que
+# entraram e as que foram removidas por citarem terceiro.
+nome: Teachy
+site: https://www.teachy.com.br/
+setor: educação
+estagio: série a
+localizacao: null
+ano_fundacao: null
+tamanho_time: null
+descricao_curta: Ferramentas de IA para o professor preparar aula, criar exercícios e avaliar aluno, com
+  o objetivo declarado de devolver tempo ao docente.
+fonte_descoberta: braziljournal.com e startups.com.br — busca por edtech de IA
+coletado_em: '2026-09-03'
+documentos:
+- tipo: noticia
+  titulo: A Teachy usa IA para ajudar os professores – e acaba de captar R$ 40 milhões
+  url_fonte: https://braziljournal.com/a-teachy-usa-ia-para-ajudar-os-professores-e-acaba-de-captar-r-40-milhoes/
+  data_publicacao: null
+  conteudo_texto: 'A Teachy — uma startup brasileira que está usando IA para ajudar os professores nas
+    aulas — acaba de levantar R$ 40 milhões com duas gestoras americanas de referência.
+
+    A Série A foi liderada pela Goodwater – que tem US$ 4 bilhões em ativos e já investiu no Spotify e
+    Twitter – e teve a participação da Reach Capital, um VC focado em educação que foi um dos primeiros
+    cheques do Duolingo.
+
+    A missão da Teachy é nobre.
+
+    A startup quer ajudar os professores a preparar as aulas, criar exercícios e avaliar os alunos com
+    ferramentas de inteligência artificial — liberando um tempo precioso.
+
+    A Teachy diz que um professor gasta em média 20 horas semanais trabalhando fora da escola, principalmente
+    com a preparação do material que será apresentado aos alunos. Com sua ferramenta, ela promete reduzir
+    esse tempo para 3 horas por semana.
+
+    “Usamos o melhor conteúdo que tem no mundo inteiro. Com nossa plataforma, um professor no interior
+    do Amazonas vai conseguir ter a mesma qualidade de ensino de uma escola de Palo Alto, da Finlândia
+    ou de Singapura,” Pedro Siciliano, um dos fundadores, disse ao
+
+    .
+
+    Segundo ele, a plataforma da Teachy ajuda na criação das aulas com a construção do plano de ensino,
+    dos slides, das listas de exercícios, das provas e dos projetos. O professor também consegue corrigir
+    os exercícios automaticamente, além de criar planos de ensino personalizados para cada aluno.
+
+    “Temos mais de 60 ferramentas de IA específicas para a educação. É um leque completo para o professor.”
+
+    Para criar um plano de aula, por exemplo, basta o professor preencher um formulário com o assunto
+    que pretende abordar, o estilo de aula que quer dar, e informações adicionais sobre como a aula vai
+    ser ministrada.
+
+    “A partir desses materiais iniciais é possível usar ferramentas para criar uma lista de exercícios,
+    projetos, resumos. E cada professor pode escolher a metodologia em que acredita. Pode ser uma aula
+    expositiva, mas pode ser também com a metodologia de sala de aula invertida,” disse Pedro.
+
+    A Teachy opera no modelo
+
+    . O usuário não paga nada para se cadastrar e usar a plataforma, mas tem uma limitação de seis consultas
+    por semana. Se quiser usar mais do que isso, a assinatura custa R$ 39,90 por mês.
+
+    A plataforma já tem mais de 1 milhão de professores cadastrados, dos quais 300 mil são ativos (usaram
+    a plataforma pelo menos uma vez no mês). A Teachy começou no Brasil, mas já é global. Metade dos usuários
+    ativos são de outros países, com uma predominância para a América Latina e Sudeste Asiático.
+
+    “Mais de 1 mil professores da Indonésia entram na plataforma todo dia,” disse o fundador. “Temos 50
+    mil professores do México também, e temos quase isso na Colômbia.”
+
+    A Teachy ainda está só arranhando a superfície de seu mercado endereçável. Segundo Pedro, existem
+    2,3 milhões de professores no Brasil e cerca de 90 milhões no mundo. “E acreditamos em ajudar as pessoas
+    a ensinar qualquer coisa, o que nos leva a centenas de milhões de ‘teaching creators’ que podemos
+    ajudar a ensinar.”
+
+    O empreendedor decidiu criar a Teachy porque sempre foi apaixonado pela educação. Enquanto cursava
+    engenharia na IME, no Rio de Janeiro, Pedro foi professor particular e deu aula em cursinhos populares.
+
+    Depois de formado, foi trabalhar na Mckinsey, onde ficou por três anos antes de entrar na Descomplica
+    como head de expansão e M&A. Em seguida, foi fazer seu MBA em Stanford, onde começou a construir a
+    ideia da Teachy.
+
+    O outro fundador – e o CTO da empresa – é Fabio Baldissera, que já fundou outras três startups e tem
+    mais de 10 anos de experiência com IA.
+
+    Segundo Pedro, um dos diferenciais da Teachy são os dados proprietários que alimentam seus modelos
+    de IA, incluindo questões do ENEM e de outras provas semelhantes de outros países do mundo.
+
+    A IA também se alimenta de dados imputados pelos próprios professores, que podem contribuir com informações
+    sobre suas áreas de conhecimento.
+
+    “Com esses dados, conseguimos criar um conteúdo muito mais relevante para os professores e que não
+    tenham erros, que é algo fundamental no nosso negócio,” disse ele. “Como somos específicos para isso,
+    a qualidade do nosso conteúdo é muito melhor do que a de um ChatGPT.”
+
+    Com os recursos da rodada, a Teachy vai investir em contratar mais profissionais de tecnologia e em
+    expandir uma de suas principais apostas de receita: fechar pacotes com escolas, que assinam a plataforma
+    para todos os seus professores.
+
+    “Nosso discurso para as escolas é que a plataforma gera um ganho na qualidade de vida dos professores,
+    porque eles têm que trabalhar menos fora da sala de aula, e também traz um impacto grande no
+
+    do ensino, o que gera mais matrículas,” disse.
+
+    Pedro não abre o número de escolas que já assinam a plataforma neste modelo, mas diz que são “centenas.”'
+- tipo: noticia
+  titulo: Teachy capta R$ 8 mi para ajudar professores usando tecnologia de IA
+  url_fonte: https://startups.com.br/negocios/rodada-de-investimento/teachy-capta-r-8-mi-para-ajudar-professores-usando-inteligencia-artificial/
+  data_publicacao: null
+  conteudo_texto: 'Pular para o conteúdo
+
+    Pular para o menu
+
+    Rodada de investimento
+
+    Teachy capta R$ 8 mi para ajudar professores usando tecnologia de IA
+
+    Nascida há menos de 1 ano, edtech faz pré-seed considerável e quer chegar a 10 mil professores na
+    plataforma até o fim de 2024
+
+    Leitura:
+
+    Copiar Link?
+
+    Pedro Siciliano e Fábio Baldissera, fundadores da Teachy
+
+    Professores gastam cerca de metade do tempo deles fora de sala de aula preparando aulas e corrigindo
+    provas. São tarefas periódicas e repetitivas que, no momento em que tanto de se fala de inteligência
+    artificial, poderiam ser facilitadas. E é exatamente isso que a
+
+    quer fazer.
+
+    Nascida em outubro do ano passado a edtech se propõe a reduzir em 80% esse tempo oferecendo correção
+    automática de provas, gabaritos comentados, planos de aula, criação de listas e materiais complementares
+    como vídeos, gráficos e artigos. Os conteúdos estão voltados aos ensinos fundamental e médio. “O professor
+    tem acesso a partes disso por meio de diferentes ferramentas. Pode pesquisar conteúdos no
+
+    e montar na mão. Mas se quiser tudo em um lugar só, de forma otimizado com auxílio de IA, é com a
+
+    ”, diz Pedro Siciliano, que fundou a companhia junto com Fábio Baldissera (ex-
+
+    ).
+
+    Pré-seed de responsa
+
+    Para tornar essa proposta uma realidade, a edtech levantou uma rodada pré-seed considerável: R$ 8
+    milhões. A captação foi liderada pelo fundo argentino
+
+    e teve participação do americano
+
+    . Entraram também alguns investidores-anjo bem conhecidos e nomes de grandes empresas brasileiras.
+
+    Segundo Pedro, os recursos captados serão usados no desenvolvimento do produto e na criação de modelos
+    de IA proprietários da companhia. “É o momento de criar os Googles que vão desenvolver tecnologia
+    de ponta no Brasil”, crava Pedro. Essa busca por independência e por fomentar a criação de tecnologia
+
+    Made in Brazil
+
+    está expressa na composição do time fundador da
+
+    : 80% da equipe é de profissionais técnicos, ou o que Pedro chama de “IME Máfia”, em uma referência
+    à sua
+
+    Instituto Militar de Engenharia
+
+    . O time tem hoje 14 pessoas, sendo 10 em tempo integral e 4 em meio período.
+
+    A escolha dos fundos que colocaram dinheiro na companhia também é um reflexo dessa ambição. Tanto
+
+    têm forte ligação com a universidade de
+
+    , a grande referência mundial quando o assunto é inteligência artificial e onde Pedro está cursando
+    seu MBA. A
+
+    também é investidora do
+
+    . “Eu já sabia que ia usar inteligência artificial antes do começo da onda”, garante Pedro. Para ele,
+    o hype tem um saldo positivo. “Tem o contra de ter muita gente querendo construir coisas que não vao
+    funcionar. E tudo bem. Acontece. Mas o número de soluções incríveis que vão tornar a vida mais fácil
+    é enorme e vai mudar o mundo do software. As empresas que não usam IA vão sumir”, diz.
+
+    História e planos
+
+    O projeto da
+
+    começou a se concretizar quando Pedro entrou no MBA em
+
+    no ano passado. Mas a história é um pouco mais longa. “A educação mudou a minha vida”, conta ele,
+    que viu a mãe lutar contra um câncer por 9 anos e foi estudar no
+
+    para ajudar em casa.
+
+    Nessa época, ele montou um cursinho preparatório para vestibulares e foi onde percebeu a dor dos professores
+    fora de sala de aula. Curiosidade. Das centenas de pessoas que passaram pelo cursinho, algumas trabalham
+    na
+
+    hoje. Saindo do
+
+    , Pedro foi para a
+
+    e depois para o
+
+    , de onde partiu para
+
+    e, agora, para empreender.
+
+    A estratégia da
+
+    é ganhar escala vendendo para escolas. Atualmente 4 são clientes da plataforma. Mas, como o objetivo
+    é ser uma ferramenta democrática, ela está disponível também para contratação individual pelos professores
+    em um modelo
+
+    – com limitações de recursos e volume de uso na versão gratuita.
+
+    O plano Premium custa R$ 19,90 por mês. Com ele é possível usar todos os recursos de forma ilimitada.
+    Neste patamar, Pedro diz acreditar que será possível impactar também os professores do ensino público.
+    Atualmente com 500 usuários, o objetivo é chegar a 10 mil até o fim do ano que vem. “E pegar uma rodada
+    seed mais cedo [do que os 18 meses que normalmente costumam separar as captações]”, diz Pedro.
+
+    Apesar de ter sido criada de olho nos 2 milhões de docentes brasileiros, a
+
+    tem ambições globais. Começando pela América Latina. “O Alex Busse [sócio da
+
+    responsável pelo aporte] confia muito em como a IA vai mudar a educação na região”, diz Pedro. Na
+    América Latina, são 7 milhões de professores.'
+- tipo: site
+  titulo: Teachy — plataforma de IA para professores
+  url_fonte: https://www.teachy.com.br/
+  data_publicacao: null
+  conteudo_texto: 'Junte-se a 5 milhões de educadores com a tecnologia de IA das melhores escolas — do
+    Brasil e do mundo
+
+    Um único sistema
+
+    integrado.
+
+    Crie seus livros didáticos por uma fração do custo — com o seu currículo, o seu jeito de ensinar.
+    Físico, digital ou híbrido.
+
+    Crie seus livros didáticos por uma fração do custo — com o seu currículo, o seu jeito de ensinar.
+    Físico, digital ou híbrido.
+
+    Planejamento alinhado à BNCC em minutos. Acompanhe e colabore com seus professores pelo calendário
+    inteligente.
+
+    Planeje aulas em minutos com 70+ formatos de materiais disponíveis. Aplique no digital ou físico.
+
+    Adapte materiais em escala para as demandas específicas de cada aluno.
+
+    Ana Clara Silva
+
+    Adaptações de aprendizagem
+
+    Ajuste o conteúdo e as avaliações para apoiar melhor diferentes necessidades de aprendizagem.
+
+    Legibilidade e Formato
+
+    Melhora a aparência e a leitura do conteúdo
+
+    Conteúdo e Estrutura
+
+    Melhora a organização e a compreensão do conteúdo
+
+    Adapta como os alunos interagem com as avaliações
+
+    Explique as necessidades deste aluno
+
+    Por exemplo: O aluno se beneficia de contextos da vida real...
+
+    Crie uma versão adaptada
+
+    Para qual aluno?
+
+    Nome do aluno...
+
+    Ana Clara Silva
+
+    Crie uma versão adaptada
+
+    Para qual aluno?
+
+    Nome do aluno...
+
+    Ana Clara Silva
+
+    Ana Clara Silva
+
+    Adaptações de aprendizagem
+
+    Ajuste o conteúdo e as avaliações para apoiar melhor diferentes necessidades de aprendizagem.
+
+    Legibilidade e Formato
+
+    Melhora a aparência e a leitura do conteúdo
+
+    Conteúdo e Estrutura
+
+    Melhora a organização e a compreensão do conteúdo
+
+    Adapta como os alunos interagem com as avaliações
+
+    Explique as necessidades deste aluno
+
+    Por exemplo: O aluno se beneficia de contextos da vida real...
+
+    Crie e aplique provas, redações e simulados — no formato que preferir.
+
+    Certa manhã, um fazendeiro contou 47 ovelhas pastando pacificamente no pasto. À medida que o dia avançava,
+    o fazendeiro levou 15 ovelhas para fora do campo para vaciná-las. Mais tarde, à tarde, uma vez que
+    a vacinação foi concluída, o fazendeiro trouxe 8 ovelhas a mais que estavam descansando em um cercado
+    próximo. No final do dia, quantas ovelhas estavam de volta no pasto?
+
+    Certa manhã, um fazendeiro contou 47 ovelhas pastando pacificamente no pasto. À medida que o dia avançava,
+    o fazendeiro levou 15 ovelhas para fora do campo para vaciná-las. Mais tarde, à tarde, uma vez que
+    a vacinação foi concluída, o fazendeiro trouxe 8 ovelhas a mais que estavam descansando em um cercado
+    próximo. No final do dia, quantas ovelhas estavam de volta no pasto?
+
+    Adição e multiplicação de números naturais
+
+    Banco de questões
+
+    Criar com IA
+
+    Corrija provas e redações com IA, mantendo o seu critério pedagógico.
+
+    A paixão é claramente necessária para que uma ideia verdadeiramente grande se estabeleça entre um
+    povo—paixão por parte do pensador original, do público,
+
+    de ambos. A
+
+    de que o assunto mais lucrativo para inspirar grandes ideias são "coisas comuns" pode parecer inicialmente
+    contraintuitiva. Afinal, não são as grandes ideias geralmente marcadas por seu
+
+    ? Embora isso seja verdade, seu caráter extraordinário muitas vezes deriva diretamente de sua percepção
+    sobre coisas que até então não haviam sido questionadas. Embora grandes ideias certamente possam surgir
+    através de
+
+    aparentemente pura...
+
+    digamos, por exemplo, a cosmologia do Big Bang, que desenvolveu quase todos os seus próprios preceitos
+    científicos e filosóficos através de seu próprio processo de formação, é igualmente verdade que tal
+    pensamento inovador foi, e ainda é, em grande parte uma reavaliação de suposições anteriores de maneira
+    radical
+
+    ... Afinal, a questão da natureza última do universo e do lugar do homem nele tem sido central para
+    o pensamento
+
+    desde o início dos tempos. Coisas comuns são, adicionalmente, necessárias como material para a geração
+    das "melhores ideias", já que certamente o sucesso entre o público deve ser considerado na avaliação
+    da importância e qualidade de uma ideia.
+
+    O advento da cosmologia do Big Bang, que ocorreu em forma rudimentar quase imediatamente após as primeiras
+    observações de Edwin Hubble no telescópio Hooker na Califórnia durante o início do século 20, foi
+    o avanço mais significativo na compreensão da humanidade sobre o universo em mais de 400 anos. O aparentemente
+    simples fato de que tudo no universo, em uma escala muito grande, está se afastando de tudo o mais
+    em...
+
+    A paixão é claramente necessária para que uma ideia verdadeiramente grande se estabeleça entre um
+    povo—paixão por parte do pensador original, do público,
+
+    de ambos. A
+
+    de que o assunto mais lucrativo para inspirar grandes ideias são "coisas comuns" pode parecer inicialmente
+    contraintuitiva. Afinal, não são as grandes ideias geralmente marcadas por seu
+
+    ? Embora isso seja verdade, seu caráter extraordinário muitas vezes deriva diretamente de sua percepção
+    sobre coisas que até então não haviam sido questionadas. Embora grandes ideias certamente possam surgir
+    através de
+
+    aparentemente pura...
+
+    digamos, por exemplo, a cosmologia do Big Bang, que desenvolveu quase todos os seus próprios preceitos
+    científicos e filosóficos através de seu próprio processo de formação, é igualmente verdade que tal
+    pensamento inovador foi, e ainda é, em grande parte uma reavaliação de suposições anteriores de maneira
+    radical
+
+    ... Afinal, a questão da natureza última do universo e do lugar do homem nele tem sido central para
+    o pensamento
+
+    desde o início dos tempos. Coisas comuns são, adicionalmente, necessárias como material para a geração
+    das "melhores ideias", já que certamente o sucesso entre o público deve ser considerado na avaliação
+    da importância e qualidade de uma ideia.
+
+    O advento da cosmologia do Big Bang, que ocorreu em forma rudimentar quase imediatamente após as primeiras
+    observações de Edwin Hubble no telescópio Hooker na Califórnia durante o início do século 20, foi
+    o avanço mais significativo na compreensão da humanidade sobre o universo em mais de 400 anos. O aparentemente
+    simples fato de que tudo no universo, em uma escala muito grande, está se afastando de tudo o mais
+    em...
+
+    Planos de ação personalizados para turmas, grupos e alunos com base em dados.
+
+    6 alunos em risco
+
+    19 alunos com desempenho médio
+
+    7 alunos com melhor desempenho
+
+    Marcela está entre os 10% melhores da sua turma. Ela se destaca em pensamento crítico e está altamente
+    engajada. Para continuar crescendo, ela poderia desenvolver estratégias de resolução de problemas
+    de forma independente.
+
+    Efetuar cálculos com potências de expoentes inteiros e aplicar esse conhecimento na representação
+    de números em notação científica.
+
+    alunos abaixo da média
+
+    6 alunos em risco
+
+    19 alunos com desempenho médio
+
+    7 alunos com melhor desempenho
+
+    Marcela está entre os 10% melhores da sua turma. Ela se destaca em pensamento crítico e está altamente
+    engajada. Para continuar crescendo, ela poderia desenvolver estratégias de resolução de problemas
+    de forma independente.
+
+    Efetuar cálculos com potências de expoentes inteiros e aplicar esse conhecimento na representação
+    de números em notação científica.
+
+    alunos abaixo da média
+
+    Mantenha as famílias engajadas e ativas na vida escolar dos alunos.
+
+    Seg–Sex • 07:30–17:00
+
+    Digite sua mensagem...
+
+    Seg–Sex • 07:30–17:00
+
+    Digite sua mensagem...
+
+    Seg–Sex • 07:30–17:00
+
+    Digite sua mensagem...
+
+    Seg–Sex • 07:30–17:00
+
+    Digite sua mensagem...
+
+    .
+
+    Toda sua escola.
+
+    .
+
+    Tutor de IA pedagógico
+
+    Gamificação e engajamento
+
+    Preparação de aulas
+
+    Recomposição de aprendizagem
+
+    Dados granulares e acionáveis
+
+    Redução de custos
+
+    Preparação de aulas
+
+    Recomposição de aprendizagem
+
+    Dados granulares e acionáveis
+
+    Redução de custos
+
+    Tutor de IA pedagógico
+
+    Gamificação e engajamento
+
+    educadores.
+
+    educadores.
+
+    dos professores reportam melhoras nas notas
+
+    O melhor material.
+
+    O seu.
+
+    Crie seus livros didáticos por uma fração do custo - com o seu currículo, o seu jeito de ensinar.
+    Físico, digital ou híbrido.
+
+    Vire a página e saiba mais
+
+    digitalmente.
+
+    Crie materiais de suporte como slides, aulas e atividades a partir dos seus livros didáticos.
+
+    Criar aula mágica
+
+    Escolha um capítulo de livro
+
+    PDF, PNG, DOCX • Max 120MB
+
+    Conheça mais por perfil
+
+    Reinventamos a vida dos professores com inteligência artificial
+
+    Studio: Material Didático
+
+    Avaliação e correção
+
+    Acessibilidade em escala
+
+    Criação de materiais
+
+    Tutor de IA pedagógico
+
+    Foco no ENEM e vestibular
+
+    Banco de questões
+
+    Planos de aula
+
+    O futuro da IA nas escolas
+
+    Certificação de IA para professores
+
+    2026 - Todos os direitos reservados
+
+    Termos de uso'

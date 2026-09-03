@@ -1,0 +1,309 @@
+# TideWise
+# Coletado em 2026-09-03. Todo `conteudo_texto` é o texto REAL da página em `url_fonte`,
+# fatiado do que `scripts/coletar.py` extraiu — não é paráfrase.
+#
+# CAMADA "DADO" (D-062): esta fixture NÃO tem bloco `gabarito:` nem `perfil_alvo`, e a
+# ausência É a decisão. As 8 fixtures originais são a régua dos critérios 1 e 3; anotar
+# esta aqui seria medir o classificador contra rótulos escritos na mesma sessão que leu
+# os mesmos documentos — calibrar contra o próprio gabarito.
+#
+# CAMPOS ESTRUTURADOS: só ficam preenchidos os que aparecem LITERALMENTE nos documentos.
+# `null` faz o Briefing reportar "requisito não verificado", que é correto; um valor
+# plausível e errado não reporta nada e ainda corrompe o filtro de elegibilidade.
+#
+# TEASER RECORTADO: os veículos injetam chamada de OUTRA empresa no meio e no fim da
+# matéria. Cada documento abaixo declara em `_corte` as linhas do arquivo coletado que
+# entraram e as que foram removidas por citarem terceiro.
+nome: TideWise
+site: https://www.tidewise.io/
+setor: robótica — embarcações autônomas
+estagio: null
+localizacao: Rio de Janeiro, RJ
+ano_fundacao: 2019
+tamanho_time: null
+descricao_curta: 'Deep tech de embarcações não tripuladas: desenvolve, integra e opera sistemas robóticos
+  autônomos para o setor marítimo, com o USV Tupan comandado de um Centro de Operações Remotas.'
+fonte_descoberta: startups.com.br — busca por robótica e simulação (regra 5 do TAPI)
+coletado_em: '2026-09-03'
+documentos:
+- tipo: noticia
+  titulo: Deeptech carioca de barcos autônomos inicia operação na Bélgica
+  url_fonte: https://startups.com.br/negocios/deeptech-carioca-de-barcos-autonomos-inicia-operacao-na-belgica/
+  data_publicacao: null
+  conteudo_texto: 'Pular para o conteúdo
+
+    Pular para o menu
+
+    Deeptech carioca de barcos autônomos inicia operação na Bélgica
+
+    TideWise planeja acelerar o crescimento na Europa com nova rodada de investimentos aberta, além de
+    ampliar frota no Brasil
+
+    Leitura:
+
+    Copiar Link?
+
+    USV Tupan é a embarcação autônoma carro-chefe da TideWise | Foto: Divulgação
+
+    , deeptech de embarcações autônomas com sede no Rio de Janeiro, está mirando o mercado internacional
+    para crescer. A startup, que atualmente desenvolve soluções para os segmentos de defesa e offshore,
+    deu início à sua operação na Bélgica e enxerga o país como uma porta de entrada para o continente
+    europeu.
+
+    Fundada em 2019 pelo engenheiro naval Rafael Coelho (CEO) e o especialista em robótica e engenheiro
+    de software Sylvain Joyeux (CTO), que é francês, a
+
+    atua no desenvolvimento de ecossistemas marítimos autônomos e não tripulados, os chamados Uncrewed
+    Surface Vehicles (USVs).
+
+    O carro-chefe da startup é o USV Tupan, primeira embarcação desse tipo registrada e autorizada para
+    operação no Brasil pela Marinha. O barco possui um software próprio da
+
+    e é comandado à distância a partir do Centro de Operações Remotas (ROC) desenvolvido pela empresa.
+
+    A entrada no mercado europeu acontece em um momento de expansão da companhia, que vem mantendo uma
+    trajetória de praticamente dobrar o faturamento a cada ano desde 2023. Para 2026, a expectativa é
+    manter esse ritmo. Com a internacionalização, a ideia é acelerar ainda mais esse crescimento.
+
+    Segundo Rafael Coelho, CEO e cofundador da
+
+    , a startup já tem um primeiro contrato na Bélgica, onde também abriu um escritório, e pretende usar
+    o país como base para avançar em outros mercados da região, como Alemanha e França.
+
+    “A Bélgica é o hub para a Europa, que para nós que somos brasileiros é muito pequena, né? Depois da
+    Europa, o objetivo é o Oriente Médio e também a Malásia e a Austrália. Estamos avaliando os dois mercados
+    e já estivemos nos dois para mapear oportunidades. Uma das formas de entrar nesses mercados pode ser
+    por meio da aquisição de empresas locais”, afirma o fundador.
+
+    Para avançar nesses planos, a startup está com uma rodada de investimentos aberta. Além de financiar
+    a escalada na Bélgica, o objetivo da captação é também ampliar a frota de embarcações no Brasil, mercado
+    onde a
+
+    já atendeu a grandes empresas do setor de energia, como
+
+    , além da própria Marinha.
+
+    deve chegar a cerca de R$ 30 milhões de faturamento em 2026, com a receita já contratada, e encerrar
+    o ano com aproximadamente 63 funcionários – acima da estimativa inicial para 2026.
+
+    Mercado em expansão
+
+    Dados da consultoria Fortune Business Insights mostram que o mercado global de embarcações autônomas
+    movimentou US$ 5,2 bilhões em 2022 e pode chegar a US$ 9,9 bilhões em 2030, um crescimento de 90%.
+    Esse cenário se soma a uma indústria de apoio marítimo também em expansão, explica Rafael.
+
+    “A indústria de apoio marítimo está crescendo muito e a frota de embarcações de apoio não está acompanhando,
+    no mundo. Há muito tempo que não se constroem navios novos. Então vai começar um desequilíbrio entre
+    a oferta e a demanda, que vai puxar o preço das embarcações para cima. É por isso que empresas como
+    Petrobras e Shell investem na gente para desenvolver tecnologias capazes de operar em águas profundas.
+    É muito mais rápido fazer uma embarcação de pequeno porte, até 24 metros, e também muito mais barato”,
+    explica o CEO da
+
+    .
+
+    Para as companhias que atuam no segmento offshore, as embarcações autônomas representam uma economia
+    de 30% a 40%, estima Rafael. Segundo ele, um USV de cerca de 19 metros pode substituir uma embarcação
+    de aproximadamente 60 metros, o que resulta em economia de combustível, além da própria tripulação.
+    Outra vantagem é a redução na emissão de carbono, contribuindo para as metas de sustentabilidade das
+    companhias.
+
+    Para além de energia e defesa, a empresa vê oportunidades em novos mercados. Uma delas é a logística
+    marítima, combinando embarcações autônomas e drones para transportar cargas de uma embarcação maior
+    até plataformas ou outros pontos sem que o navio precise interromper sua operação. A ideia é atender
+    desde o transporte de pequenas encomendas até o envio de peças críticas para instalações offshore,
+    por exemplo.
+
+    também pretende avançar na transição energética de sua própria frota. A empresa avalia um projeto
+    para desenvolver propulsão híbrida a etanol, em uma adaptação da tecnologia ao mercado brasileiro.
+    “O resto do mundo está indo para amônia, hidrogênio, mas a gente está no Brasil e, no Brasil, o etanol
+    é o melhor caminho para redução de carbono”, aponta Rafael.
+
+    Desde a sua fundação, a
+
+    já levantou cerca de R$ 15 milhões em rodadas de investimento. Entre elas, um
+
+    aporte de R$ 10 milhões
+
+    , por meio do fundo MultiCorp 2, que conta com
+
+    Embraer, BB Seguros, Baterias Moura e AgeRio
+
+    como cotistas.'
+- tipo: noticia
+  titulo: Tidewise capta R$ 10M com seus robôs autônomos para a indústria marítima
+  url_fonte: https://startups.com.br/negocios/venture-capital/tidewise-capta-r-10m-com-seus-robos-autonomos-para-a-industria-maritima/
+  data_publicacao: null
+  conteudo_texto: 'Pular para o conteúdo
+
+    Pular para o menu
+
+    Tidewise capta R$ 10M com seus robôs autônomos para a indústria marítima
+
+    Startup desenvolve, integra e opera sistemas robóticos inteligentes para solucionar demandas da indústria
+    naval
+
+    Gabriela Del Carmen
+
+    Leitura:
+
+    Copiar Link?
+
+    Tidewise (Foto: Divulgação)
+
+    , empresa carioca que oferece
+
+    soluções de tecnologia para o mercado de serviços navais
+
+    , acaba de anunciar que recebeu um aporte de R$ 10 milhões. O investimento foi liderado pela gestora
+
+    , por meio de seu fundo MultiCorp 2, que conta com
+
+    Embraer, BB Seguros, Baterias Moura e AgeRio
+
+    como investidores.
+
+    Fundada por Rafael Coelho e Sylvain Joyeux, a
+
+    desenvolve, integra e opera sistemas robóticos inteligentes para solucionar demandas da indústria
+    naval nos contextos fluvial, portuário ou marítimo. Com a missão de acelerar a transição para uma
+    indústria mais segura e sustentável, alinhando tecnologia ao aumento da segurança e à redução dos
+    custos e impactos ambientais, a empresa começou a operar em 2020 e, desde então, prestou serviços
+    para corporações como
+
+    Repsol Sinopec Brasil
+
+    , e para a companhia de distribuição elétrica
+
+    , na Bélgica.
+
+    “Deeptechs costumam ter dificuldade para captar com fundos de venture capital no Brasil, e a Tidewise
+    é uma empresa que tem necessidade de capital maior do que uma startup 100% digital, porque constrói
+    hardwares”, afirma Rafael. Segundo o executivo, a startup ainda não estava com uma rodada de investimentos
+    aberta, mas avançou nas conversas com a MSW pela oportunidade de negócio e parceria com os cotistas
+    do fundo. “A Embraer nos abordou em um momento em que ainda estávamos nos organizando para captar.
+    Vimos que era uma ótima oportunidade não só pelo dinheiro, mas pelo smart money envolvido”, pontua.
+
+    A sinergia com os investidores do MultiCorp 2 é, justamente, um dos critérios para a
+
+    avaliar a possibilidade de investimento em uma startup. “A proposta da Tidewise está muito alinhada
+    com a Embraer e Baterias Moura. A empresa também terá o apoio do BB Seguros na parte de seguros para
+    as embarcações e, por estar no Rio de Janeiro, contará com o suporte da AgeRio na região. Essas sinergias
+    são interessantes para ajudar a impulsionar o negócio”, observa Richard Zeiger, sócio da
+
+    .
+
+    O executivo destaca outros fatores que atraíram os investidores. “O mercado de soluções autônomas
+    para serviços marítimos ainda é incipiente, mas está crescendo e se transformando por causa da inovação.
+    Além disso, a Tidewise possui um time de primeira linha, que vieram dessa indústria e estão preparados
+    para endereçar as necessidades do mercado”, explica. O fundo MSW MultiCorp 2 foi lançado em meados
+    de 2022
+
+    para investir R$ 100 milhões em negócios de inovação nos próximos 5 anos
+
+    . Apenas em 2023, o veículo já aportou recursos na
+
+    , além da
+
+    .
+
+    Potencial de mercado
+
+    Com mais de R$ 30 milhões investidos em pesquisa e desenvolvimento de novos produtos e serviços, a
+
+    criou a primeira embarcação não tripulada a ser registrada na Marinha do Brasil, o USV Tupan, e pode
+    servir a diversos mercados como portuário, energia offshore e logística em geral. A startup contribui
+    para a redução do impacto ambiental ao consumir 98% a menos de combustível do que a operação convencional.
+
+    Com os recursos captados, a companhia pretende aumentar sua capacidade industrial, escalar a frota
+    e estruturar um time de operações para atender toda a costa do Brasil, expandindo para além do Rio
+    de Janeiro. “No próximo ano, já estaremos operando em toda a costa brasileira e atuando no mercado
+    de defesa, que tem crescido muito. Além disso, vamos começar a fazer provas de conceito (POCs) na
+    América do Sul, embora o foco seja acelerar a operação brasileira e fechar contratos de longo prazo
+    com os clientes já estabelecidos”, diz Rafael.
+
+    A startup se consolida em um momento estratégico no país.
+
+    De acordo com o Ministério de Minas e Energia
+
+    , o  mercado nacional de energia eólica possui mais de 26 gigawatts (GW) de capacidade instalada,
+    em mais de 900 parques eólicos distribuídos pelo país. Isso representa mais de R$ 200 bilhões investidos
+    na última década. Considerando apenas o mercado de eólicas offshore (que demandará serviços de empresas
+    como a TideWise), o Brasil reúne mais de 80 projetos anunciados, que somam mais de 200 GW de capacidade
+    instalada prevista.'
+- tipo: site
+  titulo: TideWise — embarcações autônomas
+  url_fonte: https://www.tidewise.io/
+  data_publicacao: null
+  conteudo_texto: 'top of page
+
+    seguras, sustentáveis e autônomas
+
+    Inspeção de ativos
+
+    Robótica marítima inteligente
+
+    Coleta de dados eficiente
+
+    Mais dados acurados, com alto grau de repetibilidade e capacidade de aquisição 24/7.
+
+    Menos custos com a otimização de equipamentos e pessoal. Inovação e tecnologia de ponta.
+
+    O uso de sistemas robóticos transfere as pessoas para terra, garantindo risco humano zero em ambientes
+    severos.
+
+    Menor emissão de CO²
+
+    Menos poluição atmosférica e sonora em comparação às soluções tripuladas convencionais.
+
+    Desenvolvimento interno de engenharia, adequando soluções às necessidades do cliente.
+
+    Operações 24 horas por dia, 7 dias por semana, mudança de tripulação em terra.
+
+    Com sistemas altamente flexíveis e adaptáveis, a TideWise une a expertise de soluções desenvolvidas
+    in-house com os melhores payloads do mercado.
+
+    Explore as tecnologias abaixo para conhecer os detalhes:
+
+    Inspeção de ativos
+
+    Inspeção marítima por robôs com
+
+    risco zero e OPEX até 70% menor
+
+    .
+
+    Levantamento Hidrográfico e Geofísica
+
+    de alta precisão, com
+
+    mais eficiência e menos CO²
+
+    .
+
+    Logística offshore e costeira
+
+    de cargas de até
+
+    entre plataformas.
+
+    Monitoramento ambiental via USVs e drones, mitigando riscos com até
+
+    98% menos CO²
+
+    .
+
+    Embarcações autônomas para
+
+    missões táticas na Amazônia Azul
+
+    com risco humano zero.
+
+    Pesquisa, inovação e desenvolvimento de robótica para
+
+    adaptação à demanda do cliente.
+
+    de Reais investidos
+
+    menos emissões de CO² em operações
+
+    prêmios e reconhecimentos pelo mundo'

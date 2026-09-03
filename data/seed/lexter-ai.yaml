@@ -1,0 +1,750 @@
+# Lexter.AI
+# Coletado em 2026-09-03. Todo `conteudo_texto` é o texto REAL da página em `url_fonte`,
+# fatiado do que `scripts/coletar.py` extraiu — não é paráfrase.
+#
+# CAMADA "DADO" (D-062): esta fixture NÃO tem bloco `gabarito:` nem `perfil_alvo`, e a
+# ausência É a decisão. As 8 fixtures originais são a régua dos critérios 1 e 3; anotar
+# esta aqui seria medir o classificador contra rótulos escritos na mesma sessão que leu
+# os mesmos documentos — calibrar contra o próprio gabarito.
+#
+# CAMPOS ESTRUTURADOS: só ficam preenchidos os que aparecem LITERALMENTE nos documentos.
+# `null` faz o Briefing reportar "requisito não verificado", que é correto; um valor
+# plausível e errado não reporta nada e ainda corrompe o filtro de elegibilidade.
+#
+# TEASER RECORTADO: os veículos injetam chamada de OUTRA empresa no meio e no fim da
+# matéria. Cada documento abaixo declara em `_corte` as linhas do arquivo coletado que
+# entraram e as que foram removidas por citarem terceiro.
+nome: Lexter.AI
+site: https://lexter.ai/
+setor: jurídico — legaltech
+estagio: seed
+localizacao: null
+ano_fundacao: null
+tamanho_time: null
+descricao_curta: Assistente jurídico de IA usado por escritórios para ler, analisar e redigir contratos,
+  petições e outros documentos processuais.
+fonte_descoberta: startups.com.br — busca por legaltech de IA (chave `jurídico` vazia)
+coletado_em: '2026-09-03'
+documentos:
+- tipo: noticia
+  titulo: Lexter.AI levanta R$ 16M para impulsionar IA na análise jurídica
+  url_fonte: https://startups.com.br/negocios/rodada-de-investimento/lexter-ai-levanta-r-16m-para-impulsionar-ia-na-analise-juridica/
+  data_publicacao: null
+  conteudo_texto: 'Pular para o conteúdo
+
+    Pular para o menu
+
+    Rodada de investimento
+
+    Lexter.AI levanta R$ 16M para impulsionar IA na análise jurídica
+
+    Startup de IA para analisar documentos jurídicos levantou rodada com Alexia Ventures, Grão VC, Canary
+    e Endeavor Scale-Up
+
+    Leandro Miguel Souza
+
+    Leitura:
+
+    Copiar Link?
+
+    Sócios da Lexter.ai: Guilherme Delai, Pedro Jahara, Pedro Calderón, Lucas Kawazoi, Daniela Labella
+    e Jean Peguim (Foto: Divulgação)
+
+    A onda de aportes em startups de inteligência artificial continua. Desta vez, a lawtech
+
+    levantou R$ 16 milhões (US$ 3 milhões) em uma rodada seed liderada pela
+
+    , com a participação dos já investidores
+
+    também entrou no negócio.
+
+    A empresa desenvolveu uma plataforma de análise de documentos jurídicos utilizando modelos de inteligência
+    artificial, combinando algoritmos próprios com plataforma avançadas como o GPT-4, da
+
+    .
+
+    Segundo a empresa, por meio de sua tecnologia – especialmente o Assistense Lexter, lançado no ano
+    passado – cerca de 180 escritórios otimizam trabalhos como ler, analisar e redigir contratos, petições
+    e outros documentos. Na lista de clientes estão grandes nomes do setor jurídico, como
+
+    .
+
+    Com a nova rodada, o plano da
+
+    é expandir sua presença e aprimorar a plataforma indo além dos grandes escritórios que já atende e
+    desenvolvendo uma solução para ganhar escala e conquistar pequenas firmas de advocacia. A startup
+    também quer investir em educação, com uma vertical de cursos de treinamentos.
+
+    “Outras ferramentas de inteligência artificial generativa trazem informações que parecem coerentes,
+    mas são incorretas, o que é um risco gigante para os advogados. Nossa solução é a resposta para esse
+    problema: com conhecimento jurídico atualizado das leis brasileiras, faz pesquisa de fundamentação
+    jurídica sem inventar e pode ser usado como fonte”, afirmou Pedro Jahara (de pé, ao centro na foto),
+    CEO e cofundador da
+
+    ., em nota.
+
+    É a terceira rodada da lawtech. Em 2022, ela levantou um pré-seed de US$ 500 mil com a
+
+    (que voltaram na nova rodada). Ela também passou por uma das turmas de aceleração da
+
+    , quando captou US$ 1 milhão em um pré-seed. A empresa também passou pelo programa de aceleração
+
+    , do escritório
+
+    , especializado em lawtechs.
+
+    Aliás, falando em
+
+    , é o segundo aporte do fundo em startup de IA em menos de uma semana.
+
+    Ela liderou uma rodada de R$ 12 milhões na
+
+    , que desenvolveu uma plataforma de criação de conteúdo integrando diferentes modelos de linguagem
+    em uma interface única.
+
+    Segundo Bianca Martinelli, sócia da
+
+    , o crescimento de startups como a
+
+    mostra como os escritórios de advocacia ainda tem uma grande demanda por inovação, já que a adoção
+    de tecnologia é historicamente abaixo da média em relação a outros setores.
+
+    “Acreditamos firmemente que AI e LLMs (Large Language Models) têm potencial para mudar a forma como
+    os advogados trabalham. Não os substituindo, mas empoderando-os e permitindo a eles gastar tempo com
+    o que realmente importa, com atividades estratégicas que gerem valor aos seus clientes”, finaliza
+    Bianca, em comunicado.'
+- tipo: site
+  titulo: Lexter.AI — assistente jurídico de inteligência artificial
+  url_fonte: https://lexter.ai/
+  data_publicacao: null
+  conteudo_texto: 'Seu escritório mais eficiente com a nossa
+
+    especialista virtual jurídica
+
+    Seu escritório mais eficiente com a nossa
+
+    especialista virtual jurídica
+
+    Seu escritório mais eficiente com a nossa
+
+    especialista virtual jurídica
+
+    Seu escritório mais eficiente com a nossa
+
+    especialista virtual jurídica
+
+    Seu escritório  eficiente com a nossa
+
+    especialista virtual jurídica
+
+    Seu escritório mais eficiente com a nossa
+
+    especialista virtual jurídica
+
+    A Laura automatiza a sua operação jurídica com
+
+    , liberando você para
+
+    focar no essencial: ganhar mais casos.
+
+    A Laura automatiza a sua operação jurídica com
+
+    , liberando você para
+
+    focar no essencial: ganhar mais casos.
+
+    A Laura automatiza a sua operação jurídica com
+
+    , liberando você para
+
+    focar no essencial: ganhar mais casos.
+
+    Conheça sua nova
+
+    Especialista Virtual Jurídica
+
+    Conheça sua nova
+
+    Especialista Virtual Jurídica
+
+    Conheça sua nova
+
+    Especialista Virtual Jurídica
+
+    Conheça sua nova
+
+    Especialista Virtual Jurídica
+
+    A Laura é uma especialista virtual jurídica,
+
+    treinada com inteligência artificial para entender o contexto dos casos e automatizar tarefas técnicas
+    como peças, contratos, jurisprudência e resumos com agilidade e precisão.
+
+    Ela trabalha com você para acelerar sua rotina jurídica, sem perder qualidade.
+
+    Especialista de relacionamento
+
+    Oi, eu sou a
+
+    sua especialista virtual de relacionamento. Cuido de todo o contato externo com os clientes por e-mail
+    e WhatsApp, garantindo que o atendimento do seu escritório seja ágil, organizado e profissional.
+
+    Comigo, seus clientes são sempre bem atendidos e informados, enquanto você foca no que importa.
+
+    Conheça os planos
+
+    O que eu faço:
+
+    Atendimento no Whatsapp
+
+    Farei o atendimento do seu escritório por WhatsApp 24 horas por dia, com a segurança da API oficial
+    da Meta.
+
+    Assistente de vendas
+
+    Eu entrevisto e coleto informações relevantes de novos contatos para entregar leads qualificados.
+
+    Relacionamento com o cliente
+
+    Vou responder todas as dúvidas dos seus clientes sobre seus serviços, processos e atualizações de
+    caso.
+
+    Encaminhamento e escalonamento
+
+    Direciono demandas complexas para a equipe humana. (em breve)
+
+    Geração de contratos e assinaturas
+
+    Automatizo contratos e procurações para ganhar tempo. (em breve)
+
+    Fui treinada para otimizar as tarefas operacionais e técnicas do seu dia a dia do seu escritório.
+
+    Comigo, sua operação jurídica se torna mais ágil, organizada e eficiente.
+
+    O que eu faço:
+
+    Acompanhamento de processos
+
+    Monitoro novas movimentações nos processos e informo você em tempo real.
+
+    Elaboração de peças e contratos
+
+    Automatizo a elaboração documentos jurídicos, como petições, contratos e notificações.
+
+    Busca de jurisprudência
+
+    Encontro decisões relevantes em segundos, economizando horas de pesquisa.
+
+    Dúvidas jurídicas e provas necessárias
+
+    Sugiro provas, documentos e soluções rápidas para protocolos.
+
+    Roteiros de entrevistas e audiências
+
+    Entrego roteiros organizados para você se preparar com eficiência.
+
+    Proponho próximos passos e estratégias com base nos dados processados.
+
+    Propostas de acordo e pareceres
+
+    Preparo modelos prontos, facilitando o fechamento de demandas.
+
+    Fui treinada para otimizar as tarefas operacionais e técnicas do seu dia a dia do seu escritório.
+
+    Comigo, sua operação jurídica se torna mais ágil, organizada e eficiente.
+
+    O que eu faço:
+
+    Acompanhamento de processos
+
+    Monitoro novas movimentações nos processos e informo você em tempo real.
+
+    Elaboração de peças e contratos
+
+    Automatizo a elaboração documentos jurídicos, como petições, contratos e notificações.
+
+    Busca de jurisprudência
+
+    Encontro decisões relevantes em segundos, economizando horas de pesquisa.
+
+    Dúvidas jurídicas e provas necessárias
+
+    Sugiro provas, documentos e soluções rápidas para protocolos.
+
+    Roteiros de entrevistas e audiências
+
+    Entrego roteiros organizados para você se preparar com eficiência.
+
+    Proponho próximos passos e estratégias com base nos dados processados.
+
+    Propostas de acordo e pareceres
+
+    Preparo modelos prontos, facilitando o fechamento de demandas.
+
+    Tudo em um único plano
+
+    por um preço justo
+
+    Tudo em um plano único com um preço fixo
+
+    Delegue as tarefas jurídicas repetitivas à Laura, ganhe tempo e acelere seu negócio.
+
+    Acompanhamento de processos em tempo real, com alertas automáticos.
+
+    Elaboração de peças jurídicas, contratos e notificações avançadas.
+
+    Sugestão de estratégias e busca de jurisprudências relevantes para decisões assertivas.
+
+    Resumo de documentos complexos e estruturação de relatórios processuais.
+
+    Propostas de acordo e pareceres personalizados, otimizando negociações.
+
+    Por que escolher a Lexter?
+
+    Por que escolher a Lexter?
+
+    Por que escolher a Lexter?
+
+    Por que escolher a Lexter?
+
+    Especialização no Direito:
+
+    especialistas treinadas para atender às demandas jurídicas brasileiras.
+
+    Disponibilidade 24/7:
+
+    trabalham sem pausa, garantindo suporte e eficiência sempre que precisar.
+
+    Segurança garantida:
+
+    total conformidade com a LGPD, com proteção avançada dos dados dos seus clientes.
+
+    Eficiência comprovada:
+
+    milhares de escritórios no Brasil automatizam suas operações com as especialistas virtuais Lexter.
+
+    Veja os advogados que já mudaram a sua rotina jurídica
+
+    Veja os advogados que já mudaram a sua rotina jurídica
+
+    Veja os advogados que já mudaram a sua rotina jurídica
+
+    Veja os advogados que já mudaram a sua rotina jurídica
+
+    A Lexter reduziu drasticamente o tempo gasto em triagens e pesquisas, permitindo mais foco estratégico.
+    O atendimento automatizado agilizou a comunicação e o fechamento de contratos, enquanto os resumos
+    e sugestões facilitaram a organização e reduziram o trabalho manual. Com suporte ativo e constante
+    evolução, a Lexter é indispensável para reduzir custos e aumentar nossa eficiência.
+
+    A Lexter reduziu drasticamente o tempo gasto em triagens e pesquisas, permitindo mais foco estratégico.
+    O atendimento automatizado agilizou a comunicação e o fechamento de contratos, enquanto os resumos
+    e sugestões facilitaram a organização e reduziram o trabalho manual. Com suporte ativo e constante
+    evolução, a Lexter é indispensável para reduzir custos e aumentar nossa eficiência.
+
+    Sócia do Vencovsky Advogados
+
+    A Lexter transformou nossa gestão e atendimento. Com mais de 40 advogados e alto volume de casos,
+    a plataforma automatiza fluxos, centraliza operações e reduz gargalos, aumentando nossa produtividade.
+    O suporte inicial foi essencial, e confiamos que as atualizações levarão nossa operação a outro nível.
+    Estamos confiantes no potencial da ferramenta como uma solução completa para nosso escritório.
+
+    A Lexter transformou nossa gestão e atendimento. Com mais de 40 advogados e alto volume de casos,
+    a plataforma automatiza fluxos, centraliza operações e reduz gargalos, aumentando nossa produtividade.
+    O suporte inicial foi essencial, e confiamos que as atualizações levarão nossa operação a outro nível.
+    Estamos confiantes no potencial da ferramenta como uma solução completa para nosso escritório.
+
+    Sócio-Fundador de JV Advogados
+
+    Crie sua conta e experimente a eficiência da Laura, sua nova especialista virtual jurídica
+
+    Crie sua conta e experimente a eficiência da Laura, sua nova especialista virtual jurídica
+
+    Crie sua conta e experimente a eficiência da Laura, sua nova especialista virtual jurídica
+
+    Crie sua conta e experimente a eficiência da Laura, sua nova especialista virtual jurídica
+
+    Crie sua conta e experimente a eficiência da Laura, sua nova especialista virtual jurídica
+
+    A Lexter é pioneira no uso de
+
+    inteligência artificial aplicada ao Direito
+
+    no Brasil, desenvolvendo soluções inovadoras que transformam a rotina de escritórios e advogados.
+
+    Nascemos com o propósito de
+
+    automatizar o trabalho repetitivo
+
+    e permitir que advogados foquem no que realmente importa:
+
+    a estratégia, a qualidade e os resultados.
+
+    Com tecnologia de ponta e reconhecimento no mercado, a Lexter já recebeu investimentos de fundos como
+
+    Alexia Ventures, Grão VC, Canary, Norte Ventures e Endeavor Scale-Up,
+
+    está presente em
+
+    escritórios referência no país
+
+    e é destaque entre as principais
+
+    lawtechs brasileiras.
+
+    Seu escritório eficiente, resultados extraordinários.
+
+    Mais de 1000 escritórios e advogados otimizam sua rotina com a Lexter
+
+    Mais de 1000 escritórios e advogados otimizam sua rotina com a Lexter
+
+    Mais de 1000 escritórios e advogados otimizam sua rotina com a Lexter
+
+    Central de Ajuda
+
+    Termos de uso
+
+    Política de privacidade
+
+    Curso: IA no Direito
+
+    Segunda a Sexta
+
+    09h às 18h
+
+    2024 - Todos os direitos reservados
+
+    CNPJ: 37.727.974/0001-81 / Juristech Inteligencia Artificial Ltda
+
+    Central de Ajuda
+
+    Termos de uso
+
+    Política de privacidade
+
+    Curso: IA no Direito
+
+    Segunda a Sexta
+
+    09h às 18h
+
+    2024 - Todos os direitos reservados
+
+    CNPJ: 37.727.974/0001-81 / Juristech Inteligencia Artificial Ltda
+
+    Central de Ajuda
+
+    Termos de uso
+
+    Política de privacidade
+
+    Curso: IA no Direito
+
+    Segunda a Sexta
+
+    09h às 18h
+
+    2024 - Todos os direitos reservados
+
+    CNPJ: 37.727.974/0001-81 / Juristech Inteligencia Artificial Ltda
+
+    Central de Ajuda
+
+    Termos de uso
+
+    Política de privacidade
+
+    Curso: IA no Direito
+
+    Segunda a Sexta'
+- tipo: blog
+  titulo: Lexter.AI — blog
+  url_fonte: https://lexter.ai/blog/
+  data_publicacao: null
+  conteudo_texto: 'Blog Lexter:
+
+    Seu escritório eficiente com Inteligência Artificial
+
+    Todos os artigos
+
+    Inteligência Artificial no Direito
+
+    Modelo de Peça Jurídica
+
+    Embargos de Declaração
+
+    Agravo de Instrumento Trabalhista
+
+    Conceitos e Dicas sobre Procuração
+
+    Contestação e Prescrição
+
+    Impugnação de Provas
+
+    Inteligência Artificial no Setor Jurídico
+
+    Modelo de Apelação Cível
+
+    Modelo de Divórcio
+
+    Modelo de Divórcio Consensual
+
+    Modelo de Petição
+
+    Modelo de Queixa-Crime
+
+    Modelo de Recurso Extraordinário
+
+    Recurso de Revista
+
+    Modelo de Petição
+
+    Petição de Cumprimento de Sentença: Como Elaborar Requerimento
+
+    Aprenda a elaborar uma petição de cumprimento de sentença eficiente, seguindo passos essenciais para
+    um requerimento preciso, dentro dos requisitos legais.
+
+    fev 18, 2025
+
+    Modelo de Peça Jurídica
+
+    Recurso em Sentido Estrito: O Que é e Quando Cabe no Processo Penal?
+
+    Saiba tudo sobre o recurso em sentido estrito no processo penal: quando interpor e como utilizá-lo
+    corretamente para garantir os direitos do réu.
+
+    fev 13, 2025
+
+    Recurso de Revista
+
+    Prazos e Requisitos do Recurso de Revista: Como Evitar Erros Comuns
+
+    Descubra os prazos e requisitos do recurso de revista no processo trabalhista. Evite erros comuns
+    e entenda como a automação jurídica pode ajudar.
+
+    fev 04, 2025
+
+    Embargos de Declaração
+
+    Embargos de Declaração em Ações de Família: O que mudou no Novo CPC
+
+    Conheça as particularidades dos embargos de declaração em ações de família com o Novo CPC. Descubra
+    mudanças e impactos práticos no processo judicial.
+
+    jan 27, 2025
+
+    Inteligência Artificial no Direito
+
+    Uma nova geração de IA para escritórios de advocacia
+
+    Lexter lança especialistas virtuais que automatizam tarefas jurídicas e administrativas e melhoram
+    o atendimento aos clientes.
+
+    jan 23, 2025
+
+    Recurso Ordinário no Processo Trabalhista: Como Funciona?
+
+    Entenda como funciona o recurso ordinário no processo trabalhista, seus prazos, requisitos e dicas
+    para apresentá-lo corretamente.
+
+    jan 08, 2025
+
+    Modelo de Queixa-Crime
+
+    Modelo de Queixa-Crime: Como Adaptar para Cada Tipo de Crime?
+
+    Aprenda a adaptar modelos de queixa-crime para diferentes situações, como calúnia, injúria, difamação
+    e outros crimes.
+
+    dez 23, 2024
+
+    Modelo de Recurso Extraordinário
+
+    Recurso Extraordinário: Definição, Funcionamento e Dicas Práticas
+
+    Entenda o que é o recurso extraordinário, quando ele é cabível e como elaborar um pedido eficaz. Confira
+    nossas dicas práticas para advogados.
+
+    dez 16, 2024
+
+    Modelo de Divórcio
+
+    Divórcio Judicial ou Extrajudicial: Qual o Melhor para Seu Caso?
+
+    Descubra as diferenças entre os modelos de divórcio no Brasil, judicial e extrajudicial, e saiba qual
+    é o mais adequado para o seu caso.
+
+    dez 10, 2024
+
+    Impugnação de Provas
+
+    Impugnação de Provas Documentais: Como proceder?
+
+    Saiba como funciona a impugnação de provas, em quais casos ela é cabível e confira dicas práticas
+    para elaborar um pedido de impugnação eficiente.
+
+    dez 06, 2024
+
+    Contestação e Prescrição
+
+    Contestação e Prescrição: Quando Invocar e Como Argumentar
+
+    Saiba invocar a prescrição na contestação para fortalecer a defesa do réu. Confira dicas práticas
+    e cuidados ao tratar da prescrição. Leia mais!
+
+    nov 25, 2024
+
+    Como Construir um Habeas Corpus Sólido: Erros Comuns e Boas Práticas
+
+    Aprenda como construir um habeas corpus sólido, evitando os erros mais comuns e aplicando boas práticas
+    de argumentação e estrutura.
+
+    nov 22, 2024
+
+    Modelo de Apelação Cível
+
+    Modelo de Apelação Cível, Casos de Uso e IA
+
+    Descubra como elaborar uma Apelação Cível com base no Novo CPC usando IA. Acesse nosso modelo gratuito
+    e otimize sua prática jurídica.
+
+    nov 21, 2024
+
+    Modelo de Divórcio Consensual
+
+    Modelo de Divórcio Consensual: Como Funciona e Exemplos Práticos
+
+    Entenda o que é o divórcio consensual, veja como criar um modelo de petição de divórcio e saiba como
+    simplificar o processo de separação amigável.
+
+    nov 06, 2024
+
+    Embargos de Declaração
+
+    Embargos de Declaração: O Que São, Quando Usar e Exemplos Práticos
+
+    Saiba o que são os embargos de declaração, quando utilizá-los em processos judiciais e veja um exemplo
+    prático de como redigir esse recurso. Confira!
+
+    nov 05, 2024
+
+    Inteligência Artificial no Setor Jurídico
+
+    Exemplos de Inteligência Artificial Revolucionando o Setor Jurídico
+
+    Conheça exemplos reais de como a inteligência artificial transforma o setor jurídico no Brasil, da
+    automação de processos à análise de casos complexos.
+
+    out 31, 2024
+
+    Automação Jurídica: Benefícios e Ferramentas para Seu Escritório
+
+    Descubra como a automação jurídica pode transformar a prática advocatícia, aumentando a produtividade,
+    economizando tempo e melhorando a eficiência.
+
+    out 30, 2024
+
+    Modelo de Peça Jurídica
+
+    Modelo de Agravo de Instrumento Trabalhista com boas práticas
+
+    Aprenda a elaborar um Agravo de Instrumento Trabalhista com dicas práticas e utilize o Assistente
+    Lexter para otimizar a criação de suas peças jurídicas.
+
+    out 15, 2024
+
+    Inteligência Artificial no Direito
+
+    Consulta e Acompanhamento de Processos Jurídicos de Forma Simples
+
+    Simplifique a consulta e acompanhamento de processos jurídicos com ferramentas automatizadas, como
+    IA, e aumente a eficiência no seu dia a dia.
+
+    out 08, 2024
+
+    Inteligência Artificial no Direito
+
+    Como Elaborar uma Procuração: Conceito e Dicas Essenciais
+
+    Descubra como criar uma procuração: conceitos, dicas essenciais e como a inteligência artificial pode
+    otimizar esse processo de forma prática e segura.
+
+    out 02, 2024
+
+    Inteligência Artificial no Direito
+
+    ChatGPT para Advogados: guia completo com passo a passo
+
+    Aprenda a usar o ChatGPT na sua prática jurídica com estratégia, análise de risco e prompts prontos
+    para você usar IA no seu escritório.
+
+    set 25, 2024
+
+    Inteligência Artificial no Direito
+
+    Modelo de Contrato de Honorários para advogados e boas práticas
+
+    Descubra como elaborar um contrato de honorários com eficiência e precisão. Utilize a Inteligência
+    Artificial da Lexter para automatizar o processo.
+
+    set 09, 2024
+
+    Inteligência Artificial no Direito
+
+    Propriedade Intelectual na era da Inteligência Artificial
+
+    Descubra como a Inteligência Artificial está transformando a Propriedade Intelectual, desafiando conceitos
+    de autoria e exigindo novas abordagens legais
+
+    set 09, 2024
+
+    Inteligência Artificial no Direito
+
+    Modelos de Contratos de Prestação de Serviço: melhores práticas com IA
+
+    Aprenda a criar modelos de contratos de prestação de serviços eficazes com IA, usando as melhores
+    práticas jurídicas e ferramentas como o Assistente Lexter
+
+    ago 20, 2024
+
+    LGPD e a Inteligência Artificial: O Papel do Advogado na Proteção de Dados
+
+    Descubra como a LGPD e a Inteligência Artificial impactam a proteção de dados e o papel crucial dos
+    advogados na conformidade legal e na defesa da privacidade.
+
+    ago 19, 2024
+
+    Inteligência Artificial no Direito
+
+    Modelo de Petição Inicial para Advogados com IA
+
+    Aprenda a elaborar modelos de petição com IA e otimize suas práticas jurídicas. Acesse nosso guia
+    completo e modelo gratuito!
+
+    jun 26, 2024
+
+    Inteligência Artificial no Direito
+
+    Modelo de Reclamação Trabalhista com Inteligência Artificial
+
+    Aprenda a criar um modelo de reclamação trabalhista eficiente com a ajuda da inteligência artificial
+    e descubra as melhores práticas para advogados.
+
+    jun 13, 2024
+
+    Inteligência Artificial no Direito
+
+    Inteligência Artificial para Advogados: casos de uso e limites
+
+    Explore como a IA para advogados está transformando o setor jurídico com automação de tarefas, pesquisa
+    eficiente e aumento da produtividade.
+
+    jun 11, 2024
+
+    Inteligência Artificial no Direito
+
+    Inteligência Artificial no Direito: Transformando a Prática Jurídica no Brasil
+
+    Descubra como a Inteligência Artificial no Direito está revolucionando a prática jurídica, com benefícios,
+    desafios e aplicações para advogados.
+
+    mai 23, 2024'

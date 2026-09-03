@@ -73,8 +73,27 @@ from src.state import (
 EXCLUSOES = {
     "consultoria": ["consultoria", "consulting", "desenvolvimento terceirizado", "fábrica de software",
                     "body shop", "outsourcing de ti"],
-    "cripto": ["criptomoeda", "cryptocurrency", "blockchain", "web3", "bitcoin",
-               "tokenização de ativos", "security token", "utility token",
+    # `blockchain` SAIU EM 03/09 (D-090), e é a repetição exata de D-048.
+    # D-048 tirou "token" da lista porque o termo é ambíguo entre cripto e inferência de LLM, e
+    # "custo por token" derrubava qualquer startup de infraestrutura. `blockchain` tem a MESMA
+    # forma: é nome de TECNOLOGIA, não de IDENTIDADE. A base de 03/09 trouxe o caso real — a
+    # Ecotrace rastreia boi e soja com blockchain e saía `NÃO ELEGÍVEL` por 'cripto', numa
+    # ferramenta cujo trabalho é achar startups para o Inception.
+    #
+    # POR QUE O VETO DE TERCEIRO (D-085) NÃO ALCANÇAVA ISTO: ele responde "de quem a frase
+    # fala?" — e aqui a frase fala mesmo da própria empresa. A pergunta que faltava é outra:
+    # "ser isto DEFINE a empresa?". Usar blockchain não define ninguém como cripto, do mesmo
+    # jeito que pagar por token não define ninguém como cripto.
+    #
+    # A rede que garante que a remoção não abre a porta: a Liqi, que é cripto de verdade,
+    # continua excluída por `tokenização de ativos` — medido em `--exclusoes`, os dois lados.
+    # `stablecoin` e `ativos virtuais` ENTRARAM em 03/09, na mesma sessão em que `blockchain`
+    # saiu — e o par não é coincidência: a lista estava errada nas DUAS direções. Tinha um termo
+    # de tecnologia excluindo quem não é cripto, e não tinha os termos que nomeiam quem é.
+    # `ativos virtuais` é o termo LEGAL brasileiro (Lei 14.478, SPSVAs), e aparece literal nos
+    # documentos. Emitir stablecoin é identidade, não uso.
+    "cripto": ["criptomoeda", "cryptocurrency", "web3", "bitcoin", "stablecoin",
+               "ativos virtuais", "tokenização de ativos", "security token", "utility token",
                "token não fungível", "nft"],
     "cloud provider": ["cloud service provider", "provedor de nuvem", "datacenter próprio"],
     "revenda": ["revend", "distribuidor", "reseller"],   # prefixo: cobre revenda E revendedor (D-071)

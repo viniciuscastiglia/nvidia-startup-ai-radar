@@ -2734,26 +2734,40 @@ já dizia, que é a falha que D-083 nomeou.
 
 ---
 
-## D-090 — A base vai a 16, e as fontes boas não eram as que a documentação dizia
-**Data:** 03/09/2026 · timebox de 3 h, cumprido · executa D-062
+## D-090 — A base vai a 30, e as fontes boas não eram as que a documentação dizia
+**Data:** 03/09/2026 · executa D-062 · **8 → 30 startups, 24 → 93 documentos, 93/93 `url_fonte`**
 
-**O placar honesto: 8 → 16, não 30.** Fintech (4) e agro (2) — as duas consultas que devolviam
-**zero** — respondem. Voz/call center (2) entrou e destrava a regra 3 do TAPI. **Dados tabulares e
-mais robotics não entraram**, e a razão está escrita abaixo, empresa por empresa.
+**A M3 fechou.** 30 startups, 93 documentos, **toda `url_fonte` resolve**. Distribuição por tipo:
+50 notícia · 33 site · 7 blog · 2 release · 1 vaga. `ano_fundacao` literal em 12 de 30 e
+`localizacao` em 5 — baixo de propósito: **só entra o que está literalmente no documento**, e
+`null` faz o Briefing dizer *"requisito não verificado"*, que é verdade.
 
-**O que custa a curadoria não é o YAML — é o 3º documento.** O TAPI pede 3 documentos por empresa
-e `seed.py` exige ≥ 2 TIPOS distintos. Achar a empresa é fácil, achar 2 matérias é fácil; o que
-mata é a terceira peça. **Quatro empresas boas caíram por isso, e todas depois de coletadas:**
-- **Aro** (fintech de agente de crédito, 2 matérias excelentes) — o domínio `aro.com.br` é de uma
-  **fabricante de embalagens metálicas desde 1943**. Não é a fintech. O portão de curadoria pegou.
-- **Creditas** (o caso de recusa por > 10 anos que a base não tem) — 3 matérias, **um só tipo**;
-  `creditas.com` devolve 221 caracteres e todo caminho interno dá 404.
-- **alt.bank** — `/sobre` e `/guard` devolvem **exatamente os mesmos 7.843 caracteres da home**: é
-  SPA. Usá-los seria fabricar diversidade documental, e a fixture teria 3 documentos que são 1.
+**O que ordenou a fila não foi contagem — foi consulta que devolvia zero.**
+1. **fintech (5)** e **agro (8)**: as duas consultas que devolviam **zero** em 03/09.
+2. **voz/call center (3)**, **robótica (4)** e **dados tabulares** (Agrotools): as três regras de
+   exemplo do TAPI sem startup (D-088). Cada uma que entrou tornou a **P-21** medível.
+3. **As cinco chaves de `SETORES` que estavam VAZIAS** — `logística`, `jurídico`, `indústria`,
+   `educação`, `varejo`. Isto só apareceu porque a base cresceu: **o planner tinha oito setores
+   no vocabulário e cinco não casavam empresa nenhuma.** É o mesmo defeito de `"fintechs"`
+   devolvendo zero, em cinco lugares ao mesmo tempo. **Hoje as 10 chaves têm empresa.**
+
+**As quatro exclusões do Inception ganharam caso REAL, e antes só tinham frase sintética:**
+consultoria (Deal, já existia) · **capital aberto → Zenvia** (Nasdaq) · **cripto → Liqi**
+(stablecoin BRLD) · **> 10 anos → Agrotools e Solinftec**. O valor do filtro está na recusa, e
+recusa medida com frase que eu mesmo escrevi não é recusa medida.
+
+**O QUE CUSTA A CURADORIA NÃO É A EMPRESA — É O 3º DOCUMENTO.** `seed.py` exige 3 documentos e
+**≥ 2 tipos distintos**. Achar a empresa é barato; achar a terceira peça é o gargalo. Quatro
+empresas boas caíram **depois de coletadas**, cada uma por um motivo diferente:
+- **Aro** (fintech de agente de crédito, 2 matérias ótimas) — `aro.com.br` é de uma **fabricante
+  de embalagens metálicas desde 1943**. O portão de curadoria pegou; a pressa não teria pego.
+- **Creditas** — 3 matérias, **um tipo só**; o site devolve 221 caracteres e todo caminho dá 404.
+- **alt.bank** — `/sobre` e `/guard` devolvem **os mesmos 7.843 caracteres da home**: é SPA. Usar
+  os dois seria fabricar diversidade documental — 3 documentos que são 1.
 - **ESGreen** — e esta dói: os documentos dizem que ela **já é membro do NVIDIA Inception** e
   treinou modelo próprio na infraestrutura da NVIDIA. Só existem 2 documentos públicos dela.
 
-**A DESCOBERTA QUE MUDA A ROTA, E ELA FOI MEDIDA, NÃO LIDA.** `04-ecossistema-br.md` ordena os
+**A DESCOBERTA QUE MUDA A ROTA, E FOI MEDIDA, NÃO LIDA.** `04-ecossistema-br.md` ordena os
 veículos por **disponibilidade** (grátis, sem paywall) e elege o Brazil Journal *"melhor veículo
 para este projeto"*. Rodando `coletar.py` neles, a ordem que importa é outra:
 
@@ -2772,64 +2786,131 @@ pipeline, e ninguém sabia porque ninguém tinha rodado.
 **Alternativa descartada:** restringir a curadoria aos 3 domínios que já funcionavam — economiza
 15 min e custa o setor agro inteiro.
 **Por que é barato:** `coletar.py` é auxiliar de CURADORIA, não caminho de execução. Nenhum agente
-o chama, `seed.py` lê YAML, e os `conteudo_texto` das fixtures antigas já estão congelados.
-**Não move um único número medido.**
-**Custo honesto, e ele é real:** o bloco maior traz post relacionado junto. Por isso cada documento
-novo declara em `_corte` as linhas que entraram — e `doutor-ai.yaml` já carregava
-`"Dell: Crise de componentes"` e `"ASUS quer estar entre os líderes"` **desde 22/08**, colhidos
-pelo seletor antigo. Contaminação entre empresas é o defeito de D-086 e D-089.
+o chama, `seed.py` lê YAML, e os `conteudo_texto` já congelados não mudam. **Não move um número.**
 
-**D-062 SÓ EXISTIA EM PROSA, E ISSO ERA MENSURÁVEL.** As 22 (hoje 8) entram como DADO, sem
-gabarito. Mas `avaliar_agentes.py` engolia `data/seed/*.yaml` inteiro, e quebrava de dois jeitos —
-um barulhento e um silencioso:
+**O CUSTO DESSA MUDANÇA É REAL E FOI PAGO À MÃO: teaser de terceiro.** O bloco maior traz post
+relacionado junto. Foi construído um auditor (`MARCADORES`, 80+ manchetes de terceiros observadas)
+que varre as 30 fixtures. **Primeira passada: 11 ocorrências em 4 fixtures.** As 5 minhas foram
+corrigidas por recorte. As outras **6 estavam na base desde 22/08** — `"Dell: Crise de
+componentes"` e `"ASUS quer estar entre os líderes"` dentro da **Axenya** e da **Doutor-AI**,
+colhidas pelo seletor antigo e nunca vistas. Um segundo auditor conferiu que **nenhuma fixture
+cita outra empresa da base**. Hoje: **zero ocorrências**.
+**A limpeza das duas antigas foi tratada como mudança em material MEDIDO:** critério fixado antes
+— *só entra se `classe 3/7 · stack 6/7 · confianca 0/6 · elegivel 6/6+1 · 49%/100% ·
+discriminação 8/8` reproduzirem inteiros*. Reproduziram. O lixo era **inerte para a régua e vivo
+para o briefing**, que é exatamente o que D-086 e D-089 vinham perseguindo.
+
+**D-062 SÓ EXISTIA EM PROSA, E ISSO ERA MENSURÁVEL.** As 22 novas entram como DADO, sem gabarito.
+Mas `avaliar_agentes.py` engolia `data/seed/*.yaml` inteiro, e quebrava de dois jeitos — um
+barulhento e um silencioso:
 - `--validar` saía com **exit 1**, uma linha por fixture nova;
 - **a precisão despencava sem avisar.** Sem `dores_esperadas`, `esperadas` vira conjunto vazio e a
-  fixture entra na média como `0.0`. **Medido, o contrafactual:**
+  fixture entra na média como `0.0`. **Contrafactual medido:**
 
 | | classe | precisão | recall | discriminação |
 |---|---|---|---|---|
 | régua filtrada por `gabarito` (o que entrou) | 3/7 | **49%** | 100% | 8/8 |
-| todas as 16 (o comportamento anterior) | 3/7 | **24%** | 100% | 15/16 |
+| todas as fixtures (o comportamento anterior) | 3/7 | **24%** | 100% | 15/16 |
 
 **`classe` e `recall` ficam IDÊNTICOS** — nada no placar acusaria. A régua seguiria imprimindo um
 número com cara de medição, pela metade. **Corrigido:** `regua = [f for f in fixtures if
 f.get("gabarito")]` alimenta `validar`, `medir` e os dois tetos.
-**`evidencia_literal` ficou sobre as 16, de propósito:** ela não pergunta ao gabarito, pergunta se
-todo trecho citado ocorre **verbatim** no documento — que é o modo de falha mais provável de 24
-documentos colados numa sessão. Passou nas 16.
-**E não foi só teoria de segurança:** as fixtures novas foram montadas por **script que fatia o
-arquivo do `coletar.py` por número de linha**, nunca redigitadas. Paráfrase é impossível por
-construção, e a checagem literal confirma.
+**`evidencia_literal` ficou sobre as 30, de propósito:** ela não pergunta ao gabarito, pergunta se
+todo trecho citado ocorre **verbatim** no documento — o modo de falha mais provável de 69
+documentos colados numa sessão. **Passou nas 30.** E não foi só sorte: as fixtures novas foram
+montadas por **script que fatia o arquivo do `coletar.py` por número de linha**, nunca
+redigitadas. Paráfrase é impossível por construção.
 
 **UM DEFEITO DE RASTREABILIDADE, ACHADO PELO PRÓPRIO PORTÃO.** `seed.py --verificar-urls` reprovou
 a **Laura Networks**, fixture da base desde 22/08. Medido: `HEAD` entra em laço de redirect;
-**`GET` responde 200 com 63 mil caracteres**. A página está viva. O verificador já sabia que *"alguns
-servidores recusam HEAD"* e caía para `GET` — **mas só quando a recusa vinha como STATUS ≥ 400.
-Quando vem como EXCEÇÃO, o `except` de fora engolia a tentativa e o fallback nunca rodava.**
-Falso NEGATIVO de rastreabilidade é pior que falso positivo: manda o curador trocar uma fonte
-legítima. Agora só falha quando os DOIS métodos falham, e o log diz qual respondeu. **48/48 URLs.**
+**`GET` responde 200 com 63 mil caracteres**. A página está viva. O verificador já sabia que
+*"alguns servidores recusam HEAD"* e caía para `GET` — **mas só quando a recusa vinha como STATUS
+≥ 400. Quando vem como EXCEÇÃO, o `except` de fora engolia a tentativa e o fallback nunca
+rodava.** Falso NEGATIVO de rastreabilidade é pior que falso positivo: manda o curador trocar uma
+fonte legítima. Agora só falha quando os DOIS métodos falham, e o log diz qual respondeu.
 
-**`SETORES` ganhou `voz` e `robótica`** — e a chave TEM de ocorrer literal na coluna `setor`, porque
-`buscar_startups` filtra com `s.setor ILIKE '%<chave>%'`. **É a armadilha que fazia "fintechs"
-devolver zero, uma casa adiante:** `setor: agtech` não casaria a consulta "agro". Por isso os
-rótulos saíram `agro — agricultura digital`, `fintech de crédito`, `voz e call center`.
+**`SETORES` ganhou `voz` e `robótica`** — e a chave TEM de ocorrer literal na coluna `setor`,
+porque `buscar_startups` filtra com `s.setor ILIKE '%<chave>%'`. **É a armadilha que fazia
+"fintechs" devolver zero, uma casa adiante:** `setor: agtech` não casaria a consulta "agro". Por
+isso os rótulos saíram `agro — agricultura digital`, `voz e call center`, `varejo — operação de
+lojas`.
 
 **O QUE A EXECUÇÃO MOSTROU, E A LEITURA NÃO MOSTRARIA (D-083):**
 1. **P-12 deixou de ser um número e virou uma cena.** A **Core AI** — empresa cujo produto É
    modelo de crédito com IA — sai `non-AI`, e com ela Conta Simples e Iniciador. Não é regressão:
-   é o gargalo de vocabulário que D-060 mediu, agora legível. **É o argumento de D-078 confirmado
-   por dado novo:** 8 fixtures não discriminavam o bastante para isso aparecer.
-2. **O seletor de D-086 continua atraído por mobília de página.** Na NeMo saiu
-   *"More Customer Stories / View All Blogs / View All Sessions"*; na TensorRT-LLM, uma linha de
-   changelog do README com emoji. É o mecanismo de D-089, em dado novo. **Munição para (b) em 04/09.**
+   é o gargalo de vocabulário que D-060 mediu, agora legível. **É D-078 confirmado por dado novo:**
+   8 fixtures não discriminavam o bastante para isso aparecer.
+2. **O seletor de D-086 continua atraído por mobília de página.** Na NeMo saiu *"More Customer
+   Stories / View All Blogs / View All Sessions"*; na TensorRT-LLM, linha de changelog do README
+   com emoji. Mecanismo de D-089, em dado novo. **Munição para (b) em 04/09.**
 3. **P-22 ganhou exemplo concreto:** `NEGOCIO` é indexado por TECNOLOGIA, não por dor. NeMo
-   recomendada para a dor `custo` traz o texto de `avaliação`. A justificativa de negócio fala de
-   outro assunto que não a dor que puxou a recomendação.
-4. O ponteiro `ver D-059` segue impresso no briefing do usuário (P-11, uma linha, 05/09).
+   recomendada para a dor `custo` traz o texto de `avaliação`.
+4. **A Ecotrace saía `NÃO ELEGÍVEL` por 'cripto'** — ela rastreia boi com blockchain. Virou D-091.
+5. O ponteiro `ver D-059` segue impresso no briefing do usuário (P-11, uma linha, 05/09).
 
-**Alternativa descartada para o número:** parar em 12 e usar a hora restante para forçar 30 com
-empresas de 2 documentos. Rejeitada — `seed.py` reprovaria, e afrouxar o piso de 3 documentos
-trocaria a única promessa que o sistema faz (rastreabilidade) por uma linha de contagem.
+**ERRO DE MÉTODO MEU, MEDIDO E REGISTRADO:** **47 de 159 fetches (30%) voltaram vazios**, quase
+todos de **chutar caminho de URL** (`/sobre`, `/quem-somos`, `/carreiras`) em vez de buscar a URL.
+Usei busca para achar empresa e adivinhação para achar documento — os dois pedem busca. Custou
+~25 min e é a primeira coisa a corrigir se a base voltar a crescer.
+
+**Alternativa descartada para o número:** forçar 30 com empresas de 2 documentos. Rejeitada —
+`seed.py` reprovaria, e afrouxar o piso de 3 documentos trocaria a única promessa que o sistema
+faz (rastreabilidade) por uma linha de contagem.
+
+---
+
+## D-091 — `blockchain` sai da lista de cripto, `stablecoin` entra: a lista estava errada nas duas direções
+**Data:** 03/09/2026 · achado pela execução sobre a base nova (D-090) · repete a forma de D-048
+
+**O defeito, achado rodando o grafo:** a **Ecotrace** — agtech que rastreia boi e soja — saía
+**`NÃO ELEGÍVEL` por 'cripto'**, porque `EXCLUSOES["cripto"]` continha `"blockchain"`. Numa
+ferramenta cujo trabalho é achar startups para o Inception.
+
+**É D-048 de novo, com outra palavra.** D-048 tirou `"token"` da lista porque o termo é ambíguo
+entre cripto e inferência de LLM, e *"custo por token"* derrubava qualquer startup de
+infraestrutura. `blockchain` tem a **mesma forma: é nome de TECNOLOGIA, não de IDENTIDADE.**
+
+**Por que o veto de terceiro (D-085) não alcançava:** ele responde *"de quem a frase fala?"* — e
+aqui a frase fala mesmo da própria empresa. A pergunta que faltava é outra: **"ser isto DEFINE a
+empresa?"**. São dois eixos de erro diferentes, e a lista tinha o segundo.
+
+**O ERRO QUE EU COMETI NO MEIO DO CONSERTO, E ELE VALE MAIS QUE O CONSERTO.** Antes de remover
+`blockchain`, escrevi na régua um caso-rede para garantir que a Liqi (cripto de verdade)
+continuaria excluída. **Escrevi a frase eu mesmo**, já contendo `"tokenização de ativos"`. A régua
+deu **8/8** — e a Liqi REAL saiu **ELEGÍVEL** no grafo. Uma rede tricotada em volta da resposta.
+**É exatamente por isso que `origem` é campo obrigatório em `exclusoes.yaml`**, e eu passei por
+cima da própria regra do arquivo. Os dois casos hoje são **frases LITERAIS** de `data/seed/liqi.yaml`.
+
+**O que o caso real revelou, e é maior que o termo:** a Liqi diz literalmente no site
+*"Infraestrutura para sua empresa oferecer **criptomoedas**, stablecoins e tokens de ativos"* —
+e `criptomoeda` **já estava na lista**. Ela passou assim mesmo. **Motivo: `elegibilidade()` varre
+`perfil.afirmacoes[*].evidencias[*].trecho`, não o documento.** O filtro só enxerga o que o
+Extractor por acaso citou. A exclusão da Liqi funcionava **por acidente**: `blockchain` caiu num
+trecho de evidência, `criptomoeda` não. **Isso vira P-23** — não se conserta hoje, porque mudar o
+que `elegibilidade()` lê é alteração de arquitetura em componente medido a 4 dias do vídeo.
+
+**A correção, nas duas direções:** sai `blockchain` (tecnologia); entram **`stablecoin`** (emitir
+stablecoin é identidade, sem ambiguidade) e **`ativos virtuais`** (o termo LEGAL brasileiro, Lei
+14.478/SPSVAs, literal nos documentos). **A lista estava errada dos dois lados: tinha um termo de
+tecnologia excluindo quem não é cripto, e não tinha os termos que nomeiam quem é.**
+
+**Critério fixado ANTES, e o caso entrou na régua antes do conserto** — a régua caiu para `7/8` no
+lado do falso positivo, apontando a Ecotrace, e só então o termo saiu:
+
+| | falso negativo | falso positivo |
+|---|---|---|
+| antes | 7/7 | 7/7 |
+| com os casos reais novos, antes do conserto | 8/8 | **7/8** |
+| depois | **9/9** | **8/8** |
+
+E o resto não se moveu: `classe 3/7 · stack 6/7 · confianca 0/6 · elegivel 6/6+1 · 49%/100%` ·
+justificativas `12/21` trivial e `15/21` seletor · `pytest` 81 passed. No grafo: **Liqi
+`NÃO ELEGÍVEL` por `stablecoin`, com evidência e fonte; Ecotrace `ELEGÍVEL`.**
+
+**Alternativa descartada:** manter `blockchain` e exigir um segundo termo cripto na mesma frase.
+Rejeitada por ser regra mais complicada para o mesmo efeito — e porque D-048 já tinha estabelecido
+o precedente de **remover o termo ambíguo** em vez de qualificá-lo.
+
 
 ---
 
@@ -2858,4 +2939,5 @@ trocaria a única promessa que o sistema faz (rastreabilidade) por uma linha de 
 | ~~P-20~~ | ~~O operador de borda da idade~~ | **D-085** — a borda (`idade == IDADE_MAXIMA`) vira **pendente** com a faixa impressa, não exclusão. Guardar o mês foi descartado: não consta em 6 das 8 fixtures |
 | **P-21** | **Relevância da tecnologia recomendada** | aberta por D-086. Morpheus (spear phishing, digital fingerprinting) recomendado para a dor de privacidade de uma healthtech: a recuperação casa `privacy`/`security` sem conhecer o domínio. **Nenhum seletor de trecho conserta isto** — é o motor de recomendação. **O gabarito, porém, existe e não é meu:** as 7 regras de exemplo do TAPI (`contexto/01-tapi.md:143`) são pares setor/dor → tecnologia esperada, e a regra `Saúde →` cobre 4 das 8 startups da base e reprova este caso. Falta o harness — e a cobertura, que só cresce com a base (D-088) |
 | **P-22** | **`justificativa_negocio` é stub em 11 de 16 tecnologias** | aberta pela auditoria de 03/09 (D-088). `recommendation.py:63` cura texto para **5 das 16**; as outras 11 caem num fallback formulaico que o próprio comentário chama de stub e adia "para a M4" — fase que não existe mais em arquivo vivo nenhum. É o **campo 3 dos 7 obrigatórios** e o vizinho do campo que D-086 consertou |
+| **P-23** | **`elegibilidade()` só enxerga o que o Extractor citou** | aberta por D-091. Ela varre `perfil.afirmacoes[*].evidencias[*].trecho`, não o documento. Medido no caso real: a Liqi diz *"oferecer criptomoedas, stablecoins e tokens"* no site, `criptomoeda` **já estava na lista**, e ela passou — porque a frase não caiu em nenhum trecho de evidência. **O filtro do Inception, que é o Diferencial declarado do projeto, tem cobertura igual à do casador de dores, e isso não estava escrito em lugar nenhum.** A correção óbvia (varrer `conteudo_texto`) reintroduz o falso positivo por MENÇÃO que D-085 gastou uma sessão para matar — o veto de terceiro teria de rodar sobre o documento inteiro. Não cabe a 4 dias do vídeo; o que cabe é estar escrito |
 | **P-19** | **O sweep do RAG (dimensão, banda de chunk, `k1`/`b`)** | **reaberta por D-078.** Estava cortado porque "o critério 2 já está no teto" — razão inválida. A razão candidata para manter o corte é outra e precisa ser dita: com 24 perguntas de gabarito, grade fina ajusta ao gabarito em vez de generalizar. O que joga contra o corte é `e@1 = 79%` (D-068): a primeira citação erra 1 vez em 5. Re-decidir junto com a base ampliada |

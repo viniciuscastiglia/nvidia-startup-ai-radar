@@ -1,0 +1,620 @@
+# Tractian
+# Coletado em 2026-09-03. Todo `conteudo_texto` é o texto REAL da página em `url_fonte`,
+# fatiado do que `scripts/coletar.py` extraiu — não é paráfrase.
+#
+# CAMADA "DADO" (D-062): esta fixture NÃO tem bloco `gabarito:` nem `perfil_alvo`, e a
+# ausência É a decisão. As 8 fixtures originais são a régua dos critérios 1 e 3; anotar
+# esta aqui seria medir o classificador contra rótulos escritos na mesma sessão que leu
+# os mesmos documentos — calibrar contra o próprio gabarito.
+#
+# CAMPOS ESTRUTURADOS: só ficam preenchidos os que aparecem LITERALMENTE nos documentos.
+# `null` faz o Briefing reportar "requisito não verificado", que é correto; um valor
+# plausível e errado não reporta nada e ainda corrompe o filtro de elegibilidade.
+#
+# TEASER RECORTADO: os veículos injetam chamada de OUTRA empresa no meio e no fim da
+# matéria. Cada documento abaixo declara em `_corte` as linhas do arquivo coletado que
+# entraram e as que foram removidas por citarem terceiro.
+nome: Tractian
+site: https://tractian.com/
+setor: indústria — manutenção preditiva
+estagio: série c
+localizacao: null
+ano_fundacao: null
+tamanho_time: null
+descricao_curta: Sensores em comodato instalados no maquinário capturam vibração, temperatura, pressão,
+  vazão, corrente e tensão; modelos de IA próprios preveem falha e orientam a manutenção em mais de mil
+  plantas industriais.
+fonte_descoberta: braziljournal.com e startups.com.br — busca por indústria e IoT industrial
+coletado_em: '2026-09-03'
+documentos:
+- tipo: noticia
+  titulo: Com sensores e IA, a Tractian já vale R$ 4 bilhões
+  url_fonte: https://braziljournal.com/com-sensores-e-ia-a-tractian-ja-vale-r-4-bilhoes/
+  data_publicacao: null
+  conteudo_texto: 'Quando fundaram a Tractian em 2019, Igor Marinelli, Gabriel Lameirinhas e Leonardo
+    Vieira escutavam sempre a mesma coisa: ‘fazer hardware e software não vai dar certo’; ‘é melhor pegar
+    o hardware da China.’
+
+    Cinco anos depois, os fundadores estão provando que os céticos estavam errados.
+
+    A Tractian acaba de levantar uma rodada de R$ 700 milhões que avaliou a empresa em R$ 4 bilhões (
+
+    ) — uma das maiores captações de startups deste ano no Brasil.
+
+    A Série C foi liderada pela Sapphire Ventures, uma gestora americana de VC cujo maior investidor é
+    a SAP, e teve a participação da General Catalyst, Next47 e NGP Capital.
+
+    A captação é a quarta da história da Tractian, que já havia levantado outros R$ 300 milhões até agora.
+
+    O modelo de negócios da Tractian une a chamada ‘internet das coisas’ com modelos de IA.
+
+    A startup desenvolveu sensores que são fornecidos em comodato para as indústrias e colocados nos maquinários.
+    Esses sensores capturam dados como vibração, temperatura, pressão, vazão, corrente e tensão, que depois
+    são analisados pelos modelos de IA da companhia, ajudando na manutenção preventiva dos equipamentos.
+
+    Se um sensor da Tractian identificar, por exemplo, que uma das máquinas está com falta de lubrificação,
+    o software da empresa vai pegar essa informação, cruzar com o
+
+    do fabricante e chegar à causa daquele problema. Na sequência, vai sugerir a solução: a troca do componente
+    ou o uso de um lubrificante específico, por exemplo.
+
+    “Antes, se a indústria identificava um problema, ela tinha que ligar para a WEG, para a Siemens ou
+    para outro fabricante da máquina para entender como resolver aquele problema,” Igor disse ao
+
+    . “Com nosso sistema, ela já tem essa informação e consegue corrigir muito rápido.”
+
+    A Tractian tem conquistado clientes na mesma velocidade que seus sensores capturam dados.
+
+    A startup já atende mais de mil plantas industriais — incluindo gigantes como a Suzano, Dexco, M Dias
+    Branco, Ingredion e Nissan Brasil. A startup espera faturar US$ 40 milhões este ano (R$ 230 milhões
+    no câmbio de hoje), com uma margem bruta de 72%.
+
+    Hoje 60% da receita vem do Brasil, e o restante dos Estados Unidos e do México. Igor está morando
+    em Atlanta, de onde toca a operação americana, e Vieira, na Cidade do México.
+
+    Apesar do forte crescimento até aqui, a oportunidade para a empresa ainda é gigantesca. Igor estima
+    que existam 50 mil indústrias de médio e grande porte no Brasil — um número que sobe para 500 mil
+    ao incluir os mercados americano e mexicano.
+
+    A startup também tem conseguido crescer dentro da sua própria base de clientes, com a assinatura de
+    mais licenças do software e/ou a implementação dos sensores num número maior de máquinas.
+
+    A startup funciona num modelo de SaaS, cobrando uma assinatura que varia pelo número de licenças e
+    sensores.
+
+    net revenue retention
+
+    — um indicador que mede o quanto a companhia consegue reter ou aumentar a receita da sua base de clientes
+    — é de 150% na Tractian. Ou seja, todos os anos, a receita cresceria 50% mesmo que a startup não adicionasse
+    nenhum novo cliente.
+
+    Com a rodada, a Tractian quer investir mais em P&D, com a contratação de mais engenheiros e a construção
+    de um novo laboratório de pesquisa, de 9 mil metros quadrados. Outro plano é olhar para M&As, principalmente
+    no modelo de ‘acqui-hire’.
+
+    Igor disse que a empresa já investe metade de sua margem bruta em P&D, algo incomum no Brasil.
+
+    “A média no Brasil é investir de 10% a 15% da margem bruta em P&D, enquanto nos EUA, a média é de
+    50%,” disse ele. “P&D é uma corrida pelo ouro, em que você tem que estar sempre se aprofundando. Temos
+    que ter a cabeça da Tesla, da Palantir… O produto está bom? Então vamos dobrar o esforço e deixar
+    100x melhor.”
+
+    A semente da Tractian nasceu nos corredores da USP, onde Marinelli e Lameirinhas estudaram engenharia
+    da computação.
+
+    Os dois se conheceram no primeiro dia de aula, e poucos meses depois já estavam dividindo um apartamento
+    com a ideia de criar algum negócio juntos.
+
+    “No começo, tentamos fazer as coisas na engenharia reversa. Pensávamos em uma solução e íamos atrás
+    de como chegar nela. Ela até funcionava, mas não tinha mercado porque não tínhamos identificado um
+    problema,” lembra Igor. “Só deu certo quando decidimos achar o problema antes e depois ir atrás da
+    solução.”
+
+    A Tractian começou numa garagem no bairro do Ipiranga depois que Igor voltou de Berkeley, onde foi
+    estudar por um breve período. (Ele acabou não se formando na faculdade).
+
+    Segundo ele, a escolha pelo setor industrial veio da família. O pai de Igor trabalhou 25 anos na parte
+    de manutenção de equipamentos da International Paper, enquanto o pai de Gabriel trabalhou por décadas
+    numa cimenteira.
+
+    Igor lembra que para criar a Tractian eles foram visitar 88 fábricas diferentes para entender as dores
+    do setor.
+
+    “Passamos um ano inteiro fazendo só essas visitas e conversando com gestores de processos, de manutenção,
+    de
+
+    ,” disse ele. “Em todas essas conversas, a dor que mais se repetiu foi na manutenção dos equipamentos
+    industriais, que era muito desassistida.”
+
+    A ambição global veio desde o começo. Igor disse que logo que criaram a Tractian eles decidiram registrar
+    o domínio da empresa em todos os países possíveis, comprando mais de 40 domínios num único dia.
+
+    “O desafio da indústria é igual em todo o lugar do mundo, só muda o idioma e a moeda,” disse ele.
+    “Além disso, sempre tivemos essa cabeça de que não dá para ser uma empresa gigante se você ficar só
+    no Brasil.”'
+- tipo: noticia
+  titulo: Tractian capta R$ 120,1 milhões do BNDES para robôs de manutenção preditiva
+  url_fonte: https://startups.com.br/negocios/inovacao/tractian-capta-r-120m-com-bndes-para-projeto-de-robotica/
+  data_publicacao: null
+  conteudo_texto: 'Pular para o conteúdo
+
+    Pular para o menu
+
+    Tractian capta R$ 120M com BNDES para projeto de robótica
+
+    Financiamento bancará P&D de assistentes robóticos que unem robótica, sensores e IA; projeto prevê
+    421 contratações e 20 patentes até 2028
+
+    Leandro Miguel Souza
+
+    Leitura:
+
+    Copiar Link?
+
+    Sensor da Tractian | Foto: divulgação
+
+    Leia um resumo desta notícia
+
+    A Tractian captou R$ 120,1 milhões do BNDES para desenvolver robôs de inspeção e manutenção preditiva.
+
+    Os recursos do programa BNDES Mais Inovação visam combinar robótica avançada, sensoriamento e IA.
+
+    O projeto prevê a criação de um novo produto, depósito de 20 patentes e contratação de 421 funcionários
+    até 2028.
+
+    O financiamento acelera a pesquisa em robótica e IA para proteção de ativos industriais, com engenharia
+    brasileira.
+
+    Paradas não planejadas de máquinas custam bilhões, e a manutenção preditiva busca reduzir esses custos.
+
+    Este é o primeiro financiamento público da Tractian, que antes se financiava com capital de risco.
+
+    anunciou esta semana uma nova captação para tocar sua pesquisa e desenvolvimento. Contudo, em vez
+    de equity, os recursos desta vez vieram de um financiamento do
+
+    : R$ 120,1 milhões para desenvolver uma nova geração de assistentes robóticos voltados à inspeção
+    e à manutenção preditiva de equipamentos nas fábricas.
+
+    e o banco de fomento destacaram em comunicado, os recursos, provenientes do programa BNDES Mais Inovação,
+    servirão para desenvolver uma solução que combina robótica avançada, sensoriamento de alta precisão
+    e IA para antecipar falhas em instalações industriais. O plano de investimentos cobre desde a equipe
+    própria de pesquisa até a compra de componentes e equipamentos.
+
+    O projeto tem execução prevista até junho de 2028 e deve resultar em um novo produto de inspeção industrial
+    e no depósito de 20 patentes de invenção. A companhia prevê contratar 421 novos funcionários já na
+    fase de implantação, 150 deles em pesquisa e desenvolvimento, mantendo os postos após a conclusão
+    dos investimentos.
+
+    “O financiamento acelera uma linha de pesquisa que estamos construindo há anos: usar robótica, sensoriamento
+    e IA para elevar o nível de proteção dos ativos mais críticos da indústria”, afirmou Gabriel Lima,
+    COO e cofundador da
+
+    . “As 150 vagas de P&D e as 20 patentes previstas do projeto são o resultado técnico de uma decisão
+    estratégica: fazer essa tecnologia com engenharia brasileira, e no Brasil.”
+
+    E o problema que a empresa mira não é pequeno. Paradas não planejadas de máquinas custam às 500 maiores
+    companhias do mundo o equivalente a 11% da receita anual (algo como US$ 1,4 trilhão, segundo estimativas
+    do setor), e é justamente essa conta que a manutenção preditiva promete reduzir, ao apontar a falha
+    antes que ela derrube a linha de produção.
+
+    Do lado do banco, o discurso é de reforço à inovação em solo nacional. “O financiamento aprovado pelo
+    BNDES vai contribuir com a realização de atividades de pesquisa, desenvolvimento e inovação no Brasil.
+    O projeto reúne diferentes tecnologias aplicadas à inspeção e à manutenção industrial e prevê a contratação
+    de profissionais qualificados para sua execução”, disse o presidente do
+
+    , Aloizio Mercadante.
+
+    Este é o primeiro financiamento por fomento público da
+
+    . Fundada em 2019 por Gabriel Lima e Igor Marinelli, a empresa vinha se financiando quase exclusivamente
+    com capital de risco, mas não fecha uma rodada de equity desde o fim de 2024.
+
+    Foi em dezembro daquele ano que a companhia levantou sua Série C, de R$ 700 milhões (cerca de US$
+    120 milhões), liderada pela americana
+
+    e com participação de
+
+    . A rodada avaliou a
+
+    em R$ 4 bilhões (quatro vezes o valuation da captação anterior) e a colocou entre as startups mais
+    capitalizadas do país.
+
+    Antes dela, em agosto de 2023, a empresa havia feito
+
+    um aporte de crescimento de US$ 45 milhões, também com a
+
+    . Ao todo, soma cerca de R$ 1,05 bilhão captados em quatro rodadas desde a fundação.
+
+    Nesse intervalo sem novos aportes de participação, a companhia mudou de porte: hoje se apresenta como
+    uma espécie de “copiloto industrial”, atende mais de mil plantas de multinacionais como
+
+    e diz responder por cerca de 5% do PIB industrial global.'
+- tipo: noticia
+  titulo: Tractian levanta R$ 230 milhões avaliada em R$ 1 bilhão
+  url_fonte: https://startups.com.br/negocios/venture-capital/tractian-levanta-r-230-milhoes-avaliada-em-r-1-bilhao/
+  data_publicacao: null
+  conteudo_texto: 'Pular para o conteúdo
+
+    Pular para o menu
+
+    Tractian levanta R$ 230 milhões avaliada em R$ 1 bilhão
+
+    Série B chega após crescimento acelerado e contou com venda de participação do Citrino para a monashees
+    por R$ 50 mi
+
+    Leitura:
+
+    Copiar Link?
+
+    Fundadores da Tractian
+
+    Os números do venture capital latino em agosto já têm a grande rodada para dar aquele alívio. A
+
+    , fabricante de sensores e sistemas de manutenção industrial, fechou uma série B de respeito, que
+    colocou R$ 230 milhões no caixa da companhia. No aporte, ela foi avaliada em R$ 1 bilhão, mais de
+    3 vezes os R$ 320 milhões da série A feita em maio/22.
+
+    A rodada foi liderada pelo fundo americano
+
+    , que investe na
+
+    , uma companhia de equipamentos de IoT industrial. “Eles chegaram atrasados para a nossa série A e
+    continuamos conversando. Quando falamos que íamos abrir uma nova captação eles disseram que não era
+    para seguir. Que iam fazer sozinhos porque fazia muito sentido pra eles”, conta Igor Marinelli, cofundador
+    da
+
+    .
+
+    O grosso do aporte veio da
+
+    , mas investidores que já estavam no captable como
+
+    (que liderou a série A),
+
+    , que opera os CVCs da
+
+    , e que tinha entrado na companhia em 2021 vendeu sua participação em uma operação secundária com
+    a
+
+    por R$ 50 milhões. “A ideia agora é trazer investidores institucionais que nos ajudem a preparar o
+    terreno para um IPO em 10 anos”, conta Igor.
+
+    De acordo com ele, a maior parte dos recursos da rodada será usada em pesquisa e desenvolvimento para
+    lançamento de novas ofertas e produtos. Hoje a
+
+    tem 300 funcionários, sendo 200 engenheiros.
+
+    Bons negócios têm dinheiro disponível
+
+    Quantas vezes você não ouviu essa frase nos últimos 18 meses? É difícil saber exatamente o que esse
+    chavão enigmático quer dizer, mas a
+
+    dá um exemplo interessante.
+
+    A companhia bateu todas as metas de vendas propostas em sua série A e tem expectativas de crescer
+    300% em 2023. A base de clientes mais que dobrou, saindo de 200 para 500 nomes, com mil plantas espalhadas
+    pelo Brasil e também no México. Na lista estão nomes como
+
+    .
+
+    No México, a operação já representa 25% da receita, e cresce em um ritmo mais acelerado do que o negócio
+    no Brasil. Replicando o modelo adotado por aqui, ela comprou uma parte da publicação
+
+    , que produz conteúdo para profissionais da área de manutenção. No Brasil ela
+
+    tinha investido na
+
+    Revista da Manutenção
+
+    Clube do Técnico
+
+    logo após sua rodada seed.
+
+    Em um próximo passo de expansão, o plano é ampliar os negócios nos EUA, onde ela já está presente
+    com uma equipe de 20 pessoas na cidade de Atlanta. Aqui vale uma informação curioso. Segundo Igor,
+    a busca tem disso por profissionais que tenham servido as Forças Armadas. Isso porque, segundo ele,
+    essas pessoas têm mais comprometimento com uma missão dada, o que ajuda a
+
+    a vencer o desafio cultural de fazer negócios nos EUA. “Já temos clientes americanos e uma vez vencida
+    a barreira cultural, a gente voa que nem no México”, avalia. Segundo Igor, o plano para 2023 é crescer
+    mais 250%.
+
+    A companhia tem hoje 10 setores como alvo. Um deles são grandes operações que parecem indústrias,
+    como grandes varejos e aeroportos.
+
+    De band-aid a Salesforce industrial
+
+    A Tractian nasceu com a proposta de redução de custos de manutenção para a indústria com sensores,
+    ou “band-aids inteligentes” que preveem problemas nas máquinas. A tecnologia foi desenvolvida pela
+    própria companhia, que já conseguiu registro de patente nos EUA.
+
+    Mas ao longo do último ano, principalmente, ganhou força uma outra abordagem: a geração de receita.
+    “Se a empresa tem 90% de disponibilidade, significa que a manutenção não deixa os ativos disponíveis
+    para produzir nos outros 10%. Se você eleva essa disponibilidade em 2% ou 3%, é dinheiro entrando
+    na hora”, explica Igor. Ele conta que há casos de clientes que aumentaram a receita em US$ 26 milhões
+    no ano por conta da maior disponibilidade das máquinas para produção.
+
+    Essa percepção veio do investimento da companhia para criar um sistema operacional da manutenção,
+    o TracOS, que acaba de receber uma certificação de integração com o todo poderoso sistema de gestão
+    da
+
+    . “Só monitorar não é suficiente, Tem que oferecer uma malha de ação. Onde está o técnico, as peças
+    no almoxarifado”, diz Igor. Hoje, o sistema tem uma taxa de instalação de R$ 100 mil, o que garante
+    uma receita interessante para a companhia e a coloca no caminho para ser uma espécie de “Salesforce
+    industrial”.'
+- tipo: blog
+  titulo: Tractian — blog de manutenção e confiabilidade
+  url_fonte: https://tractian.com/blog
+  data_publicacao: null
+  conteudo_texto: 'Calculadora ROI: Como o monitoramento de condição aumenta os ganhos
+
+    Vibração por rota vs. monitoramento contínuo: o que muda na prática
+
+    Priorização de ativo: risco financeiro como matriz
+
+    Calculadora ROI: Como o monitoramento de condição aumenta os ganhos
+
+    Veja como o monitoramento de condição pode aumentar o ROI da sua planta industrial a partir de uma
+    leitura completa da saúde dos seus ativos.
+
+    03 set. de 2026
+
+    Vibração por rota vs. monitoramento contínuo: o que muda na prática
+
+    Como saber escolher entre vibração por rota e monitoramento contínuo na indústria? Veja o que muda
+    na prática e qual é a melhor estratégia.
+
+    03 set. de 2026
+
+    Priorização de ativo: risco financeiro como matriz
+
+    Como priorizar ativo industrial por risco financeiro em vez de se apoiar na sua intuição? Veja como
+    estruturar a análise de riscos como matriz aplicável.
+
+    28 ago. de 2026
+
+    Tier de proteção de ativo: cobertura por criticidade real
+
+    Como definir tier de proteção de ativo por criticidade real na planta? Veja como alocar cobertura
+    por camada de risco e assim proteger suas finanças.
+
+    28 ago. de 2026
+
+    5 principais falhas de equipamento em plantas de bebidas
+
+    Conheça os principais modos de falha dos equipamentos que fazem a planta de bebidas funcionar e descubra
+    como monitorar seus ativos.
+
+    28 ago. de 2026
+
+    Principais OEMs em bebidas: ativos críticos e como monitorá-los
+
+    Krones, Sidel, Tetra Pak, KHS e GEA falham de formas diferentes. Veja um guia por OEM sobre onde o
+    desgaste começa e o que a rotina atual deixa passar.
+
+    Breno Smanio Guimarães
+
+    28 ago. de 2026
+
+    Trocar ou reparar: CAPEX baseado na condição real dos ativos
+
+    O monitoramento de condição com IA pode ser justamente aquilo que está faltando para um CAPEX elevado,
+    apontando quando trocar ou reparar seus ativos.
+
+    26 ago. de 2026
+
+    Análise de risco preliminar: como priorizar ativo crítico
+
+    A análise de risco preliminar é aquilo que permite times de manutenção priorizar ativos críticos.
+    Veja como isso acontece e tecnologias que ajudam.
+
+    26 ago. de 2026
+
+    Sensor de vibração industrial: como combinar com Inteligência Artificial
+
+    Sensor de vibração industrial ganha profundidade quando combinado com IA. Veja o que a camada analítica
+    muda no diagnóstico e como aplicar em ativo real.
+
+    24 ago. de 2026
+
+    Como reduzir o downtime na planta industrial com IA
+
+    Reduzir downtime na planta industrial com IA depende de sinal, diagnóstico e integração com OS. Veja
+    o método técnico e onde o ganho é mensurável.
+
+    21 ago. de 2026
+
+    Inteligência Artificial na indústria: o que avaliar antes de comprar
+
+    Escolher uma Inteligência Artificial na indústria exige avaliação em quatro dimensões bem diferentes.
+    Veja o que precisa saber antes de decidir.
+
+    Breno Smanio Guimarães
+
+    21 ago. de 2026
+
+    Análise de vibração e RPM: por que ler carga e rotação juntas
+
+    Veja como a Tractian te ajuda a combinar análise de vibração e RPM em uma mesma plataforma multimodal,
+    que te dá mais controle sobre seus ativos.
+
+    19 ago. de 2026
+
+    Sensores industriais com aprendizado de máquina: benefícios e qual escolher
+
+    É o sensor industrial com aprendizado de máquina que identifica padrões de degradação nos ativo industriais.
+    Veja benefícios e como escolher o melhor.
+
+    18 ago. de 2026
+
+    Como combinar Inteligência Artificial e Machine Learning na sua planta
+
+    Inteligência Artificial e Machine Learning se combinam em camadas específicas da planta industrial.
+    Veja onde cada um entra e como integrar em uma só plataforma.
+
+    14 ago. de 2026
+
+    Detecção de anomalias: como a IA aprende o baseline e eleva a planta
+
+    Detecção de anomalias em ativo industrial depende da IA aprender o baseline individual. Veja o que
+    muda no diagnóstico e onde o método tem limite.
+
+    18 ago. de 2026
+
+    Sensor ultrassônico industrial: como combinar com vibração e temperatura
+
+    Sensor ultrassônico industrial ganha profundidade quando combinado com vibração e temperatura. Veja
+    o método técnico e o que cada cruzamento diagnostica.
+
+    12 ago. de 2026
+
+    Como monitorar picadores e desfibradores com sensor de vibração
+
+    Picadores e desfibradores exigem sensor de vibração projetado para carga variável e impacto. Veja
+    o método, o ponto certo e o cruzamento de sinais.
+
+    11 ago. de 2026
+
+    Dicas de monitoramento de vibração em máquinas industriais críticas
+
+    Monitoramento de vibração em máquinas críticas exige mais do que um bom sensor. Veja dicas que podem
+    te ajudar a antecipar falhas.
+
+    10 ago. de 2026
+
+    Envelope de aceleração: saiba detectar falha de rolamento mais cedo
+
+    O envelope de aceleração isola frequências características de rolamento e pode te ajudar a detectar
+    falhas mais cedo. Veja como funciona e benefícios.
+
+    Breno Smanio Guimarães
+
+    07 ago. de 2026
+
+    Inteligência Artificial industrial: Benefícios e qual escolher
+
+    Inteligência Artificial industrial entrega valor quando aplicada em camadas específicas. Veja benefícios
+    e saiba escolher a melhor opção para seu time.
+
+    05 ago. de 2026
+
+    Sincronização de sensores industriais: como garantir o funcionamento com IA
+
+    Sincronização de sensores industriais é o que viabiliza o uso de IA em plantas bem-sucedidas no Brasil
+    e no mundo. Veja como pode ajudar a sua operação.
+
+    05 ago. de 2026
+
+    IA na Manutenção Industrial: Como aumenta a precisão de sensores?
+
+    IA na manutenção industrial não substitui sensor, aumenta a precisão dele. Veja o mecanismo técnico,
+    o que muda no diagnóstico e como afeta a rotina.
+
+    05 ago. de 2026
+
+    Plataforma de Manutenção Preditiva com IA: Benefícios e qual escolher
+
+    Plataforma de manutenção preditiva com IA precisa ir além de alerta. Veja critérios de avaliação,
+    benefícios reais e o que diferencia fornecedor sério.
+
+    05 ago. de 2026
+
+    Como Prever Quebras de Máquinas na Indústria com sensores inteligentes
+
+    Prever quebras com sensores com IA depende de sinal, cadência e modelo. Veja o que a IA prevê bem,
+    o que ela não prevê e como aplicar em ativo real.
+
+    31 jul. de 2026
+
+    Monitoramento Remoto de Máquinas: Como Funciona na Prática
+
+    Monitoramento remoto de máquinas exige sensor, transmissão, análise e integração. Veja como cada camada
+    funciona e qual é a opção ideal para sua planta.
+
+    31 jul. de 2026
+
+    Vantagens do sensor ultrassônico em ativos rotativos
+
+    Monitoramento ultrassônico em ativos rotativos antecipa falhas de lubrificação e rolamento antes da
+    vibração. Veja as vantagens técnicas e o método.
+
+    30 jul. de 2026
+
+    Sensor de Ultrassom Industrial ou Vibração: Qual Usar em Cada Caso?
+
+    A escolha entre sensor de ultrassom industrial e vibração depende do modo de falha e do ativo. Veja
+    quando cada um funciona e por que combinar é o padrão.
+
+    30 jul. de 2026
+
+    Vale a Pena Investir em Manutenção Preditiva com IA?
+
+    Manutenção preditiva com IA compensa em cenários específicos e falha em outros. Veja os critérios
+    de decisão e como calcular retorno em ativo crítico.
+
+    30 jul. de 2026
+
+    Como aumentar a confiabilidade de ativos com sensores IoT
+
+    Sensores IoT podem aumentar a confiabilidade de ativos quando bem aplicados. Veja o método técnico,
+    os limites reais e como medir o ganho na sua planta.
+
+    24 jul. de 2026
+
+    Manutenção elétrica industrial: benefícios da IA na prevenção de falhas
+
+    A IA na manutenção elétrica industrial muda a prevenção de falhas. Veja benefícios concretos em motor,
+    painel e proteção, com diagnóstico amarrado.
+
+    24 jul. de 2026
+
+    Manutenção elétrica industrial​: como evitar sobrecarga ou curto
+
+    Sobrecarga e curto-circuito na manutenção elétrica seguem um padrão detectável. Veja como antecipar
+    com monitoramento contínuo de corrente e ultrassom.
+
+    23 jul. de 2026
+
+    Proteção elétrica industrial: 5 falhas mais comuns e como evitar com monitoramento
+
+    As 5 falhas mais comuns em proteção elétrica industrial seguem padrão recorrente. Veja causas reais
+    e como o monitoramento contínuo permite antecipar.
+
+    23 jul. de 2026
+
+    Proteção elétrica industrial: o que é e como funciona
+
+    A proteção elétrica industrial define aquilo que isola falhas em plantas e evita danos em ativos.
+    Veja como funciona na sua planta e como implementar.
+
+    Breno Smanio Guimarães
+
+    23 jul. de 2026
+
+    Mecânica e manutenção industrial: como unir com monitoramento multimodal
+
+    Unir mecânica e manutenção industrial com monitoramento multimodal muda como a equipe atua no ativo.
+    Veja o método e o impacto na rotina de planta.
+
+    28 jul. de 2026
+
+    Software de manutenção mecânica industrial: qual escolher para melhorar ROI
+
+    Software de manutenção mecânica industrial precisa entregar mais que OS. Veja critérios, integração
+    com sensor e como avaliar ROI antes de escolher.
+
+    17 jul. de 2026
+
+    Manutenção mecânica: por que o rolamento falha cedo e como evitar com ultrassom
+
+    Rolamento falha cedo na manutenção mecânica por causas que ultrassom detecta antes da vibração. Veja
+    as causas reais e como antecipar com monitoramento.
+
+    17 jul. de 2026
+
+    Manutenção mecânica industrial: como fazer priorização por risco
+
+    Priorização por risco na manutenção mecânica industrial define onde investir CAPEX e onde monitorar.
+    Veja o método aplicado e como o dado entra na decisão.
+
+    Breno Smanio Guimarães'

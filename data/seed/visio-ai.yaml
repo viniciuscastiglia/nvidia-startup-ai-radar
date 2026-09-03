@@ -1,0 +1,520 @@
+# Visio.AI
+# Coletado em 2026-09-03. Todo `conteudo_texto` é o texto REAL da página em `url_fonte`,
+# fatiado do que `scripts/coletar.py` extraiu — não é paráfrase.
+#
+# CAMADA "DADO" (D-062): esta fixture NÃO tem bloco `gabarito:` nem `perfil_alvo`, e a
+# ausência É a decisão. As 8 fixtures originais são a régua dos critérios 1 e 3; anotar
+# esta aqui seria medir o classificador contra rótulos escritos na mesma sessão que leu
+# os mesmos documentos — calibrar contra o próprio gabarito.
+#
+# CAMPOS ESTRUTURADOS: só ficam preenchidos os que aparecem LITERALMENTE nos documentos.
+# `null` faz o Briefing reportar "requisito não verificado", que é correto; um valor
+# plausível e errado não reporta nada e ainda corrompe o filtro de elegibilidade.
+#
+# TEASER RECORTADO: os veículos injetam chamada de OUTRA empresa no meio e no fim da
+# matéria. Cada documento abaixo declara em `_corte` as linhas do arquivo coletado que
+# entraram e as que foram removidas por citarem terceiro.
+nome: Visio.AI
+site: https://visio.ai/
+setor: varejo — operação de lojas
+estagio: seed
+localizacao: São Paulo, SP
+ano_fundacao: null
+tamanho_time: null
+descricao_curta: 'Sistema operacional para redes de lojas: conecta PDV, ERP, escala e sensores de visão
+  computacional, e usa agentes de IA para ler cada linha do P&L de cada loja e transformar perda de margem
+  em tarefa.'
+fonte_descoberta: startups.com.br — busca por retailtech (chave `varejo` vazia em SETORES)
+coletado_em: '2026-09-03'
+documentos:
+- tipo: noticia
+  titulo: Visio.AI capta R$ 12M e entra no mercado com Subway e Bob's
+  url_fonte: https://startups.com.br/negocios/rodada-de-investimento/visio-ai-capta-r-12m-e-entra-no-mercado-com-subway-e-bobs/
+  data_publicacao: null
+  conteudo_texto: 'Pular para o conteúdo
+
+    Pular para o menu
+
+    Rodada de investimento
+
+    Visio.AI capta R$ 12M e entra no mercado com Subway e Bob''s
+
+    Recursos obtidos na rodada seed serão usados para expandir e apoiar 1,2 mil estabelecimentos do varejo
+    até 2025
+
+    Leitura:
+
+    Copiar Link?
+
+    Sócios da Visio.AI. Foto: Divulgação
+
+    recebeu R$ 12 milhões em uma rodada de investimentos seed para focar em expansão, com a meta de atender
+    e apoiar 1,2 mil estabelecimentos até 2025. A rodada foi liderada pelo
+
+    e contou com a participação de outros investidores, como
+
+    .
+
+    Fundada em São Paulo, a
+
+    usa inteligência artificial para aumentar a rentabilidade de operações de lojas e franquias. Atualmente,
+    a empresa tem focado em franquias do setor de alimentação, como as redes
+
+    .
+
+    Segundo a startup, os clientes da empresa têm percebido uma redução no prazo do retorno do investimento,
+    saindo da média nacional de 36 meses para 25 meses. Este impacto vem da redução de até 20% do custo
+    de mercadoria vendida e 40 horas de economia do tempo da equipe, já evidenciada em mais de 150 clientes
+    em todo o país.
+
+    “Nosso objetivo na
+
+    é transformar o ambiente de trabalho no varejo, aumentando a rentabilidade e escalabilidade das operações”,
+    afirma o CEO da startup, Matheus Flores. Além do executivo, a equipe da
+
+    é formada pelo CTO Gustavo Tamanaka, pelo CPO David Stanquini e pelo CFO Gabriel Flores (CFO).
+
+    “Nossa solução utiliza inteligência artificial para trazer maior precisão no que precisa ser feito
+    na loja no dia a dia, e no fim o que vemos é um efeito muito positivo na formação de cultura dos times,
+    com trabalhos mais dinâmicos, treinamentos mais personalizados e funcionários mais engajados”, explica
+    Matheus.
+
+    Daniel Heise, sócio do
+
+    , destaca que o
+
+    segmento de varejo
+
+    está passando por um momento de inflexão que representa uma oportunidade para startups como a
+
+    . “Até recentemente, a tecnologia de ponta, especialmente a inteligência artificial, estava confinada
+    ao mundo digital. Agora, essa mesma tecnologia está revolucionando as operações físicas. Encontramos
+    na
+
+    um time com a visão e capacidade para liderar essa transformação”, diz.'
+- tipo: site
+  titulo: Visio — AI-native operating system for physical operations
+  url_fonte: https://visio.ai/
+  data_publicacao: null
+  conteudo_texto: 'AI-Native Operating System for Physical Operations
+
+    Run multiple stores
+
+    like your only one
+
+    Visio OS lets multi-store operators run their stores at scale, with the margins and peace of mind
+    of running just one
+
+    Schedule a demo
+
+    Your AI Toolbox
+
+    AI that improves every task in your operation
+
+    AI Agents and Tools that empower your team to do every task better, faster and easier — from hiring
+    to training to closing the books.
+
+    The operating system for store operations
+
+    Running stores at scale means managing hundreds of moving parts. Visio connects data, sensors, insights,
+    tasks, and people into one system so the whole operation improves together.
+
+    All your store data integrated in one place, enriched and ready to use, so you always know exactly
+    what''s happening across your operation.
+
+    Connect computer vision cameras or any IoT sensor to capture what software alone can''t see and fill
+    the remaining data gaps.
+
+    Every P&L line, quantified. See exactly how much money is on the table and where to focus first to
+    move EBITDA.
+
+    Best practices from similar stores across the network, surfaced automatically so you benefit from
+    what''s already working elsewhere.
+
+    The right task, to the right person, at the right time. Automatically planned and tracked across every
+    location.
+
+    Gamification and performance incentives that keep every team member focused on doing their part to
+    improve EBITDA, every day.
+
+    ROI for every $1 invested
+
+    EBITDA margin uplift
+
+    Saved per store, per day
+
+    You''re in good company.
+
+    Hundreds of successful operators already trust us with running their store operations.
+
+    Eduardo L.
+
+    Visio is an AI that works while you sleep and helps you gain time while you are awake.
+
+    We used to run a 34–35% COGS. With Visio it dropped to 30–31% — almost 3 points lower, across 14 stores.
+
+    Henrique K.
+
+    Visio is my daily dashboard — open it, read the numbers, find opportunities. The tool is essential,
+    not optional.
+
+    By 8 a.m. I already have yesterday’s results. Before, that took a week. Visio is an investment that
+    pays back.
+
+    Ana M.
+
+    Visio flipped a switch for us. Today we reward our Sandwich Artists based on the analyses Visio gives
+    us every day.
+
+    Mauricio N.
+
+    I can’t imagine the operation without Visio. In two months my food cost went down two percentage points.
+
+    I have four stores on Visio. It helps every day with running the business, and the goal-tracking program
+    is excellent.
+
+    Gabriel S.
+
+    Visio detected and proved an employee fraud. It’s essential for a franchisee to grow with peace of
+    mind and security.
+
+    Lívia L.
+
+    Before, we worked in the dark — and you brought us light. Visio means having eyes in the store even
+    when you’re not there.
+
+    Fabio B.
+
+    With Visio’s AI, we streamlined the work of supervisors, coordinators and managers — and lowered stress
+    across the team.
+
+    Ricardo S.
+
+    The two stores where I deployed Visio first became my best on COGS. It practically eliminated receipt
+    cancellations.
+
+    I thought it was surveillance. Now it’s a lifesaver — I show each employee what to improve and the
+    difference is huge.
+
+    Rodrigo B.
+
+    It moved everything faster and helped me catch frauds I always suspected but could never prove. Now
+    I delegate much better.
+
+    In one year with Visio I caught fraud, cut losses, and lowered food cost in both stores. A really
+    strong partnership.
+
+    Leandro D.
+
+    Visio is indispensable to our operations. Without it we’d lose a lot — in control, productivity, quality
+    and COGS.
+
+    Luiz H.
+
+    I cover several stores and can’t be in all of them. Visio shows me the COGS, the bad builds, and who’s
+    overportioning.
+
+    I got costs under control and aligned service and sandwich builds. Food cost came down and store oversight
+    improved.
+
+    Marcelo Z.
+
+    Director of Operations
+
+    Visio has been a strategic partner for years. We’re going through a digital transformation, and they
+    keep bringing tools, support and trade.
+
+    Eduardo L.
+
+    Visio is an AI that works while you sleep and helps you gain time while you are awake.
+
+    We used to run a 34–35% COGS. With Visio it dropped to 30–31% — almost 3 points lower, across 14 stores.
+
+    Henrique K.
+
+    Visio is my daily dashboard — open it, read the numbers, find opportunities. The tool is essential,
+    not optional.
+
+    By 8 a.m. I already have yesterday’s results. Before, that took a week. Visio is an investment that
+    pays back.
+
+    Ana M.
+
+    Visio flipped a switch for us. Today we reward our Sandwich Artists based on the analyses Visio gives
+    us every day.
+
+    Mauricio N.
+
+    I can’t imagine the operation without Visio. In two months my food cost went down two percentage points.
+
+    I have four stores on Visio. It helps every day with running the business, and the goal-tracking program
+    is excellent.
+
+    Gabriel S.
+
+    Visio detected and proved an employee fraud. It’s essential for a franchisee to grow with peace of
+    mind and security.
+
+    Lívia L.
+
+    Before, we worked in the dark — and you brought us light. Visio means having eyes in the store even
+    when you’re not there.
+
+    Fabio B.
+
+    With Visio’s AI, we streamlined the work of supervisors, coordinators and managers — and lowered stress
+    across the team.
+
+    Ricardo S.
+
+    The two stores where I deployed Visio first became my best on COGS. It practically eliminated receipt
+    cancellations.
+
+    I thought it was surveillance. Now it’s a lifesaver — I show each employee what to improve and the
+    difference is huge.
+
+    Rodrigo B.
+
+    It moved everything faster and helped me catch frauds I always suspected but could never prove. Now
+    I delegate much better.
+
+    In one year with Visio I caught fraud, cut losses, and lowered food cost in both stores. A really
+    strong partnership.
+
+    Leandro D.
+
+    Visio is indispensable to our operations. Without it we’d lose a lot — in control, productivity, quality
+    and COGS.
+
+    Luiz H.
+
+    I cover several stores and can’t be in all of them. Visio shows me the COGS, the bad builds, and who’s
+    overportioning.
+
+    I got costs under control and aligned service and sandwich builds. Food cost came down and store oversight
+    improved.
+
+    Marcelo Z.
+
+    Director of Operations
+
+    Visio has been a strategic partner for years. We’re going through a digital transformation, and they
+    keep bringing tools, support and trade.
+
+    Marcelo Z.
+
+    Director of Operations
+
+    Visio has been a strategic partner for years. We’re going through a digital transformation, and they
+    keep bringing tools, support and trade.
+
+    I got costs under control and aligned service and sandwich builds. Food cost came down and store oversight
+    improved.
+
+    Luiz H.
+
+    I cover several stores and can’t be in all of them. Visio shows me the COGS, the bad builds, and who’s
+    overportioning.
+
+    Leandro D.
+
+    Visio is indispensable to our operations. Without it we’d lose a lot — in control, productivity, quality
+    and COGS.
+
+    In one year with Visio I caught fraud, cut losses, and lowered food cost in both stores. A really
+    strong partnership.
+
+    Rodrigo B.
+
+    It moved everything faster and helped me catch frauds I always suspected but could never prove. Now
+    I delegate much better.
+
+    I thought it was surveillance. Now it’s a lifesaver — I show each employee what to improve and the
+    difference is huge.
+
+    Ricardo S.
+
+    The two stores where I deployed Visio first became my best on COGS. It practically eliminated receipt
+    cancellations.
+
+    Fabio B.
+
+    With Visio’s AI, we streamlined the work of supervisors, coordinators and managers — and lowered stress
+    across the team.
+
+    Lívia L.
+
+    Before, we worked in the dark — and you brought us light. Visio means having eyes in the store even
+    when you’re not there.
+
+    Gabriel S.
+
+    Visio detected and proved an employee fraud. It’s essential for a franchisee to grow with peace of
+    mind and security.
+
+    I have four stores on Visio. It helps every day with running the business, and the goal-tracking program
+    is excellent.
+
+    Mauricio N.
+
+    I can’t imagine the operation without Visio. In two months my food cost went down two percentage points.
+
+    Ana M.
+
+    Visio flipped a switch for us. Today we reward our Sandwich Artists based on the analyses Visio gives
+    us every day.
+
+    By 8 a.m. I already have yesterday’s results. Before, that took a week. Visio is an investment that
+    pays back.
+
+    Henrique K.
+
+    Visio is my daily dashboard — open it, read the numbers, find opportunities. The tool is essential,
+    not optional.
+
+    We used to run a 34–35% COGS. With Visio it dropped to 30–31% — almost 3 points lower, across 14 stores.
+
+    Eduardo L.
+
+    Visio is an AI that works while you sleep and helps you gain time while you are awake.
+
+    Marcelo Z.
+
+    Director of Operations
+
+    Visio has been a strategic partner for years. We’re going through a digital transformation, and they
+    keep bringing tools, support and trade.
+
+    I got costs under control and aligned service and sandwich builds. Food cost came down and store oversight
+    improved.
+
+    Luiz H.
+
+    I cover several stores and can’t be in all of them. Visio shows me the COGS, the bad builds, and who’s
+    overportioning.
+
+    Leandro D.
+
+    Visio is indispensable to our operations. Without it we’d lose a lot — in control, productivity, quality
+    and COGS.
+
+    In one year with Visio I caught fraud, cut losses, and lowered food cost in both stores. A really
+    strong partnership.
+
+    Rodrigo B.
+
+    It moved everything faster and helped me catch frauds I always suspected but could never prove. Now
+    I delegate much better.
+
+    I thought it was surveillance. Now it’s a lifesaver — I show each employee what to improve and the
+    difference is huge.
+
+    Ricardo S.
+
+    The two stores where I deployed Visio first became my best on COGS. It practically eliminated receipt
+    cancellations.
+
+    Fabio B.
+
+    With Visio’s AI, we streamlined the work of supervisors, coordinators and managers — and lowered stress
+    across the team.
+
+    Lívia L.
+
+    Before, we worked in the dark — and you brought us light. Visio means having eyes in the store even
+    when you’re not there.
+
+    Gabriel S.
+
+    Visio detected and proved an employee fraud. It’s essential for a franchisee to grow with peace of
+    mind and security.
+
+    I have four stores on Visio. It helps every day with running the business, and the goal-tracking program
+    is excellent.
+
+    Mauricio N.
+
+    I can’t imagine the operation without Visio. In two months my food cost went down two percentage points.
+
+    Ana M.
+
+    Visio flipped a switch for us. Today we reward our Sandwich Artists based on the analyses Visio gives
+    us every day.
+
+    By 8 a.m. I already have yesterday’s results. Before, that took a week. Visio is an investment that
+    pays back.
+
+    Henrique K.
+
+    Visio is my daily dashboard — open it, read the numbers, find opportunities. The tool is essential,
+    not optional.
+
+    We used to run a 34–35% COGS. With Visio it dropped to 30–31% — almost 3 points lower, across 14 stores.
+
+    Eduardo L.
+
+    Visio is an AI that works while you sleep and helps you gain time while you are awake.
+
+    News & Stories
+
+    Stories and ideas from the frontline of store operations.
+
+    How a Subway franchisee built a 325-application hiring pipeline in three months
+
+    Grupo DGK, a Subway franchise group operating 24-hour stores in southern Brazil, processed 325 applications
+    with AI-assisted screening and built a 104-person talent pool using Visio Recruitment and Selection.
+
+    Mar 13, 2026
+
+    View all articles'
+- tipo: site
+  titulo: Visio — the operating system for multi-unit retail
+  url_fonte: https://visio.ai/about
+  data_publicacao: null
+  conteudo_texto: 'The operating system
+
+    for multi-unit retail
+
+    Visio is the AI-native layer that multi-unit operators run their networks on. We help them run the
+    store, every shift, every location, every line of the P&L.
+
+    Margin compresses at scale
+
+    A single-store operator earns twenty to twenty-five percent margins because they are in the store
+    every day, act on what they see, and train the team standing next to them. At scale, all three slip.
+    The largest operators in the world earn eight to ten percent. That gap is what Visio exists to close.
+
+    We listen, move fast and empower the team
+
+    AI agents listen to every line of the P&L across every store and every shift. The moment we hear a
+    pain, we map it to a measurable Opportunity, assemble the Solution, and ship the Tools that close
+    it. For every task someone has to do in the store, we help them do it a bit better, a bit faster,
+    a bit more pleasant, with training and motivation built in. Every Opportunity Visio closes is closed
+    by a real person, and Visio''s job is to make their day easier and their work more visible.
+
+    From data to a smoother shift
+
+    Visio connects every data source the network already has: POS, ERP, schedules, financials, the bank,
+    inventory. Where more signal helps, the platform adds it with cameras, scales, temperature sensors,
+    microphones. Every store becomes one connected picture, every line of the P&L legible in operational
+    terms.
+
+    Agents read that picture and map every pain into an Opportunity, ranked by how much margin is on the
+    table. The patterns that close it best across the network become Best Practices, and flow down as
+    Solutions: sequences of Tasks delivered to the right person at the right moment, with training and
+    motivation built in.
+
+    Every store starts running more like the first one. Every line of the P&L moves in the direction it''s
+    supposed to.
+
+    The future we are building is one where every store in every network operates at its best, every day,
+    and the people running them are proud and empowered to succeed. Visio is the operating system that
+    makes that possible.
+
+    Ready to transform your store operations?
+
+    See how Visio uses AI to help you make better decisions — based on real data from your stores.
+
+    Schedule a demo
+
+    Join the community'

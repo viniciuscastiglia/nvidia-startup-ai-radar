@@ -168,12 +168,17 @@ critério, e sem ela 49% de precisão parece bom em vez de "17 pontos acima de e
 
 ## Estado da base
 
-- **16 startups** em `data/seed/*.yaml`, 48 documentos, `url_fonte` verificadas 48/48 (D-090).
+- **30 startups** em `data/seed/*.yaml`, **93 documentos**, `url_fonte` verificadas **93/93**
+  (D-090). **A M3 fechou** — é o piso de 30-50 que o TAPI recomenda.
   **Duas camadas (D-062):** **8 com bloco `gabarito:`** — a régua dos critérios 1 e 3, e as únicas
-  que movem número — e **8 como DADO, sem gabarito**, porque anotá-las seria calibrar contra o
-  próprio gabarito. `avaliar_agentes.py` filtra por `gabarito` e imprime as duas contagens.
-  **Ainda não é a M3 (30-50):** o gargalo medido não é achar empresa, é o **3º documento com tipo
-  distinto**. `dados tabulares` segue sem startup.
+  que movem número — e **22 como DADO, sem gabarito**, porque anotá-las seria calibrar contra o
+  próprio gabarito. `avaliar_agentes.py` filtra por `gabarito` e imprime as duas contagens; sem
+  esse filtro a precisão cai de 49% para 24% **em silêncio** (contrafactual medido em D-090).
+  **As 10 chaves de `SETORES` têm empresa** — nenhuma consulta do vocabulário do planner devolve
+  zero. **As 4 exclusões do Inception têm caso REAL:** consultoria (Deal), capital aberto
+  (Zenvia/Nasdaq), cripto (Liqi/stablecoin), > 10 anos (Agrotools, Solinftec).
+  > **O gargalo da curadoria é o 3º documento, não a empresa** (D-090): `seed.py` exige 3
+  > documentos e ≥ 2 TIPOS distintos, e 4 empresas boas caíram já coletadas.
 - **16 tecnologias NVIDIA**, 175 chunks estruturais + 202 de controle, gabarito de **24 perguntas**
   (19 com resposta, 5 sem). **Os 9 passos do pipeline do TAPI estão fechados.**
 

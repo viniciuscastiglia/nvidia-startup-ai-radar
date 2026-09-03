@@ -1,0 +1,432 @@
+# Agrotools
+# Coletado em 2026-09-03. Todo `conteudo_texto` é o texto REAL da página em `url_fonte`,
+# fatiado do que `scripts/coletar.py` extraiu — não é paráfrase.
+#
+# CAMADA "DADO" (D-062): esta fixture NÃO tem bloco `gabarito:` nem `perfil_alvo`, e a
+# ausência É a decisão. As 8 fixtures originais são a régua dos critérios 1 e 3; anotar
+# esta aqui seria medir o classificador contra rótulos escritos na mesma sessão que leu
+# os mesmos documentos — calibrar contra o próprio gabarito.
+#
+# CAMPOS ESTRUTURADOS: só ficam preenchidos os que aparecem LITERALMENTE nos documentos.
+# `null` faz o Briefing reportar "requisito não verificado", que é correto; um valor
+# plausível e errado não reporta nada e ainda corrompe o filtro de elegibilidade.
+#
+# TEASER RECORTADO: os veículos injetam chamada de OUTRA empresa no meio e no fim da
+# matéria. Cada documento abaixo declara em `_corte` as linhas do arquivo coletado que
+# entraram e as que foram removidas por citarem terceiro.
+nome: Agrotools
+site: https://agrotools.com.br/
+setor: agro — dados tabulares e geointeligência
+estagio: null
+localizacao: null
+ano_fundacao: null
+tamanho_time: null
+descricao_curta: Plataforma de 'BI territorial' que monitora mais de 200 milhões de hectares com mais
+  de 300 mil análises diárias sobre dados de satélite, vendida por assinatura a mais de 200 clientes para
+  decisão de compra de commodities, crédito rural e conformidade socioambiental.
+fonte_descoberta: braziljournal.com e agfeed.com.br — busca por agtech de dados em volume
+coletado_em: '2026-09-03'
+documentos:
+- tipo: noticia
+  titulo: Agrotools, a 'big data do campo', planeja M&As e internacionalização
+  url_fonte: https://braziljournal.com/agrotools-a-big-data-do-campo-planeja-mas-e-internacionalizacao/
+  data_publicacao: null
+  conteudo_texto: 'A Agrotools — uma startup focada em soluções de analytics e big data para o agronegócio
+    — acaba de levantar R$ 85 milhões para perseguir uma estratégia de M&A e internacionalização.
+
+    Os recursos vieram de investidores como Horácio Lafer Piva, da Klabin; Henry James Salomon, da BrProp;
+    além do fundo Inovabra, do Bradesco.
+
+    Há dois anos, a startup já havia levantado R$ 15 milhões junto ao fundo KPTL e aos empresários Pedro
+    Paulo Campos, Paulo Haegler, Fatima Marques e Olivier Murguet.
+
+    Somando as duas rodadas, os fundadores abriram mão de 20% do capital.
+
+    A Agrotools não tem o perfil clássico de uma startup: ela foi fundada há mais de 15 anos por Sérgio
+    Rocha, um ex-trader de commodities que viu a oportunidade de levar dados para um setor ainda pouco
+    digitalizado.
+
+    “O que fazemos é conectar Lucas do Rio Verde com a Faria Lima,” o fundador disse ao
+
+    Brazil Journal.
+
+    A Agrotools sempre gerou caixa, e só decidiu fazer a rodada para acelerar sua expansão no Brasil e
+    no exterior — em parte por meio da aquisição de concorrentes.
+
+    Segundo Sergio, a Agrotools já fechou a compra de uma plataforma internacional que será anunciada
+    em breve e que auxilia o produtor “a ser visto de uma maneira mais individualizada, e não na média.”
+
+    “A plataforma disponibiliza dados individualizados do produtor que garantem condições especiais para
+    ele, por exemplo, na hora de tomar um empréstimo,” disse o fundador.
+
+    Hoje, a Agrotools opera em três linhas de negócios.
+
+    A primeira é o que a empresa chama de um ‘BI territorial’, basicamente uma inteligência de dados que
+    ajuda os clientes a ter visibilidade de como e onde comprar commodities no Brasil. “É um produto para
+    tradings, frigoríficos, indústrias,” disse Sergio.
+
+    O segundo é semelhante ao primeiro, mas com um caso de uso oposto: usa os dados para dar inteligência
+    sobre as melhores regiões para vender insumos como fertilizantes e tratores. Esse produto também é
+    usado por bancos e cooperativas de crédito para analisar se vale a pena ou não financiar um produtor.
+
+    O terceiro produto é uma solução para atender às demandas ESG. Basicamente, a ferramenta permite que
+    o cliente analise se seus fornecedores estão alinhados com suas políticas de sustentabilidade.
+
+    A inteligência usada por essas três ferramentas vem de dados geográficos colhidos por satélites.
+
+    “A primeira coisa que fazemos é criar uma geo-id (uma espécie de identidade geográfica) das fazendas.
+    Já temos 4,5 milhões dessas geo-ids cadastradas,” disse Sergio. “Depois, essa identidade serve como
+    base para analisarmos essas áreas e cruzarmos com dados públicos de satélites e com dados que a gente
+    vai construindo.”
+
+    Se um produtor deu sua produção como garantia, por exemplo, a solução da Agrotools consegue usar esses
+    dados e seu algoritmo para acompanhar se a produção está indo bem.
+
+    A empresa vende essas soluções num modelo de assinaturas para mais de 200 clientes, incluindo gigantes
+    como a Cargill, Nestlé e Itaú. A empresa faturou R$ 130 milhões no ano passado, o dobro do ano anterior.'
+- tipo: noticia
+  titulo: Depois de sondar a América, Agrotools ajusta a bússola da expansão e pensa até na África
+  url_fonte: https://agfeed.com.br/agtech/depois-de-sondar-a-america-agrotools-ajusta-a-bussola-da-expansao-e-pensa-ate-na-africa/
+  data_publicacao: null
+  conteudo_texto: 'no seu e-mail
+
+    Depois de sondar a América, Agrotools ajusta a bússola da expansão e pensa até na África
+
+    “Só há inovação onde há necessidade”, diz Sérgio Rocha, CEO da agtech. No Brasil, empresa lança, em
+    parceria com o Imaflora, ferramenta que promete trazer mais credibilidade ao CAR
+
+    Sérgio Rocha, fundador e CEO da Agrotools
+
+    Em 2023, quando a Agrotools anunciou o início da sua expansão para a América do Norte, mais especificamente
+    para os Estados Unidos, o CEO e fundador da agtech brasileira, Sérgio Rocha, colocou na bagagem as
+    mais sofisticadas ferramentas e soluções tecnológicas desenvolvidas pela companhia para apresentar
+    aos potenciais clientes.
+
+    Mesmo já tendo atendido empresas da terra do tio Sam em projetos pontuais, a avaliação prévia era
+    de que o setor demandaria ferramentas sofisticadas para implementar no campo.
+
+    Mas ele admite hoje que estava enganado. Após os primeiros contatos, Rocha percebeu que as demandas
+    do agronegócio norte-americano eram bem mais simples que as demandas brasileiras.
+
+    "Para a nossa surpresa, verificamos que os mercados mais desenvolvidos não tinham avançado em tecnologia
+    tanto quanto o Brasil”.
+
+    A razão para isso, segundo ele, é bastante simples: necessidade. “Por conta dos seguros, subsídios
+    e características da produção por lá, a tecnologia acabou ficando em segundo plano e o motor da criatividade
+    é a dor de um problema. Só há inovação onde há necessidade", analisa.
+
+    Em se tratando de desafios e necessidades, o mercado brasileiro é um prato cheio para o desenvolvimento
+    de novas tecnologias. Não à toa, a Agrotools é detentora de um dos maiores bancos de dados do agronegócio
+    do mundo e atende clientes como McDonalds, Nestlé, Itaú, Bradesco, Rabobank e o Banco Nacional de
+    Desenvolvimento Econômico e Social (BNDES).
+
+    Para Rocha, o crescimento acelerado do agronegócio brasileiro nos últimos anos fez com que as oportunidades
+    de desenvolvimento de novas tecnologias avançassem de forma mais rápida se comparado aos demais mercados,
+    justamente por conta dos desafios de estrutura, legislação e segurança de dados.
+
+    No entanto, alguns segmentos como logística e armazenagem, por exemplo, avançaram a passos mais lentos,
+    desafiando o setor a encontrar caminhos e ferramentas para equilibrar a balança em prol da eficiência.
+
+    Foi assim, que a Agrotools, em parceria com o Instituto de Manejo Florestal e Agrícola (Imaflora),
+    desenvolveu uma ferramenta que utiliza a inteligência artificial para analisar e categorizar os registros
+    do Cadastro Ambiental Rural (CAR).
+
+    Batizada de ScoreCAR, a tecnologia cruza dados de diversas plataformas para checar a confiabilidade
+    das informações registradas nos cadastros que ainda não foram validados pelas Secretarias Municipas
+    de Agricultura.
+
+    A partir da análise, o sistema avalia a confiabilidade do CAR com base em 10 critérios e os classifica
+    em um ranking com cinco pontuações diferentes.
+
+    “Com isso é possível identificar os CAR que estão regulares e aqueles vulneráveis, que apresentam
+    alguma inconsistência no histórico de dados e consequentemente um risco no cumprimento da legislação
+    ambiental", explica o diretor de produtos da Agrotools, Breno Felix.
+
+    Segundo Felix, o grande gargalo do CAR é a demora no tempo de validação do documento, depois que os
+    dados são registrados. Com isso, milhões de produtores que estão na fila de espera têm dificuldades
+    para obter financiamento e linhas de crédito, já que o CAR é pré-requisito para acessar tais recursos.
+
+    Com a ferramenta, os cadastros que estão na fila receberão uma pontuação, o que permitirá aos produtores
+    que tenham notas baixas, corrigir as inconsistências apontadas.
+
+    Felix explica que o ScoreCAR contribui para reduzir outro risco apontado pelo mercado: uma vez que
+    os dados do cadastro são autodeclarados, há espaço para fraudes e erros.
+
+    Assim, o ScoreCAR utiliza diferentes softwares que se comunicam entre si, além de machine learning
+    algoritmos de reconhecimento territorial e inteligência artificial, fazendo o cruzamento de dados
+    que permite compor uma linha do tempo de cada documento, identificando inconsistências e conflitos
+    de dados.
+
+    “O sistema chega como uma resposta aos questionamentos cada vez maiores do mercado internacional quanto
+    à confiabilidade dos dados e é mais um item de segurança para a agenda ESG do Brasil", pondera.
+
+    A expansão da Agrotools para as Américas do Norte e do Sul veio após uma rodada de captação de US$
+    20 milhões para a expansão das operações fora do Brasil. Atualmente a empresa está presente nos Estados
+    Unidos, Paraguai e Argentina, mas o radar de oportunidades está sempre ligado.
+
+    Assim, Rocha revela que a companhia está de olho em novos mercados, especialmente na Europa e na África.
+    Neste último, Rocha enxerga certas semelhanças com os desafios do agronegócio no Brasil.
+
+    “É um mercado complexo, com grande potencial e que assim como o Brasil, esbarra em uma grande quantidade
+    de dados ainda pouco organizados. Talvez seja possível testar soluções que já utilizamos com sucesso
+    por aqui", pondera.
+
+    O empreendedor explica que, por enquanto, não há nenhum projeto efetivo de expansão, apenas avaliações.
+    Rocha revela que em 2025 novos lançamentos virão, sem dar mais detalhes.
+
+    A companhia não divulga previsão de crescimento para os próximos anos e ainda não fechou os dados
+    para 2024, mas em 2023 alcançou um lifetime value - LTV (o volume investido pelos clientes durante
+    o contrato) de R$ 338 milhões, volume 125% superior ao LTV de 2022, que foi de R$ 150 milhões.
+
+    Ainda em 2023, segundo Rocha, a companhia registrou um aumento de 80% no faturamento mensal com receitas
+    recorrentes em comparação a 2022.'
+- tipo: noticia
+  titulo: Agrotools prova que startups e governo podem trabalhar juntos
+  url_fonte: https://startups.com.br/negocios/agtech/agrotools-prova-que-startups-e-governo-podem-trabalhar-juntos/
+  data_publicacao: null
+  conteudo_texto: 'Pular para o conteúdo
+
+    Pular para o menu
+
+    Agrotools prova que startups e governo podem trabalhar juntos
+
+    Agtech investe em base operacional em Brasília para impulsionar inovação e sustentabilidade do setor
+    agro na região
+
+    Leitura:
+
+    Copiar Link?
+
+    Para contribuir com a transformação do agronegócio digital e impulsionar inovação, a
+
+    , startup focada em soluções de analytics e big data para o agronegócio, anuncia uma nova base operacional
+    e comercial em Brasília. A movimentação faz parte da estratégia que marca a entrada da agtech no mercado
+    governamental para impulsionar a transformação no agro digital, especialmente no Centro-Oeste.
+
+    Fundada em 2007 por Sergio Rocha, um ex-trader de commodities que viu a oportunidade de levar dados
+    a um setor até então pouco digitalizado, a
+
+    sempre atendeu a iniciativa privada, oferecendo uma plataforma digital voltada às corporações agro,
+    com soluções de gestão de risco, análises remotas, entre outras.
+
+    No entanto, de acordo com Sergio, sempre houve uma cobrança para que a agtech também tivesse uma linguagem
+    Gov. Em conversa com o
+
+    , o CEO comentou que a
+
+    se preparou para este novo “aproach” pelos últimos três anos com uma base de especialistas e algumas
+    contratações de profissionais com experiência no cliente público.
+
+    Para representar o setor de vendas e relações governamentais em Brasília, por exemplo, a companhia
+    nomeou Sérgio Oliveira para ser responsável pelo desenvolvimento de relacionamento e novos negócios
+    da startup. O executivo acumula experiência de mais de 20 anos em tecnologia, finance banking e varejo,
+    e já passou por empresas como
+
+    , referências globais em inovação e tecnologias data-driven.
+
+    “A interação direta com autoridades governamentais e a participação ativa em discussões sobre o desenvolvimento
+    do agronegócio possibilitam a oportunidade de contribuir para a formulação de políticas que impulsionam
+    a inovação e o crescimento sustentável do setor. A partir de agora, vamos traduzir os dados e inteligência
+    que as corporações já utilizam para o governo e bancos estatais”, afirma o CEO da
+
+    .
+
+    Sergio Rocha, fundador e CEO da Agrotools (Foto: Divulgação)
+
+    Pioneirismo no setor
+
+    A agtech já atua junto a
+
+    órgãos governamentais, como o BNDES
+
+    e MAPA, no desenvolvimento de uma calculadora de emissão de carbono na pecuária. Nesse projeto, a
+    ela é responsável pela inserção de dados pelos usuários, geração de relatórios de desempenho ambiental
+    e pelos processos associados de certificação e validação externa dos dados registrados na calculadora.
+
+    Em outra iniciativa, com o Estado do Mato Grosso, a
+
+    fornece uma plataforma digital para reinserção de produtores rurais com bloqueios socioambientais
+    no mercado formal por meio do Programa de Reinserção e Monitoramento (PREM), do Instituto Mato-Grossense
+    da Carne (IMAC).
+
+    “Hoje as entidades governamentais necessitam de soluções para gargalos existentes no setor. Estabelecer
+    uma operação em Brasília é um passo para nos aproximarmos cada vez mais do governo e de bancos estatais
+    para colaborar com o desenvolvimento do mercado agropecuário brasileiro com tecnologia e dados em
+    grande escala”, acrescenta Sergio.
+
+    Nova rodada?
+
+    Depois de captar, em 2022, R$ 100 milhões em uma estratégia focada em M&As e internacionalização para
+    a América Latina, — com investidores como Horácio Lafer Piva, da Klabin e o fundo Inovabra, do Bradesco
+    — a
+
+    não pretende fazer uma nova captação em 2024.
+
+    Vale lembrar que em seus mais de 15 anos, a startup sempre gerou caixa com dinheiro próprio, e só
+    decidiu fazer a rodada para acelerar sua expansão no Brasil e no exterior — em parte por meio da aquisição
+    de concorrentes. Um ano depois da captação, a startup adquiriu a
+
+    , plataforma argentina de inteligência para produtores rurais.
+
+    “Não estamos em busca de novos investimentos, a não ser que seja necessário para reforçar o caixa
+    para eventuais novas aquisições. Olhamos M&A como estratégia para aquisição de carteira ou tecnologia.
+    Em como crescer além do orgânico”, enfatiza o CEO.'
+- tipo: site
+  titulo: Agrotools — inteligência territorial para o agronegócio
+  url_fonte: https://agrotools.com.br/
+  data_publicacao: null
+  conteudo_texto: 'Eficiência de vendas
+
+    Inteligência de supply chain
+
+    Proteção de Marca
+
+    Resolução CMN 5.268/2025: sua operação está pronta para sustentar uma auditoria?​​
+
+    Monitore sua carteira por sensoriamento remoto e gere evidências técnicas auditáveis para reduzir
+    o risco regulatório com o Monitor de Safras da Agrotools
+
+    Conhecer o Monitor de Safras
+
+    Evite riscos socioambientais para a sua empresa e proteja a reputação da sua marca
+
+    Conheça nossas soluções ESG
+
+    SOMOS O LADO B DO AGRO
+
+    Criamos tecnologia que move o agro para o lado bom...
+
+    Confira nossas soluções
+
+    Acesse nossa loja e comece agora a fazer análises dos territórios
+
+    Veja nossas soluções
+
+    Faça parte da revolução do agro
+
+    Trabalhe com propósito no setor que mais contrata no mundo
+
+    Veja nossas vagas
+
+    Os melhores insights sobre o agro agora em suas mãos!
+
+    Conectamos territórios com negócios para apoiar a tomada de decisão da sua empresa.
+
+    Somos um ecossistema de soluções digitais que oferecem mais controle e visibilidade de toda a cadeia
+    do agronegócio em tempo real.
+
+    Conhecemos as dores da cadeia do agro
+
+    Compra do agro?
+
+    Saiba se a origem dessa matéria prima está livre de riscos.
+
+    Financia ou segura o agro?
+
+    Analise os riscos de cada produtor e seu território em poucos segundos.
+
+    Vende para o agro?
+
+    Saiba onde, quando e para quem vender mais e melhor.
+
+    Soluções digitais para Empresas de Bens de Consumo
+
+    Conquiste uma cadeia de suprimentos, do campo ao seu cliente, livre de riscos socioambientais e proteja
+    sua marca.
+
+    Soluções para financiamento rural.
+
+    Mais agilidade e confiança na gestão de riscos em todo o seu processo de oferta de financiamento rural.
+
+    Soluções para Seguro Rural
+
+    Ofereça seguro agrícola com mais agilidade, segurança e melhores condições, usando a solução digital
+    da agrotools.
+
+    Soluções para Vendas no Agro
+
+    Inteligência geográfica para você saber onde, quando e para quem vender.
+
+    Soluções para Supply Chain
+
+    Inteligência artificial para apoiar a sua inteligência de originação.
+
+    Saiba como e quando comprar mais e melhor.
+
+    Soluções para ESG, compliance e sustentabilidade
+
+    O seu fornecedor está livre de riscos socioambientais?  Saiba de quem comprar de forma simples e rápida.
+
+    Como impactamos o seu negócio
+
+    Com inteligência, transparência, segurança e agilidade.
+
+    Pelo menos 6x mais velocidade e produtividade
+
+    Nossas soluções entregam análises de diversos bancos de dados. O que levariam horas ou dias da sua
+    equipe, com a Agrotools, fará em segundos
+
+    Geramos negócios com ESG
+
+    Comprove as melhores práticas ambientais no seu negócio, expanda seu mercado e tenha fácil acesso
+    a investimentos como títulos verdes.
+
+    Oferece visibilidade e monitoramento de riscos
+
+    Nossas soluções ajudam a gerenciar os riscos antes, durante e depois da negociação no agro.
+
+    Visibilidade de oportunidades adequadas
+
+    Se você compra ou vende para a agroindústria, nossas análises ajudam a otimizar sua operação, negociação
+    e logística.
+
+    Sua marca mais protegida e valorizada
+
+    Analise e monitore sua cadeia, direta ou indireta, remotamente e em um poucos cliques.
+
+    Segmentos do agro que atendemos
+
+    Criamos tecnologia que oferece mais controle e visibilidade de toda a cadeia das empresas do
+
+    Seguradores do agro
+
+    Financiadores do agro
+
+    Varejo e Food Service
+
+    impactam negócios, na prática.
+
+    O que nossos clientes falam
+
+    Como nossos dados ganham vida.
+
+    “O Itaú está passando por uma grande
+
+    , principalmente no agronegócio e ter acesso a essas informações pode melhorar o nosso conhecimento
+    de negócios.”
+
+    Diretor de Agronegócios do Itaú
+
+    “Podemos afirmar que a
+
+    Agrotools é âncora em diversas dessas iniciativas
+
+    , incluindo a Certificação da Califórnia, emissão de greenbonds e participação em financiamentos atrelados
+    às metas de sustentabilidade.”
+
+    CEO da FS
+
+    “Para nós é gratificante termos um parceiro como a Agrotools. Encontramos soluções diferenciadas através
+    das integrações existentes, aumentando significativamente a segurança de nossos processos e nossos
+    níveis de compliance.”
+
+    Gerente de TI da Cargill
+
+    ESG para empresas em escala só é possível com tecnologia e dados, que é o que a gente faz há mais
+    de uma década.
+
+    CEO da Agrotools
+
+    Aqui você encontra os
+
+    , elaborados com a credibilidade da Agrotools.'

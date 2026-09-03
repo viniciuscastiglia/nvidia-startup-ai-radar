@@ -98,6 +98,44 @@ casos:
     origem: sintético
     nota: identidade cripto por dois termos independentes
 
+  # O SEGUNDO PAR DE `cripto`, e ele é REAL, não sintético (03/09, D-090). A base ganhou uma
+  # agtech que usa blockchain para rastrear boi, e o filtro a recusou. `blockchain` é o mesmo
+  # erro de forma que D-048 corrigiu em "token": um termo de TECNOLOGIA fazendo o trabalho de um
+  # termo de IDENTIDADE. O veto de terceiro de D-085 não alcança este caso — ele responde "de
+  # quem a frase fala?", e aqui a frase fala mesmo da própria empresa; a pergunta errada é a
+  # outra: "ser isto define a empresa?". Rastrear commodity com blockchain não é ser cripto.
+  - rotulo: cripto
+    exclui: false
+    frase: "A tecnologia da Ecotrace integra blockchain, IA, visão computacional, IoT e geointeligência para rastrear commodities."
+    origem: >-
+      data/seed/ecotrace.yaml — frase literal do documento coletado em 03/09
+    nota: >-
+      blockchain como TECNOLOGIA de rastreabilidade, não como identidade cripto. Se este caso
+      voltar a excluir, o termo genérico voltou para a lista. Par com o caso da Liqi, que é
+      cripto de verdade e tem de continuar excluída por `tokenização de ativos`.
+
+  - rotulo: cripto
+    exclui: true
+    frase: "Infraestrutura para sua empresa oferecer criptomoedas, stablecoins e tokens de ativos na sua própria plataforma."
+    origem: >-
+      data/seed/liqi.yaml — frase LITERAL do site coletado em 03/09
+    nota: >-
+      identidade cripto SEM depender de "blockchain". É a rede que garante que remover o termo
+      genérico não abre a porta para a empresa que o filtro existe para barrar.
+      ESTE CASO NASCEU DE UM ERRO MEU, e o erro vale mais que o caso: a primeira versão era
+      PARÁFRASE minha, escrita já contendo "tokenização de ativos". Ela passou 8/8 enquanto a
+      Liqi REAL saía ELEGÍVEL no grafo — uma rede que eu mesmo tricotei em volta da resposta.
+      É o motivo de `origem` ser campo obrigatório neste arquivo.
+
+  - rotulo: cripto
+    exclui: true
+    frase: "entrou na onda das stablecoins e colocou no mercado a sua própria moeda, a BRLD."
+    origem: >-
+      data/seed/liqi.yaml — frase LITERAL da notícia coletada em 03/09
+    nota: >-
+      `stablecoin` entrou na lista em 03/09. Emitir stablecoin é identidade cripto sem qualquer
+      ambiguidade — diferente de `blockchain`, que é tecnologia, e de `token`, que D-048 tirou.
+
   - rotulo: cripto
     exclui: false
     frase: "Reduzimos o custo por token de inferência em 40% depois de migrar o serving."

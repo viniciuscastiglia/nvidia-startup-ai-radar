@@ -1,0 +1,399 @@
+# Ecotrace
+# Coletado em 2026-09-03. Todo `conteudo_texto` é o texto REAL da página em `url_fonte`,
+# fatiado do que `scripts/coletar.py` extraiu — não é paráfrase.
+#
+# CAMADA "DADO" (D-062): esta fixture NÃO tem bloco `gabarito:` nem `perfil_alvo`, e a
+# ausência É a decisão. As 8 fixtures originais são a régua dos critérios 1 e 3; anotar
+# esta aqui seria medir o classificador contra rótulos escritos na mesma sessão que leu
+# os mesmos documentos — calibrar contra o próprio gabarito.
+#
+# CAMPOS ESTRUTURADOS: só ficam preenchidos os que aparecem LITERALMENTE nos documentos.
+# `null` faz o Briefing reportar "requisito não verificado", que é correto; um valor
+# plausível e errado não reporta nada e ainda corrompe o filtro de elegibilidade.
+#
+# TEASER RECORTADO: os veículos injetam chamada de OUTRA empresa no meio e no fim da
+# matéria. Cada documento abaixo declara em `_corte` as linhas do arquivo coletado que
+# entraram e as que foram removidas por citarem terceiro.
+nome: Ecotrace
+site: https://ecotrace.info/
+setor: agro — rastreabilidade de cadeias
+estagio: null
+localizacao: null
+ano_fundacao: 2018
+tamanho_time: null
+descricao_curta: Rastreabilidade de commodities integrando blockchain, IA, visão computacional, IoT e
+  geointeligência, com registros imutáveis e APIs para ERPs; clientes na cadeia de proteína animal.
+fonte_descoberta: agfeed.com.br e startups.com.br — cobertura de rastreabilidade no agro
+coletado_em: '2026-09-03'
+documentos:
+- tipo: noticia
+  titulo: Agtech Ecotrace recebe investimento da GS1 Ventures para expansão internacional
+  url_fonte: https://startups.com.br/negocios/rodada-de-investimento/com-a-agtech-ecotrace-gs1-ventures-faz-seu-primeiro-aporte/
+  data_publicacao: null
+  conteudo_texto: 'Pular para o conteúdo
+
+    Pular para o menu
+
+    Rodada de investimento
+
+    Rodada de investimento
+
+    Com a agtech Ecotrace, GS1 Ventures faz seu primeiro aporte
+
+    Startups de rastreamento de produtos agro usará aporte para ampliar operação na Europa, Oriente Médio
+    e mercado halal
+
+    Leandro Miguel Souza
+
+    Leitura:
+
+    Copiar Link?
+
+    Flavio Redi, fundador e CEO da Ecotrace, e João Carlos de Oliveira, presidente da GS1 Brasil | Foto:
+    divulgação
+
+    Leia um resumo desta notícia
+
+    A Ecotrace, agtech brasileira de rastreabilidade, recebeu um aporte da GS1 Ventures, CVC da GS1 Brasil.
+
+    O valor do investimento está na faixa de R$ 5 a R$ 10 milhões, destinado à expansão internacional
+    e novos segmentos.
+
+    A GS1 Ventures adquiriu entre 14% e 16% de participação na Ecotrace, garantindo uma cadeira no conselho.
+
+    A tecnologia da Ecotrace integra blockchain, IA, visão computacional, IoT e geointeligência para rastrear
+    commodities.
+
+    A agtech projeta crescimento de 20% a 30% em 2026 e faturamento de R$ 60 milhões até 2028.
+
+    A empresa também atua no mercado halal com a subsidiária Ecohalal, emitindo mais de 46 mil certificados
+    em 2024.
+
+    A escolha do agronegócio pela GS1 Ventures reflete o crescimento tecnológico do setor e a expertise
+    em rastreabilidade.
+
+    , agtech brasileira especializada em rastreabilidade de commodities do agronegócio, acabou de fechar
+    uma nova rodada, e o cheque partiu da estreante
+
+    , CVC criado no fim de 2024 pela
+
+    Associação Brasileira de Automação (GS1 Brasil)
+
+    .
+
+    O primeiro cheque assinado pela
+
+    não teve o valor divulgado, mas, segundo destacam o presidente da
+
+    , João Carlos de Oliveira, e o fundador e CEO da
+
+    , Flávio Redi, ele está dentro da faixa de R$ 5 a R$ 10 milhões que a
+
+    havia comunicado ao mercado em março, quando abriu a nova captação para bancar a abertura de escritórios
+    na Europa e no Oriente Médio, a um valuation de aproximadamente R$ 60 milhões.
+
+    “A participação da associação na
+
+    ficou entre 14% e 16%, dentro do modelo padrão definido pelo fundo para as próximas apostas”, disse
+    João Carlos, em conversa com o Startups. Além disso, com o deal, a
+
+    ganha uma cadeira no conselho da agtech.
+
+    A tecnologia da agtech integra blockchain, IA, visão computacional, IoT e geointeligência, cobrindo
+    desde a verificação da origem, se a área fornecedora está regular ambientalmente e cumpre a legislação
+    trabalhista, até o QR Code final na embalagem.
+
+    Entre os clientes estão nomes de peso do agro, como
+
+    . A projeção da companhia é crescer entre 20% e 30% em 2026 e chegar a R$ 60 milhões de faturamento
+    até 2028.
+
+    Use of proceeds
+
+    Conforme explica Flávio Redi, os recursos levantados contemplam um plano em três frentes. A primeira
+    é a já mencionada expansão internacional, com foco na Europa e no Oriente Médio, regiões que absorvem
+    parte relevante das commodities brasileiras rastreadas pela plataforma. A segunda é o avanço em novos
+    segmentos: além de bovinos, aves, couro e algodão, a
+
+    anunciou sua primeira operação em grãos, com uma parceria para rastrear o feijão da
+
+    .
+
+    “Embora tenhamos uma forte atuação nas cadeias de bovinos e aves, a plataforma da
+
+    foi desenvolvida para ser escalável e atender diferentes cadeias produtivas do agronegócio. Essa flexibilidade
+    faz com que a plataforma possa ser adaptada a diferentes segmentos do agro, acompanhando as necessidades
+    específicas de cada cadeia produtiva”, pontua o CEO.
+
+    A terceira frente de expansão está no mercado halal, atendido pela subsidiária
+
+    , criada em 2024 com aporte próprio de R$ 6 milhões. Para dar uma ideia da escala, Flávio destacou
+    que a empresa emitiu mais de 46 mil certificados halal ao longo do ano, cada um equivalente a um embarque
+    de exportação. Só no rebanho bovino, foram 3,75 milhões de toneladas de carne e mais de 123 milhões
+    de caixas rastreadas.
+
+    Segundo o CEO, o mercado halal global, avaliado em US$ 2,9 trilhões pela consultoria
+
+    , é a próxima grande fronteira. “Mais do que atender a uma exigência religiosa, a rastreabilidade
+    halal tornou-se um diferencial competitivo. Os importadores querem saber a origem dos produtos e se
+    existe uma cadeia íntegra e auditável”, frisa o executivo.
+
+    Fundada em 2018 e com R$ 11,2 milhões captados em cinco rodadas anteriores, com investidores como
+
+    e o fundo
+
+    , entre outros, a
+
+    chega a este momento em posição diferenciada, segundo destaca Flávio. “A companhia está com breakeven
+    operacional, resultado de uma estratégia focada no crescimento sustentável, no aumento da recorrência
+    de receitas e na disciplina na gestão dos custos. Hoje, o foco deixa de ser financiar a sobrevivência
+    da operação e passa a acelerar oportunidades estratégicas.”
+
+    Por que o agro?
+
+    Do lado da
+
+    , uma associação historicamente conhecida por sua proximidade com setores como indústria e varejo,
+    a escolha de uma agtech para ser a primeira investida é inesperada. Mas, segundo o presidente da entidade,
+    foi um negócio circunstancial que, no fim, é representativo de como a associação está ativa em outras
+    verticais.
+
+    “O agro é um dos segmentos-base da nossa tese, e a gente fica muito contente com esse aporte, pois
+    o agro é um dos setores que mais está crescendo, inclusive diminuindo a diferença no uso de tecnologia
+    em relação a setores como indústria e varejo”, explica o executivo.
+
+    Ao mesmo tempo, o executivo destaca que a
+
+    trouxe algo específico que reforçou a tese: a possibilidade de a
+
+    agregar conhecimento próprio de rastreabilidade e padronização ao negócio. “Independentemente do valor
+    financeiro, o fator que nos levou a fecharmos com a
+
+    é que nós podemos, por meio do nosso conhecimento em rastreabilidade, sustentabilidade e padrões,
+    agregar valor ao negócio deles”, disse.
+
+    Criado no fim de 2024
+
+    , o fundo é gerido em parceria com a aceleradora gaúcha
+
+    . Na época, o ticket médio previsto pelo fundo ficou entre R$ 5 e R$ 10 milhões, com participação
+    entre 10% e 20% no capital.
+
+    Para fechar a conversa com o Startups, João Carlos adiantou que o pipeline do fundo promete movimento
+    nos próximos meses. Duas novas investidas — uma da indústria e uma do varejo — estão em fase final
+    de aprovação pelo comitê e devem ser oficializadas até o fim de 2026. “Antes do final do ano, a gente
+    vai conversar de novo sobre uma segunda ou talvez até uma terceira rodada”, finaliza.'
+- tipo: noticia
+  titulo: Depois da pecuária, startup EcoTrace tem nova captação para expandir na agricultura
+  url_fonte: https://agfeed.com.br/agtech/depois-da-pecuaria-startup-ecotrace-tem-nova-captacao-para-expandir-na-agricultura/
+  data_publicacao: null
+  conteudo_texto: 'no seu e-mail
+
+    Depois da pecuária, startup EcoTrace tem nova captação para expandir na agricultura
+
+    Investida da KPTL, empresa atua com rastreabilidade via blockchain e vai buscar R$ 5 milhões para
+    atender outras cadeias produtivas em 2024
+
+    Flavio Redi, CEO da EcoTrace
+
+    Conhecida por ter desenvolvido um sistema de rastreabilidade na pecuária, a Ecotrace, agora tem foco
+    na expansão para outras cadeias agrícolas.
+
+    Segundo a startup, 40% de toda a carne bovina brasileira que é exportada, atualmente, passa pela sua
+    plataforma.
+
+    O sistema de rastreabilidade da EcoTrace, é baseado na tecnologia blockchain. Além de bovinos, com
+    trabalho específico para o mercado halal, a empresa já atua nos segmentos de aves e algodão.
+
+    Em entrevista ao AgFeed, o CEO e fundador da empresa, Flávio Redi, disse que a ideia é buscar uma
+    nova rodada de financiamento em janeiro de 2024, “para ir além".
+
+    Até agora, a empresa já captou, entre investidores-anjo e a KPTL, R$ 8,25 milhões em aportes. A KPTL,
+    de Renato Ramalho, investiu R$ 6 milhões e colocou a startup no seu fundo Criatec 3, gerido pela empresa
+    e criado pelo BNDES.
+
+    A partir de janeiro do ano que vem, a EcoTrace deve começar a nova rodada de captação, em busca de
+    R$ 5 milhões para expandir as áreas de atuação.
+
+    Segundo a EcoTrace, do início de 2019 até julho de 2023, foram rastreadas 12,4 milhões  de cabeças
+    de gado, 88 milhões de aves e 45 milhões de fardos de algodão.
+
+    Com o aporte, que deve servir para expandir a própria equipe, que atualmente conta com 40 funcionários,
+    a empresa deve buscar ganhar mercados como café, cacau, óleo de palma e laranja. Segundo Redi, os
+    suínos estão no final da lista.
+
+    “Nosso desafio para crescer aqui é a mão de obra, se tivéssemos mais pessoal já estaríamos nessas
+    culturas. O crescimento da empresa é financiado por rodadas de investimento”, comenta o CEO.
+
+    A empresa tem crescido cerca de 70% ao ano, e o faturamento de 2023 deve chegar próximo aos R$ 10
+    milhões, segundo o executivo.
+
+    Dentre os atuais clientes da empresa estão gigantes como a JBS, Seara, Minerva, Frigol, Sampco, Swift,
+    FrigoSul e Rio Maria. No algodão, o principal cliente é a Lojas Renner.
+
+    Flavio Redi fundou o negócio em 2018, sendo essa, sua segunda empreitada no mundo do empreendedorismo.
+    Antes, tinha fundado a startup Gestão Agropecuária em 2007, onde ficou até 2021, quando deixou o negócio.
+
+    Ele explicou que a primeira startup estava focada mais da porteira para dentro, atendendo produtores
+    com um software para gerenciamento de gado de corte. “Saí da empresa com a ideia de montar um projeto
+    que pudesse se expandir globalmente, e a pauta que vi como latente é a da rastreabilidade”, diz.
+
+    A FriGol foi a primeira empresa a apostar na segunda empreitada de Redi e, junto com a startup, está
+    lançando um QR Code nos produtos finais que mostram até o bioma de origem do gado.
+
+    Agora, quem comprar uma carne do frigorífico no supermercado terá acesso a um link com toda a história
+    do produto. “Conseguimos segregar o produto em biomas como Cerrado, Mata Atlântica e Amazônia. A Frigol
+    é um dos parceiros nossos que está sempre na vanguarda e de olho nas novidades que pensamos”, diz
+    o CEO.
+
+    A empresa também oferece uma solução complementar à rastreabilidade em si, que envolve uma classificação
+    de carcaças bovinas e de frango por meio de algoritmos treinados via inteligência artificial, automatizando
+    uma tarefa que era feita pelo olho humano, para câmeras.
+
+    A ideia da EcoTrace, segundo o CEO, é ser uma espécie de “guardião dos dados da cadeia”, centralizando
+    as informações desde a fazenda, por onde o animal passa, até a carne chegar na gôndola. “Criamos tomadas
+    e plugamos todos esses elos da cadeia”, explica.
+
+    A empresa também trabalha com a iniciativa de rastrear o histórico desde o nascimento dos animais,
+    algo que é cada vez mais uma exigência dos países compradores e nem tão presente nas fazendas.
+
+    Ao mesmo que busca a expansão das culturas, a empresa tem atuado para aumentar a presença geográfica,
+    e já conta com clientes nos Estados Unidos. “A ideia de se tornar global passa, primeiro, por trabalhar
+    com o que sai daqui do Brasil e vai para fora, garantindo para o importador que tudo está de acordo
+    com os acordos comerciais”, explica.
+
+    Além da América do Norte, a empresa está negociando com players da Bélgica e do Reino Unido. Recentemente,
+    a companhia também anunciou que investirá R$ 4 milhões no desenvolvimento de uma plataforma exclusiva
+    para o segmento halal, protocolo de abate de aves e bovinos voltado para o mercado islâmico.
+
+    A ideia da empresa é atender cerca de 50% das exportações halal de frango e 80% da exportação de carne
+    bovina do Brasil já em 2024. “O Halal faz a certificação religiosa e nós entramos para complementar
+    com essa ‘garantia de origem”, explicou.
+
+    Outro setor que a EcoTrace está de olho é nas empresas de couro, e já atua junto com a Rio Maria e
+    a Durlicouros.
+
+    A União Europeia aprovou uma lei que garante que, até 2025, todo couro comprado pelo bloco terá de
+    apresentar alguma comprovação de origem. “Já temos um primeiro projeto rodando em cima do couro, e
+    devemos entregar até fevereiro um módulo de couro com rastreabilidade. A indústria da moda e a automobilística
+    estão pressionando os fornecedores de couro”, completa o CEO.
+
+    carne de frango,'
+- tipo: site
+  titulo: Ecotrace — rastreabilidade de cadeias produtivas
+  url_fonte: https://ecotrace.info/
+  data_publicacao: null
+  conteudo_texto: 'Ir para o conteúdo
+
+    a nº1 em
+
+    de ponta a ponta e
+
+    Mais eficiência, controle e rentabilidade para toda a cadeia produtiva, da origem ao varejo, com dados
+    confiáveis e segurança operacional!
+
+    Ver como funciona na prática
+
+    Explorar soluções por segmento
+
+    ECOTRACE EM NÚMEROS
+
+    move o agro
+
+    da exportação bovina brasileira
+
+    passa pela Ecotrace
+
+    países com presença global
+
+    em diferentes cadeias produtivas
+
+    analisadas com IA
+
+    Diagnóstico de risco
+
+    Sua operação está
+
+    preparada?
+
+    O risco hoje não é só operacional. É financeiro, comercial e reputacional!
+
+    EUDR, GACC e Due Diligence já impactam exportações. Sem rastreabilidade, o acesso ao mercado externo
+    fica comprometido e bloqueios acontecem sem aviso.
+
+    Falhas na origem ou inconsistência de dados podem gerar bloqueios, recalls e perda de contratos estratégicos.
+    A reputação de anos se desfaz em um único incidente rastreável.
+
+    Perdas na Operação
+
+    Processos manuais, falta de visibilidade, erros e perda de margem. Sem controle em tempo real, o prejuízo
+    é contínuo e difícil de quantificar até se tornar irreversível.
+
+    Perda de margem
+
+    Semanas para preparar documentação. Equipe inteira dedicada ao compliance. E ainda assim, risco permanente
+    de não-conformidade. Isso tem um custo invisível, até virar crise.
+
+    por cadeia produtiva
+
+    A Ecotrace adapta tecnologia, validação e rastreabilidade para operações que precisam provar conformidade,
+    proteger margem e acessar mercado.
+
+    Conformidade garantida, margem protegida e bonificação justa para cada animal rastreado, da fazenda
+    ao mercado internacional.
+
+    Menos mão de obra, análise de 100% dos lotes em tempo real e payback rápido.
+
+    Rastreabilidade completa e precisão superior em cada lote.
+
+    Rastreabilidade da Moda e transparência total dos processos.
+
+    Estruture e valide dados da sua cadeia produtiva, independentemente do segmento.
+
+    JBS / Friboi
+
+    "Rastreamos 40% de toda a exportação bovina do Brasil com a Ecotrace."
+
+    Conformidade total com protocolos internacionais
+
+    Sulbeef / Frigosul
+
+    "Em 1 mês, 350 mil produtos rastreados e 65% de engajamento no QR Code."
+
+    Transparência para consumidor final
+
+    "Lançamos o primeiro jeans 100% rastreado do Brasil."
+
+    Diferenciação de marca e comprovação ESG
+
+    "Antes levava até 72h pra chegar a informação. Agora é tudo em tempo real!"
+
+    Padronização em Tempo Real de 100% dos lotes
+
+    Ver como funciona na prática
+
+    Independente da sua cadeia, essa é sua solução para o monitoramento socioambiental de propriedades
+    rurais e fornecedores! Mapeie e levante dados de propriedades em território nacional com informações
+    cruciais para a segurança da sua marca.
+
+    Atuação em áreas de reservas ambientais
+
+    Detecção de áreas de desmatamento
+
+    Verificação de terras indígenas e áreas quilombolas
+
+    Histórico de trabalho escravo e práticas laborais irregulares
+
+    Conhecer Geocheck Analytics
+
+    as maiores empresas
+
+    escolhem a Ecotrace
+
+    Dados em Blockchain
+
+    Registros imutáveis e auditáveis. Não é planilha, é prova.
+
+    Nossos clientes medem retorno. Payback típico em menos de 6 meses.
+
+    APIs para SAP, Totvs, Linx e outros ERPs. Implementação em semanas.'

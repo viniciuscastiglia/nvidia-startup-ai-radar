@@ -1,0 +1,529 @@
+# Liqi
+# Coletado em 2026-09-03. Todo `conteudo_texto` é o texto REAL da página em `url_fonte`,
+# fatiado do que `scripts/coletar.py` extraiu — não é paráfrase.
+#
+# CAMADA "DADO" (D-062): esta fixture NÃO tem bloco `gabarito:` nem `perfil_alvo`, e a
+# ausência É a decisão. As 8 fixtures originais são a régua dos critérios 1 e 3; anotar
+# esta aqui seria medir o classificador contra rótulos escritos na mesma sessão que leu
+# os mesmos documentos — calibrar contra o próprio gabarito.
+#
+# CAMPOS ESTRUTURADOS: só ficam preenchidos os que aparecem LITERALMENTE nos documentos.
+# `null` faz o Briefing reportar "requisito não verificado", que é correto; um valor
+# plausível e errado não reporta nada e ainda corrompe o filtro de elegibilidade.
+#
+# TEASER RECORTADO: os veículos injetam chamada de OUTRA empresa no meio e no fim da
+# matéria. Cada documento abaixo declara em `_corte` as linhas do arquivo coletado que
+# entraram e as que foram removidas por citarem terceiro.
+nome: Liqi
+site: https://liqi.com.br/
+setor: fintech — tokenização de ativos
+estagio: null
+localizacao: null
+ano_fundacao: null
+tamanho_time: null
+descricao_curta: Infraestrutura de tokenização de ativos e stablecoin em reais (BRLD), com trilho de liquidação
+  on-chain para bancos, gestoras e participantes do mercado de capitais.
+fonte_descoberta: startups.com.br — busca deliberada por caso real da exclusão `cripto`
+coletado_em: '2026-09-03'
+documentos:
+- tipo: noticia
+  titulo: Liqi lança stablecoin em reais "com pedigree"
+  url_fonte: https://startups.com.br/negocios/cripto/liqi-lanca-stablecoin-em-reais-com-pedigree/
+  data_publicacao: null
+  conteudo_texto: 'Pular para o conteúdo
+
+    Pular para o menu
+
+    Liqi lança stablecoin em reais “com pedigree”
+
+    Liqi tem como investidores Itaú, Pátria e Galápagos e acredita que respaldo ajudará a conquistar empresas
+    com primeiros casos de uso
+
+    Leitura:
+
+    Copiar Link?
+
+    Daniel Coquieri, fundador da Liqi | Foto: Divulgação
+
+    A fintech de ativos digitais
+
+    entrou na onda das stablecoins e colocou no mercado a sua própria moeda, a BRLD. Atrelada ao real,
+    a moeda tem lastro em títulos do Tesouro Direto, e não estará listada em nenhuma plataforma. Sua aplicação
+    inicial será direcionada ao público corporativo. Os dois primeiros casos de uso são tesouraria e gestão
+    de caixa e o suporte a operações tokenizadas.
+
+    De acordo com Daniel Coquieri, fundador da
+
+    , o plano é avaliar novas aplicações da moeda a partir do segundo semestre. A BRLD foi construída
+    com base na BRLT, uma stablecoin desenvolvida há quatro anos pela
+
+    para uso interno em suas operações de tokenização.
+
+    O mercado de stablecoins vem ganhando atenção principalmente depois do Genius Act do governo dos EUA.
+    Com a regulação, as moedas digitais ganharam legitimidade e passaram a ser avaliadas de outra forma
+    pelo mercado financeiro.
+
+    Em 2025, o movimento global de stablecoins chegou a US$ 300 bilhões, segundo estudo da
+
+    . A maior parte desse montante circulou em moedas atreladas ao dólar, o que exige conversões constantes
+    e adiciona custos e complexidade ao processo.
+
+    O Brasil já tem stablecoins em real como BRZ (
+
+    ), BRL1 (
+
+    ), BRLV (
+
+    ) e a
+
+    ). Mas, na avaliação de Daniel, faltava uma opção “com pedigree”. O fundador se refere ao fato de
+    a
+
+    ter como investidores nomes como o banco
+
+    , as gestoras
+
+    . “Não é a stablecoin do Daniel, E isso é muito importante”, pontua.
+
+    Segundo ele, partiu dos próprios investidores a provocação para colocar a stablecoin no mercado. O
+    pedido veio em uma reunião de conselho realizada no fim de 2025. “Tem muita coisa que faz sentido.
+    Temos um ecossistema. E os sócios também podem se beneficiar”, avalia. O fundador diz acreditar em
+    um cenário em que várias moedas vão existir. Cada uma voltada a aplicações diferentes do mercado.
+
+    Casos de uso
+
+    No caso da BRLD, os usos iniciais estão ligados a demandas corporativas. O primeiro é a gestão de
+    tesouraria, que oferece às empresas uma opção de gestão de caixa de curto prazo com rendimento de
+    95% do CDI e negociação a qualquer momento (24/7). As operações não pagam IOF porque estão vinculadas
+    a títulos do Tesouro com prazo superior a 30 dias. Mas estão sujeitas a tributação de IR como qualquer
+    outras.
+
+    Daniel cita como exemplo a revendedora de carros usados Kavak, que muitas vezes “dorme” com dinheiro
+    de negociações parado no caixa porque os recebimentos acontecem fora do expediente bancário. Com a
+    BRLD, esses recursos não precisam ficar parados.
+
+    O produto está disponível para as 75 empresas que já têm relacionamento ativo com a
+
+    e pode ser acessado por outras empresas que se cadastrarem no site da companhia e forem aprovadas
+    no processo de avaliação.
+
+    Na outra aplicação, a BRLD entra como a estrutura atrelada a contratos feitos na blockchain.  na blockchain.
+    A vantagem aqui é usar os recursos de
+
+    , como e execução automática, e o conceito de “dinheiro carimbado”, já que os recursos podem ser atrelados
+    apenas a uma transação específica. Um uso possível é de plataformas de crowdfunding.
+
+    De acordo com Daniel, o escritório de advocacia
+
+    na estruturação jurídica da BRLD. O mercado de stableconis ainda não tem regras específicas no Brasil,
+    mas caminha para uma regulação.
+
+    Em novembro do ano passado o Banco Central estabeleceu
+
+    regras para a autorização e a prestação de serviços de ativos virtuais
+
+    , e criou as sociedades prestadoras de serviços de ativos virtuais (SPSVAs). Além disso, regulamentou
+    quais atividades ou operações com ativos virtuais se inserem no mercado de câmbio e quais situações
+    estão sujeitas à regulamentação de capitais internacionais. Os assuntos estão disciplinados nas resoluções
+    BCB: 519, 520 e 521.
+
+    O fundador avalia a regulação como um movimento positivo porque traz segurança ao mercado para adoção
+    das moedas.
+
+    Futuro é stablecoin
+
+    Para Daniel, a stablecoin pode ser tornar o principal negócio da
+
+    nos próximos anos por se tratar de uma necessidade fundamental das empresas, que é o dinheiro. “Há
+    cinco anos eu não via as stablecoins com o potencial que vejo hoje. Até um tempo atrás elas eram muito
+    uma inovação. Agora, viraram uma infraestrutura real que o mercado está usando” defende.
+
+    Nascida em 2021, a
+
+    fechou 2025 com uma receita de R$ 10 milhões. Para 2026, o plano é mais que dobrar de tamanho, chegando
+    a R$ 25 milhões.
+
+    O avanço virá das emissões de tokens de grandes clientes como o
+
+    , que a
+
+    começou a fazer no fim do ano passado, e também da movimentação da BRLD. A expectativa é que o volume
+    de recursos transacionados em 2026 dê um salto exponencial. De um acumulado de R$ 1 bilhão nos últimos
+    quatro anos, o plano é chegar a R$ 5 bilhões este ano.
+
+    Até o fim do ano, a
+
+    espera receber do Banco Central a licença de Sociedade de Crédito Direto (SCD), o que permitirá que,
+    a partir de 2027, ela incorpore algumas operações que hoje são feitas com outras empresas e melhore
+    ainda mais seus resultados.
+
+    Com quase 40 funcionários, a companhia ainda tem recursos em caixa da rodada de R$ 12 milhões feita
+    com o
+
+    em 2024 e está próxima de atingir o breakeven. Com o desempenho promissor, o plano é fazer uma nova
+    captação para financiar seus planos de expansão.
+
+    O objetivo é levantar US$ 10 milhões, de preferência tendo um fundo estrangeiro liderando. “Queremos
+    dolarizar o captable”, explica. Segundo ele,
+
+    já se comprometeram a participar da captação, o que deve tornar o processo menos complexo. Além dos
+    R$ 12 milhões do
+
+    levantou R$ 27,5 milhões com o
+
+    e mais R$ 14,5 milhões com
+
+    , somando R$ 54 milhões levantados até agora.'
+- tipo: noticia
+  titulo: DeFi acelera no mercado brasileiro e se aproxima de R$ 1 bi tokenizado via TIDC
+  url_fonte: https://braziljournal.com/brands/defi-acelera-no-mercado-brasileiro-e-se-aproxima-de-r-1-bi-tokenizado-via-tidc/
+  data_publicacao: null
+  conteudo_texto: 'A adoção de tecnologias originalmente desenvolvidas no ecossistema de finanças descentralizadas
+    (DeFi) deixou de ser um experimento e está passando a integrar, de forma estruturada e regulada, o
+    mercado de capitais brasileiro.
+
+    Para quem não conhece, o DeFi é um conjunto de serviços financeiros baseados em
+
+    , que funcionam sem intermediários tradicionais, como bancos ou corretoras
+
+    Um dos principais vetores desse movimento é o
+
+    Token de Investimento em Direitos Creditórios (TIDC)
+
+    protocolo proprietário da Liqi
+
+    – uma empresa de infraestrutura
+
+    para o mercado de capitais regulado – que vem sendo utilizado por importantes instituições financeiras
+    tradicionais para estruturar e gerenciar operações de crédito com maior eficiência, transparência
+    e automação.
+
+    Nesse contexto, a Liqi vem se consolidando como uma das principais infraestruturas
+
+    aplicadas ao mercado de capitais regulado no Brasil, segundo Daniel Coquieri, o CEO da companhia.
+
+    Apenas no último trimestre, a companhia alcançou a marca de US$ 100 milhões emitidos na rede XDC Network,
+    uma
+
+    projetada especialmente para aplicações empresariais e financeiras.
+
+    Esse resultado foi impulsionado por quatro grandes operações institucionais. No acumulado do ano,
+    o volume de ativos estruturados e tokenizados com apoio do TIDC se aproxima de R$ 1 bilhão, sinalizando
+    uma adoção em escala por parte do mercado tradicional.
+
+    O avanço não se limita ao volume financeiro, segundo o CEO.
+
+    As operações recentes envolveram instituições financeiras e gestoras de grande porte, como Banco Itaú
+    BBA, Banco BV, Banco ABC e a gestora Milenio.
+
+    Para Coquieri, isso evidencia que a tecnologia
+
+    já deixou de ser periférica e passou a integrar o core operacional de estruturas tradicionais de crédito,
+    securitização e gestão de recebíveis.
+
+    A lógica por trás do TIDC é inspirada nos mesmos princípios que tornaram protocolos DeFi, como AAVE,
+    amplamente utilizados no exterior. Entre eles estão a automação via
+
+    , transparência operacional, rastreabilidade de ativos e redução de fricções.
+
+    Segundo o CEO, a diferença no caso brasileiro está na adaptação desses fundamentos a um ambiente totalmente
+    regulado, compatível com as exigências da CVM, da legislação de securitização e das práticas do mercado
+    de capitais.
+
+    Na prática, o protocolo TIDC tem capacidade de processar altos volumes de operação com consistência.
+    Sendo um aliado de gestores e estruturas de capital com recebíveis pulverizados (CCBs, INSS, FGTS,
+    Consignados, etc.) que precisam saber de forma rápida o resultado e a posição da estrutura.
+
+    As estruturas de TIDC da Liqi processam carteiras com mais de 10 milhões de recebíveis diariamente,
+    garantindo que todos visualizem no dia indicadores e movimentação financeira, evitando que problemas
+    de inadimplência, liquidação e aquisição sejam percebidos apenas no final do mês.
+
+    O resultado, segundo Coquieri, é uma infraestrutura que combina a robustez do arcabouço regulatório
+    tradicional com a eficiência tecnológica dos sistemas descentralizados.
+
+    O CEO também diz que o volume financeiro é um reflexo direto da maturidade desse modelo.
+
+    “O que chama a atenção não é apenas o valor movimentado, mas o fato de que essas operações já fazem
+    parte da rotina de grandes instituições. A tecnologia DeFi está chegando ao mercado tradicional brasileiro
+    por meio do TIDC, de forma silenciosa, regulada e escalável,” disse.
+
+    A atuação da Liqi funciona como uma infraestrutura tecnológica, fornecendo a camada
+
+    que sustenta essas operações, sem alterar a lógica jurídica ou regulatória que rege o mercado de capitais.
+
+    Para o CEO, as operações recentes estruturadas por meio do TIDC reforçam a percepção de que a tokenização
+    e os protocolos inspirados em DeFi já são uma realidade operacional no mercado de capitais brasileiro.
+
+    As instituições que trabalham com Liqi utilizam o protocolo como base tecnológica para organizar,
+    automatizar e acompanhar estruturas de crédito e securitização em ambiente totalmente regulado.
+
+    Nessas operações, o TIDC atuou como a camada de
+
+    e da estrutura, permitindo a automatização de regras de elegibilidade de ativos, controle de garantias,
+    gestão de fluxos de pagamento e monitoramento contínuo de indicadores como subordinação e covenants.
+
+    Segundo o CEO, a utilização de
+
+    e do registro em blockchain trouxe maior transparência, rastreabilidade e eficiência operacional,
+    além de reduzir fricções típicas de processos manuais e sistemas fragmentados.
+
+    Para Coquieri, a adoção por diferentes perfis de instituições reforça que o TIDC não atende a um caso
+    isolado: ele vem sendo utilizado como infraestrutura recorrente para escalar operações de crédito,
+    ampliar a capacidade de originação e fortalecer a governança das estruturas, mantendo plena aderência
+    às exigências regulatórias do mercado de capitais brasileiro.
+
+    Esse movimento também sinaliza que a
+
+    começa a cumprir um papel semelhante ao da internet no sistema financeiro: uma infraestrutura invisível,
+    essencial para eficiência, mas integrada de forma natural às engrenagens do mercado tradicional.
+
+    Além disso, diz o CEO, o crescimento do TIDC aponta para uma mudança estrutural na forma como o crédito
+    é organizado, monitorado e distribuído no Brasil.
+
+    Ao incorporar tecnologias
+
+    de maneira regulada, o mercado avança para um modelo mais eficiente, auditável e integrado, sem abrir
+    mão da segurança jurídica.
+
+    Em paralelo a esse avanço operacional, a
+
+    Liqi se prepara para um novo ciclo de crescimento
+
+    .
+
+    A companhia planeja realizar, ao longo de 2026, uma nova rodada de investimento de aproximadamente
+    US$ 10 milhões, com o objetivo de acelerar a expansão do TIDC, ampliar sua infraestrutura tecnológica
+    e fortalecer sua atuação junto a bancos, gestoras e demais participantes do mercado de capitais.
+
+    A rodada ocorre em um momento de validação do modelo, após a consolidação do protocolo em operações
+    de grande porte e em escala institucional.
+
+    Para a Liqi, o momento consolida uma tese defendida desde sua fundação: a de que a blockchain não
+    substituiria o mercado tradicional, mas se tornaria sua infraestrutura de base, sustentando novas
+    formas de estruturar, escalar e operar o mercado de capitais brasileiro.'
+- tipo: site
+  titulo: Liqi — tokenização de ativos
+  url_fonte: https://liqi.com.br/
+  data_publicacao: null
+  conteudo_texto: 'Investimentos em tokens agora ficam em
+
+    — Clique aqui
+
+    Liqi lança stablecoin BRLD
+
+    Infraestrutura de ativos digitais para o mercado financeiro global.
+
+    Usamos tokenização e blockchain para simplificar, acelerar e tornar mais eficientes emissões, investimentos
+    e operações de crédito.
+
+    Soluções para empresas
+
+    Grandes instituições acreditam no papel da Liqi em liderar o futuro do mercado
+
+    Todas as soluções que a sua empresa precisa
+
+    Da securitização à distribuição, passando por infraestrutura em ativos digitais, a Liqi te ajuda a
+    captar mais, operar com menos custo e crescer com total autonomia.
+
+    Operações estruturadas via tokenização e blockchain para empresas que querem captar com mais velocidade,
+    mais governança e menos custo.
+
+    Captação via marketplace da Liqi, conectando sua operação a uma base crescente de investidores dos
+    mais diferentes perfis.
+
+    Infraestrutura para sua empresa oferecer criptomoedas, stablecoins e tokens de ativos na sua própria
+    plataforma.
+
+    Moeda de liquidação para operações em blockchain e instrumento de modernização da tesouraria corporativa.
+
+    Protocolo TIDC ativo
+
+    +12.5% este mês
+
+    A plataforma completa para impulsionar o seu negócio
+
+    Use a Liqi para todas as suas necessidades de tokenização, operações de receita e lançamento de novos
+    modelos de negócio.
+
+    Acesse investidores e emita ativos digitais em qualquer lugar do mundo com conformidade regulatória.
+
+    Escale com dados
+
+    Analytics em tempo real e dashboards completos para acompanhar todas as suas operações tokenizadas.
+
+    Segurança em primeiro lugar
+
+    Infraestrutura regulada pela CVM e Banco Central, com smart contracts auditados e governança transparente.
+
+    Ferramentas para desenvolvedores
+
+    APIs RESTful completas, webhooks, SDKs e documentação detalhada para integração rápida.
+
+    em negociações de ativos digitais
+
+    em ativos tokenizados
+
+    em recebíveis de lastro sob gestão
+
+    Por que a Liqi?
+
+    A Liqi conecta pessoas e empresas ao novo mercado de capitais com tecnologia que simplifica, padroniza
+    e dá transparência a cada etapa das operações. É mais segurança, eficiência e oportunidades reais
+    para quem investe e para quem capta.
+
+    Redução de custo
+
+    Captação mais rápida, com menos custo e mais investidores
+
+    Captação sem depender de bancos
+
+    Automação completa via TIDC
+
+    Acesso a milhares de investidores
+
+    Redução de custos e burocracia
+
+    Governança em tempo real e segurança regulatória
+
+    Falar com especialista
+
+    Confira como a Liqi está moldando a nova era do mercado financeiro
+
+    Liqi anuncia que o Banco ABC Brasil usou o protocolo TIDC em operações de R$ 300 milhões
+
+    Estrutura foi desenvolvida pela tokenizadora para automatizar processos com grande volume de contratos
+    e fluxos financeiros.
+
+    Bonds a US$1? Novo token quer democratizar investimento no Brasil
+
+    Projeto desenvolvido pela Cainvest, Liqi e Foxbit quer baratear investimentos em títulos internacionais
+    a partir da tecnologia blockchain.
+
+    DeFi acelera no mercado brasileiro e se aproxima de R$ 1 bi tokenizado via TIDC
+
+    A diferença no caso brasileiro está na adaptação desses fundamentos a um ambiente totalmente regulado.
+
+    Liqi inicia oferta de investimentos com stablecoins em ativos americanos tokenizados
+
+    Nova modalidade de investimento é lastreada em ativos dos Estados Unidos e conta com rentabilidade
+    em dólar.
+
+    Foxbit e Liqi fazem parceria para distribuição de tokens
+
+    TIDCs da tokenizadora serão distribuídos na plataforma da exchange de criptomoedas brasileira.
+
+    Liqi faz tokenização de recebíveis de R$ 60 milhões com gestora Milenio
+
+    O crédito foi distribuído a investidores profissionais na forma de CCBs tokenizados.
+
+    Liqi Securitizadora ultrapassa R$ 200 milhões em tokenização de recebíveis e debêntures financeiras
+
+    Registrado na CVM, braço de securitização da tokenizadora também está implementando o TIDC.
+
+    M3 Lending e Liqi firmam parceria, lançam crédito tokenizado e projetam receita de R$ 4 milhões
+
+    A união das empresas pretende simplificar o acesso ao crédito para pequenas e médias empresas.
+
+    Liqi anuncia que o Banco ABC Brasil usou o protocolo TIDC em operações de R$ 300 milhões
+
+    Estrutura foi desenvolvida pela tokenizadora para automatizar processos com grande volume de contratos
+    e fluxos financeiros.
+
+    Bonds a US$1? Novo token quer democratizar investimento no Brasil
+
+    Projeto desenvolvido pela Cainvest, Liqi e Foxbit quer baratear investimentos em títulos internacionais
+    a partir da tecnologia blockchain.
+
+    DeFi acelera no mercado brasileiro e se aproxima de R$ 1 bi tokenizado via TIDC
+
+    A diferença no caso brasileiro está na adaptação desses fundamentos a um ambiente totalmente regulado.
+
+    Confira todas as matérias sobre a Liqi
+
+    O Descompliqi é a plataforma de conteúdos exclusivos da Liqi
+
+    Entenda tudo sobre tokenização, ativos digitais, infraestrutura blockchain, criptomoedas e o futuro
+    do mercado financeiro.
+
+    Em todos os formatos: texto, áudio e vídeo.
+
+    Quem já constrói o futuro do mercado com a Liqi
+
+    O que nossos parceiros dizem sobre a atuação da Liqi no mercado
+
+    "A gente é uma empresa jovem que precisa sempre buscar outras alternativas. Eu vejo que a Liqi muito
+    traz muito valor, a gente pode fazer captações e deixar essa captação mais democrática, fazer com
+    que cada pessoa consiga ter a mesma rentabilidade que só os grandões teriam".
+
+    CEO e Fundador da Mell.ro
+
+    "A proximidade também nesse circuito de investidores que estão com eles, ou seja, o pessoal do BTG,
+    o pessoal do Itaú, tem outros ali também participantes. Acho que é o posicionamento e a missão da
+    Liqi pro Brasil que casou bastante [com a nossa empresa]".
+
+    Head Latam da XDC Network
+
+    "Toda a orquestração dos contratos inteligentes que automatizam os instrumentos de emissão, essa orquestração
+    feita pelo TIDC, isso ninguém tem. Toda a jornada depois que o ativo é emitido na blockchain ocorre
+    automaticamente por orquestração nossa. Isso ninguém tem."
+
+    CTO da Liqi
+
+    "Através da Liqi conseguimos não só uma operação fácil como também as melhores condições de preço
+    e liquidez. Conseguimos comprar 25 milhões de reais em algumas horas, nunca tendo feito isso antes,
+    neste volume."
+
+    Head de Estratégias de Bitcoin da Méliuz
+
+    "A gente é uma empresa jovem que precisa sempre buscar outras alternativas. Eu vejo que a Liqi muito
+    traz muito valor, a gente pode fazer captações e deixar essa captação mais democrática, fazer com
+    que cada pessoa consiga ter a mesma rentabilidade que só os grandões teriam".
+
+    CEO e Fundador da Mell.ro
+
+    "A proximidade também nesse circuito de investidores que estão com eles, ou seja, o pessoal do BTG,
+    o pessoal do Itaú, tem outros ali também participantes. Acho que é o posicionamento e a missão da
+    Liqi pro Brasil que casou bastante [com a nossa empresa]".
+
+    Head Latam da XDC Network
+
+    Assistente IA Liqi
+
+    Online no WhatsApp
+
+    Oi, bom dia!
+
+    Quais são os tokens disponíveis?
+
+    Atualmente, temos os seguintes tokens disponíveis:
+
+    1,40% a.m.
+
+    R$ 5.927 disponível
+
+    1,50% a.m.
+
+    R$ 8.450 disponível
+
+    Digite sua mensagem...
+
+    Suporte especializado e Assistente IA
+
+    Além de uma plataforma altamente segura e automatizada, a Liqi disponibiliza suporte contínuo com
+    atendimento baseado em IA.
+
+    Isso permite que você obtenha informações detalhadas da plataforma e gerencie seus investimentos em
+    tempo real.
+
+    Atendimento personalizado e IA para gestão em tempo real.
+
+    Segurança, automação e suporte contínuo ao seu alcance.
+
+    Falar com IA
+
+    Liqi. Tecnologia que conecta.
+
+    A inovação faz parte do nosso dia a dia. Com a tokenização, os ativos digitais e a blockchain redefinindo
+    as bases do mercado financeiro, você pode contar com a Liqi para se conectar à nova fase do ecossistema.
+
+    Falar com especialista'

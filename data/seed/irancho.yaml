@@ -1,0 +1,486 @@
+# iRancho
+# Coletado em 2026-09-03. Todo `conteudo_texto` é o texto REAL da página em `url_fonte`,
+# fatiado do que `scripts/coletar.py` extraiu — não é paráfrase.
+#
+# CAMADA "DADO" (D-062): esta fixture NÃO tem bloco `gabarito:` nem `perfil_alvo`, e a
+# ausência É a decisão. As 8 fixtures originais são a régua dos critérios 1 e 3; anotar
+# esta aqui seria medir o classificador contra rótulos escritos na mesma sessão que leu
+# os mesmos documentos — calibrar contra o próprio gabarito.
+#
+# CAMPOS ESTRUTURADOS: só ficam preenchidos os que aparecem LITERALMENTE nos documentos.
+# `null` faz o Briefing reportar "requisito não verificado", que é correto; um valor
+# plausível e errado não reporta nada e ainda corrompe o filtro de elegibilidade.
+#
+# TEASER RECORTADO: os veículos injetam chamada de OUTRA empresa no meio e no fim da
+# matéria. Cada documento abaixo declara em `_corte` as linhas do arquivo coletado que
+# entraram e as que foram removidas por citarem terceiro.
+nome: iRancho
+site: https://irancho.com.br/
+setor: agro — pecuária digital
+estagio: null
+localizacao: null
+ano_fundacao: null
+tamanho_time: null
+descricao_curta: Software de gestão de pecuária de corte por assinatura, com cerca de 3,4 milhões de animais
+  cadastrados e 3,5 mil fazendas atendidas; derruba o processamento dos dados de um animal de 4 minutos
+  para 12 segundos.
+fonte_descoberta: startups.com.br e agfeed.com.br — cobertura de pecuária digital
+coletado_em: '2026-09-03'
+documentos:
+- tipo: noticia
+  titulo: Banco do Brasil injeta R$ 7,2 milhões na agtech iRancho
+  url_fonte: https://startups.com.br/negocios/agtech/banco-do-brasil-injeta-r-72-milhoes-na-agtech-irancho/
+  data_publicacao: null
+  conteudo_texto: 'Pular para o conteúdo
+
+    Pular para o menu
+
+    Banco do Brasil injeta R$ 7,2 milhões na agtech iRancho
+
+    Startup oferece uma tecnologia de gestão da pecuária para mais de 3,5 mil propriedades rurais no Brasil
+    e no exterior
+
+    Gabriela Del Carmen
+
+    Leitura:
+
+    Copiar Link?
+
+    Banco do Brasil
+
+    investiu R$ 7,2 milhões na agtech
+
+    , que oferece uma tecnologia de gestão da pecuária. O aporte foi feito por meio do fundo de corporate
+    venture capital
+
+    , administrado pela
+
+    .
+
+    Fundada em 2016, a
+
+    busca auxiliar os pecuaristas na gestão dos seus empreendimentos, apoiando o processo de tomada de
+    decisões e contribuindo para a melhoria do controle de insumos e redução de custos. Utilizada por
+    mais de 3,5 mil propriedades rurais no Brasil e no exterior, a plataforma permite coletar e integrar
+    dados de rastreabilidade nimal e manejo do curral possibilitando um controle de gato mais eficaz e,
+    com isso, um aumento na produtividade.
+
+    o pecuarista faz o controle do gado, gerencia a fazenda e torna o seu negócio mais rentável. É tudo
+    muito simples e intuitivo, sem deixar de lado a eficiência na pecuária de corte”, afirma Thiago Parente,
+    CEO da
+
+    , em nota. Com o aporte, o Banco visa reforçar sua presença no setor agropecuário do país, com a possibilidade
+    de ofertar a seus clientes as soluções da agtech.
+
+    Thiago Parente, CEO da iRancho (Foto: Divulgação)
+
+    Segundo Luiz Gustavo Braz Lage, Vice-Presidente de Agronegócios do
+
+    Banco do Brasil
+
+    , a instituição financeira tem um compromisso contínuo em apoiar o setor agrícola e pecuário brasileiro.
+    “O
+
+    promove soluções na cadeia do agronegócio, contribuindo com a geração de valor e otimização do processo
+    produtivo, com a adoção de práticas ESG, que possibilitem a transformação no campo por meio da tecnologia”,
+    explica.
+
+    , o investimento na
+
+    contribui para que os produtores brasileiros se posicionem na primeira linha na competição por alimentos
+    de origem sustentável num concorrido mercado global.
+
+    “Olhamos a determinação dos empreendedores e a oportunidade de avançar, pela tecnologia, a produtividade,
+    funcionalidade e equilíbrio socioambiental. Encontramos esse binômio na
+
+    , já que seu sistema permite que pequenos e médios pecuaristas aprimorem seu padrão de manejo e demonstrem
+    o cuidado com que desenvolvem e protegem o meio ambiente”, conclui Moisés Swirski, sócio da
+
+    .
+
+    Em pouco mais de um ano de operação, a
+
+    vem num ritmo consistente de rodadas. O aporte na
+
+    é o quarto do fundo, e o primeiro em uma startup não relacionada diretamente a serviços financeiros.
+
+    Em abril desde ano,
+
+    o fundo assinou um cheque de R$ 4 milhões para a
+
+    , fintech de gerenciamento de despesas corporativas. Antes disso, em dezembro, a
+
+    entrou em uma rodada liderada pela Salesforce Ventures,
+
+    colocando R$ 10,5 milhões na
+
+    , startup especializada em meios de pagamento.
+
+    O primeiro investimento da BB Ventures foi anunciado em outubro do ano passado –
+
+    um aporte de R$ 5 milhões no banco digital
+
+    , startup que oferece contas bancárias para jovens de 10 a 18 anos.'
+- tipo: noticia
+  titulo: Com iRancho, a "pecuária digital" de Thiago Parente agora aposta no gado rastreado
+  url_fonte: https://agfeed.com.br/agtech/com-irancho-a-pecuaria-digital-de-thiago-parente-agora-aposta-no-gado-rastreado/
+  data_publicacao: null
+  conteudo_texto: 'no seu e-mail
+
+    Com iRancho, a "pecuária digital" de Thiago Parente agora aposta no gado rastreado
+
+    Filho do ex-ministro Pedro Parente trabalhou em empresas de tecnologia e na JBS antes de fundar a
+    startup, que tem potencial inicial de rastrear até 2,5 milhões de animais
+
+    Thiago Parente, CEO da iRancho
+
+    Quando se analisa o histórico profissional de Thiago Parente, é possível perceber que, desde o começo
+    da carreira, o fundador e CEO da startup iRancho procurou unir tecnologia e pecuária.
+
+    Formado em Administração, ele se especializou em mercado financeiro na Fundação Getúlio Vargas. Começou
+    sua trajetória profissional em empresas brasileiras de tecnologia brasileiras, passando também por
+    gigantes globais como IBM e Oracle.
+
+    Em entrevista ao
+
+    , Parente define a pecuária como uma paixão. Talvez por isso tenha tomado a decisão de fazer um mestrado
+    em Agribusiness na Texas A&M University, nos Estados Unidos.
+
+    Durante esse mestrado, iniciou sua passagem por outra gigante mundial, desta vez do mercado de proteína
+    animal, a JBS, até maio de 2016. Seis meses depois de deixar a companhia, fundou a iRancho.
+
+    “Quando falava que a rastreabilidade seria o futuro do mercado mundial de carnes, há 3 ou 4 anos,
+    fui chamado até de louco. Agora, já se acredita que no prazo de 5 a 10 anos, não haverá mais espaço
+    para carne não rastreada”, conta Parente.
+
+    Thiago é filho de Pedro Parente, que foi ministro do Planejamento durante o governo Fernando Henrique
+    Cardoso e CEO de gigantes do agro como Bunge e BRF, além de presidente da Petrobras.
+
+    Mais duas pessoas com o sobrenome Parente fazem parte da diretoria da iRancho. Maria Elisa é diretora
+    Jurídica, e Lia Pullen Parente, diretora Operacional, ou COO.
+
+    O executivo afirma que a iRancho é uma empresa familiar, mas está longe dos moldes mais tradicionais.
+    “Digo que não podemos ter no time pessoas que não possam ser demitidas. Eu mesmo, se não estiver mais
+    contribuindo, saio”, diz Thiago Parente.
+
+    Isso se deve também à estrutura societária formada pela iRancho desde que recebeu seu primeiro aporte
+    de capital, em 2020. Naquele ano, foram R$ 1,5 milhão da Agroven e da BRAngels, redes de investidores-anjo.
+    O primeiro produto da empresa foi um software de gestão de fazendas, que foi lançado em 2019.
+
+    E agora, o jogo da iRancho volta a mudar com a entrada do programa de venture capital do Banco do
+    Brasil na startup, com um aporte de R$ 7,2 milhões.
+
+    “Esses recursos vão servir para investir principalmente em tecnologia, com foco muito forte no SafeBeef”,
+    conta Parente.
+
+    O SafeBeef é o lançamento mais recente da iRancho, um programa de rastreamento de gado que foi apresentado
+    pela empresa na semana passada, durante o Expointer.
+
+    No evento, a startup promoveu um churrasco e distribuiu um panfleto que contava o histórico dos animais.
+    Eles tinham como origem a Fazenda União Brasil, em Buri, no interior de São Paulo.
+
+    Segundo Parente, a ferramenta é gratuita para o pecuarista, e tem um potencial inicial de rastrear
+    até 2,5 milhões de animais, desde o pasto até a venda ao consumidor final.
+
+    “Hoje, temos cerca de 3,4 milhões de animais cadastrados na iRancho. Nós atendemos entre 3,5 mil e
+    4 mil fazendas, automatizando os dados do rebanho. Com essa base de dados, resolvemos desenvolver
+    a ferramenta para aumentar a rastreabilidade do gado brasileiro”, conta o CEO.
+
+    Ele conta que os serviços de dados oferecidos pela iRancho têm um impacto imediato na produtividade
+    da pecuária de corte. “Nós conseguimos diminuir o tempo médio de processamento das informações de
+    um animal de 4 minutos para 12 segundos”, conta Parente.
+
+    Atualmente, a iRancho tem um faturamento anual entre R$ 4 milhões e R$ 4,5 milhões. As receitas da
+    startup vêm da assinatura mensal ou anual do software de gestão, que é paga pelo pecuarista.
+
+    “Estamos inclusive conseguindo diminuir muito os cancelamentos. Hoje, nós estamos com um índice de
+    churn abaixo da metade do nosso pior momento”, diz Parente.
+
+    Com a entrada do Banco do Brasil e o lançamento do SafeBeef, Parente espera que a iRancho alcance
+    o nível de breakeven, quando uma empresa atinge o equilíbrio entre receitas e despesas, no final de
+    2024 ou no primeiro semestre de 2025.
+
+    Além disso, com o SafeBeef, a startup tem uma fonte de receita adicional. “Nós seremos uma espécie
+    de ‘brokers’ de informação para bancos, seguradoras, frigoríficos e até para o varejo”.
+
+    Parente conta que a rastreabilidade ajuda bancos e seguradoras a terem dados mais exatos sobre os
+    rebanhos dos pecuaristas, o que barateia crédito e prêmios de seguros.
+
+    “E nós cobramos deles alguns centavos por cabeça de gado. Os animais entram como garantia nessas operações”,
+    conta Parente.
+
+    A iRancho já tem presença no exterior. Com a chegada do BB, a plataforma será inclusive traduzida
+    para o espanhol, e posteriormente, para o inglês, conta o CEO.
+
+    “Nós já atuamos nos Estados Unidos, Inglaterra, Portugal, México, Bolívia e Paraguai. Mas tudo pelo
+    boca a boca. Não fizemos qualquer campanha de venda no exterior. O que acontece também é que os pecuaristas
+    de outros países procuram muito pelas tecnologias desenvolvidas aqui”, afirma Parente.
+
+    A iRancho também deve aumentar sua equipe com o aporte do BB. “Hoje, temos uma equipe de 38 colaboradores.
+    Devemos chegar a 50 até o fim do ano, apostando muito na área de tecnolo'
+- tipo: site
+  titulo: iRancho — gestão de pecuária de corte
+  url_fonte: https://irancho.com.br/
+  data_publicacao: null
+  conteudo_texto: 'Ir para o conteúdo
+
+    A gestão pecuária que você busca com a facilidade que você precisa.
+
+    Com o iRancho você faz o controle do gado, gerencia a fazenda e torna o seu negócio mais rentável.
+    É tudo muito simples e intuitivo, sem deixar de lado a eficiência na pecuária de corte.
+
+    Com o iRancho você faz o controle do gado, gerencia a fazenda e torna o seu negócio mais rentável.
+    É tudo muito simples e intuitivo, sem deixar de lado a eficiência na pecuária de corte.
+
+    A nova gestão da sua fazenda
+
+    começa aqui!
+
+    Informe seus dados para receber a apresentação do sistema e o teste gratuito.
+
+    A sua fazenda sob controle
+
+    Conheça o seu rebanho
+
+    Crie os seus manejos
+
+    Informação a serviço dos resultados
+
+    Módulos adicionais para descomplicar a gestão
+
+    A sua fazenda sob controle
+
+    Conheça o seu rebanho individualmente;
+
+    Monitoramento do desempenho dentro do ciclo;
+
+    Realize a gestão financeira da propriedade;
+
+    Controle o estoque de produtos e insumos;
+
+    Faça o controle da nutrição com agilidade;
+
+    Cadastre máquinas e veículos;
+
+    Registre e gerencie seus contatos;
+
+    Acesso multiusuários ilimitado;
+
+    Cadastro ilimitado de fazendas.
+
+    Conheça o seu rebanho
+
+    Tenha o controle das movimentações dos animais dentro da fazenda;
+
+    Acompanhe os indicadores de desempenho da recria e engorda;
+
+    Acompanhe os indicadores de desenvolvimento da fase de cria;
+
+    Emita anexos SISBOV.
+
+    Crie os seus manejos
+
+    Crie e personalize seus próprios manejos no iRancho;
+
+    São mais de 9 ações para personalização do manejo;
+
+    Execução inteligente dos manejos mais usados;
+
+    Crie calendários de manejo para execução das próximas atividades;
+
+    Manejo integrado ao estoque. Saída automática de medicamentos e estoque reprodutivo;
+
+    Registre e execute seu protocolo reprodutivo;
+
+    Integrado com leitores de brincos, balanças eletrônicas e leitores RFID.
+
+    Informação a serviço dos resultados
+
+    Listagem completa do rebanho com aplicação de diferentes filtros de busca;
+
+    Mapa gerencial: atualize o valor da @ de acordo com o mercado e saiba quanto vale o seu rebanho;
+
+    Monte relatórios operacionais do seu jeito;
+
+    Tenha acesso aos principais indicadores pecuários, tais como preço médio da @, custo operacional,
+    produtividade em @/h/ano e outros;
+
+    Custo unitário por animal;
+
+    Relatórios de reprodução: estatísticas de reprodução e análise reprodutiva.
+
+    Módulos adicionais para descomplicar a gestão
+
+    Faça a gestão da recria e engorda com o iRancho Confinamento;
+
+    Conte com o iRancho Melhoramento e faça comunicação direta com os programas: ANCP, ABCZ, DeltaGen,
+    Qualitas, Paint e Cia.
+
+    A sua fazenda sob controle
+
+    Conheça o seu rebanho individualmente;
+
+    Monitoramento do desempenho dentro do ciclo;
+
+    Realize a gestão financeira da propriedade;
+
+    Controle o estoque de produtos e insumos;
+
+    Faça o controle da nutrição com agilidade;
+
+    Cadastre máquinas e veículos;
+
+    Registre e gerencie seus contatos;
+
+    Acesso multiusuários ilimitado;
+
+    Cadastro ilimitado de fazendas.
+
+    Conheça o seu rebanho
+
+    Tenha o controle das movimentações dos animais dentro da fazenda;
+
+    Acompanhe os indicadores de desempenho da recria e engorda;
+
+    Acompanhe os indicadores de desenvolvimento da fase de cria;
+
+    Emita anexos SISBOV.
+
+    Crie os seus manejos
+
+    Crie e personalize seus próprios manejos no iRancho;
+
+    São mais de 9 ações para personalização do manejo;
+
+    Execução inteligente dos manejos mais usados;
+
+    Crie calendários de manejo para execução das próximas atividades;
+
+    Manejo integrado ao estoque. Saída automática de medicamentos e estoque reprodutivo;
+
+    Registre e execute seu protocolo reprodutivo;
+
+    Integrado com leitores de brincos, balanças eletrônicas e leitores RFID.
+
+    Informação a serviço dos resultados
+
+    Crie e personalize seus próprios manejos no iRancho;
+
+    São mais de 9 ações para personalização do manejo;
+
+    Execução inteligente dos manejos mais usados;
+
+    Crie calendários de manejo para execução das próximas atividades;
+
+    Manejo integrado ao estoque. Saída automática de medicamentos e estoque reprodutivo;
+
+    Registre e execute seu protocolo reprodutivo;
+
+    Integrado com leitores de brincos, balanças eletrônicas e leitores RFID.
+
+    Módulos adicionais para descomplicar a gestão
+
+    Faça a gestão da recria e engorda com o iRancho Confinamento;
+
+    Conte com o iRancho Melhoramento e faça comunicação direta com os programas: ANCP, ABCZ, DeltaGen,
+    Qualitas, Paint e Cia.
+
+    No iRancho você produz com e sem internet
+
+    Utilize nosso sistema em computadores, tablets e o aplicativo em celulares.
+
+    Aplicativo iRancho Campo
+
+    Ideal para otimizar o trabalho na fazenda e a coleta de informações a campo.
+
+    de Animais Gerenciados
+
+    Como é fazer parte da Rede  iRancho?
+
+    “Além de estar por dentro do que há de mais novo em Gestão Pecuária, o iRancho facilita a coleta de
+    dados, o seu processamento e a análise para tomada de decisão. Com isso, agregamos muito valor a nossa
+    Consultoria pois nos tornamos referência em gestão na região em que atuamos.”
+
+    Médico Veterinário e Diretor Técnico da Start Soluções no Agronegócio
+
+    "Nossa experiência com o iRancho tem sido extremamente positiva.
+
+    A ferramenta oferece grande eficiência na coleta e centralização dos dados, tornando as análises mais
+    ágeis e precisas, além de facilitar a construção de informações estratégicas para a gestão das fazendas.
+
+    O suporte também merece destaque, sempre atencioso, ágil e com uma postura genuinamente voltada para
+    a solução das demandas."
+
+    Proprietário da BRPEC Consultoria Pecuária
+
+    “O que nos fez implantar o iRancho em 2019 foi a interface, a usabilidade e principalmente o retorno
+    com relação a suporte e melhorias. Além de termos as informações que necessitamos, nosso manejo do
+    curral melhorou muito. Já manejamos em um dia pesagem, vacinação e apartação de 1.200 animais.”
+
+    Fazenda Vera Cruz do Água Limpa - Britânia - GO
+
+    "Após a utilização do iRancho ficou mais claro medir o desempenho dos animais e ter um relatório para
+    a tomada de decisão mais consciente. Eu nao poderia deixar de falar que o sistema é bem intuitivo
+    e o suporte sempre disponível."
+
+    Gestor de planejamento da CV Reprodução
+
+    “É um sistema muito intuitivo, e só veio para agregar ao nosso trabalho, trouxe rapidez e solidez
+    para nossas informações (...) Se fazíamos o manejo de 500 animais em um dia, hoje fazemos isso em
+    meio período.”
+
+    Coordenador Administrativo Fazenda Esplanada - Aruanã (GO)
+
+    “A partir do momento que implantou o sistema, facilitou muito a nossa vida. Muito fácil, a verdade
+    é essa. A equipe adotou, abraçou a causa, entendeu a razão de implantar o sistema dentro da fazenda.
+    Que aquilo só veio agregar para eles mesmos. O artista principal dentro da propriedade são eles, eles
+    que fazem o negócio acontecer, e o sistema os ajuda a cada vez mais se sentirem importantes.”
+
+    Gestor Administrativo na Fazenda Xangaia - Porangatu (GO)
+
+    A iRancho tem um plano  pra você!
+
+    Planos acima de 10 mil animais, fale conosco
+
+    Compare os Planos
+
+    Módulos adicionais para descomplicar a gestão
+
+    Estruture e organize baias, linhas e ruas de forma prática e visual;
+
+    Organize a abertura e o fechamento de lotes;
+
+    Faça o lançamento dos tratos de forma manual ou automatizada;
+
+    Registre ocorrências por meio de fotos, vídeos e áudios;
+
+    Acompanhe as projeções de consumo e eficiência dos tratos
+
+    Importe as avaliações dos programas de melhoramento genético;
+
+    Gere comunicados direto para os programas de melhoramento cadastrados;
+
+    Acompanhe os envios dos seus comunicados;
+
+    Histórico de comunicados enviados.
+
+    Tenha acesso a 52 indicadores econômicos e produtivos sobre sua atividade;
+
+    Utilize-os na tomada de decisões;
+
+    Acompanhe como está o desempenho da atividade;
+
+    Filtre os indicadores por período;
+
+    Acesse indicadores de custos, preços, margens, peso, lucro, produtividade, dentre outros.
+
+    Junte-se a nós você também
+
+    Leia no blog:
+
+    Conheça 5 funções iRancho Confinamento
+
+    Automação de trato do iRancho: conheça a tecnologia que conecta a fábrica de ração ao cocho, mesmo
+    sem internet
+
+    Falhas na IATF: como o controle reprodutivo bovino pode impactar a taxa de prenhez'

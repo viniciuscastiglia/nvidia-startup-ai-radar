@@ -20,12 +20,12 @@
 |---|---|
 | `smoke_nvidia.py` | **3/3** — e em 03/09 o chat respondeu em **7,9 s**, contra 46,8 s no dia anterior: a faixa de D-080 é mais larga por baixo do que os 17 s medidos até aqui. `LENTO` continua não sendo EOL |
 | `pytest -q` | **81 passed** (era 53 em 01/09, 67 no início de 02/09) |
-| `python -m src.graph` | roda ponta a ponta, **as duas empresas ELEGÍVEIS**, zero chamada de LLM em produção |
+| `python -m src.graph` | roda ponta a ponta em **10 setores**, zero chamada de LLM em produção (re-conferido em 03/09 com a base de 30) |
 | `avaliar_agentes.py` | `classe 3/7 · stack 6/7 · confianca 0/6 · elegivel **6/6**+1amb · precisão 49% · recall 100%` |
 | `avaliar_agentes.py --exclusoes` | `7/7` falso negativo · **`7/7`** falso positivo (era 2/7 — D-085) |
 | `avaliar_agentes.py --justificativas` | linha trivial `12/21` · seletor **`15/21`** (D-086) |
 | corpus RAG | **175 chunks** estruturais (era 177) · 16 tecnologias · gabarito de 24 perguntas |
-| base | **8 startups**, 24 documentos · `ano_fundacao` em 6 de 8 |
+| base | **30 startups, 93 documentos, 93/93 URLs** (D-090) · `ano_fundacao` literal em 12 de 30 e `localizacao` em 5 — baixo **de propósito**: só entra o que está literalmente no documento |
 | catálogo NVIDIA | **0 vivos de 10** sondados · o modelo de produção é o único que responde |
 
 **A regra que 02/09 comprou caro:** leitura de código não substitui execução. Duas sessões de
@@ -59,8 +59,7 @@ resto do trabalho, independente de qualidade.
 | item | o que é | dia | pronto quando |
 |---|---|---|---|
 | ~~**P-10**~~ | **FEITO em 02/09 (D-086).** Régua rotulada antes do seletor; seletor `15/21` vs trivial `12/21`; num run real, justificativas que servem **1/6 → 4/6**. O case da Writer sumiu | ~~03/09~~ | ✅ |
-| ~~**Base 8 → 30**~~ · **Base 16 → 30** | **PARCIAL em 03/09 (D-090): 8 → 16.** `"fintechs"` (4), `"agro"` (2) e `"voz/call center"` (2) devolvem resultado; **48/48 URLs resolvem**; a régua reproduz exatamente. **O que falta são 14 empresas, e o gargalo está medido: não é achar a empresa, é o 3º documento** — 4 empresas boas caíram já coletadas (Aro, Creditas, alt.bank, ESGreen). **`dados tabulares` segue sem startup**, então a P-21 destrava 3 das 7 regras do TAPI, não 4 | **03/09 parcial · resto sem dia** | as três consultas passam ✅. Para 30: 14 empresas com **3 documentos e 2 tipos** cada |
-| ~~**P-15 + `avaliar_rag`**~~ | **FEITO em 02/09.** `avaliar_rag.py` rodou pós-D-082 e o caminho de produção **não se moveu em nenhuma das seis colunas** (D-068); `--geracao` deu **23/24 = 96%** no modelo atual, e o único erro é abstenção indevida, não alucinação (D-040) | ~~03/09~~ | ✅ |
+| ~~**Base 8 → 30**~~ | **FEITO em 03/09 (D-090). 8 → 30 startups, 93 documentos, 93/93 `url_fonte`.** `"fintechs"`, `"agro"` e mais oito setores devolvem resultado; **as 10 chaves de `SETORES` têm empresa** (cinco estavam vazias e ninguém sabia); as **4 exclusões do Inception ganharam caso REAL**. A régua reproduz exatamente. **O gargalo medido não é achar empresa, é o 3º documento com tipo distinto** — 4 empresas boas caíram já coletadas | ~~03/09~~ | ✅ |
 | **P-06 + interface** | zero byte. Única superfície que um não-engenheiro julga | **04–05/09** | consultar → ver → recomendações com evidência → exportar |
 | **Testes ausentes** | **três** módulos sem teste: `extractor.py` (249 linhas, primeiro nó, alimenta todos), `rag/geracao.py` (**o passo 8 do TAPI**, onde mora a abstenção de D-040) e `db.py` (o SQL da recuperação) | **05/09** | os três com teste; a abstenção do passo 8 coberta |
 | **P-11** | `confianca` é **0/6 constante** — campo do briefing com zero informação. **E pior do que se sabia (D-089):** `evidence_validator.py:210` monta e `briefing.py:258` imprime *"— **ver D-059** para por que este agregado é o defeito que a régua mede em 0/6"*. **O gerente lê isso, e o vídeo mostra isso** — é ponteiro interno de decisão dentro do entregável | **05/09** | ou promove o braço de D-059 (2/6), ou o campo para de ser impresso. **De todo jeito, o ponteiro `D-059` sai do texto do usuário** — isso não depende da decisão maior e custa uma linha |
@@ -86,6 +85,7 @@ Não são esquecimento. São escopo fechado por escrito, e cada um tem a razão 
 | **P-12** — `classe` 3/7 | D-060 calculou o **teto: 4/7**, porque 7 das 8 fixtures têm profundidade técnica zero. O gargalo é vocabulário, não a regra. E a base nova entra **como dado, sem gabarito** (D-062), então a régua não se move nem com 30 empresas — **confirmado por medição em 03/09: com 16 fixtures, `classe 3/7` e precisão 49% reproduzem exatamente** (D-090). Mexer no limiar seria calibrar contra o gabarito. **O que mudou é a visibilidade:** rodando o grafo, a **Core AI** — cujo produto É modelo de crédito com IA — sai `non-AI`. O defeito continua aceito; o custo dele agora é uma cena, não uma linha de tabela |
 | **P-17** — `validada` booleano | D-077 mediu: a gradação foi aplicada e é **inerte**, e o critério (recall ≥ 88% com precisão ≥ 80%) é **inalcançável** — admitir tudo dá 100%/49%. Falta a admissão parcial por `dores_enderecadas`, que é redesenho do motor. Não cabe em 7 dias sem risco ao vídeo |
 | **P-19** — sweep do RAG | Com **24 perguntas** de gabarito, uma grade fina ajusta ao gabarito em vez de generalizar. **Esta é a razão válida** — a antiga ("o critério 2 está no teto") foi anulada por D-078. A re-medição do corpus novo (2.1) fica; o sweep não |
+| **P-23** — `elegibilidade()` só lê os trechos de evidência | **novo, D-091.** A Liqi diz *"oferecer criptomoedas, stablecoins e tokens"* no site, `criptomoeda` **já estava na lista de exclusão**, e ela passava — a frase não caiu em nenhum trecho citado pelo Extractor. O filtro do Inception, que é o **Diferencial declarado**, tem a cobertura do casador de dores. **A correção óbvia — varrer `conteudo_texto` — reintroduz o falso positivo por MENÇÃO que D-085 gastou uma sessão inteira para matar:** o veto de terceiro teria de rodar sobre o documento inteiro, e aí a Axenya volta a ser recusada por *"Integramos consultoria, dados e operação clínica"*. Redesenho, não ajuste. **Fica ACEITO e escrito — e a frase da defesa é essa, não "o filtro funciona"** |
 | **P-09** — promover o juiz | **Medir não é promover** (D-078). Promover a 5 dias do vídeo obriga a revalidar classifier, validator e recommendation a jusante. O número entra no log e na defesa; a promoção é um segundo ato, e ele não tem dia |
 
 > **O que três destas justificativas têm em comum, e faltava escrito:** elas se apoiam em números
@@ -246,7 +246,7 @@ Refinar o vídeo, revisar a entrega, **rodar o smoke de novo antes de entregar**
 | ~~Fornecedor único de **LLM**~~ | **ACEITO POR ALINHAMENTO (D-087).** A liga declarou que a morte do modelo não pontua contra. E o LLM tem **zero chamada no caminho do grafo** — três flags `False` por medição |
 | **Fornecedor único do EMBEDDER** | **este é o que sobrou sem plano B.** Está em toda consulta (`busca.py:122`), e trocá-lo invalida os 381 vetores — não é chave, é `reembedar.py` mais re-medir a régua inteira (D-046). Contramedida única: `smoke_nvidia.py` antes de gravar e de entregar |
 | **Interface escorregar e não haver demo** | **ativo, ponto único de falha.** Mitigado por: começar em 04/09, portão diário, e a regra de corte de 05/09 |
-| **A base não chegar a 30** | **materializou-se em 03/09: parou em 16** (D-090). O timebox segurou e a ordem por setor faltante funcionou — fintech e agro, os dois defeitos medidos, entraram. O que não escala é o **3º documento por empresa**, e isso é conhecido agora, não suposto |
+| ~~**A base não chegar a 30**~~ | **NÃO se materializou: fechou em 30** (D-090). A ordem por setor faltante funcionou, e o que ela revelou vale mais que o número — cinco chaves de `SETORES` sem empresa nenhuma, invisíveis enquanto a base era pequena |
 | **Trial do Cohere** (1.000/mês, 10 req/min) | conhecido. Cena do vídeo com `MAX_STARTUPS` baixo |
 | **O embedder morrer** | descoberto. Trocá-lo invalida os vetores e exige re-medir a régua inteira |
 | ~~Confundir lento com morto~~ | **fechado em D-080** — era real: o smoke reportava `FALHOU` para um modelo vivo |

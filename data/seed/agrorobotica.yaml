@@ -1,0 +1,349 @@
+# Agrorobótica
+# Coletado em 2026-09-03. Todo `conteudo_texto` é o texto REAL da página em `url_fonte`,
+# fatiado do que `scripts/coletar.py` extraiu — não é paráfrase.
+#
+# CAMADA "DADO" (D-062): esta fixture NÃO tem bloco `gabarito:` nem `perfil_alvo`, e a
+# ausência É a decisão. As 8 fixtures originais são a régua dos critérios 1 e 3; anotar
+# esta aqui seria medir o classificador contra rótulos escritos na mesma sessão que leu
+# os mesmos documentos — calibrar contra o próprio gabarito.
+#
+# CAMPOS ESTRUTURADOS: só ficam preenchidos os que aparecem LITERALMENTE nos documentos.
+# `null` faz o Briefing reportar "requisito não verificado", que é correto; um valor
+# plausível e errado não reporta nada e ainda corrompe o filtro de elegibilidade.
+#
+# TEASER RECORTADO: os veículos injetam chamada de OUTRA empresa no meio e no fim da
+# matéria. Cada documento abaixo declara em `_corte` as linhas do arquivo coletado que
+# entraram e as que foram removidas por citarem terceiro.
+nome: Agrorobótica
+site: https://agrorobotica.com.br/
+setor: agro — sensoriamento e robótica de solo
+estagio: seed
+localizacao: null
+ano_fundacao: null
+tamanho_time: null
+descricao_curta: Combina espectroscopia a laser (LIBS) com IA treinada para análise de solo até 60 cm
+  de profundidade em 20 segundos, e usa a mesma infraestrutura de dados para mensurar carbono no solo
+  e gerar crédito.
+fonte_descoberta: agfeed.com.br e startups.com.br — cobertura de agtech de sensoriamento
+coletado_em: '2026-09-03'
+documentos:
+- tipo: noticia
+  titulo: Agrorobótica dispara "raios laser da Nasa" para analisar o solo e gerar créditos de carbono
+  url_fonte: https://agfeed.com.br/agtech/agrorobotica-dispara-raios-laser-da-nasa-para-analisar-o-solo-e-gerar-creditos-de-carbono/
+  data_publicacao: null
+  conteudo_texto: 'no seu e-mail
+
+    Agrorobótica dispara "raios laser da Nasa" para analisar o solo e gerar créditos de carbono
+
+    Startup paulista, que tem empresa de Marcos Molina e Olavo Setubal Jr. como sócia, utiliza tecnologia
+    usada em Marte pela agência espacial americana e acumula gigantes do agro em sua carteira de clientes
+
+    Italo Bertão Filho
+
+    Pesquisadora analisa amostra de solo na plataforma AgLibs, desenvolvida pela Agrorobótica
+
+    Há pouco mais de uma década, em 2012, o robô Curiosity, da agência espacial norte-americana Nasa,
+    começou a matar a curiosidade dos humanos sobre o que existe em Marte.
+
+    Com disparos de raio laser, o equipamento analisou os minerais presentes em rochas no planeta vizinho
+    à Terra – com resultados até melhores do que os obtidos por aqui.
+
+    Nos últimos anos, uma startup brasileira, a green fintech Agrorobótica, está aplicando a mesma tecnologia
+    utilizada pela Nasa para avaliar a quantidade de carbono no campo.
+
+    Com essa abordagem, a empresa garante que é possível mensurar as condições da terra, introduzir técnicas
+    agrícolas mais sustentáveis, melhorar a produtividade e, ao final do processo, gerar créditos de carbono
+    que foi estocado no território.
+
+    Não à toa, a Agrorobótica chamou a atenção de gigantes como
+
+    e OCP , para citar apenas alguns de seus clientes e parceiros, e agora se prepara para colher sua
+    primeira “safra de carbono”.
+
+    O principal foco da Agrorobótica são as multinacionais. A proposta é que essas empresas contratem
+    a startup para medir a pegada de carbono de suas propriedades, adotem boas práticas sustentáveis e,
+    posteriormente, emitam créditos de carbono com o suporte da Agrorobótica, que seria a emissora dos
+    créditos.
+
+    Os lucros obtidos com a comercialização desses créditos seriam divididos entre as companhias e a startup
+    em contratos longos, de 20 anos de duração. “É que cada ponto de análise de carbono é válido por 20
+    anos”, afirma Fábio Angelis, CEO da startup.
+
+    A empresa foi criada em 2015 por Angelis, que trabalhava como executivo da companhia de insumos Syngenta
+    e descobriu a técnica utilizada pela Nasa – Laser Induced Breakdown Spectroscopy – em uma visita de
+    campo.
+
+    Em uma apresentação do Simpósio Nacional de Instrumentação Agropecuária (Siagro), da Embrapa Instrumentação,
+    de São Carlos, no interior de São Paulo, conheceu o trabalho desenvolvido pela pesquisadora Débora
+    Milori, que trabalha com essa técnica há mais de 20 anos e é utilizada também para detectar mercúrio
+    em alimentos.
+
+    Angelis ficou impressionado com as possibilidades que a tecnologia poderia trazer e resolveu empreender
+    – inicialmente, em paralelo com sua atuação na companhia de insumos.
+
+    “Eu falei: ‘Preciso investir nesse negócio, porque tem um mercado gigante para trabalhar com isso’”,
+    afirma.
+
+    Com recursos próprios, Angelis se juntou à Aida Magalhães, que era pesquisadora da Embrapa e futuramente
+    passou a ser sócia e CTO da Agrorobótica, fechou contratos de cooperação técnica com a empresa de
+    inovação do governo e passou boa parte da década passada trabalhando no desenvolvimento de uma plataforma
+    capaz de avaliar o solo com a utilização de raios laser.
+
+    “Todo mundo falava que não dava certo fazer o que nós queríamos com a tecnologia, porque era muito
+    inovadora”, recorda o fundador da Agrorobótica.
+
+    Durante anos, a startup operou com recursos próprios de Angelis até que, em 2019, recebeu um aporte
+    feito pela firma de investimentos NT@agro, que tem como acionistas
+
+    , fundador e presidente do conselho de administração da Marfrig, e Olavo Setubal Jr., um dos herdeiros
+    do banco Itaú, e Antonio Maciel Neto, ex-CEO de empresas como Ford,
+
+    , Caoa/Hyundai e Grupo Itamarati.
+
+    Angelis prefere não revelar o valor do aporte. De acordo com o site da NT@agro, 22,5% do capital social
+    da Agrorobótica ficou com a empresa de investimentos.
+
+    Dessa forma, a startup conseguiu acelerar seu processo de criação da plataforma, batizada de AgLibs,
+    lançada em parceria com a Embrapa em 2023.
+
+    Todo o processo começa com a avaliação dos dados da propriedade. A Agrorobótica verifica se a fazenda
+    está em conformidade socioambiental, utilizando dados do Cadastro Ambiental Rural (CAR), mapeia o
+    território para a marcação dos pontos onde o solo vai ser coletado, e vai a campo para pegar as amostras,
+    cuja localização já está georreferenciada.
+
+    As amostras, segundo Angelis, seguem então para o laboratório fotônico da Agrorobótica, instalado
+    em São Carlos, no interior de São Paulo, no formato de “pastilhas”, que são inseridas na plataforma
+    AgLibs.
+
+    Com apenas um disparo de raio laser, a ferramenta analisa 23 parâmetros dessas “pastilhas” avaliando
+    fatores como textura, densidade do solo, nível de PH e macronutrientes.
+
+    A diferença entre esse processo da Agrorobótica e um convencional, feito por laboratórios químicos,
+    está no tempo de análise, segundo Angelis.
+
+    “Em 20 segundos, nós fazemos o que um laboratório químico convencional, pode demorar até 20 dias para
+    fazer”, afirma o fundador da Agrorobótica, que diz conseguir fazer até 1,2 mil análises de solo. “Isso
+    nos dá um poder analítico muito grande.”
+
+    Feita a análise, a Agrorobótica dá orientações agronômicas para a inserção de agricultura regenerativa
+    no campo, que envolve possibilidades como a adoção de plantio direto, fertilizantes orgânicos, bioinsumos
+    e piqueteamento para o gado.
+
+    “Quando você mede o estoque de carbono de um pasto degradado, ele tem 50 toneladas de carbono por
+    hectare. Quando você coloca agricultura regenerativa, ao longo de 10 anos, você pode chegar a mais
+    de 100 toneladas, porque aumenta a quantidade de carbono no solo”, afirma Angelis.
+
+    Ao longo do tempo, a Agrorobótica retorna às propriedades para verificar se houve mudanças no solo
+    para verificar novamente os dados na plataforma e poder compará-los.
+
+    A startup planeja transformar essas informações em créditos de carbono para comercialização no mercado
+    voluntário, respaldada por um nome de peso: a Verra, uma das maiores certificadoras de créditos de
+    carbono do mundo, que já aprovou a tecnologia para esse fim. Essa chancela é fundamental para viabilizar
+    a emissão dos créditos.
+
+    Hoje presente em 18 estados do Brasil em propriedades de culturas como soja, milho, café, citrus algodão,
+    a Agrorobótica ainda não gerou créditos de carbono para seus clientes, mas Angelis pretende iniciar
+    esse processo nos próximos anos.
+
+    A startup vai receber uma porcentagem do valor negociado em cada transação de créditos de carbono.
+    “A maior parte do recurso fica para o agricultor, porque o conceito do crédito carbono é ele usar
+    esse recurso para adotar as boas práticas agrícolas”, afirma Angelis.
+
+    Essa é uma das fontes de receita da startup, que também ganha com a venda de serviços de avaliação
+    do solo e com a implantação dos projetos de carbono.
+
+    Com a tecnologia já avançada, Angelis diz que gostaria de abrir uma nova rodada de investimentos entre
+    este ano e 2026 para expandir o negócio.
+
+    “Nós temos que expandir a tecnologia para todo o território nacional. Hoje, a gente só tem um centro
+    em São Carlos, mas criamos um negócio que é como se fosse um McDonalds. Precisamos de, no mínimo,
+    um centro em cada Estado”, afirma o fundador da Agrorobótica. “Mas precisamos de recurso para isso.”
+
+    Análise de solo,
+
+    Antonio Maciel Neto,
+
+    Créditos de carbono,
+
+    Olavo Setubal Jr.,'
+- tipo: noticia
+  titulo: VOX aporta R$ 10,8M em agtech que une laser e IA para analisar solo
+  url_fonte: https://startups.com.br/negocios/agtech/vox-aporta-r-108m-em-agtech-que-une-laser-e-ia-para-analisar-solo/
+  data_publicacao: null
+  conteudo_texto: 'Pular para o conteúdo
+
+    Pular para o menu
+
+    VOX aporta R$ 10,8M em agtech que une laser e IA para analisar solo
+
+    Rodada seed na Agrorobótica é o primeiro investimento do quarto fundo da gestora, em parceria com
+    o CVC BB Impacto I
+
+    Leandro Miguel Souza
+
+    Leitura:
+
+    Copiar Link?
+
+    Tecnologia AGLIBS, da Agrorobótica | Foto: divulgação
+
+    Utilizando uma tecnologia inspirada em inovações da nasa para análise do solo lunar, a agtech
+
+    criou uma solução que analisa solo de plantio – um processo que leva dias – em apenas 20 segundos.
+    De olho nessa inovação, a
+
+    acabou de assinar um cheque de R$ 10,8 bilhões em uma rodada seed para a startup.
+
+    Segundo destaca a
+
+    em nota enviada ao
+
+    , este é o investimento inicial
+
+    do seu quarto fundo
+
+    , dedicado a aplicações de IA alinhadas com vocações estratégicas da economia brasileira – neste caso,
+    o agro. Os recursos para o aporte vieram por dois caminhos: o novo fundo flagship da gestora e o BB
+    Impacto I, o CVC do
+
+    Banco do Brasil
+
+    gerido pela própria
+
+    .
+
+    Com o investimento, o plano da agtech é expandir a penetração no mercado de sua plataforma AGLIBS,
+    tecnologia patenteada pela
+
+    em parceria com a
+
+    e que combina IA com espectroscopia a laser para fazer a análise do solo.
+
+    Além disso, a entrada do CVC do
+
+    Banco do Brasil
+
+    no deal também tem uma função importante: com capilaridade junto ao agronegócio nacional, o banco
+    pode ampliar a adoção da plataforma AGLIBS junto a produtores rurais que já são clientes da instituição.
+
+    Fundada em 2015 e incubada na
+
+    nasceu da pesquisa aplicada em espectroscopia e física do solo, que adapta tecnologias originalmente
+    utilizadas pela Nasa em suas sondas de exploração em Marte.
+
+    Utilizando raios laser, em combinação com uma IA treinada para entregar análises completas até 60
+    centímetros de profundidade, a tecnologia da agtech entrega recomendações agronômicas imediatas sobre
+    fertilização e manejo do solo.
+
+    Pela plataforma da agtech, todo o processo é feito em 20 segundos – um salto gigante em relação ao
+    modelo tradicional, em que as amostras são enviadas a um laboratório, e o resultado leva até 20 dias
+    para sair. “Na prática, o produtor reduz desperdício de insumos, melhora a produtividade por hectare
+    e vê resultado já no ciclo seguinte”, destacou a agtech, em nota.
+
+    Além disso, segundo destaca a
+
+    , a mesma infraestrutura de dados que orienta o manejo do solo também mensura, reporta e certifica
+    o carbono presente nele, gerando produtividade e receita adicional via créditos de carbono.
+
+    “A Agrorobótica resolve um problema direto de rentabilidade do produtor e, ao mesmo tempo, cria a
+    infraestrutura para uma nova economia baseada no carbono do solo”, afirma Lívia Brando, Sócia e Diretora
+    de Investimentos da
+
+    . “É exatamente o tipo de solução que buscamos: tecnologia proprietária, impacto climático mensurável
+    e um modelo de negócio escalável ancorado em eficiência econômica.”
+
+    “Com a nossa tecnologia, o produtor preserva e produz e ainda é remunerado por isso. Esse investimento
+    é um reconhecimento de que é possível construir um negócio lucrativo e, ao mesmo tempo, contribuir
+    diretamente para as metas climáticas”, completa Fábio Angelis, fundador e CEO da
+
+    .
+
+    O movimento chega em um momento favorável. O Brasil tem meta de recuperar 40 milhões de hectares de
+    pastagens degradadas na próxima década, e a política industrial do país prioriza IA aplicada à indústria
+    como eixo de competitividade. Para a
+
+    , o caminho é se tornar uma das principais infraestruturas de dados e carbono para o agronegócio nacional,
+    com certificação internacional para inserção no mercado global de créditos.'
+- tipo: site
+  titulo: Agrorobótica — análise de solo com laser e IA
+  url_fonte: https://agrorobotica.com.br/
+  data_publicacao: null
+  conteudo_texto: 'Ir para o conteúdo
+
+    PLATAFORMA IA AGLIBS
+
+    SOLUÇÃO INTEGRADA PARA MONETIZAÇÃO DE  CARBONO NA AGRICULTURA
+
+    PLATAFORMA DE IA AGLIBS para produtividade e sustentabilidade agrícola, com monetização de carbono
+    e agregação de valor nas commodities.
+
+    PLATAFORMA IA AGLIBS
+
+    A plataforma utiliza a tecnologia LIBS (LIBS acrônimo de Laser Induced Breakdown Spectroscopy) a mesma
+    técnica utilizada na missão espacial pela
+
+    para caracterização do solo do planeta Marte, efetuando análises fotônicas de amostras de solo para
+    determinações de carbono, textura (teores de areia, silte e argila), pH, macro e micronutrientes,
+    através do uso do laser pulsado de alta energia, de forma rápida, econômica e precisa, sem gerar resíduos.
+
+    Conheça a Tecnologia LIBS
+
+    Monetização inovadora de carbono nas fazendas brasileiras
+
+    CO2 eq / ha /ano
+
+    Potencial de geração de crédito de carbono no mercado agrícola.
+
+    PREÇO ESTIMADO DE CARBONO
+
+    Preço estimado para comercialização de créditos de carbono no mercado mundial.
+
+    / ha/ ano
+
+    Potencial de Monetização de Crédito Carbono na agricultura brasileira.
+
+    o agricultor e
+
+    para o planeta
+
+    ESG (Ambiental, Social e Governança)
+
+    Monetização inovadora de carbono
+
+    Agregação de valor nas commodities
+
+    melhores taxas de financiamento
+
+    Inscreva-se no carbono agrorobótica
+
+    entre em contato
+
+    parceiros e clientes
+
+    Veja mais notícias
+
+    Tecnologia contém o uso da técnica LIBS que é a mesma utilizada nos robôs da NASA
+
+    A Agrorobótica e a Embrapa Instrumentação tiveram o prazer de participar do Programa Tech e Startups
+    da AgroMais, onde conversamos sobre a Plataforma de IA AGLIBS e suas aplicações em...
+
+    Pegada de carbono na lavoura ganha tecnologia com certificação global
+
+    A Embrapa (Empresa Brasileira de Pesquisa Agropecuária, pode meio da unidade Instrumentação, localizada
+    em São Carlos (SP), desenvolveu em parceria com a agfintech Agrorobótica, a AGLIBS, uma plataforma
+    de IA...
+
+    Produtores rurais investem em agricultura de precisão para melhorar produtividade
+
+    Estudos da Embrapa e de startups focam na agricultura de precisão. Confira a matéria: https://globoplay.globo.com/v/11573712/
+
+    Utilizamos seus dados para melhorar sua experiência em nosso site. Ao continuar navegando você concorda
+    com a nossa
+
+    Política de Privacidade
+
+    e Politica de
+
+    Proteção de Dados
+
+    .'

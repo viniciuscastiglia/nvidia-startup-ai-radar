@@ -1,0 +1,699 @@
+# Zenvia
+# Coletado em 2026-09-03. Todo `conteudo_texto` é o texto REAL da página em `url_fonte`,
+# fatiado do que `scripts/coletar.py` extraiu — não é paráfrase.
+#
+# CAMADA "DADO" (D-062): esta fixture NÃO tem bloco `gabarito:` nem `perfil_alvo`, e a
+# ausência É a decisão. As 8 fixtures originais são a régua dos critérios 1 e 3; anotar
+# esta aqui seria medir o classificador contra rótulos escritos na mesma sessão que leu
+# os mesmos documentos — calibrar contra o próprio gabarito.
+#
+# CAMPOS ESTRUTURADOS: só ficam preenchidos os que aparecem LITERALMENTE nos documentos.
+# `null` faz o Briefing reportar "requisito não verificado", que é correto; um valor
+# plausível e errado não reporta nada e ainda corrompe o filtro de elegibilidade.
+#
+# TEASER RECORTADO: os veículos injetam chamada de OUTRA empresa no meio e no fim da
+# matéria. Cada documento abaixo declara em `_corte` as linhas do arquivo coletado que
+# entraram e as que foram removidas por citarem terceiro.
+nome: Zenvia
+site: https://www.zenvia.com/
+setor: voz e call center — CX conversacional
+estagio: null
+localizacao: null
+ano_fundacao: null
+tamanho_time: null
+descricao_curta: 'Plataforma de CX conversacional listada na Nasdaq: o Zenvia Customer Cloud junta IA
+  generativa a jornada de marketing, vendas e atendimento, com chatbots criados pelo próprio cliente.'
+fonte_descoberta: mobiletime.com.br e neofeed.com.br — busca por caso real de capital aberto
+coletado_em: '2026-09-03'
+documentos:
+- tipo: noticia
+  titulo: Zenvia Customer Cloud faz integrações e se torna data first
+  url_fonte: https://www.mobiletime.com.br/noticias/30/09/2025/zenvia-data-first-ia/
+  data_publicacao: null
+  conteudo_texto: 'Zenvia Customer Cloud ganha integração com CRM e ERP e se torna data first
+
+    Isabel Butcher | 30/09/25 19:58
+
+    integrou o CRM, ERP e a Customer Data Platform (CDP) à sua plataforma de nuvem e solução core, a Zenvia
+    Customer Cloud. Com isso, a empresa fornecedora de soluções de atendimento e relacionamento com o
+    cliente sai do modelo de message first e entra numa abordagem data first. A proposta é que as empresas
+    encontrem valor gerado antes mesmo de enviar a primeira mensagem.
+
+    Vale lembrar que a Zenvia Customer Cloud
+
+    foi lançada há menos de um ano
+
+    e possui mais de 5,7 mil clientes ativos conectados a ela. A solução teve receita entre R$ 180 e R$
+    200 milhões em 2024, o que representou quase 21% da receita total da empresa no período, de R$ 959,7
+    milhões.
+
+    Em conversa com Mobile Time, Roberto Aran, diretor de portfólio da Zenvia, explicou que antes, os
+    clientes geravam valor depois do envio das mensagens, mas agora, a geração de valor vem a partir do
+    momento em que os dados são integrados à plataforma.
+
+    “Em um cenário data first, de integração à base de um CRM ou ERP, passo a trazer os dados dos clientes
+    dos meus clientes para dentro da CDP e capturo dados de pedidos em aberto e que já foram feitos e
+    passo a trazer dados de produtos e notas fiscais”, exemplifica Aran.
+
+    Ao ter acesso aos dados antes do disparo de mensagens, a plataforma em nuvem da Zenvia oferece:
+
+    Melhor Segmentação: É possível realizar uma segmentação mais precisa da base e entender o comportamento
+    de compra do cliente.
+
+    Análise Comportamental: A plataforma consegue entender se o cliente possui pedidos abertos ou não.
+
+    Análise RFV: A base sincronizada permite rodar a análise de Recência, Frequência e Valor (RFV) no
+    “momento zero”. Essa análise agrupa os clientes, identificando se são fiéis ou se estão em risco de
+    churn.
+
+    “Antes de enviar uma mensagem, consigo fazer segmentação da base, entender o comportamento do cliente,
+    se tem pedidos abertos ou não. Começo a fazer a geração de valor antes mesmo do disparo da mensagem
+    para o engajamento. Já tenho os dados para trazer uma melhor performance, seja num cenário de conversão,
+    de marketing, seja num cenário de nutrição, de pós-venda”, detalha o executivo.
+
+    IA na plataforma da Zenvia
+
+    A plataforma ganha também uma série de camadas de algoritmos matemático e inteligência artificial,
+    seja ela generativa ou determinística.
+
+    A análise da base (como a classificação por RFV) é feita por algoritmos autônomos que utilizam inteligência
+    e métodos tradicionais de análise estatística. A IA é aplicada em diversos momentos da jornada de
+    experiência do cliente, como:
+
+    Criação de Campanha: Para geração de insights sobre o que disparar (IA generativa);
+
+    Disparo de Campanha: Previsão do melhor horário para disparo em determinado canal (ex: WhatsApp, SMS,
+    e-mail) para ter mais impacto (IA determinística);
+
+    Atendimento (Bots): Configuração de bots com IA generativa para comunicação humanizada, primeiro nível
+    de atendimento e qualificação de leads;
+
+    Classificação de Clientes: Uso de algoritmos de RFV para classificar clusters baseados no histórico
+    e comportamento (algoritmos específicos/treinados);
+
+    Suporte Pós-Venda: Uso de copiloto que auxilia o atendente a responder e-mails, sugere a melhor resposta
+    e realiza análise de sentimento (IA generativa).
+
+    Para os mais de 5,7 mil clientes da plataforma a integração de dados não implica custos adicionais
+    ou modificação nos planos de software. Os clientes já têm acesso a uma interface que auxilia na configuração
+    da integração.'
+- tipo: noticia
+  titulo: Na Zenvia, Ebitda acelera 120% no segundo trimestre (e prejuízo fica controlado)
+  url_fonte: https://neofeed.com.br/negocios/na-zenvia-ebtida-acelera-120-no-segundo-trimestre-e-prejuizo-fica-controlado/
+  data_publicacao: null
+  conteudo_texto: 'Na Zenvia, Ebitda acelera 120% no segundo trimestre (e prejuízo fica controlado)
+
+    Empresa de tecnologia para experiência do consumidor listada na Nasdaq continua em busca de fazer
+    caixa para trocar o prejuízo pelo lucro nos próximos meses
+
+    , empresa brasileira de tecnologia especializada na experiência do consumidor, divulgou seu balanço
+    financeiro do segundo trimestre. Listada na Nasdaq, a companhia registrou um crescimento de 126% no
+    Ebitda no período, atingindo R$ 33,7 milhões.
+
+    No semestre, o indicador totalizou R$ 56,8 milhões, alta de 150% na comparação anual, o que indica
+    que a empresa está no caminho de atingir os R$ 120 milhões indicados em seu guidance de 2024.
+
+    “Não existe mais dinheiro infinito para as empresas de tecnologia, então nós precisamos gerar caixa.
+    Para isso, é necessário ter uma operação muito alinhada com a sobrevivência no longo prazo, que é
+    o nosso foco no momento”, afirma
+
+    , CFO da Zenvia, ao
+
+    .
+
+    “Esse resultado é reflexo do nosso esforço na redução de despesas dentro da companhia”, complementa.
+
+    Além de ter dinheiro em caixa, a companhia também está se esforçando para aumentar a receita, que
+    cresceu 20% no trimestre na comparação ano a ano, chegando aos R$ 231,2 milhões. No semestre, o indicador
+    atingiu R$ 443,8 milhões.
+
+    Na visão do CFO, esse aumento é fruto do lançamento do novo formato de venda dos produtos, o Zenvia
+    Customer Cloud, que une a experiência do cliente em apenas um local. Apesar de não ter sido divulgado,
+    o software já está sendo contratado por consumidores que, em sua maioria, são novos na plataforma.
+
+    Além disso, a empresa afirmou que implementou uma solução de chatbot à base de
+
+    generativa, que conta com mais de 100 chats ativos, o que também ajuda nesses números.
+
+    Apesar disso, o prejuízo líquido da companhia continua sendo uma questão. No segundo trimestre, o
+    prejuízo foi de R$ 15,9 milhões, aumento de 5% em comparação ao mesmo período de 2023. Nos primeiros
+    seis meses do ano, esse valor atingiu R$ 72,2 milhões, crescimento do 126%.
+
+    “Nós temos despesas com juros, que são referentes ao endividamento, e isso acaba nos levando a ter
+    prejuízo”, afirma Chor. “Porém, é importante lembrar que nós fizemos um reperfilamento da dívida em
+    fevereiro e tivemos um aporte de R$ 50 milhões no mesmo período, o que nos deixa menos preocupados
+    com a situação.”
+
+    No primeiro semestre, os passivos da companhia cresceram para R$ 622 milhões. Para o CFO, a única
+    forma de reverter essa situação é gerando caixa - que é o que a companhia tem feito. Em sua visão,
+    o segundo semestre promete ser ainda mais forte, como costuma ser para a companhia.
+
+    “Com as campanhas de Black Friday e Natal, que ocorrem no quarto trimestre, a gente espera ver esse
+    números subirem ainda mais, para fechar o ano com os valores que prometemos para os investidores no
+    início de 2024”, afirma o executivo.
+
+    Listada na Nasdaq, a ação da Zenvia acumula alta de 33% no ano. O valor de mercado da companhia é
+    de US$ 85,4 milhões.'
+- tipo: noticia
+  titulo: Zenvia lança solução de atendimento de IA na nuvem
+  url_fonte: https://www.mobiletime.com.br/noticias/25/11/2024/zenvia-customer-cloud/
+  data_publicacao: null
+  conteudo_texto: 'Zenvia lança solução de atendimento ao cliente de IA generativa na nuvem
+
+    Isabel Butcher | 25/11/24 19:58
+
+    lança sua solução que leva inteligência artificial para a nuvem. A Zenvia Customer Cloud combina IA
+    com solução de gestão dos processos de jornada do cliente, que vai do marketing e vendas ao atendimento
+    e relacionamento.
+
+    A proposta da solução é ajudar a gerir as experiências de milhares de consumidores em um lugar. Unifica
+    processos de interação em todas as etapas e em diferentes canais de comunicação – entre eles aplicativo
+    da empresa, e-mail, SMS e WhatsApp.
+
+    Em vendas, a Zenvia Customer Cloud oferece suporte com campanhas de marketing mais assertivas, além
+    de dar apoio ao time de vendas. E, no caso do atendimento, apresenta uma ferramenta de autosserviço.
+
+    A ferramenta pode ser usada por todo o tipo e tamanho de empresa.
+
+    Zenvia Customer Cloud é omnicanal
+
+    Sua IA generativa permite respostas mais rápidas e baseadas no histórico do cliente, inclusive os
+    sentimentos da pessoa no momento da conversa. Contribui também para a empresa ter uma visão completa
+    do consumidor e em qualquer ponto da jornada. A inteligência artificial proporciona personalização
+    das ofertas e da comunicação baseada em insights gerados pela tecnologia.
+
+    Outro ponto da solução da Zenvia é a multicanalidade, permitindo que o cliente interrompa uma conversa
+    em um canal e recomece em outro, sem perder o histórico.
+
+    A empresa também garante que a Customer Cloud é capaz de integrar com outros sistemas da empresa cliente.'
+- tipo: site
+  titulo: Zenvia — plataforma de experiência do cliente
+  url_fonte: https://www.zenvia.com/
+  data_publicacao: null
+  conteudo_texto: 'Fale conosco:
+
+    Já sou cliente
+
+    Olá! Informe seu
+
+    abaixo para iniciar a conversa no WhatsApp.
+
+    Revolucione a jornada do seu cliente com uma solução de IA completa
+
+    Venda mais e atenda melhor oferecendo experiências mais pessoais, envolventes e fluidas.
+
+    Agende uma demo
+
+    Olá! Informe seu
+
+    abaixo para iniciar a conversa no WhatsApp.
+
+    Conheça a solução
+
+    Zenvia Customer Cloud
+
+    IA completa para vender mais e
+
+    Pare de apagar incêndio no seu atendimento.
+
+    Centralize, automatize e ganhe o controle da operação
+
+    com uma solução de IA completa para gestão de atendimento.
+
+    Estamos na final do Prêmio Reclame AQUI! 🏆
+
+    Nosso orgulho é atender você bem. Seu voto faz toda a diferença.
+
+    Já são mais de
+
+    10 mil clientes
+
+    moldando um novo mundo de experiências.
+
+    A experiência do seu cliente unificada de ponta a ponta com automação de atendimento.
+
+    Tudo em um só lugar
+
+    .
+
+    Uma solução de IA completa,
+
+    que permite que sua empresa gerencie toda jornada do cliente,
+
+    da atração ao pós-venda
+
+    . Tornando a experiência com a sua marca mais
+
+    pessoal, envolvente e fluida
+
+    por meio de interações mais rápidas, estratégicas e eficientes.
+
+    Agende uma demo
+
+    Olá! Informe seu
+
+    abaixo para iniciar a conversa no WhatsApp.
+
+    Agende uma demo
+
+    Olá! Informe seu
+
+    abaixo para iniciar a conversa no WhatsApp.
+
+    Dê o play e veja como vender mais e atender melhor com Zenvia Customer Cloud.
+
+    Benefícios da Zenvia Customer Cloud para a jornada do seu cliente.
+
+    Centralize a operação de vendas e acelere a automação de atendimento em uma única solução.
+
+    Multicanalidade de ponta a ponta
+
+    Ofereça uma jornada com automação de atendimento entre os canais de comunicação mais eficientes.
+
+    Experiência rápida com fluidez
+
+    Conte com um portfólio completo, eliminando a necessidade de contratação de diversas soluções.
+
+    Jornada do cliente eficiente
+
+    Impressione seu cliente desde o primeiro contato até o pós-venda com recursos completos e fáceis de
+    usar.
+
+    Monitoramento e análise de dados
+
+    Tome decisões mais rápidas e estratégicas com dashboards inteligentes e insights unificados em um
+    só lugar.
+
+    Unifique, automatize e evolua a experiência do cliente com Zenvia Customer Cloud.
+
+    Da atração de leads e atendimento até a construção de chatbots e geração de insights para fidelizar
+    clientes.
+
+    SOLUÇÃO COMPLETA PARA
+
+    Atraia mais leads com campanhas personalizadas e disparos em massa por diversos canais.
+
+    Disparos de campanhas em massa com fluxos e réguas automatizadas
+
+    Segmentação e agrupamento de contatos personalizados para sua base
+
+    Análises e relatórios completos sobre a performance das campanhas
+
+    SOLUÇÃO COMPLETA PARA
+
+    Centralize a operação comercial, reduza tempo de resposta e aumente sua conversão de vendas com automação
+    de atendimento.
+
+    Caixa de atendimento unificada para os canais preferidos dos seus clientes
+
+    Triagem com atribuição automatizada para aumentar a produtividade do time
+
+    Integrações nativas com diversas ferramentas para potencializar o atendimento
+
+    SOLUÇÃO COMPLETA PARA
+
+    Centralize seu atendimento pós-venda com automação de atendimento e gestão completa de tickets.
+
+    Painel de atendimento organizado e personalizável para tickets de chat e e-mail
+
+    Configuração de gatilhos e notificações para ações automáticas em tickets
+
+    Base de conhecimento completa e personalizada com IA generativa
+
+    SOLUÇÃO COMPLETA PARA
+
+    Utilize dados e agentes de IA para personalizar o atendimento e fidelizar clientes.
+
+    Dados centralizados em CDP para identificar e sugerir ações com a base
+
+    Integração nativa com ERPs para conectar dados e automatizar a operação
+
+    Chatbots inteligentes criados em minutos com o poder da IA generativa
+
+    Agende uma demo
+
+    Olá! Informe seu
+
+    abaixo para iniciar a conversa no WhatsApp.
+
+    Transforme a experiência do cliente com automação de atendimento e
+
+    Agentes de IA
+
+    Zenvia Customer Cloud
+
+    , sua operação conta com
+
+    agentes de IA
+
+    que automatizam tarefas repetitivas, geram insights e mantêm o atendimento eficiente. Assim seu time
+    foca nas decisões estratégicas que realmente importam. Deixe os agentes trabalharem por você!
+
+    Agende uma demo
+
+    Olá! Informe seu
+
+    abaixo para iniciar a conversa no WhatsApp.
+
+    Zenvia Customer Cloud:
+
+    solução hiperconectada que integra seus dados com CDP nativo para uma visão 360º dos clientes e personalização
+    da experiência.
+
+    Na Zenvia sua empresa conecta dados, canais e inteligência artificial para entregar experiências únicas
+    em todos os pontos de contato.
+
+    Conheça o Meta Business Agent
+
+    a nova geração de Agentes de IA da Meta.
+
+    Escale sua operação com uma força de trabalho infinita no WhatsApp. Alie a
+
+    inteligência dos Agentes da Meta
+
+    robustez da Zenvia Customer Cloud
+
+    para integrar sistemas de ponta a ponta e garantir interações contextualizadas que convertem conversas
+    em receita.
+
+    Zenvia Customer Cloud
+
+    , histórias reais geram resultados incríveis!
+
+    de aumento na retenção
+
+    de taxa de satisfação
+
+    de redução nos custos
+
+    “Conseguimos sair de um cenário muito caótico para mudar a experiência do cliente. Quando fazemos
+    uma pesquisa de satisfação com nossos consumidores, percebemos que aqueles que são atendidos pelos
+    canais digitais trazem uma nota 28% maior do que aqueles que são atendidos por ‘humanos’. Foi uma
+    experiência bem legal e que trouxe grande satisfação.”
+
+    Fabricia Ruiz Braga
+
+    Gerente de Projetos de Atendimento ao Cliente no
+
+    Grupo Casas Bahia
+
+    Ler case completo
+
+    do tempo de atendimento otimizado
+
+    dos chamados abertos pela solução Zenvia
+
+    dos chamados atendidos dentro do SLA
+
+    “A Zenvia revolucionou o nosso setor de atendimento, melhorou os processos para os agentes e possibilitou
+    uma visualização mais fácil das demandas para os gestores. Foi um grande marco entre o que era o nosso
+    atendimento e o que é hoje, nos ajudando a oferecer um suporte de excelência para os nossos assessores.”
+
+    Tania Natali Costa
+
+    Coordenadora de Suporte de Classificados no
+
+    Ler case completo
+
+    de redução de CAC nos canais digitais
+
+    de aumento nos atendimentos ativos
+
+    de aumento nos atendimentos receptivos
+
+    “Sempre tivemos a intenção de atender bem os clientes resolvendo o problema de uma maneira humana
+    e eficiente. Nosso negócio requer um atendimento ágil, pois estamos tratando de algo importante que
+    é a saúde dos pets e em alguns casos precisamos agir muito rápido, a Zenvia nos ajuda a executar essa
+    atividade com muita eficiência.”
+
+    Ler case completo
+
+    dos acessos no bot vindos do WhatsApp
+
+    de redução no transbordo humano
+
+    de redução no tempo para abrir um sinistro
+
+    “O atendimento ágil proporcionado pela Zenvia nos canais digitais da MAPFRE representa uma mudança
+    importante na forma como os clientes e segurados experienciam o setor de seguros. A capacidade de
+    acessar informações, efetuar solicitações e acionar assistência de maneira rápida e conveniente, a
+    qualquer hora e em qualquer lugar, transforma a experiência do usuário.”
+
+    Diretora de CSC, Processos e Automação na
+
+    Ler case completo
+
+    de redução em cancelamentos
+
+    de aumento na utilização dos produtos
+
+    de redução no tempo de abertura de chamado
+
+    “A Zenvia foi a solução escolhida para escalar customer success para toda nossa base de clientes e
+    atuar no momento certo, pois era necessário uma ferramenta, com a tecnologia que suportasse a estratégia
+    de atuação com os clientes.”
+
+    Gerente de Sucesso do Cliente na
+
+    Ler case completo
+
+    de aumento na conversão via disparos
+
+    redução na taxa de abandono
+
+    de aumento na conversão orgânica
+
+    “Hoje nós conseguimos entender exatamente o motivo do abandono dos alunos e saber qual parte da operação
+    não agradou. Anteriormente, tínhamos uma taxa maior e sem entender o porquê dessa saída. Hoje, com
+    a Zenvia, isso faz toda a diferença.”
+
+    Coordenador de Planejamento e Qualidade na
+
+    Ler case completo
+
+    de aumento na conversão de clientes
+
+    de ganho na carteira de clientes
+
+    “Antes de adotar a solução da Zenvia, chegamos a perder um cliente por causa do tempo de resposta.
+    A solução Zenvia trouxe automação, facilitando a qualificação de leads, que foi importante para a
+    definição de persona e o agrupamento de informações sobre os clientes, melhorando o fluxo de atendimento
+    e a experiência deles.”
+
+    Head de Marketing na
+
+    Ler case completo
+
+    de índice de satisfação dos clientes
+
+    de redução no tempo de implementação
+
+    dos chamados atendidos dentro do SLA
+
+    “A ferramenta antiga não transformava automaticamente os e-mails recebidos em ticket, por isso, eu
+    precisava de um agente exclusivamente para identificar esses contatos por e-mail e, então, abrir um
+    ticket junto ao suporte. Percebemos logo na primeira semana que a Zenvia organizou e otimizou o nosso
+    fluxo de trabalho e isso foi incrível.”
+
+    Head de Customer Experience na
+
+    Ler case completo
+
+    de aumento nos contratos
+
+    mensagens enviadas aos clientes
+
+    “Hoje conseguimos desenhar uma jornada em que o cliente consegue chegar sozinho até a parte de enviar
+    a documentação da locação. O nosso cliente comunica para o bot o que ele está procurando e consegue
+    fazer o agendamento de visita diretamente pelo WhatsApp. Existem ferramentas que são muito robóticas,
+    mas com a Zenvia, temos a vantagem de conectar a parte humana, dando essas duas opções ao cliente.”
+
+    Gerente de Projetos na
+
+    Ler case completo
+
+    chamados por mês
+
+    de satisfação de NPS
+
+    “A Zenvia nos deu total assistência, configurando e treinando o time para usarmos a solução. Após
+    o ínicio da operação todas as expectativas foram atendidas e usamos a Zenvia como principal solução
+    de atendimento.”
+
+    Gerente de Governança de TI na
+
+    Ler case completo
+
+    Múltiplos canais, para uma experiência única.
+
+    Conecte-se ao seu cliente, onde ele estiver. Crie jornadas unificadas e inteligentes que integram
+    todos os pontos de contato.
+
+    dos celulares brasileiros são
+
+    59 milhões de usuários
+
+    . Implemente agora na sua operação!
+
+    Solução de IA completa
+
+    de pessoas ao redor do mundo utilizam o aplicativo
+
+    para conversas. Esteja presente nele!
+
+    buscam por produtos e serviços no Instagram
+
+    . Conecte-se com o seu público!
+
+    são trocadas todos os meses no
+
+    . Engaje seus leads e clientes por lá!
+
+    dos consumidores esperam interações personalizadas e
+
+    76% se decepcionam
+
+    quando elas não acontecem.
+
+    das mensagens enviadas por
+
+    lidas em até 3 minutos
+
+    . Escolha o canal com
+
+    98% de taxa de leitura
+
+    e engaje em tempo real!
+
+    ainda preferem o
+
+    para interações com marcas. Fortaleça sua comunicação!
+
+    Multicanalidade de verdade só com a
+
+    visitantes buscam comunicação em tempo real
+
+    . Implemente o
+
+    em seu site hoje mesmo!
+
+    Múltiplos canais, para uma experiência única.
+
+    Conecte-se ao seu cliente, onde ele estiver. Crie jornadas unificadas e inteligentes que integram
+    todos os pontos de contato.
+
+    dos celulares brasileiros são
+
+    59 milhões de usuários
+
+    . Implemente agora na sua operação!
+
+    Solução de IA completa
+
+    de pessoas ao redor do mundo utilizam o aplicativo
+
+    para conversas. Esteja presente nele!
+
+    buscam por produtos e serviços no Instagram
+
+    . Conecte-se com o seu público!
+
+    são trocadas todos os meses no
+
+    . Engaje seus leads e clientes por lá!
+
+    dos consumidores esperam interações personalizadas e
+
+    76% se decepcionam
+
+    quando elas não acontecem.
+
+    das mensagens enviadas por
+
+    lidas em até 3 minutos
+
+    . Escolha o canal com
+
+    98% de taxa de leitura
+
+    e engaje em tempo real!
+
+    ainda preferem o
+
+    para interações com marcas. Fortaleça sua comunicação!
+
+    Multicanalidade de verdade só com a
+
+    visitantes buscam comunicação em tempo real
+
+    . Implemente o
+
+    em seu site hoje mesmo!
+
+    Descubra como nossa solução transforma e impulsiona a experiência de empresas dos mais variados segmentos
+
+    Revolucione seu varejo para atrair clientes e vender até 2x mais em todos os canais
+
+    Transforme as relações da sua instituição financeira oferecendo uma experiência diferenciada e segura
+
+    Inove a jornada do seu aluno da captação a retenção, com um atendimento personalizado e eficiente
+
+    Crie experiências envolventes com a solução ideal para cuidar da comunicação com pacientes
+
+    Torne o atendimento para seu segurado mais ágil e humanizado e evolua seus indicadores com rapidez
+
+    Centralize canais e otimize a jornada do cliente da sua construtora ou incorporadora
+
+    Aprofunde seu conhecimento com conteúdos do nosso blog.
+
+    Mantenha sua empresa atualizado sobre as principais tendências de experiência do cliente.
+
+    Inteligência Artificial Generativa: encante seus clientes com essa inovação
+
+    Experiência do cliente e Inteligência artificial: conheça os usos para sua empresa
+
+    Experiência do cliente: conheça os benefícios de investir
+
+    FAQ – Principais dúvidas
+
+    O que é a Zenvia?
+
+    A Zenvia é uma empresa de tecnologia focada em Customer Experience (CX). Ela oferece soluções de Inteligência
+    Artificial (IA) completas para que marcas possam vender mais e atender melhor, otimizando toda a jornada
+    de relacionamento com o consumidor.
+
+    O que é Zenvia Customer Cloud?
+
+    Zenvia Customer Cloud é uma solução de IA completa, unificada e multicanal. Como ecossistema em nuvem,
+    centraliza dados, comunicação e automação, permitindo que as empresas gerenciem toda a jornada do
+    cliente, da atração ao pós-venda, em um único ambiente digital.
+
+    Como a Inteligência Artificial atua no atendimento e nas vendas?
+
+    A solução utiliza IA Generativa para automatizar tarefas complexas e gerar insights em tempo real.
+    Por meio de agentes de IA, a Zenvia Customer Cloud permite responder clientes com chatbots inteligentes
+    e personalizar interações em escala, garantindo eficiência operacional e produtividade.
+
+    Quais canais podem ser integrados à solução?
+
+    Zenvia Customer Cloud conecta empresas e clientes nos principais pontos de contato, como WhatsApp,
+    Instagram, Messenger, SMS, e-mail e RCS. Como Parceiro Oficial WhatsApp (BSP), a Zenvia garante segurança
+    enterprise e acesso prioritário a recursos oficiais da Meta.
+
+    Zenvia Customer Cloud permite integração com outros sistemas?
+
+    Sim. A solução possui portas de API e conectores nativos para integração com CRMs, ERPs e sistemas
+    de gestão. Isso possibilita uma visão 360º de toda a jornada, unificando informações para que as marcas
+    possam tomar decisões estratégicas baseadas em dados reais.
+
+    Quais setores podem se beneficiar com as soluções da Zenvia?
+
+    A Zenvia Customer Cloud oferece expertise aplicada a diversos segmentos, com destaque para Varejo,
+    Educação, Seguros, Financeiro, Saúde e Construção. A solução é desenhada para resolver dores específicas
+    de cada mercado, focando sempre em gerar ROI e evolução para o negócio.
+
+    falar com o time de vendas
+
+    clique aqui.
+
+    Olá! Informe seu'
