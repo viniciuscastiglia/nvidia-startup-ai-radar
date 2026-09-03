@@ -2561,7 +2561,7 @@ código em 02/09, e esta é a parte que muda o que se defende:
 |---|---|---|---|
 | **LLM** (`src/llm.py`) | **NÃO.** `USAR_JUIZ_LLM`, `JULGAR_SUSTENTACAO` e `CONFIANCA_DA_EVIDENCIA` são `False` **por medição** (D-056, D-059, D-075), e o grafo nunca chama `responder()` | não precisa | **sim** |
 | **Cohere rerank** | sim, passo 7 | **existe e é medida**: `RERANK_PROVEDOR=nenhum` degrada para a híbrida, número a número (D-068) | quase |
-| **Embedder** | **SIM, em toda consulta** — `busca.py:122`, dentro de `buscar_denso_bruto` | **NENHUMA** | **NÃO** — troca o espaço vetorial e invalida os 381 vetores; é `reembedar.py` mais re-medir a régua inteira (D-046) |
+| **Embedder** | **SIM, em toda consulta** — `busca.py:122`, dentro de `buscar_denso_bruto` | **NENHUMA** | **NÃO** — troca o espaço vetorial e invalida os **377** vetores; é `reembedar.py` mais re-medir a régua inteira (D-046). *O "381" corrigido em D-089* |
 
 **A folga veio no componente que já não carregava peso.** O que sobrou sem plano B é o **embedder**,
 e ele é o único cuja morte para o sistema em vez de degradá-lo. Isto não é motivo para construir
@@ -2657,6 +2657,81 @@ Rejeitada porque o `plano.md` é o primeiro arquivo que toda sessão abre e trê
 terceiro deixa um campo obrigatório fora da fila. Corrigir agora: 15 min. Manter: uma sessão inteira
 orientada por um mapa errado.
 
+## D-089 — O teste de clone limpo: o sistema roda do zero, e a execução achou 4 defeitos que a leitura não acharia
+**Data:** 03/09/2026 · clone real do GitHub, ambiente novo, banco novo · **nada foi consertado nesta sessão, de propósito**
+
+**O protocolo, e ele importa:** `git clone` do **remoto** (não cópia local, para pegar o que só
+existe na minha máquina), conda 3.12 novo, `.env` **apenas** com o que o `.env.example` documenta,
+banco `case_nvidia_clone` separado do de produção. Cada linha abaixo é comando e saída, não leitura.
+
+### O que FUNCIONA — e isto fecha um eliminatório
+
+| passo | resultado |
+|---|---|
+| `pip install -r requirements.txt` em Python **3.12.13** novo | **exit 0**, zero conflito nos 57 pinos |
+| `psql -f scripts/init_db.sql` em banco novo | **exit 0** · 3 tabelas · `vector`, `pg_trgm`, `unaccent` |
+| `seed.py --verificar-urls` | **24/24 URLs em 200** · 8 startups · 24 documentos — confirma que o seed é auto-contido sem `data/raw/` |
+| `ingerir_nvidia.py` | **175 estruturais + 202 de controle = 377**, 16 tecnologias — **a mesma contagem do corpus medido** |
+| `avaliar_rag.py --validar` | **24/24 válidas** contra o corpus baixado hoje |
+| `python -m src.graph` | **exit 0**, briefing completo, com evidência e URL em toda conclusão |
+
+**"Projeto que não executa" deixa de ser risco por suposição.** Um clone do repositório público roda
+ponta a ponta hoje.
+
+### O que NÃO está escrito — a lista que vira o README de 06/09
+
+1. **O repositório não sabe criar o próprio ambiente.** Não há `environment.yml`, `pyproject.toml`
+   nem Makefile. O `conda activate case-nvidia` do `CLAUDE.md` pressupõe um ambiente que ninguém
+   além de mim tem, e **a versão do Python existe só como comentário** (`CLAUDE.md:179`).
+2. **`createdb case_nvidia` não está em lugar nenhum.** `init_db.sql` **não** cria o banco, e o
+   comando documentado (`psql -d case_nvidia -f ...`) falha em máquina nova. Eu precisei saber disso.
+3. **O caminho Docker é bom e a `DATABASE_URL` dele não está escrita.** O compose sobe
+   `postgres:postgres@localhost:5433`; o `.env.example` traz `localhost:5432` sem usuário; o
+   `CLAUDE.md` diz *"ajustar `DATABASE_URL`"* **sem dar a string**.
+4. **`COHERE_REQ_POR_MIN`, confirmado mecanicamente:** das **17** env vars lidas por `config.py`, é a
+   **única** ausente do `.env.example` — e nenhuma documentada deixou de ser lida. O item do plano
+   estava correto e completo.
+
+### O que a EXECUÇÃO achou, e a leitura não acharia (D-083 de novo)
+
+**1. O corpus DERIVOU em menos de 24 horas — agora medido, não temido.** Mesma contagem (175
+estruturais), **hash diferente**. A página do TensorRT-LLM rolou a lista de posts: entraram
+`[08/29] ADP Balance Strategy` e `[09/02] Accelerating Video Generation…`, e entrou lixo novo
+(`✨ ➡️ link`). **O gabarito sobreviveu — 24/24 — porque a deriva bateu em RUÍDO, não em âncora.**
+Isso muda a natureza do item "as 16 fontes não estão cacheadas": não é risco hipotético para a
+semana que vem, é **deriva diária observada**, e a próxima pode pegar uma âncora. Cada dia sem cache
+afasta o corpus da web do corpus que produziu os números de D-068.
+
+**2. O briefing do usuário imprime um ponteiro interno de decisão.** `evidence_validator.py:210`
+monta, e `briefing.py:258` imprime, a linha: *"mínimo sobre as 9 afirmações do perfil, incluindo 6
+dor(es) observada(s) — **ver D-059** para por que este agregado é o defeito que a régua mede em
+0/6"*. A intenção era honesta (*"o defeito NOMEADO em vez de escondido"*), mas **o gerente lê isso, e
+o vídeo mostra isso**. Sharpen direto na **P-11**: o campo não é só sem informação, ele vaza nota de
+engenharia para dentro do entregável.
+
+**3. O seletor de D-086 é atraído por barra de badges.** A `justificativa_tecnica` de uma
+recomendação saiu como `Sensor simulation pipelines… / GitHub Workflows Documentation / Python |
+PyTorch`. A heurística é **densidade de marcador técnico** — e `Python | PyTorch | NumPy` é a linha
+mais densa da página inteira. **Não é regressão** (D-086 mediu 4/6 servindo, e este é outro run), é
+o **mecanismo** da falha restante, agora com evidência e chunk de origem.
+
+**4. Quatro números que já não são verdade sobre o sistema que roda hoje** (contra D-073):
+`CLAUDE.md:144` e a tabela de risco de **D-087** dizem **381 vetores** — são **377**; a linha da
+**P-18** diz `LLM_TIMEOUT=30 / ~90 s` — roda **120** desde D-080; `plano.md` §7 diz `src/` com
+**3.783 linhas** — são **4.208**.
+
+### Por que nada foi consertado aqui
+
+A sessão do dia é em plan mode, à parte. **O clone limpo é instrumento de descoberta, e consertar
+dentro dele misturaria achado com correção** — o mesmo motivo pelo qual a régua de D-086 foi
+commitada antes do seletor. Os quatro achados entram no plano com dia; os dois de código (2 e 3) são
+da sessão do dia, não desta.
+
+**Alternativa descartada:** rodar o clone só até `pip install`, para poupar API. Rejeitada — os
+quatro achados **estão todos depois da instalação**, e três deles só aparecem com o grafo rodando.
+Um teste de clone que para antes de executar teria confirmado exatamente o que a leitura de código
+já dizia, que é a falha que D-083 nomeou.
+
 ---
 
 ## Decisões pendentes
@@ -2676,7 +2751,7 @@ orientada por um mapa errado.
 | **P-11** | **O `min()` da confiança** | 0/6 constante. Barato, mas exige critério fixado antes — uma tentativa já foi reprovada (D-059) |
 | ~~P-16~~ | ~~Julgamento semântico no Evidence Validator~~ | **medido e REPROVADO em D-075** — 4 de 5 alvos passam, o recall no Recommendation falha nas três execuções |
 | **P-17** | **`recommendation.py` trata `validada` como booleano** | **D-077: a gradação total foi aplicada e é INERTE** — flag desligada, `confianca` sem leitor, régua espelhando o código antigo. E o critério (recall ≥ 88% com precisão ≥ 80%) é inalcançável assim: admitir tudo dá 100%/49%. Falta a admissão PARCIAL, por `dores_enderecadas` e não por `confianca` |
-| ~~P-18~~ | ~~`src/llm.py` sem `timeout`~~ | **D-076** — `LLM_TIMEOUT=30` por tentativa, `max_retries=2` do SDK mantido: ~90 s de teto combinado |
+| ~~P-18~~ | ~~`src/llm.py` sem `timeout`~~ | **D-076** — `LLM_TIMEOUT` por tentativa, `max_retries=2` do SDK mantido. **O valor subiu para 120 em D-080**, porque com 30 s cinco de oito chamadas estouravam a primeira tentativa: teto combinado ~360 s (D-089) |
 | **P-12** | **`classe`: vocabulário ou curadoria?** | D-060 mostrou que o gargalo não é a regra de decisão. Exige base ampliada |
 | ~~P-13~~ | ~~Exclusão por menção vs. identidade~~ | **D-085** — veto de terceiro com escopo de frase. Falso positivo 2/7 → **7/7**, falso negativo 7/7 sem regressão |
 | **P-14** | **Quatro campos são calculados e nada os lê** | `estrategia_analise` e `exige_sinais_ia` (Query Planner), `score_recuperacao` (Retriever), `motivo_validacao` (Evidence Validator). Não é código morto — é capacidade anunciada e não entregue: a arquitetura publicada promete *"critérios de busca + estratégia de análise"*. Ou o subgrafo passa a lê-los, ou o diagrama para de prometê-los |

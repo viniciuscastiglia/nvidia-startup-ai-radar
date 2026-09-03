@@ -141,7 +141,7 @@ Consulta do usuário
 >   descrevem só respostas que CHEGAM; um **timeout não é conclusão**. O smoke separa os casos e
 >   imprime a conduta. **`LENTO` NÃO justifica trocar de modelo** — em 02/09, lê-lo como EOL teria
 >   aberto uma migração desnecessária a 5 dias do vídeo.
-> - **Env var não protege o embedder.** Trocar o modelo muda o espaço vetorial e invalida os 381
+> - **Env var não protege o embedder.** Trocar o modelo muda o espaço vetorial e invalida os 377
 >   vetores — é `scripts/reembedar.py` mais re-medir a régua inteira (D-046).
 > - **O teto da trial do Cohere é pior que a documentação:** o 429 chega na 4ª chamada sequencial,
 >   `retry-after` vem ausente, recuperação de ~26 s. Por isso `src/rag/rerank.py` tem limitador
