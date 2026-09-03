@@ -97,7 +97,21 @@ EXCLUSOES = {
                "token não fungível", "nft"],
     "cloud provider": ["cloud service provider", "provedor de nuvem", "datacenter próprio"],
     "revenda": ["revend", "distribuidor", "reseller"],   # prefixo: cobre revenda E revendedor (D-071)
-    "capital aberto": ["capital aberto", "listada na b3", "publicly traded", "ipo concluído"],
+    # A LISTA ERA B3-CÊNTRICA, E ISSO ERA O CASO MAIS COMUM, NÃO O EXÓTICO (03/09, D-094).
+    # Tinha "listada na b3" e "ipo concluído", e a Zenvia — listada na NASDAQ desde 2021 — saía
+    # ELEGÍVEL. Metade das brasileiras que abrem capital lista fora do Brasil: Nubank e VTEX na
+    # NYSE, PagSeguro, StoneCo, XP e Zenvia na Nasdaq. O conceito estava certo; o vocabulário
+    # cobria uma bolsa só.
+    #
+    # POR QUE NÃO `"listada na"` GENÉRICO: casaria "listada na Forbes", "listada na pesquisa".
+    # O veto de terceiro de D-085 não ajuda aí — ele responde de QUEM a frase fala, não o que a
+    # frase significa. Então a lista nomeia as bolsas e as formas legais, e paga o preço de ser
+    # lista: só cobre o que já se viu. `companhia aberta` é o termo do direito societário
+    # brasileiro e vale mais que qualquer nome de bolsa.
+    "capital aberto": ["capital aberto", "companhia aberta", "abriu capital",
+                       "listada na b3", "listada na nasdaq", "listada na nyse",
+                       "listada em bolsa", "listada na bolsa",
+                       "publicly traded", "ipo concluído"],
 }
 IDADE_MAXIMA = 10   # o programa exige menos de 10 anos de existência
 
@@ -145,6 +159,17 @@ MARCADORES_DE_TERCEIRO = [
     "integramos", "integrou",
     # (3) o que o termo nomeia é declaradamente DE FORA
     "externa", "externo", "de terceiros",
+    # (4) O TERMO NOMEIA UM MERCADO, NÃO A EMPRESA — categoria nova em 03/09 (D-094).
+    # Ela nasceu de um falso positivo que ESTA MESMA SESSÃO criou: ao pôr `stablecoin` na lista
+    # de cripto, a Iniciador — infraestrutura de Open Finance e Pix — passou a ser recusada por
+    # *"disputada por gigantes de cartões e pelo mercado de stablecoins"*. Não é "outra empresa"
+    # (categoria 1) nem "somos consumidores" (categoria 2): é contexto competitivo.
+    #
+    # POR QUE `"mercado de stablecoin"` E NÃO `"mercado de"` GENÉRICO: *"atuamos no mercado de
+    # criptomoedas"* É declaração de identidade, e um marcador genérico a vetaria — trocando um
+    # falso positivo visível por um falso NEGATIVO silencioso, que D-052 nomeou como o pior dos
+    # dois. Marcador observado, escopo estreito, preço declarado: só cobre o que já se viu.
+    "mercado de stablecoin",
 ]
 
 # `;` entra junto de `.!?` porque em texto institucional a enumeração com ponto e vírgula separa

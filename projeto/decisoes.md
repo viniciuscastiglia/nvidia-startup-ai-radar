@@ -3000,6 +3000,65 @@ o passo 7, e aí a chamada é deliberada — a mesma disciplina de `--juiz` e `-
 
 ---
 
+## D-094 — A varredura das 30 de uma vez: `capital aberto` era B3-cêntrica, e eu criei um falso positivo consertando cripto
+**Data:** 03/09/2026 · **o método é a decisão**
+
+**O QUE MUDOU FOI COMO EU PROCUREI.** D-091 e D-092 saíram de LER briefings — e ler briefing é
+amostragem. Depois do terceiro achado da mesma forma (conceito certo, vocabulário estreito),
+parei de amostrar e escrevi uma varredura que roda `extractor` + `elegibilidade()` **nas 30 de
+uma vez, sem grafo e sem API**, e imprime o veredito de cada uma numa tabela. **Ela achou dois
+casos na primeira execução, e um deles eu tinha acabado de criar.**
+
+**ACHADO 1 — `capital aberto` era B3-CÊNTRICA, e isso era o caso COMUM, não o exótico.**
+A lista tinha `"listada na b3"` e `"ipo concluído"`. A **Zenvia** está na **Nasdaq desde 2021** e
+saía **ELEGÍVEL**. Metade das brasileiras que abrem capital lista fora: Nubank e VTEX na NYSE,
+PagSeguro, StoneCo, XP e Zenvia na Nasdaq. A frase *"Listada na Nasdaq, a companhia registrou um
+crescimento de 126% no Ebitda"* está literalmente num trecho de evidência — o filtro tinha tudo
+para vê-la e não tinha a palavra.
+**Descartado `"listada na"` genérico:** casaria *"listada na Forbes"*, e o veto de terceiro não
+ajuda — ele responde de QUEM a frase fala, não o que ela significa. Entraram as bolsas por nome
+mais `companhia aberta` (o termo do direito societário) e `abriu capital`.
+
+**ACHADO 2 — EU CRIEI UM FALSO POSITIVO EM D-091, E A VARREDURA O PEGOU NO MESMO DIA.**
+Ao pôr `stablecoin` na lista de cripto, a **Iniciador** — infraestrutura de Open Finance e Pix —
+passou a ser recusada por *"disputada por gigantes de cartões e pelo **mercado de stablecoins**"*.
+O termo nomeia o **mercado**, como contexto competitivo. **Não é nenhuma das duas categorias que
+D-085 previu:** não é "outra empresa" (categoria 1) nem "somos consumidores" (categoria 2). É uma
+terceira forma de sujeito, e virou a **categoria 4** de `MARCADORES_DE_TERCEIRO`.
+**Descartado `"mercado de"` genérico:** *"atuamos no mercado de criptomoedas"* É identidade, e o
+marcador genérico a vetaria — trocando um falso positivo VISÍVEL por um falso negativo
+SILENCIOSO, que D-052 nomeou como o pior dos dois.
+
+**A régua, com os dois lados e casos REAIS, ao longo do dia:**
+
+| momento | falso negativo | falso positivo | casos |
+|---|---|---|---|
+| início de 03/09 | 7/7 | 7/7 | 14 (5 de fixture) |
+| D-091 (cripto: `blockchain` sai, `stablecoin` entra) | 9/9 | 8/8 | 17 |
+| D-092 (`parceria entre`) | 9/9 | 9/9 | 18 |
+| **D-094 (Nasdaq + mercado de stablecoin)** | **10/10** | **11/11** | **21 (11 de fixture)** |
+
+**De 5 casos de fixture para 11.** A régua deixou de ser majoritariamente sintética.
+
+**O VEREDITO DAS 30, e ele está certo empresa por empresa:** 4 por **idade** (Agrorobótica 2015,
+Agrotools 2007, Automni 2014, JetBov 2015) · 1 **consultoria** (Deal) · 1 **cripto** (Liqi) ·
+1 **capital aberto** (Zenvia). As outras 23 passam, **incluindo Ecotrace e Iniciador**, que eram
+os dois falsos positivos do dia.
+
+**A LIÇÃO DE MÉTODO, E ELA É A DECISÃO:** três defeitos da mesma forma escaparam de duas sessões
+de auditoria e de dezenas de greps. **O que os achou foi rodar o componente sobre a base
+inteira** — 30 empresas, um `print` por empresa, zero API, poucos segundos. D-083 diz *"rode o
+sistema"*; isto é o corolário: **rode-o sobre TUDO, não sobre uma amostra**, porque a amostra
+esconde exatamente o caso que você não imaginou. E o mais importante: **a varredura pegou um
+defeito MEU, introduzido 40 minutos antes.** Instrumento que só confirma o que você espera não é
+instrumento.
+
+**Alternativa descartada:** parar depois de D-092, já que a régua estava 9/9 e 9/9. Rejeitada —
+a régua mede o que está NELA, e os dois defeitos deste registro não estavam. **Régua verde não é
+prova de ausência; é prova sobre os casos que alguém pensou em escrever.**
+
+---
+
 ## Decisões pendentes
 
 | # | Decisão | Estado |

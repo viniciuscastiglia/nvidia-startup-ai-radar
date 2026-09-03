@@ -41,7 +41,8 @@ aparecer.
 | `seed.py --verificar-urls` | **30 startups · 93 documentos · 93/93 URLs** |
 | `avaliar_agentes.py --validar` | exit 0 · **evidência literal ok nas 30** |
 | `avaliar_agentes.py` | `classe 3/7 · stack 6/7 · confianca 0/6 · elegivel 6/6+1amb · 49%/100%` — **idêntico ao de antes da base** |
-| `--exclusoes` | **9/9** falso negativo · **9/9** falso positivo (era 7/7 · 7/7, com **3 casos REAIS** novos) |
+| `--exclusoes` | **10/10** falso negativo · **11/11** falso positivo (era 7/7 · 7/7). Casos vindos de **fixture: 5 → 11** — a régua deixou de ser majoritariamente sintética |
+| `varrer_elegibilidade.py` | **novo (D-094):** 7 de 30 recusadas, e cada recusa confere — 4 por idade, 1 consultoria, 1 cripto, 1 capital aberto |
 | `--justificativas` | trivial `12/21` · seletor `15/21` — sem regressão |
 | `pytest -q` | **81 passed** (com `RERANK_PROVEDOR=nenhum`, em 6,5 s — ver o aviso no topo) |
 | `python -m src.graph` | roda em fintech, agro, voz, robótica, cripto e rastreabilidade |
@@ -56,6 +57,11 @@ sintética escrita por nós.
 
 ## O que 03/09 abriu, e é para amanhã
 
+- **O método que achou os defeitos de hoje virou script (D-094):** `varrer_elegibilidade.py`
+  roda `extractor` + `elegibilidade()` nas **30 de uma vez**, zero API, e imprime uma tabela para
+  LER. Ler briefing é amostragem — dá para ler três empresas, não trinta. **Ela achou dois
+  defeitos na primeira execução, e um deles a própria sessão tinha criado 40 minutos antes.**
+  É o corolário de D-083: *rode o sistema* → **rode-o sobre TUDO, não sobre uma amostra.**
 - **P-23, nova e a mais séria (D-091):** `elegibilidade()` varre **os trechos de evidência**, não
   o documento. A Liqi diz *"oferecer criptomoedas, stablecoins e tokens"* no site, `criptomoeda`
   **já estava na lista de exclusão**, e ela passava — porque a frase não caiu em nenhum trecho

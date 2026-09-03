@@ -167,6 +167,7 @@ Nenhum número vive aqui: números envelhecem e este arquivo é carregado em tod
 | abstenção do passo 8 | **D-040** — re-medida em 02/09 no modelo atual | `--geracao` |
 | filtro do Inception (falso positivo E negativo) | **D-085** | `--exclusoes` |
 | `justificativa_tecnica`: seletor × os 150 primeiros | **D-086** | `--justificativas` |
+| filtro do Inception, os 30 vereditos numa tabela | **D-094** | `varrer_elegibilidade.py` |
 
 **A linha de base trivial é obrigatória em toda tabela de agente** (D-051) — é o `denso puro` deste
 critério, e sem ela 49% de precisão parece bom em vez de "17 pontos acima de emitir tudo".
@@ -223,6 +224,8 @@ python scripts/avaliar_agentes.py --baseline   # a linha trivial, obrigatória n
 python scripts/avaliar_agentes.py              # extrator + classificador + validador (zero API)
 python scripts/avaliar_agentes.py --exclusoes  # filtro do Inception: falso positivo E negativo
 python scripts/avaliar_agentes.py --justificativas  # o seletor do trecho técnico vs. os 150 primeiros
+python scripts/varrer_elegibilidade.py         # o veredito das 30 numa tabela, zero API (D-094)
+python scripts/varrer_elegibilidade.py --motivos   # com a evidência de cada recusa
 python scripts/avaliar_agentes.py --juiz       # LIGA o juiz do Extractor — ~52 chamadas
 python scripts/avaliar_agentes.py --rubrica    # braço REPROVADO (D-060)
 python scripts/avaliar_agentes.py --confianca-diagnostico  # braço REPROVADO (D-059)

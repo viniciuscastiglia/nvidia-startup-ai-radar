@@ -158,6 +158,43 @@ casos:
       "token" em contexto de LLM. Este caso é a rede de D-048: se ele voltar a excluir, o termo
       ambíguo voltou para a lista.
 
+  # ── capital aberto ─────────────────────────────────────────────────────────
+  # O PAR REAL DE `capital aberto` (03/09, D-094). A lista era B3-CÊNTRICA: tinha
+  # "listada na b3" e "ipo concluído", e a Zenvia — listada na NASDAQ desde 2021 — saía
+  # ELEGÍVEL. Metade das brasileiras que abrem capital lista fora do Brasil (Nubank, VTEX,
+  # PagSeguro, StoneCo, XP), então a lacuna não era exótica: era o caso mais comum.
+  # Terceira vez na mesma sessão em que o CONCEITO estava certo e o VOCABULÁRIO era estreito.
+  - rotulo: capital aberto
+    exclui: true
+    frase: "Listada na Nasdaq, a companhia registrou um crescimento de 126% no Ebitda no período, atingindo R$ 33,7 milhões."
+    origem: >-
+      data/seed/zenvia.yaml — frase LITERAL da notícia coletada em 03/09, e ela ocorre num
+      trecho de evidência (o que `elegibilidade()` de fato lê — ver P-23)
+    nota: >-
+      capital aberto FORA da B3. Se este caso voltar a passar, a lista voltou a ser B3-cêntrica.
+
+  - rotulo: capital aberto
+    exclui: false
+    frase: "Nossos clientes incluem companhias listadas na Nasdaq e na B3, além de multinacionais."
+    origem: sintético
+    nota: >-
+      o par obrigatório: quem está listada é o CLIENTE. Alargar a lista de termos sem este caso
+      seria comprar falso positivo — o veto de terceiro de D-085 tem de segurar aqui.
+
+  # O CASO QUE EU MESMO CRIEI AO ALARGAR A LISTA (03/09, D-094), e ele é o par do da Liqi.
+  # Ao pôr `stablecoin` na lista de cripto, a **Iniciador** — infraestrutura de Open Finance e
+  # Pix — passou a ser recusada por uma frase que fala do MERCADO de stablecoins como contexto
+  # competitivo, não dela. É uma terceira forma de sujeito, ao lado das duas que D-085 nomeou:
+  # não é "outra empresa" nem "somos consumidores" — é "o termo nomeia um MERCADO".
+  - rotulo: cripto
+    exclui: false
+    frase: "A corrida para conectar modelos de inteligência artificial aos meios de pagamento, hoje disputada por gigantes de cartões e pelo mercado de stablecoins, ganhou uma frente brasileira."
+    origem: >-
+      data/seed/iniciador.yaml — frase LITERAL da notícia coletada em 03/09
+    nota: >-
+      o termo nomeia o MERCADO, não a empresa. Par obrigatório do caso da Liqi, que diz
+      "Liqi lança stablecoin" e "colocou no mercado a sua própria moeda" — ali o sujeito é ela.
+
   # ── cloud provider ─────────────────────────────────────────────────────────
 
   - rotulo: cloud provider
