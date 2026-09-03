@@ -3059,6 +3059,78 @@ prova de ausência; é prova sobre os casos que alguém pensou em escrever.**
 
 ---
 
+## D-095 — A base de 30 mede a P-12 pela primeira vez: `AI-native` 1, `AI-enabled` 20, `non-AI` 9
+**Data:** 03/09/2026 · varredura das 30, zero API · **medição, não promoção** (D-078)
+
+**Um radar de startups AI-native que acha 1 AI-native em 30.** É a primeira vez que este número
+existe: com 8 fixtures a régua dizia `classe 3/7`, o que é placar contra gabarito e não diz nada
+sobre a **distribuição**. A base de 30 diz.
+
+| classe | n | quadrante |
+|---|---|---|
+| AI-enabled | **20** | prospect-de-evolucao |
+| non-AI | **9** | fora-do-funil |
+| AI-native | **1** (JetBov) | sweet-spot |
+
+**ACHADO 1 — o degrau `2a` é inalcançável para o gênero de documento da base, e agora tem número.**
+`PROFUNDOS` tem 13 marcadores (`cuda`, `gpu`, `tensorrt`, `triton`, `vllm`, `quantiz`,
+`self-hosted`, `on-premise`, `inferência`, `latência`, `throughput`, `mlops`, `observabilidade`) e
+o degrau exige **≥ 3 distintos**. Medido nas 30: **29 têm ZERO. Só a Maritaca AI tem 3.**
+
+**ACHADO 2 — a hipótese óbvia foi TESTADA E REFUTADA.** `04-ecossistema-br.md` diz que *"a vaga é
+o documento mais honesto sobre a stack real"*, e a base tem **1 vaga em 93 documentos**. Parecia a
+causa. Não é:
+- **página índice de carreiras**: 0 marcadores em 3 testadas (Tractian, Zenvia, Conta Simples) —
+  ela LISTA vagas, não as descreve;
+- **descrição individual de vaga**, que é o que o texto queria dizer: **1 de 7** vagas reais da
+  Zenvia tem marcadores, e são **2** — abaixo do limiar de 3.
+
+**A leitura honesta do achado 2 é desconfortável e importante:** talvez o classificador esteja
+CERTO sobre profundidade. Se nem a vaga de engenharia de uma empresa listada na Nasdaq fala de
+inferência, quantização ou serving, é porque a empresa realmente não opera essa camada — ela
+consome API. **Que é exatamente a tese do TAPI**, a pergunta norteadora deste projeto: *startups
+que dependem só de wrappers de LLM*. O sistema pode estar medindo a realidade do ecossistema.
+
+**MAS O RÓTULO `non-AI` ESTÁ ERRADO, E ISSO É OUTRA COISA — vira P-24.** Em produção
+(`RUBRICA_EM_DEGRAUS = False`, reprovada em D-060) a regra é
+`pontos = 2·autopilot + 2·dado_proprio + 1·sinal_tecnico`, e `pontos == 0 -> non-AI`. Medido:
+
+| empresa | modelo_entrega | dado próprio | sinal técnico | pontos | classe |
+|---|---|---|---|---|---|
+| **Core AI** | copilot | 0 | 0 | 0 | **non-AI** |
+| **Visio.AI** | **VAZIO** | 0 | 0 | 0 | **non-AI** |
+| Maritaca AI | copilot | 0 | 1 | 1 | AI-enabled |
+| JetBov | autopilot | 1 | 1 | 5 | AI-native |
+
+A **Core AI** tem "AI" no nome, 5 dores de IA extraídas com evidência, e uma matéria que diz
+*"usa inteligência artificial para criar modelos de crédito"* e *"usamos agentes de AI para
+automatizar toda a operação"*. Ela sai **`non-AI`** porque **três detectores do Extractor voltaram
+vazios**. A aritmética do classificador está sendo fiel; quem não viu foi a extração.
+
+**O PRINCÍPIO QUE ISSO VIOLA JÁ ESTÁ ESCRITO NESTE REPOSITÓRIO, EM OUTRO COMPONENTE.**
+`Elegibilidade` separa `motivos_exclusao` de `requisitos_nao_verificados`, e o docstring diz:
+*"'a base não prova que tem developer' é diferente de 'a base prova que é consultoria'. Só o
+segundo exclui."* É a regra 4 do Evidence Validator — **ausência de sinal não é sinal negativo**.
+**O classificador faz exatamente o contrário:** detecção falha vira `non-AI`, que é uma AFIRMAÇÃO
+positiva sobre a empresa — *"esta empresa não usa IA"* — emitida sem nenhuma evidência que a
+sustente. E ela tem consequência: `non-AI` → `fora-do-funil` → **zero recomendações**. Nove
+empresas saem do funil por silêncio da extração.
+
+**NÃO FOI CONSERTADO, e a razão é a mesma de D-062:** as 22 novas entram **como dado, sem
+gabarito**. Ajustar detectores até a Core AI "sair certa" é calibrar contra o meu próprio
+julgamento sobre fixtures que eu mesmo curei hoje — o erro que D-062 existe para impedir, e o
+mesmo que eu já cometi uma vez hoje com a paráfrase de D-091. **Medir não é promover** (D-078).
+O que muda é a frase da defesa: não *"o classificador acerta 3/7"*, e sim **"o classificador não
+distingue 'sem sinal de IA' de 'não achei sinal de IA', e isso tira 9 de 30 empresas do funil"**.
+
+**Alternativa descartada:** ampliar `PROFUNDOS` com termos de mais alto nível (`machine learning`,
+`modelo próprio`, `visão computacional`) para "consertar" a distribuição. Rejeitada por dois
+motivos: (1) a lista é o eixo de **profundidade de infraestrutura**, e diluí-la com termos de
+aplicação apaga a distinção que o eixo 2 existe para medir; (2) seria calibração contra as 22 sem
+gabarito. Se um dia for feito, o critério vem antes, e sobre fixtures rotuladas.
+
+---
+
 ## Decisões pendentes
 
 | # | Decisão | Estado |
@@ -3084,5 +3156,6 @@ prova de ausência; é prova sobre os casos que alguém pensou em escrever.**
 | ~~P-20~~ | ~~O operador de borda da idade~~ | **D-085** — a borda (`idade == IDADE_MAXIMA`) vira **pendente** com a faixa impressa, não exclusão. Guardar o mês foi descartado: não consta em 6 das 8 fixtures |
 | **P-21** | **Relevância da tecnologia recomendada** | aberta por D-086. Morpheus (spear phishing, digital fingerprinting) recomendado para a dor de privacidade de uma healthtech: a recuperação casa `privacy`/`security` sem conhecer o domínio. **Nenhum seletor de trecho conserta isto** — é o motor de recomendação. **O gabarito, porém, existe e não é meu:** as 7 regras de exemplo do TAPI (`contexto/01-tapi.md:143`) são pares setor/dor → tecnologia esperada, e a regra `Saúde →` cobre 4 das 8 startups da base e reprova este caso. Falta o harness — e a cobertura, que só cresce com a base (D-088) |
 | **P-22** | **`justificativa_negocio` é stub em 11 de 16 tecnologias** | aberta pela auditoria de 03/09 (D-088). `recommendation.py:63` cura texto para **5 das 16**; as outras 11 caem num fallback formulaico que o próprio comentário chama de stub e adia "para a M4" — fase que não existe mais em arquivo vivo nenhum. É o **campo 3 dos 7 obrigatórios** e o vizinho do campo que D-086 consertou |
+| **P-24** | **`non-AI` é o default de detecção falha, não um achado** | aberta por D-095. `pontos == 0 -> non-AI` transforma silêncio da extração em AFIRMAÇÃO sobre a empresa. Medido: **9 de 30** saem `non-AI`, incluindo a **Core AI** (5 dores de IA extraídas, "AI" no nome) e a **Visio.AI** (cujo site se declara *"AI-Native Operating System"*), e `non-AI` → `fora-do-funil` → **zero recomendações**. **O repositório já resolve isso em outro componente:** `Elegibilidade` separa `motivos_exclusao` de `requisitos_nao_verificados` pela regra 4 do Evidence Validator — *ausência de sinal não é sinal negativo*. O classificador não faz a separação. **Consertar exige gabarito**, e as 22 novas entram sem ele (D-062): ajustar detectores até a Core AI "sair certa" é calibrar contra o próprio julgamento |
 | **P-23** | **`elegibilidade()` só enxerga o que o Extractor citou** | aberta por D-091. Ela varre `perfil.afirmacoes[*].evidencias[*].trecho`, não o documento. Medido no caso real: a Liqi diz *"oferecer criptomoedas, stablecoins e tokens"* no site, `criptomoeda` **já estava na lista**, e ela passou — porque a frase não caiu em nenhum trecho de evidência. **O filtro do Inception, que é o Diferencial declarado do projeto, tem cobertura igual à do casador de dores, e isso não estava escrito em lugar nenhum.** A correção óbvia (varrer `conteudo_texto`) reintroduz o falso positivo por MENÇÃO que D-085 gastou uma sessão para matar — o veto de terceiro teria de rodar sobre o documento inteiro. Não cabe a 4 dias do vídeo; o que cabe é estar escrito |
 | **P-19** | **O sweep do RAG (dimensão, banda de chunk, `k1`/`b`)** | **reaberta por D-078.** Estava cortado porque "o critério 2 já está no teto" — razão inválida. A razão candidata para manter o corte é outra e precisa ser dita: com 24 perguntas de gabarito, grade fina ajusta ao gabarito em vez de generalizar. O que joga contra o corte é `e@1 = 79%` (D-068): a primeira citação erra 1 vez em 5. Re-decidir junto com a base ampliada |

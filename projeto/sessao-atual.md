@@ -68,9 +68,19 @@ sintética escrita por nós.
   citado pelo Extractor. **O Diferencial declarado do projeto tem a cobertura do casador de
   dores.** Consertar reintroduz o falso positivo por MENÇÃO que D-085 matou. **Está escrito; não
   se conserta a 4 dias do vídeo.**
-- **P-12 virou cena, não número.** A **Core AI** — cujo produto É modelo de crédito com IA — sai
-  `non-AI` no briefing. Segue **ACEITA** (D-060: o gargalo é vocabulário), mas o custo agora é
-  visível para quem assistir ao vídeo.
+- **P-24, e ela é a descoberta técnica do dia (D-095).** A varredura das 30 deu
+  `AI-native` **1** · `AI-enabled` 20 · `non-AI` **9**. E `non-AI` sai de `pontos == 0` — de três
+  detectores do Extractor voltarem vazios. A **Core AI** (5 dores de IA extraídas, "AI" no nome) e
+  a **Visio.AI** (site: *"AI-Native Operating System"*) saem `non-AI` → `fora-do-funil` → **zero
+  recomendações**. **É o oposto do princípio que o próprio repositório aplica em `Elegibilidade`**,
+  que separa `motivos_exclusao` de `requisitos_nao_verificados`: *ausência de sinal não é sinal
+  negativo*. **Não consertei, e a razão é D-062:** ajustar detectores até a Core AI sair certa é
+  calibrar contra o meu julgamento sobre fixtures que eu curei hoje.
+- **E a hipótese óbvia foi testada e REFUTADA:** 29 das 30 têm **zero** dos 13 marcadores de
+  profundidade. Parecia falta de vagas na base (1 em 93 documentos) — mas índice de carreiras dá
+  0 marcadores, e **1 de 7 vagas reais** da Zenvia tem, com 2, abaixo do limiar. **Talvez o
+  classificador esteja certo sobre profundidade** — se nem a vaga de engenharia de uma empresa da
+  Nasdaq fala de inferência ou quantização, a empresa consome API. Que é a tese do TAPI.
 - **O seletor de D-086 segue atraído por mobília de página**, agora em dado novo: na NeMo saiu
   *"More Customer Stories / View All Blogs / View All Sessions"*. **Munição para (b) em 04/09.**
 - **P-22 ganhou exemplo concreto:** `NEGOCIO` é indexado por TECNOLOGIA, não por dor — NeMo
