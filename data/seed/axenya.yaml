@@ -11,7 +11,9 @@
 nome: Axenya
 site: https://www.axenya.com/
 setor: saúde corporativa
-estagio: null        # NÃO consta: os documentos dizem 'US$ 12 milhões', não o rótulo da rodada
+estagio: série a   # CORRIGIDO em 03/09: a nota de 22/08 dizia "NÃO consta o rótulo da rodada",
+                   # mas o documento `site` diz LITERALMENTE "rodada Serie A da Axenya". A nota
+                   # antiga olhou só as notícias.
 localizacao: null    # NÃO consta nos documentos coletados
 ano_fundacao: 2020   # LITERAL: "Fundada em 2020, a companhia desenvolveu um sistema de
                      # gestão contínua da saúde" — startups.com.br. A auditoria de 22/08

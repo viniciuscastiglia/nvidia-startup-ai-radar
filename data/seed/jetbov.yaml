@@ -19,7 +19,7 @@ site: https://jetbov.com/
 setor: agro — pecuária digital
 estagio: null
 localizacao: null
-ano_fundacao: null
+ano_fundacao: 2015   # LITERAL: "Criada em 2015, atravessou várias fases"
 tamanho_time: null
 descricao_curta: Plataforma de gestão de pecuária de corte vendida por franquias agtech, com 4.073 fazendas
   e 13 milhões de cabeças; lançou um app que a própria empresa chama de "ChatGPT da pecuária", com predição

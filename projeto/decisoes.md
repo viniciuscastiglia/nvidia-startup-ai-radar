@@ -2738,9 +2738,22 @@ já dizia, que é a falha que D-083 nomeou.
 **Data:** 03/09/2026 · executa D-062 · **8 → 30 startups, 24 → 93 documentos, 93/93 `url_fonte`**
 
 **A M3 fechou.** 30 startups, 93 documentos, **toda `url_fonte` resolve**. Distribuição por tipo:
-50 notícia · 33 site · 7 blog · 2 release · 1 vaga. `ano_fundacao` literal em 12 de 30 e
-`localizacao` em 5 — baixo de propósito: **só entra o que está literalmente no documento**, e
-`null` faz o Briefing dizer *"requisito não verificado"*, que é verdade.
+50 notícia · 33 site · 7 blog · 2 release · 1 vaga.
+
+**O metadado passou por uma varredura própria, e ela achou o que a curadoria manual perdeu:**
+`ano_fundacao` foi de **12 para 18 de 30** e `localizacao` de 5 para 9, procurando padrão de
+frase (`Fundada em`, `Criada em`, gentílico) em vez de ler documento por documento. Cada
+achado foi conferido pelo SUJEITO da frase antes de entrar — e três foram REJEITADOS por isso:
+o `2004` da Produzindo Certo é a ONG Aliança da Terra; o `Buri, interior de São Paulo` da
+iRancho é a origem dos ANIMAIS, não a sede; o `agro paulista` dela é o family office
+investidor. **O que segue `null` segue `null` de propósito** — a Solinftec diz *"criada há 18
+anos"*, que é idade e não ano, então o Briefing reporta *"requisito não verificado"*, e é
+verdade. **O ganho é concreto:** com `2007` literal, a **Agrotools** passou a sair
+`NÃO ELEGÍVEL` com o motivo escrito — *"fundada em 2007, 19 anos"* — em vez de um `?`.
+**E uma nota de curadoria de 22/08 foi CORRIGIDA por evidência:** a da Axenya dizia *"NÃO
+consta o rótulo da rodada"*, e o documento `site` dela diz *"rodada Serie A da Axenya"* — a
+nota antiga tinha olhado só as notícias. Por ser fixture de gabarito, a mudança foi tratada
+como material medido: critério fixado antes, e a régua reproduziu inteira.
 
 **O que ordenou a fila não foi contagem — foi consulta que devolvia zero.**
 1. **fintech (5)** e **agro (8)**: as duas consultas que devolviam **zero** em 03/09.

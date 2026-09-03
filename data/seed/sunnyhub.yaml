@@ -2,7 +2,8 @@ nome: SunnyHUB
 site: https://www.sunnyhub.com.br/
 setor: energia
 estagio: null
-localizacao: null
+localizacao: RS   # LITERAL: "a SunnyHUB é uma startup gaúcha, pioneira no serviço de energia
+                  # solar por assinatura". O documento dá o ESTADO, não a cidade.
 ano_fundacao: 2018
 tamanho_time: null
 descricao_curta: 'Cleantech de energia solar e baterias em modelo de assinatura: instala o sistema fotovoltaico

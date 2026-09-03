@@ -19,7 +19,7 @@ site: https://www.produzindocerto.com.br/
 setor: agro — rastreabilidade socioambiental
 estagio: null
 localizacao: null
-ano_fundacao: null
+ano_fundacao: 2019   # LITERAL: "A Produzindo Certo foi criada em 2019". O 2004 na mesma frase é a ONG Aliança da Terra, outra entidade
 tamanho_time: null
 descricao_curta: Plataforma que avalia o desempenho ambiental e social de propriedades rurais combinando
   visita técnica presencial com análise remota de dados e imagens, para estruturar cadeias de fornecimento

@@ -169,7 +169,9 @@ critério, e sem ela 49% de precisão parece bom em vez de "17 pontos acima de e
 ## Estado da base
 
 - **30 startups** em `data/seed/*.yaml`, **93 documentos**, `url_fonte` verificadas **93/93**
-  (D-090). **A M3 fechou** — é o piso de 30-50 que o TAPI recomenda.
+  (D-090). **A M3 fechou** — é o piso de 30-50 que o TAPI recomenda. `ano_fundacao` literal em
+  18 de 30, `estagio` em 11, `localizacao` em 9: baixo **de propósito**, porque só entra o que
+  o documento diz LITERALMENTE — `null` faz o Briefing reportar *"requisito não verificado"*.
   **Duas camadas (D-062):** **8 com bloco `gabarito:`** — a régua dos critérios 1 e 3, e as únicas
   que movem número — e **22 como DADO, sem gabarito**, porque anotá-las seria calibrar contra o
   próprio gabarito. `avaliar_agentes.py` filtra por `gabarito` e imprime as duas contagens; sem

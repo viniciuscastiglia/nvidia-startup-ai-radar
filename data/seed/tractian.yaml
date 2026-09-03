@@ -19,7 +19,7 @@ site: https://tractian.com/
 setor: indústria — manutenção preditiva
 estagio: série c
 localizacao: null
-ano_fundacao: null
+ano_fundacao: 2019   # LITERAL: "Fundada em 2019 por Gabriel Lima e Igor Marinelli"
 tamanho_time: null
 descricao_curta: Sensores em comodato instalados no maquinário capturam vibração, temperatura, pressão,
   vazão, corrente e tensão; modelos de IA próprios preveem falha e orientam a manutenção em mais de mil

@@ -18,8 +18,8 @@ nome: Agrorobótica
 site: https://agrorobotica.com.br/
 setor: agro — sensoriamento e robótica de solo
 estagio: seed
-localizacao: null
-ano_fundacao: null
+localizacao: SP   # LITERAL: "Startup paulista". O documento dá o ESTADO, não a cidade
+ano_fundacao: 2015   # LITERAL: "A empresa foi criada em 2015 por Angelis" e "Fundada em 2015 e incubada"
 tamanho_time: null
 descricao_curta: Combina espectroscopia a laser (LIBS) com IA treinada para análise de solo até 60 cm
   de profundidade em 20 segundos, e usa a mesma infraestrutura de dados para mensurar carbono no solo

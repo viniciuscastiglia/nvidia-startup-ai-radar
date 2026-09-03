@@ -19,7 +19,7 @@ site: https://agrotools.com.br/
 setor: agro — dados tabulares e geointeligência
 estagio: null
 localizacao: null
-ano_fundacao: null
+ano_fundacao: 2007   # LITERAL: "Fundada em 2007 por Sergio Rocha" — 19 anos, exclusão por IDADE do Inception
 tamanho_time: null
 descricao_curta: Plataforma de 'BI territorial' que monitora mais de 200 milhões de hectares com mais
   de 300 mil análises diárias sobre dados de satélite, vendida por assinatura a mais de 200 clientes para

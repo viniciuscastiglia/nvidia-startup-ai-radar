@@ -17,8 +17,8 @@
 nome: BemAgro
 site: https://bemagro.com/
 setor: agro — agricultura digital
-estagio: null
-localizacao: null
+estagio: pré-série a   # LITERAL: "acabou de fechar uma rodada pré-série A de R$ 10,2 milhões"
+localizacao: Ribeirão Preto, SP   # LITERAL: "Com base em Ribeirão Preto (SP), a agtech já era forte na cana"
 ano_fundacao: 2018
 tamanho_time: null
 descricao_curta: 'Agtech de visão computacional e IA para gestão de safras: inspeção dirigida e monitoramento

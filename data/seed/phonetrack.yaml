@@ -18,7 +18,7 @@ nome: PhoneTrack
 site: https://www.phonetrack.com.br/
 setor: voz e call center — speech analytics
 estagio: null
-localizacao: null
+localizacao: Curitiba, PR   # LITERAL: "A startup curitibana PhoneTrack"
 ano_fundacao: null
 tamanho_time: null
 descricao_curta: Plataforma de speech analytics que transcreve e analisa automaticamente 180 variáveis

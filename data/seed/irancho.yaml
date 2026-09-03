@@ -19,7 +19,7 @@ site: https://irancho.com.br/
 setor: agro — pecuária digital
 estagio: null
 localizacao: null
-ano_fundacao: null
+ano_fundacao: 2016   # LITERAL: "Fundada em 2016, a iRancho"
 tamanho_time: null
 descricao_curta: Software de gestão de pecuária de corte por assinatura, com cerca de 3,4 milhões de animais
   cadastrados e 3,5 mil fazendas atendidas; derruba o processamento dos dados de um animal de 4 minutos
