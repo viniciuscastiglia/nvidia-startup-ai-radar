@@ -1,0 +1,473 @@
+# Solinftec
+# Coletado em 2026-09-03. Todo `conteudo_texto` é o texto REAL da página em `url_fonte`,
+# fatiado do que `scripts/coletar.py` extraiu — não é paráfrase.
+#
+# CAMADA "DADO" (D-062): esta fixture NÃO tem bloco `gabarito:` nem `perfil_alvo`, e a
+# ausência É a decisão. As 8 fixtures originais são a régua dos critérios 1 e 3; anotar
+# esta aqui seria medir o classificador contra rótulos escritos na mesma sessão que leu
+# os mesmos documentos — calibrar contra o próprio gabarito.
+#
+# CAMPOS ESTRUTURADOS: só ficam preenchidos os que aparecem LITERALMENTE nos documentos.
+# `null` faz o Briefing reportar "requisito não verificado", que é correto; um valor
+# plausível e errado não reporta nada e ainda corrompe o filtro de elegibilidade.
+#
+# TEASER RECORTADO: os veículos injetam chamada de OUTRA empresa no meio e no fim da
+# matéria. Cada documento abaixo declara em `_corte` as linhas do arquivo coletado que
+# entraram e as que foram removidas por citarem terceiro.
+nome: Solinftec
+site: https://solinftec.com/
+setor: agro — agricultura digital e robótica
+estagio: null
+localizacao: Araçatuba, SP
+ano_fundacao: null
+tamanho_time: null
+descricao_curta: 'Agtech de agricultura digital e robótica: a plataforma de IA Alice e a família de robôs
+  autônomos Solix, movidos a energia solar, que monitoram a lavoura e aplicam defensivos planta a planta.'
+fonte_descoberta: agfeed.com.br — cobertura de agtechs de IA e robótica agrícola
+coletado_em: '2026-09-03'
+documentos:
+- tipo: noticia
+  titulo: Solinftec atinge maioridade com R$ 1,3 bilhão captados e de olho em recursos externos
+  url_fonte: https://agfeed.com.br/agtech/solinftec-atinge-maioridade-com-r-13-bilhao-captados-e-de-olho-em-recursos-externos/
+  data_publicacao: null
+  conteudo_texto: 'no seu e-mail
+
+    Solinftec atinge maioridade com R$ 1,3 bilhão captados e de olho em recursos externos
+
+    Com operações e prioridade de crescimento nos Estados Unidos, companhia aposta no dólar em queda e
+    nas taxas menores do mercado norte-americano
+
+    A Solinftec, empresa de soluções de inteligência artificial e tecnologias agrícolas, chega à maioridade
+    em 2025 no Brasil com planos ousados de crescimento. Após captar R$ 1,3 bilhão em rodadas de investimentos
+    e com Certificados de Recebíveis do Agronegócio (CRAs) desde 2016, a companhia olha agora o mercado
+    externo de capitais para sustentar seu plano de atuação no exterior.
+
+    Com os juros caminhando para 15% ao ano por aqui e o dinheiro escasso, a Solinftec aposta no dólar
+    em queda e nas taxas menores do mercado norte-americano para dar suporte aos planos de expansão nos
+    Estados Unidos.
+
+    Fundada em Araçatuba, no interior de São Paulo, a agtech tem uma base no estado americano de Indiana
+    e operações crescentes naquele país e elegeu o mercado dos EUA como uma das prioridades de crescimento.
+
+    “Com o dinheiro bastante caro e escasso no Brasil, as operações no exterior ajudam muito na cesta
+    de moedas e na possibilidade de investimentos. Uma linha externa é bastante possível de captação e,
+    entre os desafios, está ter uma forte participação nos Estados Unidos”, disse Denis Arroyo, vice-presidente
+    global da Solinftec, em entrevista a jornalistas nesta terça-feira, 4 de fevereiro.
+
+    O mais recente aporte veio da YvY Capital, fundo de investimento liderado pelo ex-ministro Paulo Guedes
+    e pelo ex-presidente do BNDES, Gustavo Montezano, focado na transição para uma economia verde, em
+    segurança alimentar sustentável, transição energética e economia de baixo carbono.
+
+    Na rodada, fechada em novembro passado, a Solinftec captou R$ 300 milhões, dos quais R$ 250 milhões
+    já foram recebidos, com o restante previsto para o primeiro quadrimestre deste ano.
+
+    A receita recorrente acumulada da companhia - os contratos de operação são de cinco anos - cresceu
+    20% em 2024, para R$ 370 milhões, e deve avançar o mesmo porcentual em 2025, para até R$ 450 milhões.
+    A carteira acumulada de contratos deve superar R$ 2,5 bilhões este ano, de acordo com projeções da
+    Solinftec.
+
+    Criada há 18 anos por pesquisadores cubanos que vieram ao Brasil para a área de cana-de-açúcar e que
+    migraram para a indústria, a Solinftec passou a desenvolver computadores de bordo, inteligência artificial
+    para máquinas e tratores, soluções de rastreabilidade para produtores. Recentemente, lançou o robô
+    autônomo Solix para aplicações nas lavouras
+
+    Presente em 11 países e com soluções para 13 milhões de hectares, a Solinftec tem 60 mil equipamentos
+    online. Segundo o diretor de operações da Solinftec, Emerson Crepaldi, 90% do mercado de cana-de-açúcar
+    tem soluções da companhia, que chega a 74% no de citros e 20% no de grãos e fibras.
+
+    “Nossa meta no setor de cana é vender novas soluções para clientes já estruturados e crescer dentro
+    da base criada”, afirmou o executivo.
+
+    No mercado de grãos e fibras, a companhia monitorou mais de 3 milhões de hectares em 2024. Considerando
+    safra e safrinha, a Solinftec já cobre cerca de 8% da área cultivada no Brasil, além de monitorar
+    mais de 14 mil máquinas de diversas marcas e 7 mil unidades climáticas em campo.
+
+    A grande aposta da companhia é o Solix. Com 150 unidades espalhadas pelo mundo, principalmente no
+    Brasil, o equipamento já deixou de ser tratado como protótipo e a meta da Soilinftec é ter escala
+    para chegar a 300 unidades em 2025 e a 700 equipamentos operando em 2026.
+
+    A máquina autônoma integra a plataforma robótica que coleta dados sobre a lavoura e promove aplicações
+    localizadas de herbicidas, por exemplo. A companhia aponta a redução de 90% no uso de herbicidas em
+    soja e milho e de 65% nas lavouras de cana, 70% a menos do uso de água e um crescimento de 10% a 15%
+    na produtividade de grãos.
+
+    Com um investimento de R$ 370 mil, preço de um trator de 80 cavalos, e um incremento de R$ 6 a R$
+    7 mil por mês para atualizações, o Solix é tratado pela empresa como um solução de baixo custo e financiável,
+    com linhas de 6% a 11% ao ano e com carência de um ano para pagar, de acordo com Crepaldi.
+
+    “A principal receita da Solinftec são as soluções de monitoramento, mas o Solix é um produto novo
+    e começa a se tornar carro-chefe na representatividade da empresa”, afirmou o executivo.'
+- tipo: noticia
+  titulo: Com famílias de robôs e lógica de iPhone, Solinftec quer "acelerar o tempo" da agricultura
+  url_fonte: https://agfeed.com.br/agtech/com-familias-de-robos-e-logica-de-iphone-solinftec-quer-acelerar-o-tempo-da-agricultura/
+  data_publicacao: null
+  conteudo_texto: 'no seu e-mail
+
+    Com famílias de robôs e lógica de iPhone, Solinftec quer "acelerar o tempo" da agricultura
+
+    Os conceitos que estão por trás da nova estratégia da agtech brasileira de maior sucesso internacional
+    para os próximos anos e como ela pretende resolver, com novas abordagens, problemas antigos de diferentes
+    segmentos do agro
+
+    Luiz Fernando Sá
+
+    O robô Solix e a estação de abastecimento autônoma: a tecnologia já “mora” no campo
+
+    Qual é o tempo do agro? Para um negócio que depende de meses de espera por safras e em que observação
+    de tendências e busca de resultados muitas vezes tomam várias safras, entre uma ideia e a constatação
+    se ela tem ou não potencial pode tomar anos de uma espera muitas vezes angustiante – e para a qual
+    o capital nem sempre é paciente.
+
+    A inovação do agro vive permanentemente esse dilema, que coloca o setor muitas vezes fora dos planos
+    dos investidores de risco, habituados com a velocidade das ideações, provas de conceitos e decisões
+    dos empreendedores da tecnologia, sobretudo no Vale do Silício.
+
+    Mudar essa lógica está no centro das discussões da liderança da agtech Solinftec, multinacional brasileira
+    de tecnologia agrícola e uma das pioneiras globais no lançamento de robôs agrícolas.
+
+    “Hoje em dia, uma nova máquina, um novo químico, uma nova solução, nada na agricultura acontece em
+    menos de cinco anos”, afirma ao
+
+    o executivo-chefe global de estratégia da companhia, Léo Carvalho.
+
+    “Nosso objetivo é acelerar o tempo da agricultura”, resume, de forma ambiciosa, os rumos traçados
+    para a Solinftec nas recentes reuniões de planejamento realizadas no QG brasileiro da empresa, em
+    Araçatuba (SP).
+
+    O que saiu dessas conversas foi não um redirecionamento, mas um aprofundamento da visão da agtech
+    liderada por Britaldo Hernandez, hoje posicionada como uma das mais avançadas na robótica voltada
+    às operações agrícolas, com seu robô Solix ganhando espaço nas lavouras de Brasil, Estados Unidos
+    (onde a empresa também mantém sede e fábrica) e em outros países agrícolas.
+
+    Se com o Solix a companhia tem difundido o conceito de “morar no campo”, graças à capacidade do robô
+    de executar tarefas de forma autônoma durante 24 horas por dia, a visão agora é “reaproximar o produtor
+    do campo”, transformando seus equipamentos em uma presença digital permanente nas lavouras, com capacidade
+    de observação e decisão imediata, como nos tempos em que ele percorria a pé, diariamente, os talhões
+    de sua propriedade.
+
+    Nessa visão, o Solix não estará sozinho. O planejamento da Solinftec prevê desenvolvimento e lançamentos
+    rápidos de famílias de robôs, capazes de realizar funções de forma superlocalizada, inclusive algumas
+    ainda não atendidas por outras máquinas ou equipamentos de automação agrícola.
+
+    Esse movimento deve ser feito em curto prazo e, segundo Carvalho, sem a necessidade de uma transformação
+    mais ampla na estrutura produtiva da companhia, hoje com unidades fabris no Brasil, nos EUA, no México
+    e na China.
+
+    “Todos os conceitos já estão teoricamente lançados e agora a gente está colocando energia para acelerar
+    esse processo”, diz. “Em três anos, no máximo, tudo isso vai ter que estar rodando”.
+
+    Para acelerar o tempo da agricultura e também da indústria, como Carvalho indica, são vários os conceitos
+    que estão sendo revistos.
+
+    Ele afirma que, nos últimos três meses, a empresa deu “um passo atrás” para identificar um problema
+    que, na sua opinião, limitou a expansão da agricultura de precisão: ela partia da tese de afastar
+    o produtor da terra, estimulando-o a tomar decisões a partir de imagens com uma visão espacial de
+    sua propriedade.
+
+    “Quando a gente olha uma agricultura mais antiga, sempre via um produtor no campo, sempre via alguém
+    mexendo com a terra. Quando se faz esse mesmo cenário hoje em dia, poucas vezes você encontra um produtor
+    na terra. E mesmo as máquinas, passam rápido por ela, fazem suas operações, e a gente quase não vê”,
+    reflete carvalho.
+
+    “No primeiro momento eles estavam juntos, homem e máquina, mas nós fizemos a retirada dele e o maquinário
+    entrou com grande força. Hoje a gente não acha que o produtor vai ficar próximo novamente. A gente
+    acha que vão existir tecnologias que vão fazer essa aproximação”.
+
+    Nesse sentido, a Solinftec acredita que é preciso dar outro passo no aperfeiçoamento dessas tecnologias,
+    de forma a dar uma real sensação de presença digital do agricultor em campo, mesmo que ele esteja
+    bem distante da fazenda.
+
+    De acordo com Carvalho, a atual geração de equipamentos de agricultura digital “cria a falsa sensação
+    de que, tendo um equipamento em campo, temos informações necessárias para uma tomada de decisão”.
+
+    “O que acontece é que o produtor começou a tomar decisões a partir de informações pontuais ou históricas,
+    mas não com uma análise cotidiana, fruto de sua observação diária da sua produção”, continua.
+
+    Carvalho lembra de ter feito, em uma reunião da Solinftec, um comentário que virou uma piada interna.
+    “Eu falei assim: ‘nós estamos tomando decisões de snapshot. A gente pega as 10 últimas fotos, dos
+    10 últimos anos, analisa e tem uma certa tendência’. E então prossegui: ‘Snapshot aqui é só para turista
+    quando vem para o Brasil, que olha, acha bonito 10 colhedoras colhendo uma do lado da outra e tira
+    uma foto. Isso está totalmente errado, não é o conceito que a gente precisa utilizar para a agricultura’”.
+
+    Foi aqui que a ideia de “acelerar o tempo da agricultura”. A proposta da Solinftec é ampliar o uso
+    de sensores em máquinas presentes o tempo todo no campo para acompanhar mudanças sutis no desenvolvimento
+    das lavouras e, a partir dessas informações em tempo real e permanente, mudar a perspectiva das decisões,
+    não só dos agricultores, mas até mesmo das indústrias.
+
+    Como se faz essa aceleração? Léo Carvalho discorre com entusiasmo sobre possibilidades e projetos
+    internos que demonstram o potencial do conceito. E faz várias analogias para sustentar sua tese.
+
+    Ele compara, por exemplo, a evolução dos robôs agrícolas com os robôs domésticos, como os aspiradores
+    autônomos que se tornaram populares nos últimos anos. Segundo Carvalho, os equipamentos domésticos
+    foram, aos poucos, ganhando novas funções, como passar panos ou até mesmo, em alguns modelos, ganharam
+    pinças para coletar objetos que estavam em seu trajeto.
+
+    Isso deve acontecer, de acordo com ele, com os robôs agrícolas. Mas só até um certo ponto. Hoje, equipamentos
+    como o próprio Solix já são capazes de monitorar as lavouras, fazendo o scout de pragas e pulverizar
+    herbicidas de forma localizada, por exemplo.
+
+    “Temos três versões de robô, mas a agricultura como um todo não para por aí. Ela precisa ter outros
+    tipos de soluções. E se você começar a empacotar todas as soluções dentro do mesmo robô, ele começa
+    a perder um pouco a característica”, diz.
+
+    Assim, a Solinftec acredita que o caminho está no desenvolvimento de diferentes robôs, dentro de uma
+    mesma família, com funções complementares e capazes de solucionar problemas atuais de eficiência nas
+    operações agrícolas.
+
+    Ele cita, por exemplo, a questão da irrigação em um cenário de escassez hídrica. O uso de pivôs, com
+    a dispersão de água sobre grandes áreas em determinados momentos, poderia ser substituído pela irrigação
+    localizada por equipamentos que, ao percorrerem um talhão, perceberiam a situação de estresse hídrico
+    de uma planta em germinação, indicariam a necessidade de água naquele ponto.
+
+    Os exemplos vão se sucedendo. Carvalho diz que essa mesma lógica poderia ser usada na solução de problemas
+    que demandam muitas horas de mão de obra nem sempre eficiente no plantio de eucaliptos ou na identificação
+    de soqueiras arrancadas e replantio imediato de canaviais ou.
+
+    “Se a gente tivesse um robô que, além de fazer as funções normais, fizesse o plantio ou o replantio
+    de onde tirou a soqueira, de forma barata, eu evitaria o preparo de solo, que é exatamente o que o
+    pessoal faz. Ou seja, eu consigo antecipar e reduzir drasticamente a linha do tempo”, explica.
+
+    E geraria economias importantes. Segundo Carvalho, o custo do preparo de solo em uma área representa
+    o resultado de cerca de duas safras e meia dessa área. “Se a cana tem um ciclo de cinco safras, ou
+    seja, tem dois anos e meio ali para se pagar e apenas dois anos e meio para se lucrar”, analisa.
+
+    “Ou seja, podemos trazer mais um produto para dentro da nossa demanda. Mas provavelmente não é o mesmo
+    robô. E aí começam as disseminações do que a gente entende que vão existir, uma família de robôs”.
+
+    Outra possibilidade que entusiasma Carvalho é a introdução dos robôs e seus sensores em processos
+    de desenvolvimento de processos agrícolas, atuando como observadores em provas de conceito, ou aos
+    produtores que desejam testar um novo produto, em um sistema que ele chama de “teste e erro”.
+
+    “Por que o Vale do Silício é uma potência em termos de tecnologia?”, questiona. E ele mesmo responde:
+    “Porque eles têm uma facilidade, primeiro, de captar dinheiro e, segundo, de testar, errar e voltar
+    várias vezes. A gente não consegue fazer isso na agricultura”.
+
+    O que a Solinftec tem proposto, inclusive em trabalhos em conjunto com indústrias de insumos como
+    Corteva e Syngenta, é o uso dos robôs para monitorar, em espaços curtos de tempo, a ação real de produtos
+    aplicados no campo.
+
+    “Quando eu dou a possibilidade para um produtor de soja fazer algumas pequenas aplicações no campo
+    e daqui a dois, três dias, passar nesses mesmos lugares e analisar, ver se foi efetivo, ao invés de
+    esperar uma safra estamos mudando o tempo da agricultura. Você coloca elementos para que ele tome
+    a decisão de forma constante e não de snapshot”.
+
+    Com a indústria de insumos, a ideia é semelhante, incorporando os protocolos de desenvolvimento nos
+    robôs e, a partir de informações coletadas pelos sensores, ajudando a acelerar processos.
+
+    “Eu posso dar a elas a fenotipagem, indicar que determinada planta é mais resistente ao calor ou tem
+    uma raiz melhor, porque eu estou lá no campo. Nano que vem, com a quantidade de robô que está planejado
+    nas vendas, eu vou ter mais imagens, mais informação do que qualquer química no mundo”, diz.
+
+    A Solinftec acredita que a transformação que propõe já está em curso e, como diz Carvalho, “mudando
+    a agricultura de alguma maneira”.
+
+    A companhia não acredita em enxames de robôs operando em lavouras, mas na presença de vários robôs,
+    cada um capaz de resolver vários problemas.
+
+    “O que a gente está conseguindo fazer é nós estamos nos tornando o centralizador de vários problemas
+    com diferentes tipos de robôs”, diz.
+
+    Para ele, a empresa está bem posicionada porque conseguiu superar duas das três etapas importantes
+    no processo de aceleração que se propõe a fazer. A primeira é a que chama de manutenção, que é a capacidade
+    de desenvolver e colocar no campo produtos associando tecnologias de software e hardware.
+
+    O segundo momento, bastante relevante para a Solinftec, é a questão da autonomia total, de forma a
+    permitir que seus produtos “morem no campo”, trabalhando de forma permanente.
+
+    Passo importante para superar esse obstáculo foi o lançamento, tanto na última edição da Agrishow,
+    no Brasil, como da Farm Progess, nos Estados Unidos – as duas feiras de tecnologia agrícola mais relevantes
+    nos dois principais países agrícolas do mundo – de seu modelo de estação autônoma de abastecimento.
+
+    A terceira etapa é justamente a do desenvolvimento de novos sensores capazes de solucionar problemas
+    específicos e, assim, fazer surgirem novos integrantes para suas famílias de robôs. Ele cita, por
+    exemplo, que a empresa já possui câmeras térmicas e equipamentos que mensuram a emissão de gases pelas
+    plantas.
+
+    Com isso, diz ele, é possível identificar que a planta está passando por estresse antes mesmo de isso
+    ser identificado por outros tecnologia. “Aí eu consigo fazer toda a parte de fenotipagem, saber o
+    que está acontecendo, saber se tem algum fungo, algum tipo de dificuldade”, explica.
+
+    “Então, são sensores que a gente consegue colocar nas máquinas, o que está fazendo com que a gente
+    consiga passar essa nova camada de geração da agricultura. E aí, a escala dos robôs vai mudando também
+    de tamanho à medida que você vai agregando funções”.
+
+    Lógica do iPhone
+
+    Hoje a Solinftec já tem protótipos de robôs com porte semelhante ao de máquinas agrícolas. E, com
+    a nova visão, incorpora o desafio de diversificar sua linha de produção, sem que isso represente um
+    obstáculo para sua estratégia.
+
+    No modelo atual, segundo carvalho, a companhia tem condições de produzir até cinco diferentes versões
+    de robôs em suas instalações. Cada fábrica pode produzir até 800 unidades por ano. E a orientação
+    é se manter assim.
+
+    O plano, a princípio, não é transformar a Solinftec, que se define como uma empresa de tecnologia,
+    em uma montadora de máquinas.
+
+    “A gente vai continuar criando sensores para acoplar nessas máquinas ou criar outras versões, porque
+    a gente está constantemente nesse processo”.
+
+    A ideia é que as fábricas próprias se dediquem a produzir os modelos mais recentes, terceirizando
+    a produção de equipamentos já devidamente testados e adotados pelo mercado.
+
+    “Se eu pego meu produto hoje, que já é comercial, eu não tenho problema nenhum de juntar esse pacote,
+    dar na mão de alguém e deixar alguém fabricar isso para mim”, diz Carvalho.
+
+    Assim, o licenciamento da produção dos robôs deve ser o caminho adotado em um futuro breve pela Solinftec.
+    “Uma empresa de tecnologia que se dedica a virar uma montadora, de alguma maneira, vai perder velocidade”.
+
+    O modelo que serve de inspiração para a empresa – cujo CEO, Britaldo Hernandez, é muitas vezes comparado
+    internamente a um Steve Jobs do mundo agtech – é o da Apple e seu iPhone, que a cada ano lança uma
+    nova versão, incorporando atualizações e novas funcionalidades.
+
+    “Não necessariamente a gente vai entrar nesse caminho de sempre criar novos produtos, mas eu vou criar
+    novas soluções dentro do mesmo produto”, resume Carvalho.
+
+    “Isso me dá uma flexibilidade de licenciar a produção para uma montadora. É claro, falando em velocidade,
+    eu sempre vou fazer a pré-série, a série, as primeiras vendas para atingir o mercado. Eu sempre vou
+    fazer, porque eu tenho um controle na minha mão e eu preciso melhorar meu produto rápido, que é um
+    grande diferencial nosso”.
+
+    Carvalho lembra que acelerar o tempo já faz parte da cultura da empresa. Segundo ele, o primeiro robô
+    da Solinftec tornou-se um produto comercial há apenas três anos. Hoje, já há cinco diferentes versões
+    dele. ”Não existe montadora nenhuma no mundo que consiga fazer o que a gente está tentando fazer.
+    É uma lógica de iPhone mesmo”.
+
+    Solinftec quer reduzir o “tempo do agro” com robôs e sensores que monitoram lavouras em tempo real
+    e apoiam decisões rápidas
+
+    Estratégia inclui lançamento de famílias de robôs especializados em até três anos, avançando para
+    soluções em áreas hoje não atendidas pela agricultura digital
+
+    Modelo de negócios deve seguir a lógica do iPhone: versões atualizadas anualmente, foco em tecnologia
+    e licenciamento de produção'
+- tipo: site
+  titulo: Solinftec — plataforma Alice e robôs Solix
+  url_fonte: https://solinftec.com/
+  data_publicacao: null
+  conteudo_texto: 'Skip to Main Content
+
+    Casos de Sucesso
+
+    Impactando o agro
+
+    através da tecnologia.
+
+    Fale com um especialista
+
+    Impactando o agro
+
+    através da tecnologia.
+
+    Fale com um especialista
+
+    Os desafios nos impulsionam
+
+    Como líder global em inteligência digital para o agro, sabemos que o planeta passa por um momento
+    decisivo:
+
+    A produção agrícola global precisa crescer em 60% para atender à demanda por alimentos estimada para
+    2050.
+
+    Precisaremos nos adaptar com extrema agilidade para conseguir produzir mais em um mesmo espaço de
+    terra.
+
+    Em 30 anos, as mudanças climáticas podem limitar ainda mais a produtividade na agricultura.
+
+    Na medida em que aumentamos a produção, devemos simultaneamente diminuir o impacto ambiental para
+    assegurar a qualidade de vida das próximas gerações.
+
+    NOSSA MISSÃO É DAR A CADA FAZENDA UM FUTURO SUSTENTÁVEL
+
+    Para os próximos anos, nosso foco está em fornecer soluções reais e eficazes para aumentar a eficiência
+    e reduzir o impacto ambiental da agricultura.
+
+    Um ecossistema que conecta
+
+    e opera toda a sua produção
+
+    Dados, máquinas, logística e inteligência artificial atuando
+
+    de forma integrada para otimizar a operação em tempo real.
+
+    A SOLINFTEC entende o seu negócio como ele realmente funciona.
+
+    Ela atua diretamente nos desafios da operação agrícola, conectando dados operacionais, logísticos,
+    agronômicos e climáticos em um único sistema.
+
+    Isso permite gestão contínua da operação, com decisões aplicadas no dia a dia da lavoura.
+
+    A SOLINFTEC transforma dados da sua operação em decisões que melhoram resultado.
+
+    A plataforma cruza histórico, contexto e dados em tempo real para identificar desvios, antecipar problemas
+    e orientar ações práticas na operação.
+
+    O foco é reduzir perdas, aumentar eficiência e garantir previsibilidade.
+
+    A SOLINFTEC opera com a maior base de dados do agro no mundo.
+
+    São bilhões de dados processados continuamente para gerar inteligência aplicada ao campo.
+
+    Isso permite decisões mais seguras, automação de processos e ganho consistente de produtividade.
+
+    A SOLINFTEC entende o seu negócio como ele realmente funciona.
+
+    Ela atua diretamente nos desafios da operação agrícola, conectando dados operacionais, logísticos,
+    agronômicos e climáticos em um único sistema.
+
+    Isso permite gestão contínua da operação, com decisões aplicadas no dia a dia da lavoura.
+
+    A SOLINFTEC transforma dados da sua operação em decisões que melhoram resultado.
+
+    A plataforma cruza histórico, contexto e dados em tempo real para identificar desvios, antecipar problemas
+    e orientar ações práticas na operação.
+
+    O foco é reduzir perdas, aumentar eficiência e garantir previsibilidade.
+
+    A SOLINFTEC opera com a maior base de dados do agro no mundo.
+
+    São bilhões de dados processados continuamente para gerar inteligência aplicada ao campo.
+
+    Isso permite decisões mais seguras, automação de processos e ganho consistente de produtividade.
+
+    Ver como funciona na prática
+
+    Sua operação rodando com inteligência em tempo real
+
+    A Solinftec conecta dados, máquinas e logística para eliminar perdas, aumentar eficiência e tomar
+    decisões enquanto a operação acontece.
+
+    + 11 milhões de hectares monitorados em tempo real
+
+    Visibilidade completa da operação, talhão a talhão.
+
+    Operação acompanhada 24h por dia, 7 dias por semana
+
+    Decisões contínuas, sem depender de fechamento de relatório.
+
+    3,7 trilhões de dados processados por ano
+
+    Base que permite previsões mais precisas e decisões mais seguras.
+
+    + 6 mil eventos processados por segundo
+
+    A operação é ajustada enquanto acontece, não depois.
+
+    + 30% de ganho em eficiência operacional
+
+    Redução de ociosidade, falhas e desperdícios no campo.
+
+    + 395 grandes operações agrícolas ativas
+
+    Tecnologia aplicada em escala, em diferentes culturas e regiões.
+
+    Com a ALICE AI, sua produção é mais inteligente e competitiva
+
+    Tornamos as operações agrícolas mais eficientes do início ao fim. Desde os cuidados agronômicos, até
+    a otimização da logística.
+
+    Na Solinftec, o produtor não recebe relatórios dos problemas – recebe solução em tempo real!
+
+    + 11 milhões de hectares monitorados em tempo real
+
+    Visibilidade completa da operação, talhão a talhão.'

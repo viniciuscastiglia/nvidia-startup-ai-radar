@@ -1,0 +1,283 @@
+# Conta Simples
+# Coletado em 2026-09-03. Todo `conteudo_texto` é o texto REAL da página em `url_fonte`,
+# fatiado do que `scripts/coletar.py` extraiu — não é paráfrase.
+#
+# CAMADA "DADO" (D-062): esta fixture NÃO tem bloco `gabarito:` nem `perfil_alvo`, e a
+# ausência É a decisão. As 8 fixtures originais são a régua dos critérios 1 e 3; anotar
+# esta aqui seria medir o classificador contra rótulos escritos na mesma sessão que leu
+# os mesmos documentos — calibrar contra o próprio gabarito.
+#
+# CAMPOS ESTRUTURADOS: só ficam preenchidos os que aparecem LITERALMENTE nos documentos.
+# `null` faz o Briefing reportar "requisito não verificado", que é correto; um valor
+# plausível e errado não reporta nada e ainda corrompe o filtro de elegibilidade.
+#
+# TEASER RECORTADO: os veículos injetam chamada de OUTRA empresa no meio e no fim da
+# matéria. Cada documento abaixo declara em `_corte` as linhas do arquivo coletado que
+# entraram e as que foram removidas por citarem terceiro.
+nome: Conta Simples
+site: https://contasimples.com/
+setor: fintech B2B
+estagio: série b
+localizacao: null
+ano_fundacao: null
+tamanho_time: null
+descricao_curta: Plataforma de despesas corporativas e cartões para PMEs que anunciou o 'banco agêntico'
+  B2B — agentes de IA que executam pagamentos, conciliações e gestão financeira sem código, integrados
+  por MCP.
+fonte_descoberta: startups.com.br e braziljournal.com — cobertura de fintechs B2B
+coletado_em: '2026-09-03'
+documentos:
+- tipo: noticia
+  titulo: Conta Simples lança “banco agêntico” B2B para finanças corporativas
+  url_fonte: https://startups.com.br/negocios/fintech/conta-simples-lanca-banco-agentico-b2b-para-financas-corporativas/
+  data_publicacao: null
+  conteudo_texto: 'Pular para o conteúdo
+
+    Pular para o menu
+
+    Conta Simples lança “banco agêntico” B2B para finanças corporativas
+
+    Ferramenta permite que empresas criem agentes de IA para pagamentos, conciliações e gestão financeira
+    sem depender de código ou times de TI
+
+    Gabriela Del Carmen
+
+    Copiar Link?
+
+    Rodrigo Tognini, CEO e cofundador da Conta Simples (Foto: Divulgação)
+
+    apresentou ontem (10) o conceito de finanças autônomas como a nova frente estratégica da companhia.
+    Segundo o CEO, Rodrigo Tognini, a plataforma de despesas corporativas está evoluindo para uma infraestrutura
+    financeira capaz de operar com agentes de IA de forma segura e alinhada às políticas de seus clientes.
+    O movimento marca o primeiro passo da
+
+    rumo ao banco agêntico B2B, modelo em que a tecnologia reduz a carga operacional do time financeiro
+    para que ele concentre esforços em análise, estratégia e tomada de decisão.
+
+    “Nunca acreditamos que o preço era a diferenciação necessária para o mercado para crescer”, disse
+    Rodrigo em coletiva de imprensa realizada no
+
+    Web Summit Rio 2026
+
+    . Na visão do CEO, 80% a 85% dos produtos bancários disponíveis hoje competem pela mesma variável
+    – taxa mais barata, cartão com mais limite -, o que transforma preço em piso, não em diferencial.
+
+    No caso da
+
+    , a proposta é
+
+    do futuro com base nos avanços da inteligência artificial, oferecendo soluções para simplificar a
+    gestão financeira das empresas e aumentar a eficiência.
+
+    “Estamos olhando para empresas que gostam de inovar e querem estar na vanguarda da transformação tecnológica.
+    Esses players terão uma vantagem competitiva relevante, enquanto aqueles que aderirem daqui a alguns
+    anos tendem a ficar para trás”, afirmou.
+
+    A visão da
+
+    vem acompanhada do Seu Agente, ferramenta que permite que as empresas construam seus agentes de IA
+    para operar pagamentos, conciliações e gestão financeira. “Qualquer gestor descreve em linguagem natural
+    o que o agente deve fazer, quando agir e com quais limites. O agente executa, e cada ação fica registrada,
+    auditável e reversível – sem código e sem TI”, explicou.
+
+    Dois modos, uma base
+
+    A estratégia de go-to-market prevê a convivência entre perfis distintos de clientes. Empresas menos
+    familiarizadas com IA continuarão acessando a plataforma no “modo banco” — a experiência atual, sem
+    alterações. Em paralelo, empresas que já experimentam automação podem ativar o “modo agente”.
+
+    Como sinal de demanda, Tognini citou a integração da
+
+    com o Model Context Protocol (MCP), que permite conectar assistentes de IA a sistemas externos e viabiliza,
+    por exemplo, consultar transações financeiras diretamente de ferramentas como o Claude, da
+
+    . A integração foi lançada há menos de um mês e, desde então, a fintech registrou mais de 900 inscritos,
+    120 usuários ativos e clientes com mais de mil requisições semanais.
+
+    O lançamento do Seu Agente está previsto para o quarto trimestre de 2026. Atualmente, cerca de 100
+    empresas participam da fase de testes em uma lista de espera.
+
+    O foco está em PMEs com 10 a 500 funcionários – segmento que, segundo Rodrigo, ainda perde tempo significativo
+    com a descentralização de despesas e processos de reembolso. Hoje, a
+
+    soma mais de 40 mil empresas na base e já ultrapassou R$ 70 bilhões transacionados desde o lançamento.'
+- tipo: noticia
+  titulo: Conta Simples faz rodada de R$ 200 milhões
+  url_fonte: https://braziljournal.com/conta-simples-faz-rodada-de-r-200-milhoes/
+  data_publicacao: null
+  conteudo_texto: 'Na primeira grande captação do ano na América Latina, a Conta Simples acaba de levantar
+    R$ 200 milhões para escalar sua carteira de cartões de crédito, lançar novos produtos e expandir seu
+    perfil de clientes com empresas maiores.
+
+    A Série B vem dois anos depois da fintech — que oferece uma conta digital PJ com ferramentas de gestão
+    de despesas — ter feito sua última rodada, quando levantou R$ 121 milhões.
+
+    A rodada de hoje foi feita apenas com investidores que já estavam no
+
+    da fintech: o líder foi a gestora americana Base10 Partners, que foi acompanhada pela Valor Capital,
+    Jam Fund, Y Combinator, Big Bets, Broadhaven e DOMO.
+
+    O CEO Rodrigo Tognini disse ao
+
+    que a Conta Simples só gastou 30% dos recursos da rodada anterior, mas decidiu fazer uma nova captação
+    para ter mais fôlego e acelerar ainda mais seu crescimento.
+
+    “Fizemos uma boa alocação da rodada anterior e nossa ideia era fazer uma nova ao longo de 2024. Mas
+    a Base10, que já era investidor nosso, olhou o mercado e achou que era o momento de fazer uma Série
+    B,” disse ele.
+
+    Rodrigo não abriu o
+
+    , mas disse que ele foi 230% maior que o da Série A, cujo valuation também não havia sido revelado.
+
+    A captação vem em meio a uma melhora operacional relevante da Conta Simples. A fintech multiplicou
+    sua receita por 2,7x no ano passado, saindo de uma margem EBITDA negativa (- 60%) em janeiro para
+    o
+
+    em outubro.
+
+    Segundo Rodrigo, a melhora na rentabilidade veio de um aumento do
+
+    — com a diversificação das fontes de receita — e um controle dos custos, que cresceram num ritmo muito
+    menor.
+
+    Até recentemente, 98% da receita da Conta Simples vinha da taxa de
+
+    dos cartões. Mas no ano passado, ela adicionou receitas de floating, de crédito, da assinatura de
+    um software de gestão de publicidade (o Hackr Ads, que ela comprou em 2022), e de uma mensalidade
+    de R$ 49,90 cobrada das empresas que gastam menos de R$ 1.000 por mês no cartão de crédito.
+
+    “Além disso, mantivemos bons indicadores operacionais, como CAC e LTV,” disse o fundador. “Nossa receita
+    por cliente cresceu 180% ano contra ano.”
+
+    A Conta Simples não abre sua receita, mas o CEO disse que os 30 mil clientes ativos da fintech movimentaram
+    R$ 17 bilhões no ano passado, considerando as transações com cartões, Pix, transferências e boletos.
+
+    Só o TPV de cartões foi de R$ 5 bilhões, e a startup disse que tem quase R$ 400 milhões em depósitos
+    de clientes em suas contas.
+
+    Com a entrada dos recursos da rodada, Rodrigo disse que a Conta Simples deve sair novamente do
+
+    para acelerar o crescimento.
+
+    “Vamos nos permitir operar queimando um pouco do caixa, mas nada que não permita voltar rapidamente
+    ao
+
+    se quisermos,” disse.
+
+    Uma das avenidas de crescimento será o lançamento de novos produtos de crédito. Além do cartão de
+    crédito, a fintech fez um teste no primeiro semestre do ano passado com uma linha de crédito para
+    capital de giro, mas acabou paralisando a originação para focar apenas nos cartões.
+
+    Agora, no entanto, Rodrigo disse que a Conta Simples quer lançar um produto de crédito que vai ser
+    uma espécie de ‘
+
+    buy now, pay later do PIX
+
+    ’.
+
+    “Imagina uma empresa que tem um fornecedor para pagar num prazo de 30 dias mas quer pagar em 60. A
+    gente vai operacionalizar o pagamento em 30, e cobrar da empresa em 60 dias cobrando um
+
+    ,” disse o CEO.
+
+    Para reduzir o risco, a ideia é rodar este produto dentro da plataforma de gestão de despesas da Conta
+    Simples, o que vai lhe dar mais visibilidade sobre a situação do cliente.
+
+    Outro plano com a rodada é expandir o perfil de clientes. Hoje, a maioria das 65 mil empresas cadastradas
+    na
+
+    têm de 10 a 50 funcionários.
+
+    A ideia é criar novos canais de aquisição e investir em marketing para atrair companhias com 100 a
+    1.000 funcionários. “Isso demanda um investimento grande em estrutura, marketing e canais,” disse
+    o fundador.
+
+    Por fim, a Conta Simples também pode usar os recursos em M&As, ainda que este seja um plano mais para
+    o médio prazo.
+
+    Segundo Rodrigo, a rodada dá tranquilidade de caixa para a startup pelos próximos 3 a 4 anos.
+
+    “O que vai ser daqui em diante, se vamos para um IPO, se vai ter rodada ou se vamos para um movimento
+    estratégico, não sabemos ainda,” disse o fundador.
+
+    “Mas adicionamos uma ‘pista de vida’
+
+    relevante para multiplicar por 4 ou 5 vezes nossa base nos próximos anos. E tendo um crescimento desses,
+    com um
+
+    saudável e um diferencial de produto, as oportunidades surgem.”
+
+    O FM/Derraik e o WilmerHale assessoraram a Conta Simples na operação.'
+- tipo: site
+  titulo: Conta Simples — conta PJ e gestão de despesas
+  url_fonte: https://contasimples.com/
+  data_publicacao: null
+  conteudo_texto: "Agende uma demo\nAbra sua conta\nAbra sua conta\nGestão \nde despesas\ncomo deve ser.\n\
+    Simples.\nSua empresa na nova era da eficiência financeira.\nAbra sua conta\nmenos burocracia.\nCartões\
+    \ virtuais ilimitados\nEmita cartões virtuais em 1 clique\n, com limite certo para cada objetivo.\n\
+    menos burocracia.\nDashboards e Insights de IA\nVeja o gasto e retorno \npor canal e\nreceba alertas\
+    \ \ne insights estratégicos por IA.\nmenos burocracia.\nCashback de até 0.5% ao mês\nReceba de volta\
+    \ parte\ndos gastos\ne reduza\nseu CAC no dia a dia.\nmenos burocracia.\n(VCN) Viaja Simples\nCartões\
+    \ VCN e uma linha\nde\ncrédito exclusiva\npara o setor de turismo.\nmenos burocracia.\nConta internacional\
+    \ com saldo em dólar,\nmúltiplos cartões sem IOF e as menores taxas do mercado.\n+ 50 mil empresas\
+    \ já simplificam\nOrganização dos gastos\nConfigure a estrutura da sua\nempresa em poucos cliques\n\
+    Configure a estrutura da sua empresa em poucos cliques\nPersonalize a plataforma para que cada pagamento\
+    \ já apareça devidamente categorizado por área, responsável e tipo de despesa.\nUsuários com permissões\
+    \ predefinidas\nCentros de custos personalizáveis\nCategorização automática de despesas\nControle\
+    \ de movimentações\nCrie cartões e agilize\nos seus pagamentos\nEmita quantos cartões corporativos\
+    \ precisar, concentre seus gastos em um só lugar e gerencie tudo o que acontece em tempo real.\nAcesso\
+    \ a crédito\nEmissão e pagamento de boletos\nPagamentos em lote\nÁrea de aprovações\nInteligência\
+    \ em gestão\nbaseadas em dados\nEntenda o comportamento financeiro da empresa em detalhes e faça escolhas\
+    \ estratégicas sobre o orçamento e a alocação de recursos.\nPainel geral de dados\nInsights gerados\
+    \ por IA\nAnálise por centros de custos, usuários e categorias de despesas\nSeu financeiro elevado\
+    \ ª Simples\nSeu financeiro elevado ª Simples\nAbra sua conta\nÉ o fim das planilhas de gastos.\n\
+    Mesmo.\nFinanceiro sem tempo ruim é financeiro com tempo de sobra.\nAnalise o uso do orçamento sem\
+    \ precisar interpretar linhas e colunas ou abrir várias abas.\nCrie cartões específicos para gastos\
+    \ com viagens, softwares ou anúncios e atribua aos responsáveis.\ncentros de custos\nConfigure centros\
+    \ de custos na plataforma e identifique a origem dos gastos automaticamente.\nDefina as permissões\
+    \ de cada usuário e deixe sua gestão com a cara do seu time.\nem tempo real\nAcompanhe todos os pagamentos\
+    \ via app ou desktop. Como fizer mais sentido.\nAbra sua conta\nAnexação de comprovantes\nElimine\
+    \ os reembolsos\nda sua rotina\nDistribua cartões ao seu time e incentive usuários a anexarem a nota\
+    \ fiscal em cada transação. Menos operações manuais, mais eficiência.\nAbra sua conta\nem poucos minutos\n\
+    Agilize a rotina de conciliação. Conclua a\nintegração com seu ERP\nantes mesmo do primeiro café do\
+    \ dia.\nAbra sua conta\nÉ de crédito que você precisa? A gente tem.\nMais flexibilidade na rotina\
+    \ de pagamentos para o seu financeiro liderar a expansão da empresa.\nSoluções de crédito\nO que o\
+    \ seu time\nfaria com tempo\nde sobra?\nV4 faz o lançamento da fatura\nem tempo real\nTurbi faz a\
+    \ conciliação\nem 5 minutos\nV4 faz o lançamento da fatura\nem tempo real\nTurbi faz a conciliação\n\
+    em 5 minutos\nSimplificar é multiplicar.\nNossos clientes liberam horas valiosas perdidas em operações\
+    \ manuais e fazem a rotina financeira render muito mais.\nCalcule seu potencial de economia com a\
+    \ Conta Simples\nSer eficiente nunca foi tão Simples.\nSe tempo é dinheiro, cada segundo conta. Use\
+    \ nossa\nCalculadora de Economia\npara simular quanto tempo e dinheiro sua empresa economiza na nossa\
+    \ plataforma.\nPix ilimitado no mês\nPix gratuito, emissão e pagamento de boletos\nPagamentos em lote\n\
+    Centros de custos personalizáveis\nAtendimento 24 horas por dia\nBateu a dúvida? Fale com a IA da\
+    \ nossa plataforma.\nMas, se preferir bater um papo, acione alguém do nosso time a qualquer momento.\n\
+    Multicanal, pra todo gosto\nTire suas dúvidas ou resolva problemas via chat online, WhatsApp, email\
+    \ ou telefone. Tem também a Central de Ajuda.\nGente de verdade o tempo todo\nTem coisa que só o calor\
+    \ humano dá um jeito. Fale com nosso time a qualquer momento, 7 dias por semana.\nCliente em primeiro\
+    \ lugar\nLevamos a sério nossa missão. E a prova disso é que o nosso atendimento humanizado tem avaliação\
+    \ de 4,5 (de 0 a 5).\nPrecisa daquela ajudinha a mais?\nTemos gerentes fixos disponíveis para contas\
+    \ especiais. Agende uma demo para saber mais.\nAbra sua conta\nOs cartões da Conta Simples são de\
+    \ crédito?\nSim. Todos os cartões da Conta Simples são emitidos na função crédito com duas modalidades\
+    \ diferentes de construção de limite. Saiba mais sobre cada modalidade na página Cartões.\nDe quais\
+    \ documentos preciso para abrir a minha conta?\nVocê vai precisar de:\nFoto do RG ou CNH (física ou\
+    \ digital) da pessoa responsável pela conta;\nFoto de rosto (selfie) da pessoa responsável;\nProcuração\
+    \ (caso seja um procurador).\nContrato Social autenticado (caso a empresa seja LTDA.);\nEstatuto social,\
+    \ boletim de subscrição e ata de assembleia (para empresas S.A.);\nDocumentos de todos os sócios com\
+    \ 25% ou mais de participação.\nO que é a Conta Simples?\nA Conta Simples é uma plataforma financeira\
+    \ em que você controla os pagamentos da sua empresa em tempo real, dá autonomia ao seu time, simplifica\
+    \ processos operacionais do dia a dia e ganha insights valiosos para uma gestão mais estratégica.\
+    \ Crie cartões corporativos, faça transferências via Pix e pague boletos em um só lugar, organizando\
+    \ suas despesas por centros de custos, e faça parte da nova era da gestão das despesas corporativas.\n\
+    Pra quem é a Conta Simples?\nA Conta Simples é uma solução financeira feita para empresas. Portanto,\
+    \ você precisa ter um CNPJ ativo para abrir uma conta.\nNão tenho CNPJ. Consigo abrir uma conta?\n\
+    Não. É preciso ter um CNPJ ativo para abrir uma Conta Simples.\nA Conta Simples é uma plataforma paga?\n\
+    Sim, existe uma cobrança mensal de R$ 49,90 pelos serviços da plataforma, mas é possível evitar essa\
+    \ cobrança ao gastar ao menos R$ 5.000,00 (cinco mil reais) nos cartões corporativos em cada ciclo\
+    \ de mensalidade (ou seja, a cada 30 dias). A mensalidade é debitada automaticamente do saldo disponível\
+    \ em sua conta no dia da cobrança.\nComo faço para abrir uma Conta Simples?\npara iniciar o processo\
+    \ de abertura de conta ou faça o download do app da Conta Simples em seu smartphone. Tenha com você\
+    \ os dados da sua empresa, como o CNPJ e a razão social, e documentos dos sócios responsáveis.\nClareza\
+    \ pra decidir.\nLiberdade pra crescer.\nFaça Simples. Abra sua conta.\nCrie cartões de crédito em\
+    \ segundos\nGestão de Despesas\nGerencie todos os gastos\nSoluções de crédito\nEscale sua operação\
+    \ com mais flexibilidade\nPix, boletos, pagamentos em lote"

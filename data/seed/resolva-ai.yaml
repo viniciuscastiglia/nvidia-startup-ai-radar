@@ -1,0 +1,345 @@
+# Resolva AI
+# Coletado em 2026-09-03. Todo `conteudo_texto` é o texto REAL da página em `url_fonte`,
+# fatiado do que `scripts/coletar.py` extraiu — não é paráfrase.
+#
+# CAMADA "DADO" (D-062): esta fixture NÃO tem bloco `gabarito:` nem `perfil_alvo`, e a
+# ausência É a decisão. As 8 fixtures originais são a régua dos critérios 1 e 3; anotar
+# esta aqui seria medir o classificador contra rótulos escritos na mesma sessão que leu
+# os mesmos documentos — calibrar contra o próprio gabarito.
+#
+# CAMPOS ESTRUTURADOS: só ficam preenchidos os que aparecem LITERALMENTE nos documentos.
+# `null` faz o Briefing reportar "requisito não verificado", que é correto; um valor
+# plausível e errado não reporta nada e ainda corrompe o filtro de elegibilidade.
+#
+# TEASER RECORTADO: os veículos injetam chamada de OUTRA empresa no meio e no fim da
+# matéria. Cada documento abaixo declara em `_corte` as linhas do arquivo coletado que
+# entraram e as que foram removidas por citarem terceiro.
+nome: Resolva AI
+site: https://resolva.ai/
+setor: voz e call center
+estagio: null
+localizacao: null
+ano_fundacao: null
+tamanho_time: null
+descricao_curta: Agente de IA de voz que liga para o call center das empresas a mando do consumidor e
+  conduz a conversa até resolver o chamado — o inverso do robô de atendimento, começando por telecom.
+fonte_descoberta: mobiletime.com.br — nicho de robôs conversacionais e agentes de voz
+coletado_em: '2026-09-03'
+documentos:
+- tipo: noticia
+  titulo: 'Resolva AI: agente de IA liga para call centers a mando do consumidor'
+  url_fonte: https://www.mobiletime.com.br/noticias/19/05/2025/resolva-ai/
+  data_publicacao: null
+  conteudo_texto: 'Resolva AI: agente de IA liga para call centers a mando do consumidor
+
+    Fernando Paiva | 19/05/25 19:31
+
+    Depois da onda nos últimos anos de robôs de conversação criados por empresas para atender seus clientes,
+    agora acontece o inverso. São os consumidores que vão utilizar
+
+    agentes de inteligência artificial
+
+    para ligar a seu mando para os call centers das empresas e resolver seus problemas. Essa é a proposta
+    da startup brasileira Resolva AI. Ela criou um agente de IA, o Rê, que liga e conversa com atendentes
+    de call center para resolver problemas a pedido dos consumidores.
+
+    Seu foco inicial é o setor de telecomunicações – mais especificamente as grandes operadoras Claro,
+    Oi, TIM e Vivo. Em apenas quatro meses, o Rê conseguiu resolver 5 mil solicitações, e está com taxa
+    de resolução de 87%. Dentro de quatro meses, a empresa espera atuar com outros setores, como aviação
+    civil, bancário/financeiro, utilities etc. E um detalhe importante: o serviço é gratuito para o consumidor
+    final.
+
+    “Escolhemos começar por telecom porque tem muitos tíquetes diariamente e de assuntos diversos, desde
+    cobrança indevida e recuperação de crédito, até problema de sinal. Trabalhar essa variedade de assuntos
+    é importante para validar a
+
+    solução”, justifica Vicente Camillo, CEO e cofundador da Resolva AI, em conversa com Mobile Time.
+
+    Como funciona a Resolva AI?
+
+    A jornada do consumidor começa pelo
+
+    site da Resolva AI
+
+    , aonde ele se identifica fornecendo alguns dados pessoais necessários para que o agente atue a seu
+    mando, como nome completo, CPF, data de nascimento, email e telefone. Também é preciso aceitar os
+    termos do serviço e declarar que todos os dados cadastrados são verídicos.
+
+    O passo seguinte é informar a operadora e confirmar o número telefônico para o qual deseja atendimento.
+    O agente pergunta se o cliente já tentou contato com a operadora para tratar do assunto – em caso
+    positivo, é solicitado o número de protocolo. Depois, o consumidor informa como contratou o serviço
+    e qual é o problema que deseja resolver com a operadora. O agente apresenta uma lista de opções mais
+    comuns, como troca de plano, cobrança indevida ou cancelamento de linha, mas também é possível escrever
+    livremente o caso.
+
+    Depois, o agente se encarrega de ligar para o call center da operadora. Ele se identifica como um
+    representante do consumidor em questão e confirma todos os dados solicitados. O Rê consegue passar
+    pelas URAs, aguardar ouvindo música e, claro, falar efetivamente com um atendente humano.
+
+    “Uma das maiores dificuldades foi o agente entender que a musiquinha era parte da ligação. Outras
+    dificuldades que enfrentamos foi digitar o menu numérico da URA e manter o contexto em conversas mais
+    longas, com mais de 10 minutos de duração. A manutenção do contexto implica em o agente não esquecer
+    o que falou 10 minutos atrás”, relata Camillo.
+
+    Vicente Camillo, CEO e cofundador do Resolva AI (Crédito: Elias Aftim)
+
+    A ligação para o call center é gravada pela Resolva AI e disponibilizada depois para o consumidor,
+    pelo site do serviço, junto com um resumo do que foi feito. Se a operadora não resolver o problema,
+    o Resolva AI se encarrega de abrir uma reclamação em nome do cliente no portal Consumidor.gov, entregando
+    a documentação completa sobre o caso. O Resolva AI segue acompanhando o assunto e, se necessário,
+    pode até elaborar uma pré-petição para o consumidor levar à Justiça.
+
+    A Resolva AI construiu uma solução que combina diversos LLMs, incluindo de Anthropic, Meta e OpenAI,
+    assim como diferentes ferramentas de text to speech e speech to text, de fornecedores como Google
+    e ElevenLabs. Também foram adotadas técnicas de fine tuning para aprimorar a qualidade do agente.
+    Um banco de dados proprietário está sendo construído para diminuir a necessidade de consulta aos modelos
+    externos de LLM.
+
+    “Pegamos várias bases públicas de problemas que envolvem consumidores e fizemos a qualificação, segregando
+    por assunto, empresa e mercado. Trabalhamos com fine tuning e RAG. Hoje temos base vetorizada grande
+    e agora temos dados proprietários com reinforcement learning, o que reduz a necessidade de chamar
+    o modelo toda hora. Chamamos somente em situações específicas, não na abertura de todo e qualquer
+    tíquete”, explica.
+
+    A monetização da Resolva AI vem através da oferta da sua solução para empresas, no atendimento aos
+    seus clientes. Ou seja, no futuro, possivelmente um problema será resolvido com agentes da Resolva
+    AI nas duas pontas: representando o consumidor e a empresa.
+
+    A primeira aplicação da solução para empresas está acontecendo no setor de cobranças com o grupo Liftcred.
+    O agente atua em canais de áudio, como WhatsApp e telefone, tanto no recebimento de um contato quanto
+    na realização de ligações para renegociação de dívidas. Ele valida se está falando com a pessoa certa,
+    consulta o CRM e depois faz uma proposta para pagamento da dívida. Caso o cliente não aceite a oferta
+    inicial, o agente faz contas em tempo real e pode ajustar a proposta, dentro de parâmetros pré-estabelecidos.
+    Toda a conversa acontece em linguagem natural. No fim, é enviado um link para pagamento dentro do
+    que foi acordado.
+
+    As taxas de conversão, que eram de 3% a 4% com atendentes humanos, agora estão em torno de 8%, e Camillo
+    acredita que seja possível chegar perto de 15%.
+
+    A Resolva AI cobra em cima do sucesso. Quanto mais resolve, mais recebe. E o custo é até 70% mais
+    barato do que seria com uma PA tradicional de call center, afirma o executivo.
+
+    Super Bots Experience
+
+    A 11ª edição do Super Bots Experience & Fórum de Autoatendimento Digital trará painéis e palestras
+    sobre a era dos agentes de IA. Os ingressos do primeiro lote, com desconto, já estão à venda. O evento,
+    organizado por Mobile Time, acontecerá nos dias 21 e 22 de agosto, no WTC, em São Paulo. Confira mais
+    informações em
+
+    A imagem no alto foi produzida por Mobile Time com IA'
+- tipo: site
+  titulo: Resolva AI — agentes de inteligência artificial para experiência do cliente
+  url_fonte: https://resolva.ai/
+  data_publicacao: null
+  conteudo_texto: "Ir para o conteúdo\nMais sucesso e inteligência na experiência do seu cliente\nagentes\
+    \ de inteligência artificial\npara você humanizar e aumentar a satisfação do seu cliente.\nFale com\
+    \ nosso CEO\nConheça Nossas Soluções\nResolva AI na mídia\nVeja - Planeta IA: \"A IA que liga para\
+    \ o SAC no seu lugar\" (09/07/2025)\nNeoFeed - WhatsApp cria hub e manda um “zap” para startups brasileiras\
+    \ (18/09/2025)\nConsumidor Moderno: \"Resolva AI: a nova IA de defesa do consumidor\" (05/02/2025)\n\
+    Mobile Time: \"Resolva AI: agente de IA liga para call centers\" (18/05/2025)\nO Resolva AI fala.\n\
+    Ser ouvido é tudo que seu cliente precisa. E o Resolva AI atende de forma humanizada. Humanizada mesmo...\n\
+    Tenha chamadas telefônicas melhores e mais rápidas\nOfereça atendimento natural, eficiente e personalizado\
+    \ para seus clientes.\nVoz realista e comunicação fluida\nNosso agente fala de forma clara, concisa\
+    \ e sem perder o ritmo, entendendo quando o cliente fala e respondendo na hora certa.\nConhecimento\
+    \ profundo da sua marca\nEle entende sua empresa, produtos e processos para oferecer um atendimento\
+    \ alinhado à sua identidade.\nSempre evoluindo com IA\nO agente aprende com cada interação e se atualiza\
+    \ automaticamente, garantindo sempre o melhor resultado.\nDisponível 24/7, escalável globalmente\n\
+    Atenda seus clientes a qualquer hora e em qualquer lugar, mesmo nos períodos de maior demanda.\ntransforme\
+    \ a experiência do seu cliente\nResolva o sucesso do seu cliente com o Resolva AI\nEscolha o canal,\
+    \ defina o objetivo e ofereça mais sucesso aos seus clientes através dos agentes de IA do Resolva\
+    \ AI\nNegociação inteligente, resolução de objeções e redução de inadimplência.\nSell, upsell e cross-sell\n\
+    Identificação de oportunidades, engajamento e aumento de conversão. Venda melhor e amplie o uso dos\
+    \ seus produtos.\nResolução de demandas em tempo real, de acordo com as informações atualizadas da\
+    \ sua empresa.\nOuvidoria e Conciliação\nO Resolva AI resolve os problemas entre você e o seu consumidor\
+    \ de acordo suas políticas comerciais e compliance.\nAcompanhe e atenda os seus consumidores nas redes\
+    \ sociais em tempo real. Análise de comentários e vídeos, respostas públicas e privadas e insights\
+    \ de marca.\nInteligência e Analytics\nTodas as interações em nossa plataforma se transformam em insights\
+    \ para você oferecer mais sucesso ao seu cliente.\n<span data-mce-type=\"bookmark\" style=\"display:\
+    \ inline-block; width: 0px; overflow: hidden; line-height: 0;\" class=\"mce_SELRES_start\">\uFEFF\
+    </span><span data-mce-type=\"bookmark\" style=\"display: inline-block; width: 0px; overflow: hidden;\
+    \ line-height: 0;\" class=\"mce_SELRES_start\">\uFEFF</span><span data-mce-type=\"bookmark\" style=\"\
+    display: inline-block; width: 0px; overflow: hidden; line-height: 0;\" class=\"mce_SELRES_start\"\
+    >\uFEFF</span>\n<span data-mce-type=\"bookmark\" style=\"display: inline-block; width: 0px; overflow:\
+    \ hidden; line-height: 0;\" class=\"mce_SELRES_start\">\uFEFF</span>\n<span data-mce-type=\"bookmark\"\
+    \ style=\"display: inline-block; width: 0px; overflow: hidden; line-height: 0;\" class=\"mce_SELRES_start\"\
+    >\uFEFF</span><span data-mce-type=\"bookmark\" style=\"display: inline-block; width: 0px; overflow:\
+    \ hidden; line-height: 0;\" class=\"mce_SELRES_start\">\uFEFF</span>\n<span data-mce-type=\"bookmark\"\
+    \ style=\"display: inline-block; width: 0px; overflow: hidden; line-height: 0;\" class=\"mce_SELRES_start\"\
+    >\uFEFF</span><span data-mce-type=\"bookmark\" style=\"display: inline-block; width: 0px; overflow:\
+    \ hidden; line-height: 0;\" class=\"mce_SELRES_start\">\uFEFF</span>\n<span data-mce-type=\"bookmark\"\
+    \ style=\"display: inline-block; width: 0px; overflow: hidden; line-height: 0;\" class=\"mce_SELRES_start\"\
+    >\uFEFF</span><span data-mce-type=\"bookmark\" style=\"display: inline-block; width: 0px; overflow:\
+    \ hidden; line-height: 0;\" class=\"mce_SELRES_start\">\uFEFF</span>\n<span data-mce-type=\"bookmark\"\
+    \ style=\"display: inline-block; width: 0px; overflow: hidden; line-height: 0;\" class=\"mce_SELRES_start\"\
+    >\uFEFF</span><span data-mce-type=\"bookmark\" style=\"display: inline-block; width: 0px; overflow:\
+    \ hidden; line-height: 0;\" class=\"mce_SELRES_start\">\uFEFF</span>\nexperiência do seu cliente\n\
+    24 horas por dia, 7 dias por semana, nossos agentes de IA estão disponíveis para os seus clientes\
+    \ em seus\nEnvolva e encante seus clientes\nImplante um agente inteligente que está sempre disponível,\
+    \ empático e totalmente alinhado ao tom e à voz da sua marca.\nAdapte-se e melhore continuamente\n\
+    Responda rapidamente às mudanças no seu negócio e use análises e relatórios detalhados para aprimorar\
+    \ continuamente a experiência do cliente.\nDê suporte aos seus clientes em tempo real\nAjude seus\
+    \ clientes mesmo com as questões mais complexas, seja para resolver cobranças ou atualizar contratos\
+    \ e assinaturas.\nAgentes de IA exclusivos\nAtendimento humanizado e personalizado, adaptado ao tom\
+    \ de voz da sua marca.\nCriamos agentes de inteligência artificial sob medida, que entende as particularidades\
+    \ do seu negócio e fala a mesma língua do seu cliente.\nSegurança e clareza.\nTenha total controle\
+    \ sobre os processos e atendimentos realizados. Oferecemos dados detalhados e insights precisos para\
+    \ que você acompanhe cada interação.\nprodutividade na sua operação\naumento médio de NPS\nPersonalize\
+    \ a IA para o sucesso do seu cliente\nNo Resolva AI, cada agente de IA é configurado de forma personalizada\
+    \ para refletir a identidade e as necessidades do seu negócio, garantindo resultados precisos e alinhados\
+    \ aos seus objetivos.\nconectamos o Resolva AI às suas plataformas e sistemas para operação fluida\
+    \ e unificada.\na IA compreende o histórico e a jornada do cliente para respostas mais eficazes e\
+    \ personalizadas.\nTom de voz da marca\ngarantimos que o atendimento mantenha a personalidade e o\
+    \ estilo da sua empresa em cada interação.\nObjetivos e métricas de sucesso\ndefinimos KPIs claros\
+    \ para medir e aprimorar continuamente a performance dos agentes.\ncoordenamos as interações entre\
+    \ canais, agentes humanos e sistemas, para uma experiência integrada.\nSegurança e privacidade\ncomprometidos\
+    \ com a proteção dos dados, adotamos rigorosas medidas para garantir conformidade com a LGPD e demais\
+    \ normas.\nGuardrails éticos e operacionais\nregras e filtros configuráveis que mantêm a IA segura\
+    \ e responsável, garantindo que suas respostas estejam sempre alinhadas com as políticas da sua empresa\
+    \ e respeitem padrões éticos, evitando erros e comportamentos inadequados.\nClientes atendidos pela\
+    \ IA do Resolva AI,\nsempre saem satisfeitos.\nA voz da sua marca, nos seus canais de atendimento\n\
+    Marque um papo com nosso CEO\nQuer cancelar seu plano com a operadora?\nResolver um problema de cobrança\
+    \ indevida?\nCancelar um serviço contratado?\nEstá com problemas de conexão?\nTermos de Uso\nPolítica\
+    \ de Privacidade\nCalc Das Margaridas 163 Sala 02, Condomínio Centro Comercial Alphaville - Barueri SP - 06453-038\
+    \ - CNPJ : 54.456.718/0001-16"
+- tipo: blog
+  titulo: Resolva AI Blog
+  url_fonte: https://resolva.ai/blog
+  data_publicacao: null
+  conteudo_texto: 'Ir para o conteúdo
+
+    Resolva AI Blog
+
+    Resolva AI Help
+
+    Ver todos os resultados
+
+    Mão de obra para trabalhar com IA no Brasil: Desafios, dados e como o Resolva AI está liderando essa
+    transformação
+
+    No cenário atual de tecnologia, o Brasil enfrenta uma grande “paradoxo da inteligência artificial”:
+    ao mesmo tempo em que cresce o interesse pelo...
+
+    Atendimento ao cliente
+
+    Agentes de IA: Superando o Paradoxo entre Escala e Personalização
+
+    O crescimento de uma empresa costuma trazer consigo um desafio estrutural: como manter a qualidade
+    e a personalização do atendimento à medida que...
+
+    Atendimento ao cliente
+
+    Atendimento Público: Como a Tecnologia Está Transformando a Relação Entre Governo e Cidadão
+
+    O atendimento público sempre foi um dos maiores desafios da administração pública no Brasil. Filas
+    longas, processos burocráticos, falta de informação clara e...
+
+    IA para atendimento ao cliente: como transformar a experiência do consumidor e escalar resultados
+
+    IA para atendimento ao cliente: como transformar a experiência do consumidor e escalar resultados
+    Introdução A IA para atendimento ao cliente deixou de...
+
+    Da Reclamação à Resolução: Como a Orquestração de Agentes de IA Está Transformando o Sucesso do Cliente
+
+    Durante muitos anos, o relacionamento entre consumidores e empresas foi marcado por um único caminho:
+    a reclamação. SACs, ouvidorias, Procon e plataformas públicas...
+
+    Atendimento ao cliente
+
+    Frases prontas para atendimento ao cliente WhatsApp: guia completo para encantar, vender mais e ganhar
+    eficiência
+
+    O WhatsApp se tornou um dos principais canais de atendimento ao cliente no Brasil. Rápido, direto
+    e acessível, ele é hoje a ponte...
+
+    Como a Inteligência Artificial está transformando a forma como empresas resolvem conflitos com clientes
+
+    A Inteligência Artificial na resolução de conflitos com clientes deixou de ser uma tendência futura
+    para se tornar uma realidade estratégica. Em um...
+
+    Tecnologia antiga: o passado que ainda move o presente
+
+    Vivemos cercados por dispositivos inteligentes, algoritmos e inteligência artificial, mas muitas vezes
+    esquecemos de onde tudo começou. A tecnologia antiga é a base...
+
+    Direito do Consumidor
+
+    Produto avariado: o que fazer, seus direitos e como resolver sem dor de cabeça
+
+    Receber um produto avariado é uma das situações mais frustrantes que um consumidor pode enfrentar.
+    Você espera ansiosamente por uma entrega, e quando...
+
+    Atendimento ao cliente
+
+    Conectado sem Internet: o que fazer quando seu Wi-Fi diz conectado, mas não navega?
+
+    Resumo rápido O aviso “conectado sem internet” indica que o Wi-Fi está ativo, mas sem acesso externo.
+    As causas variam entre falhas do...
+
+    Direito do Consumidor
+
+    Venda Casada: o que é, por que é ilegal e como sua empresa pode evitar riscos
+
+    A venda casada acontece quando uma empresa condiciona a compra de um produto ou serviço à aquisição
+    de outro. Em outras palavras: o...
+
+    Cobranças e taxas
+
+    Direito do Consumidor
+
+    Venda Casada: o que é, por que é ilegal e como se proteger
+
+    Você já se deparou com situações em que precisa comprar algo que não queria para conseguir adquirir
+    o produto ou serviço desejado? Isso...
+
+    Artigos por categorias
+
+    Atendimento ao Cliente
+
+    Agentes de IA: Superando o Paradoxo entre Escala e Personalização
+
+    Atendimento Público: Como a Tecnologia Está Transformando a Relação Entre Governo e Cidadão
+
+    Frases prontas para atendimento ao cliente WhatsApp: guia completo para encantar, vender mais...
+
+    Conectado sem Internet: o que fazer quando seu Wi-Fi diz conectado, mas não...
+
+    Como escolher o melhor plano de celular (e o que fazer quando ele...
+
+    veja mais...
+
+    Mão de obra para trabalhar com IA no Brasil: Desafios, dados e como...
+
+    Como a Inteligência Artificial está transformando a forma como empresas resolvem conflitos com...
+
+    Tecnologia antiga: o passado que ainda move o presente
+
+    Venda Casada: o que é, por que é ilegal e como sua empresa...
+
+    Tecnologia: as melhores dicas de tecnologia para facilitar seu dia
+
+    veja mais...
+
+    IA para atendimento ao cliente: como transformar a experiência do consumidor e escalar...
+
+    Da Reclamação à Resolução: Como a Orquestração de Agentes de IA Está Transformando...
+
+    Venda Casada: o que é, por que é ilegal e como sua empresa...
+
+    Como o Growth Hacking ajuda sua empresa a economizar?
+
+    veja mais...
+
+    Quer cancelar seu plano com a operadora?
+
+    Resolver um problema de cobrança indevida?
+
+    Cancelar um serviço contratado?
+
+    Está com problemas de conexão?
+
+    Termos de Uso
+
+    Política de Privacidade
+
+    Calc Das Margaridas 163 Sala 02, Condomínio Centro Comercial Alphaville - Barueri SP - 06453-038 -
+    CNPJ : 54.456.718/0001-16'

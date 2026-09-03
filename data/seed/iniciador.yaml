@@ -1,0 +1,596 @@
+# Iniciador
+# Coletado em 2026-09-03. Todo `conteudo_texto` é o texto REAL da página em `url_fonte`,
+# fatiado do que `scripts/coletar.py` extraiu — não é paráfrase.
+#
+# CAMADA "DADO" (D-062): esta fixture NÃO tem bloco `gabarito:` nem `perfil_alvo`, e a
+# ausência É a decisão. As 8 fixtures originais são a régua dos critérios 1 e 3; anotar
+# esta aqui seria medir o classificador contra rótulos escritos na mesma sessão que leu
+# os mesmos documentos — calibrar contra o próprio gabarito.
+#
+# CAMPOS ESTRUTURADOS: só ficam preenchidos os que aparecem LITERALMENTE nos documentos.
+# `null` faz o Briefing reportar "requisito não verificado", que é correto; um valor
+# plausível e errado não reporta nada e ainda corrompe o filtro de elegibilidade.
+#
+# TEASER RECORTADO: os veículos injetam chamada de OUTRA empresa no meio e no fim da
+# matéria. Cada documento abaixo declara em `_corte` as linhas do arquivo coletado que
+# entraram e as que foram removidas por citarem terceiro.
+nome: Iniciador
+site: https://iniciador.com.br/
+setor: fintech de infraestrutura
+estagio: null
+localizacao: null
+ano_fundacao: 2021
+tamanho_time: null
+descricao_curta: Infraestrutura de Open Finance licenciada como iniciadora de transação de pagamento;
+  usa o Pix como trilho de liquidação e lançou pagamentos agênticos, em que agentes de IA iniciam a transação
+  fora do app do banco.
+fonte_descoberta: neofeed.com.br — cobertura de Open Finance e pagamentos agênticos
+coletado_em: '2026-09-03'
+documentos:
+- tipo: noticia
+  titulo: Fintech brasileira leva Pix à era da inteligência artificial
+  url_fonte: https://neofeed.com.br/startups/fintech-brasileira-leva-pix-a-era-da-inteligencia-artificial/
+  data_publicacao: null
+  conteudo_texto: 'Fintech brasileira leva Pix à era da inteligência artificial
+
+    Investida da Valor Capital e Prosus, o Iniciador integra IA ao Pix e leva os pagamentos agênticos
+    para as transações instantâneas
+
+    Ler o resumo da matéria
+
+    A corrida para conectar modelos de inteligência artificial aos meios de pagamento, hoje disputada
+    por gigantes de cartões e pelo mercado de stablecoins, ganhou uma frente brasileira. O Iniciador,
+    fintech de infraestrutura para Open Finance, afirma ter lançado a primeira solução de pagamentos agênticos
+    do mundo baseada em um sistema de pagamentos instantâneos.
+
+    A tecnologia usa o Pix como trilho de liquidação e o Open Finance para permitir que pagamentos sejam
+    iniciados fora do aplicativo do banco, em jornadas como e-commerce, delivery ou assistentes de IA.
+    Segundo Gustavo Bresler, CPO e cofundador do Iniciador, o diferencial brasileiro está na capilaridade
+    do Pix. “O Pix é como se já tivesse tokenizado os depósitos do Brasil inteiro”, diz.
+
+    Criada no fim de 2021, o Iniciador lidera o ranking de chamadas de APIs de iniciação de pagamentos
+    no país e faturou R$ 10 milhões em 2025. Investida por Valor Capital e Prosus, a empresa atende nomes
+    como Stone, PagBank, iFood, CloudWalk, Banco Genial, Wise e Caju. Agora, quer vender a bancos e plataformas
+    a infraestrutura para que agentes de IA possam iniciar pagamentos via Pix.
+
+    * Resumo gerado por inteligência artificial e revisado pelos jornalistas do NeoFeed
+
+    Agentes que otimizam investimentos de acordo com os objetivos do usuário, trocam de fornecedor quando
+    os preços de mercado mudam ou fazem as compras do mês com base no que falta na geladeira — tudo isso
+    de forma automática. Essa realidade, que até pouco tempo parecia distante, está cada vez mais próxima
+    com os avanços da
+
+    .
+
+    mar de oportunidades
+
+    aberto por essa nova tecnologia tem provocado uma corrida para conectar modelos de IA aos meios de
+    pagamento. A disputa por esse mercado envolve gigantes de cartões, como Visa e Mastercard, além do
+    mercado de
+
+    .
+
+    É nesse contexto que o Iniciador, fintech brasileira de infraestrutura para Open Finance, afirma ter
+    lançado a primeira
+
+    solução de pagamentos agênticos
+
+    do mundo baseada em um sistema de pagamentos instantâneos.
+
+    “O dinheiro pode ir de qualquer conta para qualquer conta, em qualquer banco, e tanto o pagador quanto
+    o recebedor são notificados desse processo”, afirma Gustavo Bresler, CPO e co-fundador do Iniciador.
+
+    A solução se apoia em duas infraestruturas criadas nos últimos anos pelo Banco Central: o Pix e o
+    Open Finance. O Pix funciona como o trilho de liquidação instantânea, enquanto o Open Finance permite
+    que uma instituição autorizada inicie a transação a partir de outras interfaces, fora do aplicativo
+    do banco.
+
+    Com a licença de iniciador de transação de pagamento, o Iniciador consegue conectar diferentes instituições
+    e permitir que uma transação seja iniciada em outras jornadas digitais — como de um e-commerce ou
+    de um aplicativo de delivery.
+
+    A partir dessa infraestrutura, a empresa já vinha desenvolvendo aplicações como Pix por aproximação
+    e Pix Inteligente, que permite criar regras automáticas de movimentação entre contas do próprio usuário.
+
+    Criada no fim de 2021, o Iniciador já lidera o ranking de chamadas de APIs ligadas à iniciação de
+    pagamentos no país — indicador que mede as comunicações entre instituições no Open Finance.
+
+    Nos últimos três meses, a companhia teve 283 milhões de registros, segundo dados do Banco Central,
+    à frente do Google Pay Brasil, com 162,3 milhões, e do Nubank, com 112,3 milhões.
+
+    Em 2025, a empresa faturou R$ 10 milhões, quatro vezes mais que no ano anterior. No ano passado, levantou
+    US$ 6 milhões em sua primeira rodada de captação institucional, liderada pela Valor Capital, e, posteriormente,
+    também recebeu
+
+    da Prosus.
+
+    A nova fronteira para seguir crescendo, agora, é a conexão dessa estrutura com agentes de IA.
+
+    Segundo Bresler, já existem
+
+    soluções baseadas em cartões de crédito
+
+    , mas lojistas podem esperar semanas para receber ou pagar taxas de antecipação, e iniciativas de
+    pagamentos agênticos com cripto e stablecoins ainda dependem da tokenização dos depósitos.
+
+    “Outros modelos pelo mundo não têm essa conexão direta que o Pix já tem com todos os bancos do Brasil”,
+    afirma. “O Pix é como se já tivesse tokenizado os depósitos do Brasil inteiro.”
+
+    O avanço do Pix no comércio também reforça essa leitura. Segundo o último Global Payments Report,
+    o Pix já superou os cartões de crédito em volume transacionado no Brasil. Em 2025, respondeu por 42%
+    do volume no e-commerce, ante 40% dos cartões de crédito. Nas lojas físicas, a fatia foi de 34%, contra
+    31% do crédito.
+
+    “Estamos vendo começar o que vai ser essa parte de
+
+    e bancarização agêntica também”, diz Bresler. “Em vez de você entrar num marketplace para comparar
+    produtos, você poderia fazer isso diretamente no ChatGPT, no Claude ou no Gemini, porque é um lugar
+    em que hoje você já entra para pesquisar o que é melhor para você.”
+
+    Como provedora de infraestrutura para o mercado financeiro, a proposta do Iniciador é vender a solução
+    para bancos, instituições de pagamento, adquirentes, subadquirentes e plataformas digitais — o mesmo
+    público para o qual já oferece serviços ligados ao Open Finance.
+
+    Bresler afirma que a empresa não pretende criar agentes de IA, mas fornecer a camada tecnológica e
+    regulatória que permite que esses agentes iniciem pagamentos via Pix.
+
+    A estratégia por trás desse modelo é liberar bancos e instituições financeiras de uma parte considerada
+    mais operacional do Open Finance. Segundo Bresler, muitas instituições montaram equipes próprias para
+    cumprir as exigências regulatórias, mas boa parte precisava se dedicar apenas à manutenção, às atualizações
+    e à integração do sistema.
+
+    Além da tecnologia desenvolvida por trás da nova solução, um dos ativos mais valiosos conquistados
+    pela companhia nesses menos de cinco anos de existência foi a carteira de clientes. Entre eles, estão
+    Stone, PagBank,
+
+    , CloudWalk, Banco Genial, Wise, Caju, Núclea, Nomad e Vindi.
+
+    “A gente consegue não só cuidar de toda a manutenção recorrente, que é o mais trabalhoso do Open Finance,
+    mas também ajudar aquela instituição a habilitar, dentro dos seus produtos, todas as mil e uma possibilidades
+    que o Open Finance tem.”
+
+    Com a integração aos agentes de IA, o Iniciador quer levar essa mesma lógica. Em vez de cada banco
+    ou fintech construir do zero a conexão entre seus assistentes, o Pix e o Open Finance, a empresa quer
+    fornecer toda a infraestrutura, liberando as instituições financeiras da parte técnica para que possam
+    focar no desenvolvimento de novos produtos.'
+- tipo: noticia
+  titulo: A rodada do Iniciador, uma infra do PIX que mostra o potencial do Open Finance
+  url_fonte: https://braziljournal.com/a-rodada-da-iniciador-uma-infra-do-pix-que-mostra-o-potencial-do-open-finance/
+  data_publicacao: null
+  conteudo_texto: 'O Iniciador — uma startup que fornece a infraestrutura tecnológica para companhias
+    disponibilizarem o Pix por biometria, o Pix automático e o Pix inteligente — acaba de levantar uma
+    rodada de R$ 32 milhões, em mais uma prova do potencial do
+
+    .
+
+    A captação foi liderada pela Valor Capital e teve a participação da big bets, Alter, Actyus e Norte
+    Ventures.
+
+    Essa é a segunda rodada do Iniciador, fundada em 2021 por Marcelo Martins, um empreendedor que já
+    fundou e vendeu uma startup antes.
+
+    A rodada anterior, logo que a startup foi fundada, foi de R$ 1,2 milhão e feita com especialistas
+    do setor, como Edson Santos, e empreendedores como Andres Bilbao, o cofundador do Rappi.
+
+    Martins disse ao
+
+    que vai usar os recursos da rodada para investir mais no produto, melhorando a tecnologia; para contratar
+    mais pessoas para sustentar o crescimento projetado; e para reforçar o capital prudencial exigido
+    pelo Banco Central.
+
+    O Iniciador tem as licenças de Instituição de Pagamento (IP) e de Iniciador de Pagamentos (ITP). Alguns
+    clientes contratam apenas a infraestrutura tecnológica da startup e usam suas próprias licenças para
+    operar, mas outros usam as licenças da startup, o que demanda o capital regulatório.
+
+    A infraestrutura do Iniciador faz basicamente a conexão com as APIs do Banco Central e a gestão diária
+    dessas conexões. “A conexão inicial é complexa, mas o maior desafio é a operação do dia a dia. Fazer
+    isso de uma forma eficiente que garanta a maior conversão possível para os clientes,” disse Martins.
+
+    A startup já atende clientes como iFood, Stone e Nomad. No Pix automático, Martins diz que o Iniciador
+    tem um
+
+    de 60% de todas as instituições que oferecem hoje o produto. No Pix por biometria, de 50%.
+
+    Gustavo Bresler, o COO do Iniciador, disse que outro benefício para os clientes é o
+
+    time to market
+
+    . “Nesse momento de início do mercado e de forte competição entre os participantes, é muito importante
+    ser rápido para lançar os produtos para ter ganho de market share. E com a gente eles conseguem isso,”
+    disse ele.
+
+    As novas funcionalidades do Pix — nas quais o Iniciador atua — têm sido lançadas gradativamente pelo
+    Banco Central.
+
+    A primeira delas foi o Pix inteligente, lançado em abril de 2024 e que permite fazer transações automáticas
+    entre contas da mesma titularidade. Em fevereiro deste ano, foi a vez do Pix por biometria, que permite
+    fazer transações de Pix em ecommerces, por exemplo, sem precisar acessar o banco, usando a biometria.
+    Por fim, o Banco Central lançou em junho o Pix automático, que permite fazer transações recorrentes
+    com o Pix, como pagar uma assinatura mensal.
+
+    A próxima funcionalidade que o BC deve lançar é o Pix parcelado, que permitirá pagamentos parcelados
+    com o Pix, com a cobrança de juros. (Assim que for lançada, o Iniciador deve entrar também nesse produto.)
+
+    O modelo de monetização do Iniciador é vinculado ao sucesso: a receita vem de um valor fixo — alguns
+    centavos — por cada transação bem sucedida que ocorrer na plataforma de seus clientes.
+
+    A startup não abre a receita atual, mas diz que cresceu em 4x sua base de clientes desde o início
+    do ano. Para frente, o crescimento virá tanto dos clientes atuais, com o crescimento do uso dessas
+    opções de pagamento, quanto de novos clientes.
+
+    O Iniciador já tem um
+
+    relevante dos players que operam com esses meios de pagamento hoje, mas o mercado ainda está muito
+    no começo. “Essa figura da ITP é algo muito novo no mercado. Muitas instituições ainda não entraram
+    nessa modalidade,” disse Martins. “Vamos crescer nessas empresas, que vão adicionar essa modalidade
+    e precisam de um
+
+    que forneça a infraestrutura para elas.”
+
+    A rodada de hoje mostra a força que o Open Finance tem ganhado no Brasil, cinco anos depois de ter
+    sido anunciado pelo BC. Hoje, o Open Finance do Brasil é o maior do mundo — em escopo e em uso.
+
+    Para se ter uma ideia, no Brasil acontecem mais de 4 bilhões de chamadas de Open Finance por semana;
+    no Reino Unido, um dos primeiros mercados a adotar a tecnologia, são 15 bilhões por ano. “E isso é
+    muito apoiado pelo Pix, que tem um impacto significativo no mercado e uma adoção por quase toda a
+    população bancarizada,” disse Martins.'
+- tipo: site
+  titulo: Iniciador — infraestrutura de Open Finance
+  url_fonte: https://iniciador.com.br/
+  data_publicacao: null
+  conteudo_texto: 'A infraestrutura que escala o Open Finance no Brasil.
+
+    Opere em compliance. Conecte contas. Inicie pagamentos.
+
+    Habilite o Open Finance — sem o peso do Open Finance.
+
+    Fale com nossa equipe comercial
+
+    Detentora & Transmissora
+
+    Infra regulatória, manutenção e gestão de tickets, com suporte dedicado.
+
+    Iniciador & Receptora
+
+    Novos tipos de Pix e Dados Bancários alavancando seus produtos.
+
+    Mova dinheiro programaticamente e integre pagamentos a fluxos agênticos.
+
+    1 em 3
+
+    iniciações Pix do Brasil são processadas pelo Iniciador
+
+    requisições de dados por mês — volume top 2 do Open Finance
+
+    O Iniciador é o parceiro de escolha de
+
+    Instituições de Pagamento
+
+    Fintechs & Plataformas
+
+    // 01 infraestrutura
+
+    Plataforma full-service.
+
+    A stack de Open Finance mais completa do Brasil.
+
+    Detentora de Contas
+
+    Infra e compliance técnico-regulatório.
+
+    Servidor de autorização
+
+    Gestão de consentimentos
+
+    Monitoramento PCM, FVP
+
+    Cadastro de marcas no diretório
+
+    Transmissora de Dados
+
+    Infra e compliance técnico-regulatório.
+
+    Servidor de autorização
+
+    Gestão de consentimentos
+
+    Monitoramento PCM, FVP, MQD
+
+    Cadastro de marcas no diretório
+
+    Infraestrutura de Produtos
+
+    Iniciador de Pagamentos
+
+    #1 do Brasil em volume — 1 em 3 iniciações de Pix são feitas por nós.
+
+    Pague com Seu Banco
+
+    Pagamento por Biometria
+
+    Pix por aproximação
+
+    Receptora de Dados
+
+    Receba dados bancários de contas do seu usuário em outras instituições.
+
+    Validação de Saldo
+
+    com a infraestrutura.
+
+    Foque no seu produto. Nós cuidamos da manutenção regulatória do Open Finance por você — melhor que
+    qualquer IA.
+
+    Onboarding & processos regulatórios
+
+    Pix tester, certificações, DCR, cadastro de marcas, gestão do diretório
+
+    Monitoramento PCM, FVP, MQD & relatórios regulatórios
+
+    índices de monitoramento, validação em produção, qualidade de dados
+
+    Adequação contínua a novos normativos
+
+    atualizações de especificações, FAPI OP/RP, anti-fraude ITP, participação em pilotos
+
+    Guia de experiência do usuário
+
+    interfaces white-label, guias simplificados, consultoria de conversão
+
+    Servidor de autorização & consentimentos
+
+    FAPI 1.0 Advanced, OAuth 2.0, mTLS RFC-8705, JWS
+
+    Habilitação de JSR & integração FIDO Server
+
+    servidor FIDO dedicado, homologação criptográfica, vínculo de dispositivo, jornada otimizada
+
+    Motor de tradução de dados
+
+    integração a sistemas internos, tradução de dados para padrão OFB
+
+    Observabilidade & retenção de logs
+
+    telemetria em tempo real, visibilidade de payloads, traces, logs permanentes
+
+    Engenheiros embarcados — Open Finance Full-Stack
+
+    integrações, migração, adequações, monitoramento contínuo, habilitação de produtos
+
+    Service Desk & resolução de tickets
+
+    intermediação, monitoramento proativo, adequações técnicas, acompanhamento de conversão
+
+    Portal do Cliente & MCP Server de Operações
+
+    SSO, consulta granular de consentimentos e pagamentos, máquina de estados, export JSONs
+
+    status: 100% em compliance com o Open Finance Brasil — sem o seu time virar service desk regulatório.
+
+    Comece com a
+
+    para testar e lançar produtos rapidamente.
+
+    quando quiser — sem retrabalho, sem nova integração.
+
+    // 02 habilitação
+
+    Open Finance sem dor de cabeça.
+
+    Um consultor sempre ao seu lado. Orientamos seu time a cada passo do processo — ou fazemos tudo por
+    você.
+
+    Deployment Estrategistas && Forward Deployed Engineers
+
+    Open Finance Strategists
+
+    Consultoria de habilitação
+
+    Experts em Open Finance apoiando seu time a gerar valor
+
+    Mapeamento de objetivos de negócio para as participações certas
+
+    Processo guiado de implementação e setup de toda infraestrutura
+
+    Identificação de casos de uso de maior valor em pagamentos e dados
+
+    Aceleramos time-to-value sem aumentar headcount interno
+
+    Open Finance Full-Stack
+
+    Engenheiros embarcados + Monitoria
+
+    Deixe a sobrecarga técnica conosco e libere headcount
+
+    Integrações, processos regulatórios e migração de fornecedor
+
+    Monitoramento de atualizações técnico-regulatórias
+
+    Adequação regulatória total com sistemas internos
+
+    Habilitação técnica contínua de novos produtos internos
+
+    contínua.
+
+    cuidam da manutenção e apoiam seu time de produto a extrair o máximo valor do Open Finance.
+
+    Sem Iniciador ▂
+
+    Você assume a sobrecarga de:
+
+    Acompanhar 50+ atualizações do Open Finance Brasil por ano
+
+    Resolver tickets do ecossistema e gerir Service Desk
+
+    Realizar ajustes solicitados pelo Monitoramento
+
+    Operar FAPI, MQD, FVP, PCM e logs permanentes
+
+    Manter o Open Finance regulatório em detrimento do seu produto
+
+    Com Iniciador ▂▃▅▇▊
+
+    Você foca no seu produto, enquanto nós:
+
+    Monitoramos e implementamos cada update
+
+    Nosso time é o seu Service Desk
+
+    Conduzimos o processo ponta a ponta
+
+    Já operamos em produção em todos clientes
+
+    Apoiamos seu time de produto com nossa experiência
+
+    guiam sua implementação e apoiam seu time de produtos com consultoria.
+
+    , também executamos integrações e adequações — nunca mais lide com tickets.
+
+    // 03 produtos
+
+    Torne-se Open Finance-first.
+
+    Seja a interface principal do seu usuário. Mova o ponteiro de conversão dos seus pagamentos. Otimize
+    modelos de risco.
+
+    Mova dinheiro e realize pagamentos em fluxos agênticos.
+
+    Transações programáveis entre contas do mesmo titular. Crie produtos financeiros inteligentes.
+
+    Dados da conta bancária do usuário em tempo-real. Cadastro, extrato, cartões, crédito, investimentos.
+
+    Pague com Seu Banco
+
+    Pix one-shot ou agendado, com aprovação no app do banco.
+
+    Pagamento por Biometria
+
+    Pix autorizado com a biometria do aparelho, sem sair do app.
+
+    Pix on file. Pagamentos recorrentes de valor e frequência variáveis.
+
+    Onboarding com 1 clique e dados pré-validados pelo KYC do banco.
+
+    Para regulados e não-regulados.
+
+    Produtos referência do mercado integrados como plataforma.
+
+    Rejeite cópias genéricas — O Iniciador liderou a criação dos padrões regulatórios.
+
+    // 04 soluções
+
+    Escale sua operação.
+
+    Reduza custos. Lance rápido.
+
+    // compliance regulatório
+
+    Liberamos seu time do peso regulatório — e dos tickets.
+
+    Infra, monitoramento, tickets e atualizações. Nós resolvemos sua dor de cabeça, você economiza e seu
+    time foca no que importa.
+
+    reguladas — Bancos, IPs, SCDs, ITPs, Cooperativas
+
+    Detentora · Transmissora · Iniciador · Receptora · Full-Stack
+
+    na sua licença
+
+    // pagamentos inovadores
+
+    Lance novas modalidades de Pix em tempo recorde.
+
+    Novas modalidades de Pix em produção em players líderes, com conversão de até 95% em pagamentos e
+    go-live em semanas.
+
+    adquirentes, PSPs, ITPs e bancos com apetite competitivo
+
+    Iniciador · Full-Stack · Pagamento por Biometria · Transferências Inteligentes
+
+    na sua licença ou na nossa, com a sua marca — migre quando quiser
+
+    // ai financial services
+
+    A infra dos produtos financeiros do amanhã.
+
+    Assistentes financeiros com IA, pagamentos agênticos e gestão financeira inteligente — habilitados
+    pela melhor infra do mercado.
+
+    fintechs que estão construindo o futuro das finanças — hoje
+
+    Pagamentos Agênticos · Transferências Inteligentes · Dados Bancários · Cadastro Expresso
+
+    na nossa licença, com a sua marca
+
+    O que nossos parceiros dizem
+
+    O Iniciador é referência em Open Finance e está na vanguarda técnica. Foi o primeiro player a lançar
+    as Transferências Inteligentes, permitindo que a Magie se tornasse um verdadeiro banco no WhatsApp.
+    Hoje, pensamos em produto em conjunto com o time do Iniciador e temos colhido ótimos resultados dessa
+    parceria.
+
+    Co-Founder e CPO, Magie
+
+    O Iniciador se tornou um aliado estratégico da Stone, cuidando do nosso Open Finance de forma 360°
+    com tecnologia, regulatório, monitoramento e service desk, sem dores de cabeça.
+
+    As grandes ondas tecnológicas do momento são IA e Open Finance. Ambos permitem a criação de uma experiência
+    hiperpersonalizada que vai além de uma transação. O Open Finance é o melhor cenário do mundo para
+    construir isso graças à estabilidade de APIs e regulação do Banco Central.
+
+    Fundador da Decade e ex-CTO do Nubank
+
+    O Iniciador opera junto com a gente o que há de mais avançado em Open Finance no Brasil — da homologação
+    técnica à sustentação diária dos produtos. É o tipo de parceria que faz diferença num mercado em construção.
+
+    Senior Engineering Manager — Banking Platform, iFood
+
+    Eu sei o que custa construir infraestrutura bancária do zero — foram 9 meses no Guiabolso. Com o Iniciador,
+    resolvi em 3 dias.
+
+    Fundador do Guiabolso
+
+    // 05 segurança & privacidade
+
+    Enterprise-grade security.
+
+    Os consentimentos dos seus usuários são dados a você, não a seus competidores. Para o Iniciador, a
+    proteção da privacidade é um princípio fundamental. Nossas políticas de segurança refletem esse compromisso.
+
+    Acesse nosso trust center
+
+    AICPA SOC 2
+
+    Auditado · 2026
+
+    SOC 2 Compliance
+
+    Auditoria anual de controles de segurança.
+
+    Padrão internacional para dados de pagamento.
+
+    Participação na governança de identidade aberta.
+
+    Single Sign-On (SSO)
+
+    Autenticação federada disponível para suas aplicações.
+
+    // 06 demos
+
+    Teste agora.
+
+    Em produção.
+
+    Iniciação de Pagamento
+
+    Faça uma doação aprovando direto no app do banco
+
+    Selecione a causa que tocar seu coração, escolha quanto quer doar e faça um Pix do bem através do
+    Open Finance!
+
+    Fazer uma doação
+
+    Veja há quanto tempo você é cliente do seu banco
+
+    Compartilhe apenas os dados cadastrais de sua conta via Open Finance e veja o dia em que sua conta
+    foi aberta!'

@@ -1,0 +1,329 @@
+# Core AI
+# Coletado em 2026-09-03. Todo `conteudo_texto` é o texto REAL da página em `url_fonte`,
+# fatiado do que `scripts/coletar.py` extraiu — não é paráfrase.
+#
+# CAMADA "DADO" (D-062): esta fixture NÃO tem bloco `gabarito:` nem `perfil_alvo`, e a
+# ausência É a decisão. As 8 fixtures originais são a régua dos critérios 1 e 3; anotar
+# esta aqui seria medir o classificador contra rótulos escritos na mesma sessão que leu
+# os mesmos documentos — calibrar contra o próprio gabarito.
+#
+# CAMPOS ESTRUTURADOS: só ficam preenchidos os que aparecem LITERALMENTE nos documentos.
+# `null` faz o Briefing reportar "requisito não verificado", que é correto; um valor
+# plausível e errado não reporta nada e ainda corrompe o filtro de elegibilidade.
+#
+# TEASER RECORTADO: os veículos injetam chamada de OUTRA empresa no meio e no fim da
+# matéria. Cada documento abaixo declara em `_corte` as linhas do arquivo coletado que
+# entraram e as que foram removidas por citarem terceiro.
+nome: Core AI
+site: https://www.coreai.com.br/
+setor: fintech de crédito
+estagio: pre-seed
+localizacao: null
+ano_fundacao: null
+tamanho_time: null
+descricao_curta: Camada de IA entre empresas de software e provedores de banking as a service que monta
+  a esteira de crédito ponta a ponta — modelagem de risco, dados públicos e privados, automação de fluxos
+  e capital.
+fonte_descoberta: braziljournal.com e neofeed.com.br — cobertura de fintechs de crédito com IA
+coletado_em: '2026-09-03'
+documentos:
+- tipo: noticia
+  titulo: Core AI levanta rodada para o 'last mile' do crédito – junto com os BaaS
+  url_fonte: https://braziljournal.com/core-ai-levanta-rodada-para-o-last-mile-do-credito-junto-com-os-baas/
+  data_publicacao: null
+  conteudo_texto: 'A Core AI acaba de levantar uma rodada para expandir sua solução que usa inteligência
+    artificial para criar modelos de crédito que aumentam a taxa de aprovação mantendo a inadimplência
+    baixa.
+
+    A captação de US$ 4,1 milhões foi liderada pela 14B (uma das gestoras que surgiu da
+
+    cisão da Upload Ventures
+
+    ), com a participação das brasileiras Big Bets, Norte Ventures e Nameless, além da BFF, uma gestora
+    de Nova York.
+
+    A rodada também contou com investidores-anjo que já estavam no
+
+    da startup, incluindo os fundadores da Stone, André Street e Eduardo Pontes, e Fersen Lambranho, da
+    GP Investimentos.
+
+    A Core AI foi fundada no ano passado por Enrico Francesco e Fernando Martins, que trabalham juntos
+    há mais de oito anos. Os dois são programadores e se conheceram ainda na faculdade quando Fernando
+    fundou uma HR Tech, a Preparo, que ajudava empresas a contratar estagiários. Enrico foi o primeiro
+    funcionário da startup.
+
+    Depois de vender o negócio, os dois foram trabalhar na Stone, onde lideraram as áreas de
+
+    .
+
+    A Core AI opera como uma camada intermediária entre o cliente final e empresas de
+
+    banking as a service
+
+    como a Celcoin e Stark Bank, fazendo o que os fundadores chamam de ‘last mile’ do crédito.
+
+    “Essas empresas de BaaS oferecem a habilidade de oferecer crédito, mas não a expertise para analisar
+    dados e criar o melhor modelo de crédito possível. Então, mesmo com a infra, muitas empresas que querem
+    começar a dar crédito não tem o
+
+    e não sabem como operar,” disse Enrico.
+
+    “O que fazemos é montar toda a esteira de crédito para os clientes usando inteligência artificial
+    e dados de comportamento de seus clientes que são muito mais ricos.”
+
+    Segundo ele, quando uma empresa se pluga num BaaS, ela tem acesso aos birôs de crédito e cria suas
+    regras de aprovação com base nisso. “Mas esses modelos não aproveitam todos os dados que as empresas
+    têm. Uma imobiliária, por exemplo, tem todos os dados transacionais de aluguel, que são dados muito
+    ricos e que precisam ser incorporados nos modelos.”
+
+    A Core AI opera em parceria com as empresas de BaaS: ela se pluga à infraestrutura dessas fintechs.
+    Os fundadores dizem que conseguem criar uma esteira de crédito em menos de um mês – e com um modelo
+    que, segundo eles, gera uma taxa de aprovação maior e uma inadimplência menor.
+
+    A startup se remunera com um mix de um
+
+    fixo e uma participação nos resultados. Na prática, o cliente pagará um custo adicional ao que pagaria
+    se se plugasse direto nas empresas de BaaS, “mas nosso modelo é muito mais eficiente. Ele aprova mais
+    e com o pricing correto, então a empresa vai ganhar muito mais.”
+
+    “Também usamos agentes de AI para automatizar toda a operação, o que elimina a necessidade de ter
+    centenas de pessoas conferindo documentos.”
+
+    Com um ano de vida, a Core AI tem cinco clientes e espera faturar mais de US$ 3 milhões este ano.
+
+    Um dos clientes é a Alude, um sistema de gestão para imobiliárias que usa a Core AI para criar sua
+    esteira de crédito para um produto de antecipação de aluguel que eles criaram.
+
+    A rodada de hoje é a segunda da história da startup, que já havia captado US$ 400 mil no ano passado,
+    logo que o negócio foi criado.
+
+    Os recursos serão usados basicamente para investir em time e aprimorar a plataforma tecnológica. Fernando
+    disse que a startup não quer contratar muitos funcionários. “Queremos um time com poucas pessoas mas
+    ultraqualificadas,” disse ele.'
+- tipo: noticia
+  titulo: Essa startup transforma empresas de software em uma plataforma de crédito. A Big Bets gostou
+    da ideia
+  url_fonte: https://neofeed.com.br/startups/essa-startup-transforma-empresas-de-software-em-uma-plataforma-de-credito-a-big-bets-gostou-da-ideia/
+  data_publicacao: null
+  conteudo_texto: 'Essa startup transforma empresas de software em uma plataforma de crédito. A Big Bets
+    gostou da ideia
+
+    Com a ajuda de inteligência artificial, a Core AI permite que qualquer empresa de software crie e
+    escale operações de crédito
+
+    Ralphe Manzoni Jr.
+
+    Pensou em transformar um software em uma plataforma de crédito? Essa é a ideia por trás da Core AI,
+    startup fundada por Carolina da Costa Carvalho, Fernando Martins e Enrico Francesco Damiani, que acaba
+    de receber um aporte pré-seed da gestora de
+
+    .
+
+    A rodada contou também com a participação de investidores-anjos de renome, como Daniel Silva, fundador
+    da Hyperplane, comprada pelo
+
+    (ele, atualmente, é diretor de IA no banco digital),
+
+    , chairman da GP, e Lívia Kuga, ex-sócia da Stone, entre outros nomes.
+
+    “Crédito virou uma ferramenta de crescimento. Mas operar crédito ainda é caro e complexo”, diz Carolina.
+    “Queremos reimaginar a experiência de crédito com
+
+    A proposta da Core AI é eliminar a complexidade, o tempo e o custo de construir uma operação de crédito
+    do zero. Para fazer isso, a startup redesenha fluxos com IA, une modelagem de risco, estrutura dados
+    públicos e privados, além de automatizar processos, fluxos jurídicos, monitoramento e capital para
+    o crédito.
+
+    A ideia é fazer parceria com empresas de software para que possam oferecer, através de seus sistemas,
+    operações de crédito. “Acessamos as bases de dados dos clientes e entregamos o produto de crédito
+    pronto, com integração simples, cuidando da operação de crédito do início ao fim”, diz Damiani.
+
+    A Core AI, que captou US$ 1 milhão nesta rodada, já está atuando no setor de real estate e de saúde,
+    em casos que envolvem antecipação de recebíveis. São, atualmente, mais de 40 mil usuários ativos.
+
+    Os fundadores da Core AI: Enrico Francesco Damiani, Carolina da Costa Carvalho e Fernando Martins
+
+    A plataforma faz a integração com o sistema de imobiliárias e pode oferecer, ao proprietário do imóvel,
+    uma antecipação do aluguel. O mesmo
+
+    para médicos, que prestam serviços para hospitais, mas que recebem os pagamentos, às vezes, em até
+    90 dias.
+
+    “Há centenas de bilhões de reais em aluguel e o fluxo financeiro passa dentro do software. E tudo
+    poderia ser usado para crédito”, diz Martins.
+
+    De acordo com a Core AI, nesses primeiros testes, os resultados têm sido positivos: 70% da base foi
+    pré-aprovada, a inadimplência ficou abaixo de 1% e o crédito está sendo liberado em segundos. O
+
+    é fornecido por family offices e por alguns investidores-anjos.
+
+    Apesar de começar com real estate e saúde, o plano da Core AI é se expandir para outros segmentos.
+    A plataforma, que não depende exclusivamente de estruturas tradicionais como bancos, financeiras ou
+    FIDCs, pode ser usada por marketplaces, ERPs, SaaS e outros negócios que operem crédito próprio.
+
+    A ideia surgiu de experiências que o trio de fundadores tinha com a questão de crédito. Embora tenham
+    caminhos e histórias diferentes, os três identificaram a mesma dor: não era fácil obter crédito no
+    Brasil.
+
+    Carolina, que tem MBA pela Columbia Business School, atuou em crédito estruturado e investimentos
+    alternativos no Mubadala, CPP Investments e Credix. Já Martins e Damiani se conheceram na Stone, onde
+    ambos trabalharam na área de tecnologia, desenvolvendo modelos de IA para recomendação de produtos
+    financeiros.'
+- tipo: site
+  titulo: Core AI — end-to-end credit platform
+  url_fonte: https://www.coreai.com.br/
+  data_publicacao: null
+  conteudo_texto: 'Your partner for ready-to-launch customized credit products that fuel SaaS growth with
+    a simple integration
+
+    WHAT WE DELIVER
+
+    High performance credit products with few lines of code
+
+    Easy to develop
+
+    Lauch customized financial products with a simple API integration
+
+    Unlock a new revenue stream
+
+    Boost customer acquisition and monetization with embedded credit products
+
+    Focus on your core business
+
+    Spare founder and dev focus while all the funding, risk management and infrastructure are on us
+
+    Focus on your core business
+
+    Spare founder and dev focus while all the funding, risk management and infrastructure are on us
+
+    Focus on your core business
+
+    Spare founder and dev focus while all the funding, risk management and infrastructure are on us
+
+    White label credit solution
+
+    for any business label
+
+    Turn your customer relationships and data into powerful acquisition, retention, and monetization tools
+    through credit, while Core AI works seamlessly behind the curtains
+
+    next 12 months
+
+    Total Payment Volume (forecast)
+
+    next 12 months
+
+    Total Payment Volume (forecast)
+
+    Do you want to receive your monthly tuitionin advance?
+
+    Get paid now
+
+    Do you want to receive your appoiment in advance?
+
+    Get paid now
+
+    Do you want to receive your rent in advance?
+
+    Get paid now
+
+    END-TO-END CREDIT PLATFORM
+
+    Core apps and segment-specific layers customization for rapid and flexible deployment
+
+    Core apps and segment-specific layers customization for rapid and flexible deployment
+
+    Moat built on AI-ready architecture with encrypted, privacy-compliant integration of private and public
+    data
+
+    Moat built on AI-ready architecture with encrypted, privacy-compliant integration of private and public
+    data
+
+    Core AI''s risk engine combines hybrid ML and foundational models to make smarter risk decisions
+
+    Core AI''s risk engine combines hybrid ML and foundational models to make smarter risk decisions
+
+    Embedded funding solutions, streamlining access to capital for faster and efficient financing
+
+    Embedded funding solutions, streamlining access to capital for faster and efficient financing
+
+    Meet ouR FOUNDING team
+
+    I’m focused on growing my brand, improving my products, and finding smarter ways to market and package
+    my work. I’m driven, curious, and committed to turning my design skills into something bigger.
+
+    (Co-founder & CEO)
+
+    I’m focused on growing my brand, improving my products, and finding smarter ways to market and package
+    my work. I’m driven, curious, and committed to turning my design skills into something bigger.
+
+    (Co-founder & CTO)
+
+    I’m focused on growing my brand, improving my products, and finding smarter ways to market and package
+    my work. I’m driven, curious, and committed to turning my design skills into something bigger.
+
+    I’m focused on growing my brand, improving my products, and finding smarter ways to market and package
+    my work. I’m driven, curious, and committed to turning my design skills into something bigger.
+
+    I’m focused on growing my brand, improving my products, and finding smarter ways to market and package
+    my work. I’m driven, curious, and committed to turning my design skills into something bigger.
+
+    I’m focused on growing my brand, improving my products, and finding smarter ways to market and package
+    my work. I’m driven, curious, and committed to turning my design skills into something bigger.
+
+    I’m focused on growing my brand, improving my products, and finding smarter ways to market and package
+    my work. I’m driven, curious, and committed to turning my design skills into something bigger.
+
+    I’m focused on growing my brand, improving my products, and finding smarter ways to market and package
+    my work. I’m driven, curious, and committed to turning my design skills into something bigger.
+
+    I’m focused on growing my brand, improving my products, and finding smarter ways to market and package
+    my work. I’m driven, curious, and committed to turning my design skills into something bigger.
+
+    (Product & Operation)
+
+    I’m focused on growing my brand, improving my products, and finding smarter ways to market and package
+    my work. I’m driven, curious, and committed to turning my design skills into something bigger.
+
+    I’m focused on growing my brand, improving my products, and finding smarter ways to market and package
+    my work. I’m driven, curious, and committed to turning my design skills into something bigger.
+
+    (Co-founder & CEO)
+
+    I’m focused on growing my brand, improving my products, and finding smarter ways to market and package
+    my work. I’m driven, curious, and committed to turning my design skills into something bigger.
+
+    (Co-founder & CTO)
+
+    I’m focused on growing my brand, improving my products, and finding smarter ways to market and package
+    my work. I’m driven, curious, and committed to turning my design skills into something bigger.
+
+    I’m focused on growing my brand, improving my products, and finding smarter ways to market and package
+    my work. I’m driven, curious, and committed to turning my design skills into something bigger.
+
+    I’m focused on growing my brand, improving my products, and finding smarter ways to market and package
+    my work. I’m driven, curious, and committed to turning my design skills into something bigger.
+
+    I’m focused on growing my brand, improving my products, and finding smarter ways to market and package
+    my work. I’m driven, curious, and committed to turning my design skills into something bigger.
+
+    I’m focused on growing my brand, improving my products, and finding smarter ways to market and package
+    my work. I’m driven, curious, and committed to turning my design skills into something bigger.
+
+    I’m focused on growing my brand, improving my products, and finding smarter ways to market and package
+    my work. I’m driven, curious, and committed to turning my design skills into something bigger.
+
+    I’m focused on growing my brand, improving my products, and finding smarter ways to market and package
+    my work. I’m driven, curious, and committed to turning my design skills into something bigger.
+
+    (Product & Operation)
+
+    I’m focused on growing my brand, improving my products, and finding smarter ways to market and package
+    my work. I’m driven, curious, and committed to turning my design skills into something bigger.
+
+    Ready to start?
+
+    Offer customized credit products with our AI-powered end-to-end credit platform while we work behind
+    the curtains
+
+    Get in touch'

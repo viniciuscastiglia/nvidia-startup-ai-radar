@@ -1,0 +1,362 @@
+# PhoneTrack
+# Coletado em 2026-09-03. Todo `conteudo_texto` é o texto REAL da página em `url_fonte`,
+# fatiado do que `scripts/coletar.py` extraiu — não é paráfrase.
+#
+# CAMADA "DADO" (D-062): esta fixture NÃO tem bloco `gabarito:` nem `perfil_alvo`, e a
+# ausência É a decisão. As 8 fixtures originais são a régua dos critérios 1 e 3; anotar
+# esta aqui seria medir o classificador contra rótulos escritos na mesma sessão que leu
+# os mesmos documentos — calibrar contra o próprio gabarito.
+#
+# CAMPOS ESTRUTURADOS: só ficam preenchidos os que aparecem LITERALMENTE nos documentos.
+# `null` faz o Briefing reportar "requisito não verificado", que é correto; um valor
+# plausível e errado não reporta nada e ainda corrompe o filtro de elegibilidade.
+#
+# TEASER RECORTADO: os veículos injetam chamada de OUTRA empresa no meio e no fim da
+# matéria. Cada documento abaixo declara em `_corte` as linhas do arquivo coletado que
+# entraram e as que foram removidas por citarem terceiro.
+nome: PhoneTrack
+site: https://www.phonetrack.com.br/
+setor: voz e call center — speech analytics
+estagio: null
+localizacao: null
+ano_fundacao: null
+tamanho_time: null
+descricao_curta: Plataforma de speech analytics que transcreve e analisa automaticamente 180 variáveis
+  do áudio de cada ligação recebida — aderência a script, tempo de fala, sobreposição e análise de sentimento.
+fonte_descoberta: mobiletime.com.br — nicho de robôs conversacionais e voz
+coletado_em: '2026-09-03'
+documentos:
+- tipo: noticia
+  titulo: 'PhoneTrack: startup de speech analytics monitora 4 milhões de chamadas/mês'
+  url_fonte: https://www.mobiletime.com.br/noticias/29/09/2021/phonetrack-startup-de-speech-analytics-monitora-4-milhoes-de-chamadas-mes/
+  data_publicacao: null
+  conteudo_texto: 'PhoneTrack: startup de speech analytics monitora 4 milhões de chamadas/mês
+
+    Fernando Paiva | 29/09/21 09:40
+
+    A tecnologia de análise automatizada de fala, ou speech analytics, em inglês, está sendo cada vez
+    mais utilizada no Brasil para monitorar a qualidade no atendimento telefônico. Ela permite analisar
+    rapidamente um grande volume de chamadas telefônicas, ao contrário da análise feita exclusivamente
+    por humanos, que costuma trabalhar com uma pequena amostra. Com a
+
+    e o distanciamento social, a demanda por soluções de speech analytics se acelerou. A startup curitibana
+    PhoneTrack, que desenvolveu sua própria tecnologia nessa área, viu dobrar nos últimos 12 meses o volume
+    monitorado: por mês agora são 4 milhões de ligações, que somam cerca de 10 milhões de minutos. A expectativa
+    é dobrar de novo dentro de um ano, diz Marcio Pacheco, CEO da PhoneTrack, em conversa com Mobile Time.
+
+    “Começamos há seis anos, no fim de 2015, inicialmente para mensurar campanhas de marketing com ligações
+    telefônicas. Monitoramos as ligações recebidas em 11 mil pontos de venda de 700 clientes em 600 cidades”,
+    contabiliza Pacheco.
+
+    A solução da PhoneTrack analisa automaticamente 180 variáveis a partir do áudio gravado de todas as
+    ligações recebidas pelo cliente. Consegue verificar, por exemplo, se o atendente seguiu o script;
+    a proporção de tempo de fala do atendente e do consumidor; a sobreposição da conversa (quando o atendente
+    fala por cima do consumidor); e até análise de sentimento. Com base nesses dados, prepara relatórios
+    e indica para as empresas o que pode ser feito para melhorar a produtividade.
+
+    “Procuramos entender qual é o padrão de sucesso. E informamos depois para o atendente o que ele precisa
+    fazer. Às vezes pode ser só mudar o tom de voz”, comenta.
+
+    Segundo Pacheco, os erros mais comuns em pontos de venda são os seguintes: 1) de 20% a 30% das chamadas
+    recebidas não são atendidas, o que é um desperdício enorme, haja vista que são leads provenientes
+    de campanhas de marketing que divulgaram aquele número telefônico; 2) falta de preparo do vendedor,
+    que não faz as perguntas certas; 3) falta de cultura de análise de dados; 4) falta de padronização
+    no atendimento nas redes lojas.
+
+    Call center e futuro
+
+    Depois de seis anos concentrada na análise de fala em chamadas recebidas em pontos de venda, a PhoneTrack
+    começa a levar sua solução para contact centers, onde está sendo experimentada em diferentes tipos
+    de chamadas. O maior desafio no call center é manter o padrão do atendimento, como o tom de voz e
+    o respeito ao script, aponta Pacheco. O alto turn over mensal nesse setor agrava o problema, acrescenta.
+
+    “Hoje os call centers escutam 2% das ligações. Como a avaliação é feita por humanos, ela varia conforme
+    o turno. As chamadas de manhã costumam ser mais bem avaliadas, enquanto as de tarde recebem notas
+    piores”, comenta.
+
+    Para o futuro, a PhoneTrack avalia se tornar uma ferramenta de anlytics omnichannel, trabalhando também
+    com texto e em diferentes canais. Além disso, estuda a possibilidade de analisar áudios de WhatsApp
+    e de alto-falantes inteligentes.'
+- tipo: site
+  titulo: PhoneTrack — mensuração e análise de dados de voz
+  url_fonte: https://www.phonetrack.com.br/
+  data_publicacao: null
+  conteudo_texto: 'Pular para o conteúdo
+
+    Venda mais pelo telefone!
+
+    Com a PhoneTrack, você identifica a
+
+    origem das ligações recebidas, consegue recuperar as chamadas perdidas, analisar o desempenho de cada
+    ligação
+
+    e muito, muito mais!
+
+    Peça uma demonstração
+
+    Como nós te ajudamos
+
+    Uma plataforma completa de mensuração, análise e qualificação de dados de voz,
+
+    feita sob medida para
+
+    times de marketing, vendas ou gestão.
+
+    A Nossa Inteligência Artificial analisa ligações, classifica as mais produtivas,
+
+    cria automações e
+
+    acelera o seu processo de venda!
+
+    Saiba quais campanhas estão gerando mais ligações!
+
+    A PhoneTrack te ajuda a monitorar suas campanhas on e offline para identificar quais estão gerando
+    mais ligações. Potencialize os resultados das suas campanhas e pare de perder dinheiro investindo
+    nos canais errados.
+
+    Funcionalidades para você:
+
+    Rastreamento de leads telefônicos
+
+    Integração com Google Ads e outras 38 ferramentas
+
+    Valor de oportunidade
+
+    Gerencie o desempenho da equipe em um único lugar
+
+    Tenha em mãos as métricas sobre cada vendedor ao telefone e saiba quais termos convertem ligações
+    em vendas. Use os dados para treinamento da equipe e tenha novos insights sobre a jornada do seu consumidor.
+
+    Funcionalidades para você:
+
+    Relatórios em tempo real
+
+    Mapeamento de URA
+
+    Integração com CRM
+
+    Classificação de leads
+
+    Análise de palavras-chave
+
+    Gerencie o desempenho da equipe em um só lugar
+
+    Métricas sobre cada vendedor ao telefone e termos que convertem ligações em vendas. Além de dados
+    para treinamento da equipe e insights sobre a jornada do consumidor
+
+    Funcionalidades para você:
+
+    Relatórios e análises
+
+    Mapeamento de URA
+
+    Integração com CRM
+
+    Classificação de leads
+
+    Análise de palavras-chave
+
+    Tenha dados em tempo real para tomadas de decisão mais assertivas
+
+    Acompanhe múltiplos pontos de vendas (ou centrais de atendimento) e métricas de performance relacionadas
+    a marketing. Tudo isso em um painel centralizado, completo e de baixa complexidade.
+
+    Funcionalidades para você:
+
+    Gravação das ligações
+
+    Alerta de ligação perdida
+
+    Visão por PDV
+
+    QUERO UMA DEMO
+
+    Integre com as ferramentas do seu dia a dia
+
+    Mais de 2.000 ferramentas disponíveis para integrar!
+
+    Saiba mais sobre integrações
+
+    Conheça Nossos Planos
+
+    ✅ 5 mídias mensuradas
+
+    ✅ Até 2.000 minutos
+
+    ✅ Até 5 números
+
+    ✅ Usuários ilimitados
+
+    Lista de ligações recebidas
+
+    Recuperação de chamadas perdidas
+
+    Dashboards e relatórios
+
+    Mais de 2.000 Integrações
+
+    Bloqueio de números
+
+    Gravação das ligações
+
+    Origem das ligações/ROI
+
+    Alertas e marcadores personalizados
+
+    Lead Tracking avançado
+
+    Valor mensal:
+
+    *Consulte valores dos excedentes
+
+    QUERO UMA DEMONSTRAÇÃO
+
+    ✅ 10 mídias mensuradas
+
+    ✅ Até 4.000 minutos
+
+    ✅ Até 10 números
+
+    ✅ Usuários ilimitados
+
+    Lista de ligações recebidas
+
+    Recuperação de chamadas perdidas
+
+    Dashboards e relatórios
+
+    Mais de 2.000 Integrações
+
+    Bloqueio de números
+
+    Gravação das ligações
+
+    Origem das ligações/ROI
+
+    Alertas e marcadores personalizados
+
+    Lead Tracking avançado
+
+    Valor mensal:
+
+    *Consulte valores dos excedentes
+
+    QUERO UMA DEMONSTRAÇÃO
+
+    Agências e grandes operações
+
+    ✅ Condições especiais de contratação
+
+    ✅ Planos 100% customizáveis
+
+    Lista de ligações recebidas
+
+    Recuperação de chamadas perdidas
+
+    Dashboards e relatórios
+
+    Mais de 2.000 Integrações
+
+    Bloqueio de números
+
+    Gravação das ligações
+
+    Origem das ligações/ROI
+
+    Alertas e marcadores personalizados
+
+    Lead Tracking avançado
+
+    Valor mensal:
+
+    *Consulte valores dos excedentes
+
+    QUERO UMA DEMONSTRAÇÃO
+
+    Somos líderes no mercado de voz!
+
+    DE MINUTOS ANALISADOS
+
+    de consumidores únicos
+
+    agências de marketing com 750 clientes monitorados
+
+    pontos de venda monitorados
+
+    Quero uma demo
+
+    Entendemos o que nossos clientes precisam
+
+    Mais de 3 mil empresas já aumentaram sua eficiência usando Phonetrack
+
+    Saiba mais sobre os cases de sucesso
+
+    Comece já a gerar mais resultados com ligações telefônicas
+
+    Temos o que você precisa para melhorar a sua operação!
+
+    Quero uma demo'
+- tipo: site
+  titulo: PhoneTrack — Speech Analytics
+  url_fonte: https://www.phonetrack.com.br/speech-analytics
+  data_publicacao: null
+  conteudo_texto: 'Pular para o conteúdo
+
+    Conheça o Speech Analytics!
+
+    O melhor jeito de
+
+    melhorar o atendimento ao seu público
+
+    , é ouvindo a voz dele!
+
+    Desenvolvemos a  Inteligência Artificial que trabalha por você
+
+    em tempo real durante as chamadas que a sua empresa recebe!
+
+    Com ela, você terá insights preciosos através da análise de tudo o que está sendo dito durante suas
+    chamadas de voz.
+
+    Alguns dados que você pode obter em tempo real
+
+    Saiba se o time está seguindo o script de atendimento
+
+    Mapeie as palavras-chave mais mencionadas pelos seus clientes
+
+    Identifique o nível de produtividade das chamadas
+
+    Saiba o sentimento do seu cliente
+
+    Confira quando os seus concorrentes são citados
+
+    Ofereça feedbacks mais assertivos para a sua equipe
+
+    Por que usar o
+
+    da PhoneTrack?
+
+    Automatize a monitoria de atendimento
+
+    Ofereça feedbacks e treinamentos mais assertivos
+
+    Identifique as falhas do seu processo
+
+    Melhore o atendimento ao público
+
+    Reduza o churn oferecendo uma boa experiência para o usuário
+
+    Como funciona?
+
+    O Speech Analytics é uma inteligência artificial que acompanha as suas chamadas. Através da análise
+    de voz, a tecnologia extrai informações como o sentimento do usuário e as palavras mais mencionadas
+    por ele. Assim, você pode oferecer um
+
+    atendimento mais personalizado
+
+    ao usuário e ainda consegue extrair relatórios completos sobre a
+
+    qualidade das suas chamadas.
+
+    A PhoneTrack é líder em dados de voz e call analytics no Brasil!
+
+    Descubra agora como gerar eficiência para sua operação'

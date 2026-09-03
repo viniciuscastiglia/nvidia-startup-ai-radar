@@ -2734,6 +2734,105 @@ já dizia, que é a falha que D-083 nomeou.
 
 ---
 
+## D-090 — A base vai a 16, e as fontes boas não eram as que a documentação dizia
+**Data:** 03/09/2026 · timebox de 3 h, cumprido · executa D-062
+
+**O placar honesto: 8 → 16, não 30.** Fintech (4) e agro (2) — as duas consultas que devolviam
+**zero** — respondem. Voz/call center (2) entrou e destrava a regra 3 do TAPI. **Dados tabulares e
+mais robotics não entraram**, e a razão está escrita abaixo, empresa por empresa.
+
+**O que custa a curadoria não é o YAML — é o 3º documento.** O TAPI pede 3 documentos por empresa
+e `seed.py` exige ≥ 2 TIPOS distintos. Achar a empresa é fácil, achar 2 matérias é fácil; o que
+mata é a terceira peça. **Quatro empresas boas caíram por isso, e todas depois de coletadas:**
+- **Aro** (fintech de agente de crédito, 2 matérias excelentes) — o domínio `aro.com.br` é de uma
+  **fabricante de embalagens metálicas desde 1943**. Não é a fintech. O portão de curadoria pegou.
+- **Creditas** (o caso de recusa por > 10 anos que a base não tem) — 3 matérias, **um só tipo**;
+  `creditas.com` devolve 221 caracteres e todo caminho interno dá 404.
+- **alt.bank** — `/sobre` e `/guard` devolvem **exatamente os mesmos 7.843 caracteres da home**: é
+  SPA. Usá-los seria fabricar diversidade documental, e a fixture teria 3 documentos que são 1.
+- **ESGreen** — e esta dói: os documentos dizem que ela **já é membro do NVIDIA Inception** e
+  treinou modelo próprio na infraestrutura da NVIDIA. Só existem 2 documentos públicos dela.
+
+**A DESCOBERTA QUE MUDA A ROTA, E ELA FOI MEDIDA, NÃO LIDA.** `04-ecossistema-br.md` ordena os
+veículos por **disponibilidade** (grátis, sem paywall) e elege o Brazil Journal *"melhor veículo
+para este projeto"*. Rodando `coletar.py` neles, a ordem que importa é outra:
+
+| domínio | antes | depois | mecanismo |
+|---|---|---|---|
+| braziljournal.com | **48** | **4.110** | o único `<main>` é uma tarja de teaser; os 9 `<article>` são cards |
+| agfeed.com.br (agro) | **384** | **7.122** | não há `<main>`; o 1º `<article>` é o card de chamada |
+| startups.com.br | 5.062 | 5.390 | — |
+| mobiletime.com.br | 5.553 | 6.163 | — |
+| portal.clientesa.com.br | 3.245 | 4.649 | — |
+
+`extrair()` fazia `find("main") or find("article") or body` — **preferência por tipo de tag,
+desempatada pela ORDEM no documento**. Trocado por **o maior bloco** entre `main`, `article` e
+`body`. As duas melhores fontes do país para agro e para negócios estavam mortas para este
+pipeline, e ninguém sabia porque ninguém tinha rodado.
+**Alternativa descartada:** restringir a curadoria aos 3 domínios que já funcionavam — economiza
+15 min e custa o setor agro inteiro.
+**Por que é barato:** `coletar.py` é auxiliar de CURADORIA, não caminho de execução. Nenhum agente
+o chama, `seed.py` lê YAML, e os `conteudo_texto` das fixtures antigas já estão congelados.
+**Não move um único número medido.**
+**Custo honesto, e ele é real:** o bloco maior traz post relacionado junto. Por isso cada documento
+novo declara em `_corte` as linhas que entraram — e `doutor-ai.yaml` já carregava
+`"Dell: Crise de componentes"` e `"ASUS quer estar entre os líderes"` **desde 22/08**, colhidos
+pelo seletor antigo. Contaminação entre empresas é o defeito de D-086 e D-089.
+
+**D-062 SÓ EXISTIA EM PROSA, E ISSO ERA MENSURÁVEL.** As 22 (hoje 8) entram como DADO, sem
+gabarito. Mas `avaliar_agentes.py` engolia `data/seed/*.yaml` inteiro, e quebrava de dois jeitos —
+um barulhento e um silencioso:
+- `--validar` saía com **exit 1**, uma linha por fixture nova;
+- **a precisão despencava sem avisar.** Sem `dores_esperadas`, `esperadas` vira conjunto vazio e a
+  fixture entra na média como `0.0`. **Medido, o contrafactual:**
+
+| | classe | precisão | recall | discriminação |
+|---|---|---|---|---|
+| régua filtrada por `gabarito` (o que entrou) | 3/7 | **49%** | 100% | 8/8 |
+| todas as 16 (o comportamento anterior) | 3/7 | **24%** | 100% | 15/16 |
+
+**`classe` e `recall` ficam IDÊNTICOS** — nada no placar acusaria. A régua seguiria imprimindo um
+número com cara de medição, pela metade. **Corrigido:** `regua = [f for f in fixtures if
+f.get("gabarito")]` alimenta `validar`, `medir` e os dois tetos.
+**`evidencia_literal` ficou sobre as 16, de propósito:** ela não pergunta ao gabarito, pergunta se
+todo trecho citado ocorre **verbatim** no documento — que é o modo de falha mais provável de 24
+documentos colados numa sessão. Passou nas 16.
+**E não foi só teoria de segurança:** as fixtures novas foram montadas por **script que fatia o
+arquivo do `coletar.py` por número de linha**, nunca redigitadas. Paráfrase é impossível por
+construção, e a checagem literal confirma.
+
+**UM DEFEITO DE RASTREABILIDADE, ACHADO PELO PRÓPRIO PORTÃO.** `seed.py --verificar-urls` reprovou
+a **Laura Networks**, fixture da base desde 22/08. Medido: `HEAD` entra em laço de redirect;
+**`GET` responde 200 com 63 mil caracteres**. A página está viva. O verificador já sabia que *"alguns
+servidores recusam HEAD"* e caía para `GET` — **mas só quando a recusa vinha como STATUS ≥ 400.
+Quando vem como EXCEÇÃO, o `except` de fora engolia a tentativa e o fallback nunca rodava.**
+Falso NEGATIVO de rastreabilidade é pior que falso positivo: manda o curador trocar uma fonte
+legítima. Agora só falha quando os DOIS métodos falham, e o log diz qual respondeu. **48/48 URLs.**
+
+**`SETORES` ganhou `voz` e `robótica`** — e a chave TEM de ocorrer literal na coluna `setor`, porque
+`buscar_startups` filtra com `s.setor ILIKE '%<chave>%'`. **É a armadilha que fazia "fintechs"
+devolver zero, uma casa adiante:** `setor: agtech` não casaria a consulta "agro". Por isso os
+rótulos saíram `agro — agricultura digital`, `fintech de crédito`, `voz e call center`.
+
+**O QUE A EXECUÇÃO MOSTROU, E A LEITURA NÃO MOSTRARIA (D-083):**
+1. **P-12 deixou de ser um número e virou uma cena.** A **Core AI** — empresa cujo produto É
+   modelo de crédito com IA — sai `non-AI`, e com ela Conta Simples e Iniciador. Não é regressão:
+   é o gargalo de vocabulário que D-060 mediu, agora legível. **É o argumento de D-078 confirmado
+   por dado novo:** 8 fixtures não discriminavam o bastante para isso aparecer.
+2. **O seletor de D-086 continua atraído por mobília de página.** Na NeMo saiu
+   *"More Customer Stories / View All Blogs / View All Sessions"*; na TensorRT-LLM, uma linha de
+   changelog do README com emoji. É o mecanismo de D-089, em dado novo. **Munição para (b) em 04/09.**
+3. **P-22 ganhou exemplo concreto:** `NEGOCIO` é indexado por TECNOLOGIA, não por dor. NeMo
+   recomendada para a dor `custo` traz o texto de `avaliação`. A justificativa de negócio fala de
+   outro assunto que não a dor que puxou a recomendação.
+4. O ponteiro `ver D-059` segue impresso no briefing do usuário (P-11, uma linha, 05/09).
+
+**Alternativa descartada para o número:** parar em 12 e usar a hora restante para forçar 30 com
+empresas de 2 documentos. Rejeitada — `seed.py` reprovaria, e afrouxar o piso de 3 documentos
+trocaria a única promessa que o sistema faz (rastreabilidade) por uma linha de contagem.
+
+---
+
 ## Decisões pendentes
 
 | # | Decisão | Estado |

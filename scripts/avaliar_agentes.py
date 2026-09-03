@@ -740,16 +740,42 @@ def main() -> int:
         return 0
 
     fixtures = carregar()
-    print(f"{len(fixtures)} fixture(s) em data/seed/")
+    # AS DUAS CAMADAS DE D-062, AGORA NO CÓDIGO E NÃO SÓ NA PROSA (03/09, D-090)
+    # ---------------------------------------------------------------------------
+    # D-062 decidiu em 27/08 que a base cresce em duas camadas: as 8 originais COM bloco
+    # `gabarito:` são a régua dos critérios 1 e 3, e as demais entram como DADO, sem gabarito —
+    # anotá-las seria medir o classificador contra rótulos escritos na mesma sessão que leu os
+    # mesmos documentos, que é calibrar contra o próprio gabarito.
+    #
+    # O harness não sabia disso. `carregar()` engole `data/seed/*.yaml` inteiro, e com as
+    # fixtures novas isso quebrava de duas formas — uma barulhenta e uma silenciosa:
+    #
+    #   `--validar` saía com exit 1, uma linha "sem bloco `gabarito:`" por fixture nova;
+    #   `medir()` derrubava a PRECISÃO sem avisar: sem `dores_esperadas`, `esperadas` vira
+    #   conjunto vazio e a fixture entra na média como 0.0 (emitiu algo) ou 1.0 (não emitiu).
+    #   Os 49% viravam ruído, e nada no placar acusaria.
+    #
+    # A silenciosa é a grave: a régua continuaria imprimindo um número com cara de medição.
+    regua = [f for f in fixtures if f.get("gabarito")]
+    dados = len(fixtures) - len(regua)
+    print(f"{len(fixtures)} fixture(s) em data/seed/ — {len(regua)} com gabarito (A RÉGUA) "
+          f"e {dados} como dado, sem gabarito (D-062)")
 
     if args.validar:
-        if problemas := validar(fixtures):
+        if problemas := validar(regua):
             print("\nGABARITO INCOERENTE:")
             for p in problemas:
                 print(f"  - {p}")
             return 1
         print("  coerência do gabarito: ok")
 
+        # `evidencia_literal` roda sobre `fixtures`, NÃO sobre `regua`, e isso é deliberado.
+        # Ela não pergunta nada ao gabarito: pergunta se todo trecho citado ocorre VERBATIM no
+        # documento que a evidência aponta. É checagem do DADO, e o modo de falha que ela pega —
+        # paráfrase colada no lugar do texto real — é justamente o mais provável nas fixtures
+        # novas, que são dezenas de documentos copiados à mão numa sessão só. Rodar sobre as
+        # fixtures sem gabarito é ganho; ficar de fora delas seria deixar a rede aberta onde o
+        # peixe está.
         if falhas := evidencia_literal(fixtures):
             print("\nEVIDÊNCIA NÃO LITERAL:")
             for f in falhas:
@@ -757,18 +783,18 @@ def main() -> int:
             return 1
         print("  evidência literal: ok — todo trecho ocorre verbatim no documento citado")
 
-        ok, total, perdidas = teto_do_casador(fixtures)
+        ok, total, perdidas = teto_do_casador(regua)
         print(f"  teto de recall do casador: {ok}/{total} = {ok / total:.0%}")
         for p in perdidas:
             print(f"      - {p}")
 
-        ok, total, fora = teto_do_degrau_2a(fixtures)
+        ok, total, fora = teto_do_degrau_2a(regua)
         print(f"  teto do degrau 2a da rubrica: {ok}/{total} das AI-native decididas")
         for f in fora:
             print(f"      - {f}")
         return 0
 
-    r = medir(fixtures, args.motor, args.baseline)
+    r = medir(regua, args.motor, args.baseline)
     bracos = [n for n, ligado in (("juiz LLM", args.juiz), ("rubrica em degraus", args.rubrica),
                                   ("confiança do diagnóstico", args.confianca_diagnostico)) if ligado]
     titulo = ("linha de base TRIVIAL (sempre AI-native, todas as 8 dores)" if args.baseline

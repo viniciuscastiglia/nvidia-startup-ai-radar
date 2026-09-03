@@ -53,9 +53,35 @@ def extrair(html: str) -> tuple[str, str]:
     for tag in sopa(RUIDO_HTML):
         tag.decompose()
 
-    # Prefere <main> ou <article> quando a página os declara; senão cai para o <body>.
-    principal = sopa.find("main") or sopa.find("article") or sopa.body or sopa
-    texto = principal.get_text(separator="\n", strip=True)
+    # O MAIOR BLOCO, E NÃO O PRIMEIRO (03/09, D-090)
+    # ------------------------------------------------
+    # A versão anterior era `find("main") or find("article") or body`: preferência por tipo de
+    # tag, resolvida pela ORDEM no documento. Medido em 03/09, ela mata duas das melhores
+    # fontes da curadoria brasileira, e por dois caminhos diferentes:
+    #
+    #   braziljournal.com  o único <main> é uma tarja de teaser  ->  48 chars (corpo: 4.110)
+    #   agfeed.com.br      não há <main>; o 1º <article> é o card ->  384 chars (corpo: 7.122)
+    #
+    # Em ambos os casos o texto ESTÁ na página — o seletor é que pegava a chamada em vez da
+    # matéria. Tamanho é a heurística certa aqui porque a pergunta da curadoria é "onde está o
+    # corpo do texto?", e a resposta é o bloco com mais prosa depois de `RUIDO_HTML` derrubar
+    # nav/header/footer/aside. `<body>` entra como candidato — é ele que ganha nos dois sites
+    # acima — e continua perdendo para o <article> certo quando a página o marca direito.
+    #
+    # O CUSTO, E ELE É REAL: o bloco maior traz junto post relacionado. Medido nos domínios já
+    # usados na base: 5.062->5.390, 5.553->6.163, 3.245->4.649. Esse excedente é chamada de
+    # outra empresa, e contaminação entre empresas é o defeito que D-086 e D-089 perseguiram.
+    # Quem o remove é o curador ao recortar — este script imprime para leitura humana, nunca
+    # escreve fixture. Ver o portão 4 da curadoria no plano de 03/09.
+    #
+    # POR QUE ISTO É BARATO: `coletar.py` é auxiliar de CURADORIA, não caminho de execução.
+    # Nenhum agente o chama, `seed.py` lê YAML, e os `conteudo_texto` das fixtures existentes
+    # já estão congelados. Mudá-lo não move um único número medido.
+    candidatos = [*sopa.find_all("main"), *sopa.find_all("article")]
+    if sopa.body:
+        candidatos.append(sopa.body)
+    textos = [c.get_text(separator="\n", strip=True) for c in candidatos]
+    texto = max(textos, key=len) if textos else sopa.get_text(separator="\n", strip=True)
 
     return titulo, limpar_linhas(texto)
 

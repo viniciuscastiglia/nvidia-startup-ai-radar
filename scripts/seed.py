@@ -125,17 +125,40 @@ def verificar_urls(fixtures: list[dict]) -> list[str]:
         for f in fixtures:
             for d in f.get("documentos") or []:
                 url = d.get("url_fonte", "")
+                # UM `HEAD` QUE LEVANTA TAMBÉM É `HEAD` RECUSADO (03/09, D-090)
+                # ---------------------------------------------------------------
+                # A versão anterior já sabia que "alguns servidores recusam HEAD" e caía para
+                # `GET` — mas só quando a recusa vinha como STATUS >= 400. Quando ela vem como
+                # EXCEÇÃO, o `except` de fora engolia a tentativa inteira e o fallback nunca
+                # rodava. Medido em 03/09 na `lauranetworks.com`, que é fixture da base desde
+                # 22/08: `HEAD` entra em laço de redirect (`TooManyRedirects`) e `GET` responde
+                # **200 com 63 mil caracteres**. A página está viva; o verificador é que dizia
+                # que morreu — e ele é o teste que sustenta a única coisa que este sistema
+                # promete sobre toda conclusão que emite.
+                #
+                # Falso NEGATIVO de rastreabilidade é pior que falso positivo: ele manda o
+                # curador remover ou trocar uma fonte legítima. Por isso a falha só é relatada
+                # quando os DOIS métodos falham, e o log diz qual dos dois respondeu.
+                erro_head = None
                 try:
                     r = cli.head(url)
                     if r.status_code >= 400:
-                        r = cli.get(url)   # alguns servidores recusam HEAD
-                    marca = "ok " if r.status_code < 400 else "FALHA"
-                    print(f"    [{marca}] {r.status_code}  {url}")
-                    if r.status_code >= 400:
-                        falhas.append(f"{f['nome']}: HTTP {r.status_code} em {url}")
+                        erro_head = f"HTTP {r.status_code}"
+                        r = cli.get(url)
                 except Exception as exc:  # noqa: BLE001
-                    print(f"    [FALHA] {type(exc).__name__}  {url}")
-                    falhas.append(f"{f['nome']}: {type(exc).__name__} em {url}")
+                    erro_head = type(exc).__name__
+                    try:
+                        r = cli.get(url)
+                    except Exception as exc2:  # noqa: BLE001
+                        print(f"    [FALHA] HEAD {erro_head} · GET {type(exc2).__name__}  {url}")
+                        falhas.append(
+                            f"{f['nome']}: HEAD {erro_head} e GET {type(exc2).__name__} em {url}")
+                        continue
+                marca = "ok " if r.status_code < 400 else "FALHA"
+                via = f" (HEAD {erro_head}, resolvida por GET)" if erro_head else ""
+                print(f"    [{marca}] {r.status_code}  {url}{via}")
+                if r.status_code >= 400:
+                    falhas.append(f"{f['nome']}: HTTP {r.status_code} em {url}")
     return falhas
 
 

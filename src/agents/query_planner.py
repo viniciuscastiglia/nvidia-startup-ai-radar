@@ -24,6 +24,16 @@ SETORES = {
     "indústria": ["indústri", "industri", "manufatur", "fábric", "manutenç"],
     "educação": ["educaç", "educac", "ensino", "escola"],
     "varejo": ["varejo", "retail", "e-commerce", "comércio"],
+    # OS DOIS SETORES QUE ENTRARAM COM A BASE DE 03/09 (D-090)
+    # ---------------------------------------------------------
+    # A chave TEM de ocorrer literalmente na coluna `setor`, porque `buscar_startups` filtra
+    # com `s.setor ILIKE '%<chave>%'` (ver `_curinga` em src/db.py). É a mesma armadilha que
+    # fazia "fintechs" devolver zero, uma casa adiante: setor na base sem chave aqui é
+    # empresa que só a busca lexical alcança, e aí "call center" traz qualquer empresa que
+    # cite "call". As duas chaves abaixo casam `voz e call center` e
+    # `agro — agricultura digital e robótica`, que são os rótulos que a curadoria produziu.
+    "voz": ["voz", "call center", "callcenter", "telefon", "transcri", "speech", "ura"],
+    "robótica": ["robótic", "robotic", "robô", "robot"],
 }
 
 ESTAGIOS = ["pre-seed", "pré-seed", "seed", "série a", "serie a", "série b", "serie b"]

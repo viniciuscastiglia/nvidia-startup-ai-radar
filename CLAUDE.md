@@ -168,8 +168,12 @@ critério, e sem ela 49% de precisão parece bom em vez de "17 pontos acima de e
 
 ## Estado da base
 
-- **8 startups** em `data/seed/*.yaml`, 24 documentos, `url_fonte` verificadas. **Não é a M3
-  (30-50)** — é o subconjunto que serve de gabarito aos agentes (D-050, D-062).
+- **16 startups** em `data/seed/*.yaml`, 48 documentos, `url_fonte` verificadas 48/48 (D-090).
+  **Duas camadas (D-062):** **8 com bloco `gabarito:`** — a régua dos critérios 1 e 3, e as únicas
+  que movem número — e **8 como DADO, sem gabarito**, porque anotá-las seria calibrar contra o
+  próprio gabarito. `avaliar_agentes.py` filtra por `gabarito` e imprime as duas contagens.
+  **Ainda não é a M3 (30-50):** o gargalo medido não é achar empresa, é o **3º documento com tipo
+  distinto**. `dados tabulares` segue sem startup.
 - **16 tecnologias NVIDIA**, 175 chunks estruturais + 202 de controle, gabarito de **24 perguntas**
   (19 com resposta, 5 sem). **Os 9 passos do pipeline do TAPI estão fechados.**
 

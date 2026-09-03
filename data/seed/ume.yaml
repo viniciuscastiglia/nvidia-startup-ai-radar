@@ -1,0 +1,332 @@
+# Ume
+# Coletado em 2026-09-03. Todo `conteudo_texto` é o texto REAL da página em `url_fonte`,
+# fatiado do que `scripts/coletar.py` extraiu — não é paráfrase.
+#
+# CAMADA "DADO" (D-062): esta fixture NÃO tem bloco `gabarito:` nem `perfil_alvo`, e a
+# ausência É a decisão. As 8 fixtures originais são a régua dos critérios 1 e 3; anotar
+# esta aqui seria medir o classificador contra rótulos escritos na mesma sessão que leu
+# os mesmos documentos — calibrar contra o próprio gabarito.
+#
+# CAMPOS ESTRUTURADOS: só ficam preenchidos os que aparecem LITERALMENTE nos documentos.
+# `null` faz o Briefing reportar "requisito não verificado", que é correto; um valor
+# plausível e errado não reporta nada e ainda corrompe o filtro de elegibilidade.
+#
+# TEASER RECORTADO: os veículos injetam chamada de OUTRA empresa no meio e no fim da
+# matéria. Cada documento abaixo declara em `_corte` as linhas do arquivo coletado que
+# entraram e as que foram removidas por citarem terceiro.
+nome: Ume
+site: https://www.ume.com.br/
+setor: fintech de crédito no varejo
+estagio: null
+localizacao: null
+ano_fundacao: 2019
+tamanho_time: null
+descricao_curta: Infraestrutura de crédito para varejistas e marketplaces, com agentes de IA na concessão,
+  precificação, cobrança e atendimento; nasceu de uma tese de doutorado em inteligência artificial aplicada
+  ao crédito.
+fonte_descoberta: startups.com.br e braziljournal.com — cobertura de crédito no varejo
+coletado_em: '2026-09-03'
+documentos:
+- tipo: noticia
+  titulo: Ume levanta R$ 500M em FIDCs para ampliar crédito com IA
+  url_fonte: https://startups.com.br/negocios/fintech/ume-levanta-r-500m-em-fidcs-para-ampliar-credito-com-ia/
+  data_publicacao: null
+  conteudo_texto: 'Pular para o conteúdo
+
+    Pular para o menu
+
+    Ume levanta R$ 500M em FIDCs para ampliar crédito com IA
+
+    Fintech que atua como infraestrutura de crédito para varejistas e marketplaces espera movimentar R$
+    2 bilhões em transações ao longo de 2026
+
+    Leitura:
+
+    Copiar Link?
+
+    Theo Ramalho, cofundador da Ume | Foto: Divulgação
+
+    acaba de levantar R$ 500 milhões por meio de Fundos de Investimento em Direitos Creditórios (FIDCs)
+    para ampliar a capacidade de concessão de crédito dos seus clientes. A empresa atua como uma infraestrutura
+    terceirizada para empresas que querem oferecer crédito aos consumidores, oferecendo desde a plataforma,
+    até análise de crédito e o acesso ao capital, tudo isso com inteligência artificial.
+
+    Em comunicado enviado ao mercado, a fintech informou que a demanda pelos investimentos nos FIDCs superou
+    o volume ofertado. Entre as instituições que participaram da captação estão
+
+    .
+
+    A proposta da
+
+    é permitir que varejistas, marketplaces e empresas de serviços ofereçam crédito diretamente aos seus
+    consumidores sem precisar construir uma operação financeira própria. A companhia assume a infraestrutura
+    necessária para colocar esse produto de pé, enquanto cada parceiro define as condições e as regras
+    de acordo com sua estratégia comercial.
+
+    Na prática, isso significa que uma loja pode incorporar uma opção de financiamento à própria jornada
+    de compra. A análise do consumidor é feita pela tecnologia da
+
+    , que avalia individualmente o risco e pode definir, por exemplo, quem terá acesso ao crédito e qual
+    limite será oferecido.
+
+    Segundo a companhia, o modelo pode elevar as vendas dos parceiros em até 15% e dobrar o lucro. A
+
+    estima ainda que os R$ 500 milhões recém-captados possibilitem gerar mais de R$ 1 bilhão em receita
+    adicional para essas empresas.
+
+    Os FIDCs da nova operação foram estruturados e são geridos pela
+
+    , gestora especializada em crédito estruturado que acompanha a
+
+    desde o início. A captação atual acontece meses depois de a companhia levantar R$ 150 milhões em um
+    outro FIDC concluído no início do ano.
+
+    A companhia espera movimentar R$ 2 bilhões em transações ao longo de 2026, considerando o ritmo atual
+    da operação. Hoje, a
+
+    já está presente em 10 mil pontos de venda e atende cerca de 4 milhões de consumidores em todo o Brasil.
+
+    IA como infraestrutura
+
+    A inteligência artificial é usada pela
+
+    não apenas para analisar crédito, mas para automatizar diferentes etapas da operação. A plataforma
+    trabalha com agentes de IA que atuam na concessão, precificação, cobrança e atendimento.
+
+    É essa arquitetura que, segundo a empresa, permite operar crédito em escala sem que cada varejista
+    precise manter uma estrutura própria para administrar a carteira.
+
+    “Seria impossível oferecer o nosso nível de serviço, com a capacidade de precificação de crédito que
+    entrega o ‘banco dos business’, de fim a fim, se não tivéssemos nascidos já nativos em IA”, afirma
+    Theo Ramalho, cofundador da
+
+    , por meio de nota.
+
+    A companhia surgiu a partir de uma tese de doutorado em inteligência artificial aplicada ao crédito.
+    O desenvolvimento da tecnologia é liderado pelo CTO Berthier Ribeiro-Neto, fundador da
+
+    , empresa de buscas adquirida pelo Google, onde ele liderou a área de engenharia por 20 anos.
+
+    , a combinação de IA com acesso ao mercado de capitais é o que permite levar a infraestrutura financeira
+    para negócios que já possuem uma base relevante de consumidores, mas não necessariamente teriam escala
+    ou recursos para desenvolver uma operação de crédito internamente.'
+- tipo: noticia
+  titulo: UME atrai o PayPal, em seu segundo aporte numa startup brasileira
+  url_fonte: https://braziljournal.com/ume-atrai-o-paypal-em-seu-segundo-aporte-numa-startup-brasileira/
+  data_publicacao: null
+  conteudo_texto: 'A UME — que opera no mercado de crediário digital — acaba de levantar uma rodada liderada
+    pelo PayPal, no segundo investimento da gigante americana de pagamentos numa startup brasileira, depois
+    de seu aporte no Neon.
+
+    A captação, de US$ 15 milhões (quase R$ 80 milhões ao câmbio de hoje), vai financiar a expansão da
+    UME, que começou operando apenas no Norte do País, em cidades como Manaus, e hoje já tem presença
+    no Nordeste, no Sul e no Centro-Oeste.
+
+    A próxima fronteira: entrar no Sudeste.
+
+    Fundada em 2019, a UME opera junto a pequenos e médios varejistas regionais — que faturam de R$ 40
+    milhões a R$ 500 milhões por ano — oferecendo aos clientes dessas empresas o parcelamento das compras
+    em até 4 vezes.
+
+    Para pagar com a UME, o cliente precisa baixar o app da startup e passar por um processo de aprovação
+    de crédito que normalmente leva cinco minutos.
+
+    Depois da compra, a fintech paga os varejistas em D+2, cobrando uma taxa de desconto por isso. Ela
+    também ganha um juro que é pago pelo consumidor.
+
+    A UME compete com
+
+    consolidados como a DMCard, a líder desse setor. Mas, diferente da concorrente, que opera basicamente
+    com cartões private label, a UME permite que os clientes façam suas compras com PIX, escaneando um
+    QR Code nas lojas pelo app da startup.
+
+    Isso reduz drasticamente o custo por transação da UME, turbinando suas margens, e torna o processo
+    mais simples para os clientes. “O PIX já é a principal forma que o cliente usa para fazer suas transações
+    de débito, e achamos que ele vai se tornar também a principal forma de comprar com crédito no futuro,”
+    o fundador Berthier Ribeiro disse ao
+
+    Brazil Journal.
+
+    A UME está conectada a mais de 2.000 varejistas e emprestou R$ 220 milhões no ano passado, mais que
+    o dobro do ano anterior, quando havia emprestado R$ 100 milhões.
+
+    para os empréstimos vem de FIDCs.
+
+    A startup havia levantado um FIDC de R$ 60 milhões, cujo capital acaba de ser retornado aos investidores,
+    e agora levantou um novo FIDC de R$ 100 milhões.
+
+    Captado com investidores como a Verde, Western Asset, Itaú, Credit Saison e Milenio, o novo FIDC vai
+    dar poder de fogo para a empresa operar até o final do ano que vem.
+
+    Berthier disse que como os empréstimos são sempre curtos, durando no máximo quatro meses, esses R$
+    100 milhões vão permitir que a startup empreste cerca de R$ 600 milhões no período.
+
+    Segundo ele, um dos grandes diferenciais da UME é sua tecnologia de precificação de crédito, que usa
+    inteligência artificial e foi criada por dois PhDs em ciência da computação: Márcio Palheta e Marco
+    Cristo — o último, cofundador da fintech.
+
+    Berthier disse que a taxa de inadimplência da carteira é 30% inferior à média do mercado de crediário,
+    que gira em torno de 10%.
+
+    A rodada de hoje — a segunda da startup desde que ela foi fundada em 2019 — também teve a participação
+    da Globo Ventures, o braço de venture capital do grupo de mídia, e de gestoras que já eram investidoras
+    da UME, incluindo a NFX, Clocktower Ventures, FJ Labs, Big Bets e Canary.
+
+    Além de usar os recursos para investir na expansão geográfica, a UME vai usar parte do capital para
+    investir mais em tecnologia.
+
+    “Nossa visão de longo prazo é construir uma plataforma de crédito em cima do PIX, para que o PIX seja
+    a nova forma do brasileiro contratar crédito,” disse Berthier. “Mas para isso é preciso muito investimento
+    em tecnologia.”
+
+    Segundo Berthier, a UME tem queimado caixa nos últimos anos porque tem focado em crescer de forma
+    agressiva, já que a carteira “está muito saudável”. Ainda assim, a startup ainda tinha em caixa 20%
+    dos recursos da rodada anterior, de US$ 4,5 milhões.'
+- tipo: site
+  titulo: Ume — crédito próprio impulsionado por IA
+  url_fonte: https://www.ume.com.br/
+  data_publicacao: null
+  conteudo_texto: 'Gere mais receita com crédito próprio impulsionado por IA
+
+    Alavanque suas vendas com tecnologia de ponta e a melhor expertise financeira do mercado.
+
+    Fale com especialista
+
+    Sobre a Ume
+
+    pontos de vendas cadastrados
+
+    +R$ 1,2 bilhão
+
+    crédito concedido em 2026
+
+    +R$ 850 milhões
+
+    captados com investidores (equity e dívida)
+
+    pontos de vendas cadastrados
+
+    +R$ 1,2 bilhão
+
+    crédito concedido em 2026
+
+    +R$ 850 milhões
+
+    captados com investidores (equity e dívida)
+
+    Quem investe na Ume
+
+    O que oferecemos
+
+    Capture o lucro financeiro das suas vendas, sem complexidade operacional incremental.
+
+    Seu negócio vende parcelado, mas quem fica com o lucro do crédito é o banco. Com a Ume, essa lucro
+    fica com você, sem alterar seu negócio.
+
+    seu potencial de lucro
+
+    aumento de vendas
+
+    Como construímos a sua operação
+
+    Você foca em vender.
+
+    A Ume entrega sua operação de crédito próprio de ponta a ponta.
+
+    Os especialistas da Ume estruturam e gerenciam operações de crédito completas para qualquer negócio
+    oferecer o crédito próprio para seu cliente final. Infraestrutura, IA e capital, em um único parceiro.
+
+    Fale com especialista
+
+    Onde o dinheiro nasce
+
+    Estrutura financeira & Alavancagem
+
+    Estruturamos a base jurídica, regulatória e financeira da operação, garantindo recursos, liquidez
+    e crescimento sustentável.
+
+    Onde o crédito é desenhado
+
+    Estratégia & Políticas de crédito
+
+    Definimos políticas por produto e perfil, ajustando o crédito para impulsionar resultados e acompanhar
+    a evolução do mercado.
+
+    Onde o risco é controlado
+
+    Modelagem & Gestão de Risco
+
+    Monitoramos a carteira com modelos proprietários, ajustando estratégias para reduzir perdas e manter
+    a operação saudável.
+
+    Onde tudo se conecta
+
+    Plataforma de Venda & Pagamento
+
+    Integramos vendas, pagamentos e sistemas da operação, oferecendo uma jornada simples e suporte contínuo
+    aos canais.
+
+    Onde o resultado se sustenta
+
+    Atendimento, Cobrança & Relacionamento
+
+    Atendemos o cliente em todos os canais, com estratégias de cobrança que preservam o relacionamento
+    e fortalecem a marca.
+
+    IA em toda a operação
+
+    Modelos proprietários de
+
+    para tomar decisões de crédito com precisão e transformar
+
+    informação em crescimento.
+
+    modelo proprietário rodando desde
+
+    Agentes de Atendimento
+
+    Agentes dedicados para resolver dúvidas e pagamentos do cliente e do vendedor.
+
+    + 270 mil tickets p/ mês – NPS 85
+
+    do atendimento automatizado por IA
+
+    Acionamento ativo de clientes em atraso, com réguas de cobrança segmentadas e multicanal.
+
+    +465 mil clientes cobrados p/ mês, +30 mil renegociações p/ mês
+
+    das negociações por agentes próprios
+
+    O que estão dizendo sobre a Ume
+
+    “Eles transformaram a maior dor do varejo em negócio — e vão faturar R$ 350 milhões”
+
+    : “Eles transformaram a maior dor do varejo em negócio — e vão faturar R$ 350 milhões”
+
+    “Fintech Ume capta R$ 500 milhões em FIDCs”
+
+    : “Fintech Ume capta R$ 500 milhões em FIDCs”
+
+    “Depois das PMEs, a UME está levando seu crediário digital para as grandes empresas”
+
+    : “Depois das PMEs, a UME está levando seu crediário digital para as grandes empresas”
+
+    Conteúdos, dados e estudos sobre o futuro do crédito no varejo brasileiro. Para tomadores de decisão
+    que querem entender mais antes de conversar.
+
+    Seu negócio totalmente preparado para o futuro dos pagamentos
+
+    Preparando seu varejo para as mudanças da Reforma Tributária
+
+    Lições que aprendemos com o Magalu para o varejo no Brasil
+
+    A NRF para o varejo e comércio brasileiro
+
+    Vamos desenhar a operação de crédito da sua empresa.
+
+    Vamos desenhar sua operação de crédito?
+
+    Em uma conversa de 30 minutos, mapeamos o potencial da sua base, o modelo financeiro ideal e os primeiros
+    passos. Sem custo. Sem compromisso.
+
+    Fale com um especialista'

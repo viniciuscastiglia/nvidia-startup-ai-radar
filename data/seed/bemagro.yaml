@@ -1,0 +1,472 @@
+# BemAgro
+# Coletado em 2026-09-03. Todo `conteudo_texto` é o texto REAL da página em `url_fonte`,
+# fatiado do que `scripts/coletar.py` extraiu — não é paráfrase.
+#
+# CAMADA "DADO" (D-062): esta fixture NÃO tem bloco `gabarito:` nem `perfil_alvo`, e a
+# ausência É a decisão. As 8 fixtures originais são a régua dos critérios 1 e 3; anotar
+# esta aqui seria medir o classificador contra rótulos escritos na mesma sessão que leu
+# os mesmos documentos — calibrar contra o próprio gabarito.
+#
+# CAMPOS ESTRUTURADOS: só ficam preenchidos os que aparecem LITERALMENTE nos documentos.
+# `null` faz o Briefing reportar "requisito não verificado", que é correto; um valor
+# plausível e errado não reporta nada e ainda corrompe o filtro de elegibilidade.
+#
+# TEASER RECORTADO: os veículos injetam chamada de OUTRA empresa no meio e no fim da
+# matéria. Cada documento abaixo declara em `_corte` as linhas do arquivo coletado que
+# entraram e as que foram removidas por citarem terceiro.
+nome: BemAgro
+site: https://bemagro.com/
+setor: agro — agricultura digital
+estagio: null
+localizacao: null
+ano_fundacao: 2018
+tamanho_time: null
+descricao_curta: 'Agtech de visão computacional e IA para gestão de safras: inspeção dirigida e monitoramento
+  em larga escala, com integração às máquinas agrícolas para coletar dado no campo.'
+fonte_descoberta: agfeed.com.br e startups.com.br — cobertura de agtechs de visão computacional
+coletado_em: '2026-09-03'
+documentos:
+- tipo: noticia
+  titulo: Encorpada após duas captações em 2024, BemAgro cresce 141% no primeiro trimestre
+  url_fonte: https://agfeed.com.br/agtech/encorpada-apos-duas-captacoes-em-2024-bemagro-cresce-141-no-primeiro-trimestre/
+  data_publicacao: null
+  conteudo_texto: 'no seu e-mail
+
+    Encorpada após duas captações em 2024, BemAgro cresce 141% no primeiro trimestre
+
+    Startup de agricultura digital recebeu cerca de R$ 15 milhões em investimentos no ano passado, trazendo
+    empresas como CNHi, Atvos e Suzano para o quadro societário. Para este ano, quer aumentar a área monitorada
+    em 3 milhões de hectares e ganhar mais mercado fora do Brasil
+
+    Johann Coelho, CEO da BemAgro
+
+    O ano de 2024 foi transformacional na BemAgro. Em um intervalo de seis meses, a startup de agricultura
+    digital fundada por Johann Coelho captou R$ 15 milhões e encorpou seu quadro societário com grandes
+    nomes do agro.
+
+    Em fevereiro, numa
+
+    rodada liderada pela CNHi
+
+    e com participação da
+
+    e a revenda goiana MM Agro, recebeu R$ 10,2 milhões. Em agosto, fechou uma
+
+    extensão dessa mesma rodada
+
+    e recebeu mais R$ 5 milhões em aportes de
+
+    .
+
+    Com o caixa recheado, a empresa cresceu 50% seu faturamento no ano passado em relação a 2023, revelou
+    Coelho, que atua como CEO.
+
+    “Desde o início da operação buscamos investidores para a BemAgro que pudessem agregar valor às operações,
+    tanto financeiramente quanto na estratégia”, disse ao
+
+    .
+
+    E 2025 começou ainda mais aquecido. Considerando o primeiro trimestre deste ano, em comparação com
+    o mesmo intervalo em 2024, a receita saltou 141%. A empresa prefere não abrir os números no detalhe.
+
+    Coelho comentou algumas das mudanças no negócio desde a entrada dos novos sócios. Com base em Ribeirão
+    Preto (SP), a agtech já era forte na cana, cultura forte no oeste paulista. A entrada da Suzano ajudou
+    a empresa a diversificar em culturas e começar sua atuação no mercado de eucalipto.
+
+    O CEO disse que o investimento da companhia de papel e celulose prevê o lançamento de cinco novos
+    produtos para os próximos dois anos.
+
+    A startup utiliza tecnologias de análise de imagens captadas por drones e satélites para produzir
+    mapas e relatórios com informações para monitoramento e gestão das lavouras.
+
+    Ao longo dos anos, a agtech incorporou modelos de inteligência artificial e visão computacional aos
+    seus produtos e criou soluções de integração ao maquinário agrícola, permitindo a coleta de dados
+    também em campo.
+
+    Com isso, ampliou o leque de serviços, fornecendo atualmente mais de 20 diferentes relatórios agronômicos
+    e mapas com informações como altimetria, população de plantas e matologia -, que auxiliam o planejamento
+    o produtor em projetos de plantio e pulverização, com aplicações localizadas, até a colheita.
+
+    “Estamos em vias de soltar, nos próximos 2 meses, dois novos produtos para o setor florestal. Ambas
+    envolvem IA e visão computacional para gerar informações relevantes na tomada de decisão na hora da
+    colheita e outra no pós-plantio”, disse Johann Coelho.
+
+    A companhia encerrou 2024 com 6 milhões de hectares monitorados, sendo 60% de cana e o restante se
+    dividindo entre grãos, fibras e culturas perenes, como a silvicultura.
+
+    Com o avanço nas florestas, Coelho prevê que 2025 marque um equilíbrio de 50% para a cana e 50% para
+    as outras categorias.
+
+    A meta é encerrar dezembro com 8,5 milhões a 9 milhões de hectares monitorados pelo software da empresa.
+
+    “Já estamos hoje na cana, soja, milho, algodão e entrando em reflorestamento. Isso soma 90% das áreas
+    agricultáveis brasileiras. Quando olhamos para o setor de reflorestamento, vemos potencial, pois possui
+    uma área similar à de cana, com players muito profissionalizados que conseguem inserir a tecnologia
+    no fluxo de trabalho diário”, comentou o CEO da BemAgro.
+
+    Além de crescer em área, Coelho contou que, desde o ano passado, a BemAgro partiu para um modelo de
+    negócio Saas (software as a service), no qual vende uma assinatura de 12 meses para os clientes que
+    queiram utilizar o programa. O valor depende da quantidade de análises que ele necessitar.
+
+    “Temos crescido em ticket médio em função do lançamento de novos produtos. Sair de 6 milhões de hectares
+    para 9 milhões não significa que a receita acompanha na mesma medida. Na mesma área posso fazer três
+    ou quatro operações diferentes”, disse.
+
+    Com isso, a ideia é crescer dentro dos hectares que já atende. “A mudança para Saas com assinatura
+    de software aumentou a retenção e fidelização dos clientes. Esse modelo ainda diminui o impacto da
+    sazonalidade”, acrescentou.
+
+    Para além de lançamentos para o setor florestal, Coelho citou que a empresa acrescentou recentemente
+    uma funcionalidade de identificação às plantas daninhas por espécie e tipo. “Seja mamona, folha larga,
+    folha estreita ou gramínea, o software permite ao produtor identificar as infestações e saber qual
+    produto deve utilizar”, disse.
+
+    Na cana, a empresa desenvolveu um programa que identifica linhas de colheita da cana. O programa permite
+    uma integração com máquinas colhedoras, facilitando o processo de colheita.
+
+    O passaporte e o doutor
+
+    Johann Coelho ainda revelou que a empresa deu seus primeiros passos oficiais fora do Brasil. “Dentro
+    do nosso novo momento de escala, intensificamos a cooperação com a CNHi e abrimos novos mercados.
+    Atualmente já estamos presentes na Colômbia, Argentina e Paraguai”, disse.
+
+    Em junho deste ano, a BemAgro dará seus primeiros passos nos Estados Unidos, realizando provas de
+    conceito na Dakota do Sul.
+
+    Segundo o CEO, a ideia é verificar como o mercado americano absorve a tecnologia brasileira, e se
+    for o caso, realizar alguns ajustes na rota. Por aqui no Brasil, a empresa ainda aposta em reforçar
+    seu networking com um conhecido do setor.
+
+    A empresa anunciou que Marcos Fava Neves, comnhecido como Doutro Agro, professor da USP de Ribeirão
+    Preto e um dos fundadores da Harven Agribusiness School.
+
+    Fava Neves foi professor de Johann Coelho na faculdade, quando o executivo cursava economia empresarial
+    e controladoria, e atribuiu parte da criação da BemAgro ao agora conselheiro.
+
+    “Fui exposto ao que era o agro e o papel do Brasil nesse mercado. Agora ele vêm somar sua experiência
+    no conselho”, disse. Coelho estima que o professor ajudará a startup em seu planejamento estratégico
+    tanto aqui quanto lá fora.
+
+    “Estamos entusiasmados com a participação do professor Fava. Sua trajetória e presença em conselhos
+    de grandes empresas vão trazer uma leitura estratégica valiosa para a nossa evolução e processo de
+    governança”, acrescentou Luiz Ambar, presidente do conselho e sócio da empresa.
+
+    Marcos Fava Neves,'
+- tipo: noticia
+  titulo: Bem Agro levanta R$ 10,2M em rodada liderada por gigante internacional
+  url_fonte: https://startups.com.br/negocios/agtech/bem-agro-levanta-r-102m-em-rodada-liderada-por-gigante-internacional/
+  data_publicacao: null
+  conteudo_texto: 'Pular para o conteúdo
+
+    Pular para o menu
+
+    Bem Agro levanta R$ 10,2M em rodada liderada por gigante internacional
+
+    Startup de visão computacional e dados para a gestão no campo recebeu investimento da CNHi
+
+    Leandro Miguel Souza
+
+    Leitura:
+
+    Copiar Link?
+
+    Bem Agro. Crédito: Canva
+
+    , agtech que combina inteligência artificial (IA) e visão computacional para transformar dados de
+    tratores, drones e satélites em relatórios agronômicos, acabou de fechar uma rodada pré-série A de
+    R$ 10,2 milhões. O aporte foi liderado por uma gigante internacional do setor – a
+
+    , controladora de marcas como a New Holland e Case.
+
+    Com o aporte, que foi estruturado pela
+
+    e também teve a participação da
+
+    Rural Ventures, MMAgro e Agroven
+
+    , o plano da agtech é escalar a sua solução, ganhando não apenas tração no mercado nacional, mas também
+    aproveitando a chegada dos novos investidores para buscar oportunidades fora do país.
+
+    “Com o montante captado, seguiremos avançando no desenvolvimento da nossa plataforma, na expansão
+    do time comercial, bem como intensificaremos nosso processo de internacionalização”, ressalta Johann
+    Coelho, fundador e CEO da
+
+    , em comunicado.
+
+    Fundada em 2018, a
+
+    utiliza aplicações de IA e visão computacional para apoiar na gestão das safras, oferecendo inspeções
+    direcionadas e monitoramento em larga escala. De acordo com o CEO, a IA pode ser aplicada em diversas
+    frentes do agronegócio, desde a previsão de condições climáticas e análise de solo até o monitoramento
+    do desenvolvimento das culturas e gestão de cadeias de suprimentos.
+
+    “Um dos benefícios mais importantes dessa tecnologia para o agronegócio é a capacidade da IA em fornecer
+    insights que podem ser aplicados para tomadas de decisões mais assertivas”, completa o CEO da
+
+    . Segundo a agtech, clientes conseguiram reduzir em cerca de 80% o uso de defensivos e em 25% o número
+    de manobras com maquinário em campo.
+
+    Antes do aporte, a agtech já tinha uma parceria com a
+
+    , entregando a camada de análise para processar os dados coletados pelas máquinas da companhia e gerando
+    projeções de cenário.
+
+    “Estamos entusiasmados em fazer parte do crescimento da
+
+    e contribuir para a transformação digital no campo. Acreditamos no potencial dessa parceria para impulsionar
+    a inovação no setor agrícola”, Gregory Riordan, Diretor de Tecnologias Digitais e Inovação da
+
+    para a América Latina e Diretor da
+
+    no Brasil.
+
+    Com o investimento na startup brasileira, a multinacional traz para o seu lado uma empresa de um ramo
+    que outras concorrentes de maquinário agrícola também estão de olho. Nos últimos anos, nomes como
+
+    também fizeram seus investidores em startups de tecnologia para entregar soluções mais inteligentes.
+
+    já atende mais de 400 clientes ativos em 11 países, processando mais de 5 milhões de hectares. A empresa
+    visa ampliar sua área de atuação, mirando 10 milhões de hectares sob gestão. Antes desta rodada, a
+    companhia já tinha levantado R$ 8 milhões em aportes – em duas rodadas distintas em 2018 e no ano
+    passado.'
+- tipo: site
+  titulo: BemAgro — agricultura digital com visão computacional
+  url_fonte: https://bemagro.com/
+  data_publicacao: null
+  conteudo_texto: 'Skip to content
+
+    Fale com um especialista
+
+    Peça uma demonstração
+
+    Software de IA em nuvem por assinatura
+
+    Extraia o máximo potencial da agricultura digital
+
+    Decida com base em dados, do plantio à colheita, e otimize
+
+    seu campo.
+
+    sua equipe.
+
+    seu tempo.
+
+    seus recursos.
+
+    Ferramenta de processamento de imagens de drone e vetores de maquinários mais ágil e completa do mercado.
+
+    Ferramenta de edição de mapas da IA BemAgro®, com precisão geoespacial para diversas estratégias no
+    planejamento agrícola.
+
+    Ferramenta de inteligência artificial para simular cenários e gerar projetos de linhas  automaticamente.
+
+    Ferramenta de inteligência artificial para detectar plantas daninhas e gerar zonas de manejo para
+    aplicação em taxa variável.
+
+    Ferramenta de IA para restituição de linhas, detecção de falhas de plantio, análise de paralelismo
+    e contagem de plantas.
+
+    Processe imagens de drone e vetores de maquinários de forma ágil e escalável em nuvem.
+
+    Transforme imagens brutas em mapas detalhados de alta resolução.
+
+    GPS de Máquina
+
+    Interpole levantamentos topográficos em modelos digitais de elevação.
+
+    Modelo Digital de Elevação
+
+    Gere modelos digitais do terreno e de superfície com base em dados captados por drones ou GPS de máquinas
+    agrícolas.
+
+    Obtenha índices de vegetação NDVI, GLI e VARI para analisar a variabilidade da lavoura.
+
+    Simule cenários e gere projetos de linhas automaticamente.
+
+    Gere automaticamente mapas de altimetria, declividade e escoamento d''água.
+
+    Linhas de terraço
+
+    Simule diferentes formas de alocação de curvas de nível de acordo com as características do terreno
+    e variando o volume de chuva.
+
+    Linhas de Plantio
+
+    Simule diferentes formas de plantar de acordo com o relevo do terreno e decida baseado em dados e
+    estatísticas.
+
+    Linhas de Pulverização
+
+    Simule diferentes formas de pulverizar de acordo com o relevo do terreno e decida baseado em dados
+    e estatísticas.
+
+    Automatize a detecção de plantas daninhas e gere mapas de aplicação em taxa variável para aplicação
+    otimizada de insumos.
+
+    Detecte plantas daninhas de forma rápida e assertiva para gerar mapas de aplicação localizada.
+
+    Regulador de Crescimento
+
+    em Taxa Variável
+
+    Gere zonas de manejo para aplicação de regulador de crescimento co-relacionando altura da planta,
+    taxa de crescimento vertical e horizontal.
+
+    em Taxa Variável
+
+    Identifique áreas com variabilidade e aplique desfolhante e dessecante em taxa variável para otimizar
+    a colheita.
+
+    Ureia em Taxa Variável
+
+    Crie zonas de manejo para aplicar uréia em taxa variável.
+
+    Ferramenta de inteligência artificial para restituição de linhas, detecção de falhas de plantio, análise
+    de paralelismo e contagem de plantas.
+
+    Restituição de Linhas
+
+    Identifique e restitua linhas plantadas para colheita mecanizada.
+
+    Falhas de Plantio
+
+    Detecte e quantifique as falhas de plantio.
+
+    Relatório de Paralelismo
+
+    Avalie a qualidade de espaçamento entre linhas plantadas e quantifique potenciais perdas de produtividade
+    por amassamento.
+
+    Contagem de Plantas
+
+    Mapeie as plantas e pontos de replantio e quantifique o índice de sobrevivência do seu plantio.
+
+    Ferramenta de edição e análise geoespacial da Plataforma BemAgro integrada aos módulos FieldPlanning
+    e FiedMetrics. Visualize imagens de alta resolução em tempo real e edite vetores de linhas em um único
+    ambiente digital e 100% online.
+
+    Edição geoespacial integrada
+
+    Edite vetores e imagens direto no navegador com ajustes rápidos e personalizados.
+
+    Detecção de falhas de plantio com IA
+
+    Identifique falhas no mapa com IA e tome decisões mais ágeis.
+
+    Ortomosaicos sem download
+
+    Visualize e edite mapas online, sem precisar baixar nada.
+
+    Resultados com IA BemAgro
+
+    Mapas e relatórios prontos em poucas horas com a IA da BemAgro.
+
+    Exporte seus mapas
+
+    Nossa Plataforma é compatível com as principais marcas de monitores do mercado, simplificando a importação
+    para sua máquina.
+
+    Compatibilidade máxima, esforço mínimo.
+
+    Integração com Portais de Conectividade
+
+    Importe talhões e envie mapas de linhas diretamente para os monitores via portais de conectividade.
+
+    Atinja o próximo nível da agricultura digital.
+
+    A escolha das empresas
+
+    líderes do agronegócio
+
+    Destaco o excelente suporte da BemAgro, sempre prontos para atender às solicitações dos nossos clientes.
+    Houve ganhos operacionais e de performance das máquinas com os projetos, principalmente na automatização
+    de limites de plantio. A aquisição de um drone próprio pela Parecis também melhorou a autonomia e
+    velocidade para obter os resultados. A agilidade na entrega de projetos via Plataforma Bem Agro e
+    a capacidade de visualização dos resultados na tela junto ao cliente são grandes diferenciais frente
+    aos concorrentes. A flexibilidade para ajustar os ângulos de plantio em tempo real é fantástico!
+
+    Gerente PLM na Parecis Máquinas - NewHolland
+
+    Nossa experiência com a BemAgro começou com o projeto de linha e estamos atualmente discutindo a implementação
+    dos relatórios de falha de plantio e restituição de linhas. Comercializamos cerca de 2500 hectares
+    para dois clientes importantes, visando torná-los casos de sucesso na região. Estamos muito satisfeitos
+    com a qualidade dos projetos entregues, a pontualidade e o suporte pós-venda oferecido pela BemAgro.
+    As visitas e o apoio contínuo nos deixam seguros para oferecer as soluções da empresa aos nossos clientes.
+    Além disso, desenvolvemos novos modelos de negócio e adquirimos um drone para complementar as soluções
+    oferecidas. Agradecemos pelo apoio contínuo.
+
+    Gerente de Ag Digital Racine - Tratores CASEIH
+
+    Com a Plataforma ficou mais fácil de trabalhar, a tecnologia facilitou o trabalho, pois ficou tudo
+    automático. Ficamos mais livres para ter tudo num lugar só. Vai gerar economia, que vai trazer um
+    ganho muito grande para o produtor não só na questão da aplicação do produto, mas na qualidade da
+    planta em si. Estamos muito confiantes de que vai ser um sucesso.
+
+    CEO - LemeTech Brasil
+
+    O DroneXploer é a a principal gama de serviços que estamos utilizando via CNH. Tem uma adesão muito
+    boa junto aos clientes e esperamos expandir ainda mais esse ano, os clientes têm tido maior segurança
+    nas operações e melhoria do rendimento operacional, estes são os principais feedbacks que a gente
+    tem dos clientes. E isso é segurança na operação e produtividade. Hoje todos os nossos clientes estão
+    satisfeitos.
+
+    Agricultura Digital - Carpal Tratores
+
+    Estava buscando uma solução para o mapeamento e gestão de áreas para a realidade de uma Usina e uma
+    prestadora de serviços. Fiquei impressionado com a facilidade que a solução BemAgro traz para o dia
+    a dia e o modo interativo que é possível trabalhar com os dados coletados em campo. Agradeço a todos
+    os funcionários que estiveram envolvidos no projeto, se mostraram solícitos e motivados a trabalhar
+    junto aos seus clientes para aperfeiçoar esta solução que para mim hoje julgo ser a melhor neste setor.
+
+    O DroneXploer é a a principal gama de serviços que estamos utilizando via CNH. Tem uma adesão muito
+    boa junto aos clientes e esperamos expandir ainda mais esse ano, os clientes têm tido maior segurança
+    nas operações e melhoria do rendimento operacional, estes são os principais feedbacks que a gente
+    tem dos clientes. E isso é segurança na operação e produtividade. Hoje todos os nossos clientes estão
+    satisfeitos.
+
+    Agricultura Digital - Carpal Tratores
+
+    Destaco o excelente suporte da BemAgro, sempre prontos para atender às solicitações dos nossos clientes.
+    Houve ganhos operacionais e de performance das máquinas com os projetos, principalmente na automatização
+    de limites de plantio. A aquisição de um drone próprio pela Parecis também melhorou a autonomia e
+    velocidade para obter os resultados. A agilidade na entrega de projetos via Plataforma Bem Agro e
+    a capacidade de visualização dos resultados na tela junto ao cliente são grandes diferenciais frente
+    aos concorrentes. A flexibilidade para ajustar os ângulos de plantio em tempo real é fantástico!
+
+    Gerente PLM na Parecis Máquinas - NewHolland
+
+    Nossa experiência com a BemAgro começou com o projeto de linha e estamos atualmente discutindo a implementação
+    dos relatórios de falha de plantio e restituição de linhas. Comercializamos cerca de 2500 hectares
+    para dois clientes importantes, visando torná-los casos de sucesso na região. Estamos muito satisfeitos
+    com a qualidade dos projetos entregues, a pontualidade e o suporte pós-venda oferecido pela BemAgro.
+    As visitas e o apoio contínuo nos deixam seguros para oferecer as soluções da empresa aos nossos clientes.
+    Além disso, desenvolvemos novos modelos de negócio e adquirimos um drone para complementar as soluções
+    oferecidas. Agradecemos pelo apoio contínuo.
+
+    Gerente de Ag Digital Racine - Tratores CASEIH
+
+    Estava buscando uma solução para o mapeamento e gestão de áreas para a realidade de uma Usina e uma
+    prestadora de serviços. Fiquei impressionado com a facilidade que a solução BemAgro traz para o dia
+    a dia e o modo interativo que é possível trabalhar com os dados coletados em campo. Agradeço a todos
+    os funcionários que estiveram envolvidos no projeto, se mostraram solícitos e motivados a trabalhar
+    junto aos seus clientes para aperfeiçoar esta solução que para mim hoje julgo ser a melhor neste setor.
+
+    Com a Plataforma ficou mais fácil de trabalhar, a tecnologia facilitou o trabalho, pois ficou tudo
+    automático. Ficamos mais livres para ter tudo num lugar só. Vai gerar economia, que vai trazer um
+    ganho muito grande para o produtor não só na questão da aplicação do produto, mas na qualidade da
+    planta em si. Estamos muito confiantes de que vai ser um sucesso.
+
+    CEO - LemeTech Brasil
+
+    Seja bem-vindo a BemAgro
+
+    Preencha o formulário a baixo para solicitar uma demonstração
+
+    Olá, seja bem-vindo a BemAgro!
+
+    Preencha com seu e-mail para ser notificado quando nosso conteúdo sobre Seeds Saving estiver disponível:
+
+    Seja bem-vindo!
+
+    Ficamos felizes que chegou até aqui, preencha os dados abaixo e nossos representantes entrarão em
+    contato com você em breve!'
