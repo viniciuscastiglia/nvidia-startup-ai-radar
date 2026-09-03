@@ -45,7 +45,8 @@ aparecer.
 | `varrer_elegibilidade.py` | **novo (D-094):** 7 de 30 recusadas, e cada recusa confere — 4 por idade, 1 consultoria, 1 cripto, 1 capital aberto |
 | `--justificativas` | trivial `12/21` · seletor `15/21` — sem regressão |
 | `pytest -q` | **81 passed** (com `RERANK_PROVEDOR=nenhum`, em 6,5 s — ver o aviso no topo) |
-| `python -m src.graph` | roda em fintech, agro, voz, robótica, cripto e rastreabilidade |
+| `python -m src.graph` | roda em fintech, agro, voz, robótica, indústria, jurídico, educação, varejo |
+| **contaminação** | **zero** teaser de terceiro e **zero** mobília de página nas 30 — e as duas checagens entraram no `seed.py --so-validar` (D-096), com teste negativo |
 
 **As 22 novas entram como DADO, sem `gabarito:` nem `perfil_alvo`** (D-062) — e isso agora está
 **no código**, não só na prosa. Sem o filtro, a precisão cairia de **49% para 24%** com `classe` e

@@ -28,6 +28,7 @@ quebrada a desfaz inteira — isso transforma "a URL tem que ser real" de promes
 from __future__ import annotations
 
 import argparse
+import re
 import sys
 from pathlib import Path
 
@@ -41,6 +42,26 @@ from src.config import DATABASE_URL  # noqa: E402
 DIR_SEED = Path(__file__).resolve().parent.parent / "data" / "seed"
 
 TIPOS_VALIDOS = {"site", "blog", "noticia", "vaga", "perfil_founder", "release"}
+
+# MOBÍLIA DE PÁGINA QUE NUNCA É CONTEÚDO (03/09, D-096)
+# ------------------------------------------------------
+# Skip-link de acessibilidade, botão de compartilhar, rótulo de tempo de leitura. `coletar.py`
+# mata menu residual por TAMANHO (`limpar_linhas`), e estas passam porque são frases curtas mas
+# não curtas o bastante. Em 03/09 havia **89 ocorrências em 23 das 30 fixtures**, e a da Liqi
+# saiu IMPRESSA no briefing, dentro da citação que sustenta uma recusa de elegibilidade:
+#
+#     x exclusão por 'cripto': o termo 'stablecoin' aparece nos documentos...
+#         "Pular para o conteúdo / Pular para o menu / Liqi lança stablecoin em reais..."
+#
+# É ruído que o gerente lê. A checagem fica AQUI, e não em `src/rag/limpeza.py`, por um motivo
+# concreto: aquele módulo é compartilhado com `ingerir_nvidia.py`, e mexer nele mudaria o corpus
+# de 175 chunks — invalidando o gabarito de 24 perguntas por um problema que não é dele.
+MOBILIA_DE_PAGINA = {
+    "pular para o conteúdo", "pular para o menu", "pular para o rodapé",
+    "ir para o conteúdo", "copiar link?", "leitura:", "compartilhar:", "tags:",
+    "no seu e-mail", "ver todos os resultados",
+    "ler o resumo da matéria", "ler um resumo desta notícia", "leia um resumo desta notícia",
+}
 
 SQL_STARTUP = """
 INSERT INTO startups (nome, site, setor, estagio, localizacao, descricao_curta,
@@ -113,7 +134,38 @@ def validar(fixtures: list[dict]) -> list[str]:
                     f"{arq}: conteudo_texto curto demais em {d.get('titulo')!r} "
                     f"— texto raso não dá o que extrair"
                 )
+            for linha in (d.get("conteudo_texto") or "").splitlines():
+                if linha.strip().lower() in MOBILIA_DE_PAGINA:
+                    problemas.append(
+                        f"{arq}: mobília de página em {d.get('titulo')!r}: {linha.strip()!r} "
+                        f"— vira citação de evidência no briefing (D-096)"
+                    )
     return problemas
+
+
+def citacoes_cruzadas(fixtures: list[dict]) -> list[str]:
+    """Alguma fixture cita OUTRA empresa da base? É AVISO, não falha.
+
+    Contaminação cruzada é o defeito que D-086 e D-089 perseguiram: a `justificativa_tecnica`
+    falando da empresa errada, porque o veículo injeta chamada de outra matéria no meio do texto.
+    Em 03/09 a auditoria achou `"Dell: Crise de componentes"` e `"ASUS quer estar entre os
+    líderes"` dentro da Axenya e da Doutor-AI — **desde 22/08**, invisíveis.
+
+    NÃO é falha porque menção legítima existe: uma matéria de fintech pode citar o Nubank, e uma
+    de agro pode citar a Solinftec num apanhado do setor. Quem decide é o curador — o script só
+    garante que ele VEJA.
+    """
+    por_nome = {f.get("nome"): f for f in fixtures if f.get("nome")}
+    avisos: list[str] = []
+    for nome, f in sorted(por_nome.items()):
+        for i, d in enumerate(f.get("documentos") or [], 1):
+            texto = d.get("conteudo_texto") or ""
+            for outro in por_nome:
+                if outro == nome or outro.lower() in nome.lower() or nome.lower() in outro.lower():
+                    continue
+                if re.search(r"(?<![\w.-])" + re.escape(outro) + r"(?![\w-])", texto):
+                    avisos.append(f"{f['_arquivo']} doc{i} cita {outro!r}")
+    return avisos
 
 
 def verificar_urls(fixtures: list[dict]) -> list[str]:
@@ -223,6 +275,13 @@ def main() -> int:
             print(f"  - {p}")
         return 1
     print("validação estrutural: ok")
+
+    if avisos := citacoes_cruzadas(fixtures):
+        print(f"\nAVISO — {len(avisos)} citação(ões) cruzada(s), para o curador OLHAR:")
+        for a in avisos:
+            print(f"  ? {a}")
+    else:
+        print("citações cruzadas: nenhuma fixture cita outra empresa da base")
 
     if args.verificar_urls:
         print("\nverificando url_fonte:")

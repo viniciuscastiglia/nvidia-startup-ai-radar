@@ -3131,6 +3131,49 @@ gabarito. Se um dia for feito, o critério vem antes, e sobre fixtures rotuladas
 
 ---
 
+## D-096 — Mobília de página virava citação de evidência, e a checagem passou a morar no `seed.py`
+**Data:** 03/09/2026 · achado LENDO o briefing do portão, na última passada
+
+**O que o gerente estava lendo.** A recusa de elegibilidade da Liqi vinha assim:
+
+```
+x exclusão por 'cripto': o termo 'stablecoin' aparece nos documentos falando da própria empresa
+    "Pular para o conteúdo / Pular para o menu / Liqi lança stablecoin em reais “com pedigree”..."
+```
+
+**Skip-link de acessibilidade dentro da citação que sustenta uma recusa.** `coletar.py` mata menu
+residual por TAMANHO (`limpar_linhas`), e estas passam por serem frases curtas — mas não curtas o
+bastante. Medido nas 30: **89 ocorrências em 23 fixtures** de `Pular para o conteúdo`,
+`Copiar Link?`, `Leitura:`, `Tags:`, `no seu e-mail`.
+
+**Tratado como mudança em material MEDIDO**, porque 3 das 23 são fixtures de gabarito: critério
+fixado antes — *só entra se `classe 3/7 · stack 6/7 · confianca 0/6 · elegivel 6/6+1 ·
+motivo 6/6 · 49%/100% · discriminação 8/8 · proibidas 10` reproduzirem inteiros, e a evidência
+literal continuar ok nas 30*. Reproduziram.
+
+**A limpeza teve DUAS formas, e a segunda quase escapou.** A primeira passada removeu linhas cuja
+`.strip()` batia com a lista — 53 linhas. Sobraram 35 porque o `yaml.safe_dump` escreve a primeira
+linha do escalar **na mesma linha da chave**: `conteudo_texto: 'Pular para o conteúdo`. O filtro
+comparava a linha inteira e não via. Uma delas ainda usava aspas duplas com `\n` escapado.
+**Lição pequena e cara:** filtro que compara linha bruta não conhece a serialização; a única prova
+é reabrir o arquivo pelo parser e comparar.
+
+**A CHECAGEM FICOU NO `seed.py`, E O LUGAR É A DECISÃO.** Duas alternativas descartadas:
+- **`src/rag/limpeza.py`** — é onde "parece" que deveria estar, e é onde NÃO pode: aquele módulo é
+  compartilhado com `ingerir_nvidia.py`, e mexer nele mudaria o corpus de **175 chunks**,
+  invalidando o gabarito de 24 perguntas por um problema que não é dele.
+- **um script de auditoria à parte** — dependeria de alguém lembrar de rodar. `seed.py
+  --so-validar` já é o portão obrigatório de toda fixture nova.
+
+Entrou também `citacoes_cruzadas()`, como **AVISO e não falha**: ela pergunta se alguma fixture
+cita OUTRA empresa da base — o defeito de D-086/D-089 — mas menção legítima existe (uma matéria de
+fintech pode citar o Nubank). Quem decide é o curador; o script garante que ele VEJA.
+
+**Teste negativo feito, porque checagem que nunca falha pode estar quebrada:** reintroduzi
+`Copiar Link?` numa fixture e o validador reprovou com a mensagem certa; restaurada, passa.
+
+---
+
 ## Decisões pendentes
 
 | # | Decisão | Estado |
