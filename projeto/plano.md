@@ -99,14 +99,15 @@ Não são esquecimento. São escopo fechado por escrito, e cada um tem a razão 
 > decidiu não fazer. O que muda por estar escrito é a frase da defesa: *"o juiz passou o critério em
 > 28/08, no modelo anterior, e não foi re-medido"* — não *"o juiz passa"*.
 
-### 3.3 DECIDIR — 4 abertos, e são seus (2 resolvidos em 02/09)
+### 3.3 DECIDIR — 5 abertos, e são seus (2 resolvidos em 02/09, 1 pela metade em 03/09)
 
 | # | decisão | por que só você decide | prazo |
 |---|---|---|---|
 | ~~**1**~~ | ~~A chave do Grok~~ | **RESOLVIDO em 02/09 (D-087).** Alinhado com a liga: se o modelo morrer não é problema — a avaliação olha a arquitetura. **O fallback não entra**, e a hora vai para a base e a interface. O risco real muda de componente: o LLM tem zero chamada no grafo; quem não tem plano B é o **embedder** | ✅ |
 | ~~**2**~~ | ~~P-10: qual das três opções~~ | **RESOLVIDO em 02/09 (D-086):** a opção **(a)** foi implementada e medida. O que segue aberto é **(b), o LLM redigir** — e a régua dela é a de D-084 (latência que o gerente sente · fornecedor único), **não** o que o vídeo mostra. Decidir com a interface na frente | ✅ · (b) em **04/09** |
 | **3** | **P-06: escopo da interface** | sai de "o que o gerente precisa ver", não de esforço. A decidir **na frente do briefing real**, em 04/09 | **04/09** |
-| **4** | **Canal de submissão e formato da entrega** · **individual ou em grupo?** | O TAPI **não responde** nenhuma das duas, e "entrega fora do prazo sem alinhamento prévio" é **eliminatório**. Não saber o canal em 09/09 é perder por logística, com o projeto pronto | **hoje** |
+| **4** | ~~individual ou em grupo?~~ · **canal de submissão** | **METADE RESOLVIDA em 03/09: a entrega é INDIVIDUAL**, e o formato é **o repositório + o vídeo** (Vinícius). O **canal** segue aberto, adiado por decisão dele. Continua sendo o único item que ninguém conserta em 09/09 — *"entrega fora do prazo sem alinhamento prévio"* é **eliminatório** | canal: **até 06/09** |
+| **7** | **O `projeto/` faz parte do entregável?** | **novo, decorre do item 4.** Se o que se envia é o **link do repositório**, e ele é **público** (verificado em 03/09: `git ls-remote` sem credencial responde), então o avaliador vê `decisoes.md` (89 decisões), `plano.md` e `sessao-atual.md`. **É ativo:** o TAPI diz que avalia *"a capacidade de tomar e defender decisões técnicas"*, e o log é exatamente isso. **Mas só se o README apontar para ele** — quem cai no `plano.md` sem contexto lê uma lista de defeitos escrita pelo próprio candidato | **06/09**, junto com o README |
 | **5** | **Executam o projeto na avaliação, e com chave de quem?** | a conta gratuita não alcança **nenhum** modelo de terceiros (0 vivos em 12), e o catálogo aposentou o LLM em 01/09 sem aviso | esta semana |
 | **6** | **O reranker da NVIDIA saiu do ar; migramos para o Cohere**, que o próprio TAPI recomenda (§5.3) — confirmam que é aceitável? | muda a conformidade declarada | esta semana |
 
