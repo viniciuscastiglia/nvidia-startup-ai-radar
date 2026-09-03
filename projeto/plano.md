@@ -1,6 +1,6 @@
 # Plano final — 02/09 a 09/09/2026
 
-**Entrega: 09/09 às 23:59 · Vídeo: 07/09.** Restam **7 dias**, **5 até o vídeo**.
+**Entrega: 09/09 às 23:59 · Vídeo: 07/09.** Em **03/09**: restam **6 dias**, **4 até o vídeo**.
 
 > **Visão visual deste plano:** [Os últimos sete dias](https://claude.ai/code/artifact/b6d37462-6743-43c1-ac6d-da5a15af7839) — mesma informação, para ler de relance.
 >
@@ -117,9 +117,18 @@ D-081/D-082 (o que mudou hoje). São as que um avaliador pergunta primeiro.
 
 ### 03/09 — os dois defeitos que o gerente sente na cara
 
-**Manhã · P-10 FOI FEITA EM 02/09 (D-086), junto de P-13 e P-20 (D-085).** A manhã fica livre.
-Use-a no item mais barato que sobrou: **`avaliar_rag.py` e `--geracao` sobre o corpus pós-D-082**
-(P-15) — `e@1 = 79%` ainda é de um corpus com entulho dentro.
+**A manhã que o plano reservava a P-10 está livre: P-10, P-13, P-20 e P-15 fecharam em
+02/09** (D-085, D-086, e as re-medições em D-040 e D-068).
+
+**Manhã · O TESTE DE CLONE LIMPO — puxado do fim do dia para o começo.** É o item de **tamanho
+desconhecido**: os outros dois do dia têm limite (a base é timebox de 3 h; o portão é uma execução),
+este não — ninguém sabe o que ele acha até rodar. Pela regra da §7, o que tem limite desconhecido vai
+primeiro, porque é o que pode estourar o dia. **E é o único item do dia que não depende de decisão do
+Vinícius**, então ele começa mesmo antes de a base estar destravada.
+
+`git clone` numa pasta nova, ambiente do zero, `.env` só com o que o `.env.example` documenta,
+`init_db.sql`, `seed.py`, `ingerir_nvidia.py`, `python -m src.graph`. **Anotar cada passo em que foi
+preciso saber algo que não está escrito** — é a lista que vira o README de 06/09.
 
 **Tarde · base para 30.** Ordem **obrigatória**: fintech → agro → demais setores.
 D-062 já dá a estrutura: as 8 atuais mantêm gabarito, as 22 novas entram **como dado**, com
@@ -128,16 +137,13 @@ D-062 já dá a estrutura: as 8 atuais mantêm gabarito, as 22 novas entram **co
 > **REGRA DE PARADA: timebox de 3 h.** Parar em 20 com fintech e agro dentro é sucesso — o defeito
 > medido foi corrigido. O que não couber vira **decisão escrita**, não silêncio.
 
-**Background (não ocupa ninguém):** `avaliar_rag.py`, `--geracao`, `--sustentacao`.
+> **Por que o clone limpo hoje e não em 06/09:** *"projeto que não executa"* é **eliminatório**,
+> e este é o último risco do plano sem limite conhecido. Achado em 03/09 tem 4 dias de conserto; em
+> 06/09 tem um.
 
-**30 minutos, no fim do dia · O TESTE DE CLONE LIMPO — antecipado de 06/09.**
-`git clone` numa pasta nova, ambiente do zero, `.env` só com o que o `.env.example` documenta,
-`init_db.sql`, `seed.py`, `ingerir_nvidia.py`, `python -m src.graph`. **Anotar cada passo em que
-foi preciso saber algo que não está escrito.**
-
-> **Por que hoje e não em 06/09:** *"projeto que não executa"* é **eliminatório**, e este é o
-> último risco do plano sem limite conhecido. Achado em 03/09 tem 4 dias de conserto; em 06/09
-> tem um. É a regra da §7 aplicada a ela mesma.
+**Background:** nada pendente. `avaliar_rag.py` e `--geracao` rodaram em 02/09 e estão registrados
+(D-068 e D-040). `--sustentacao` **não é medição pendente** — é braço **reprovado** em D-075, e
+re-rodá-lo custa API sem mudar decisão.
 
 **PORTÃO 03/09:** o grafo roda; `"fintechs AI-native"` devolve resultado; nenhuma justificativa
 técnica cita empresa alheia. *Se P-10 não fechar hoje, ele empurra a base — não a interface.*
