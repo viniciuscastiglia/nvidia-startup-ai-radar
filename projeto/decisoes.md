@@ -2583,6 +2583,80 @@ componentes, não só o que a liga dispensou.
 **Reversível?** Trivialmente — `src/config.py` já isola o provedor; o que não foi feito é escrever
 as ~30 linhas do segundo.
 
+## D-088 — A auditoria do plano contra a fila de 01/09: três itens sem dono, e um critério banido que voltou
+**Data:** 03/09/2026 · auditoria pedida pelo Vinícius antes de abrir a sessão do dia · **zero mudança de comportamento** · abre **P-22**
+
+**O que motivou.** A sessão de 02/09 documentou tudo que fez, e as réguas **conferem**: re-rodadas em
+03/09 com `__pycache__` limpo, deram `pytest 81 passed`, smoke `3/3`, agentes `3/7 · 6/7 · 0/6 · 6/6`,
+exclusões `7/7 · 7/7`, justificativas `12/21 → 15/21` — idênticos ao registrado. **Nenhum número
+documentado é falso.** A auditoria procurou o inverso: o que a fila de 01/09 mapeava e o `plano.md`
+não herdou.
+
+### 1. `justificativa_negocio` não estava em lugar nenhum (vira P-22)
+
+Item 4 da fila de 01/09. **Zero ocorrências em `plano.md`**, e nunca foi P-número. `recommendation.py:63`
+tem texto curado para **5 das 16** tecnologias; as outras 11 caem num fallback formulaico que o próprio
+comentário chama de stub e adia **"para a M4"** — fase que não existe em nenhum arquivo vivo do projeto.
+**A dívida não estava atrasada: estava sem dono.**
+
+E é o **campo 3 dos 7 obrigatórios** do TAPI, vizinho exato do campo que D-086 consertou. A varredura
+de completude de 02/09 passou por ele sem vê-lo, porque verificou que *"os 7 campos existem em
+`Recomendacao`"* — **existência, não qualidade.** É a fresta que toda varredura de presença deixa.
+
+**Destino: FAZER em 05/09**, na tarde, sob a regra de corte. Curadoria das 11 restantes (~1 h,
+determinístico, zero latência, e `test_justificativa_negocio_fala_da_tecnologia_recomendada` já é a
+rede), **ou** o campo declara por escrito que é derivado da dor. O que não pode continuar é **prometer
+curadoria e entregar fórmula**.
+
+### 2. A P-21 nasceu dizendo que não há gabarito, e o TAPI dá um
+
+A ficha dizia *"nada o mede hoje"*. Verdade sobre o código, **falso sobre o material**:
+`contexto/01-tapi.md:143` lista **7 regras de exemplo** — pares setor/dor → tecnologia esperada — e a
+fila de 01/09 já as apontava como *"gabarito pronto"*. A regra `Saúde → Clara, MONAI, NIM, NeMo
+Guardrails, AI Enterprise` cobre **4 das 8 startups** da base (Axenya, Doutor-AI, Laura, e saúde
+corporativa) e **reprova exatamente o caso que abriu a P-21**: Morpheus não está na lista.
+
+**A ressalva que decide, e fica junto:** das 7 regras, só 1 ou 2 têm startup na base de hoje — não há
+robotics nem dados tabulares. **O gabarito engorda com a base**, o que amarra a P-21 ao item da base
+de 03/09, não à interface.
+
+### 3. Três justificativas do plano se apoiam em números de modelo morto — e agora está escrito
+
+D-059 (27/08), D-060 (27/08) e D-072 (28/08) foram medidas no `nemotron-3-nano-30b-a3b`, morto em
+01/09 (D-079). O handoff daquele dia escreveu que **não valem até serem refeitas no modelo vivo**, e
+só `--geracao` foi refeita (23/24, D-040). O plano voltou a usá-las: **P-12** aceita citando o teto de
+D-060, **P-11** fecha citando o braço de D-059, **P-09** cita o placar do juiz.
+
+**Decisão: ACEITAR o não-re-medir, e dizer isso no documento.** ~200 chamadas a um modelo de mediana
+51 s, a 4 dias do vídeo, para decidir promoções que o plano já decidiu não fazer. **O que muda por
+estar escrito é a frase da defesa:** *"o juiz passou o critério em 28/08, no modelo anterior, e não
+foi re-medido"* — não *"o juiz passa"*.
+
+### 4. "Muda o que o vídeo mostra" tinha voltado, sete linhas acima de onde D-084 limpou
+
+`plano.md` §3.3 item 2 seguia pedindo *"P-10: qual das três opções"*, com prazo **hoje** — P-10 fechou
+em 02/09 — e com a coluna de razão *"muda o que o vídeo mostra"*. **D-084 limpou a tabela da §5 e não
+a linha da §3.3.** É a terceira aparição do padrão de D-078: o critério banido volta pela porta que a
+limpeza anterior não fechou.
+
+**O que isso ensina sobre a própria correção:** banir um critério exige **varrer o documento inteiro
+pelo texto dele**, não corrigir o lugar onde ele foi notado. Um `grep` por *"vídeo"* no `plano.md`
+teria achado isto em 02/09, no mesmo minuto.
+
+### O erro que esta auditoria cometeu, e fica registrado
+
+Afirmei que a ACEITAR da P-09 *"promete um número que não existe"*. **Existe:** D-072, 28/08, precisão
+`83-96%` contra alvo de `64%`, no log. Eu li *"`--juiz` segue não coletado"* da `sessao-atual.md` — que
+é sobre a **re-medição** — como se fosse sobre a medição. O achado verdadeiro é o do item 3, e é **mais
+fraco** do que eu havia afirmado: não é número inventado, é número válido de instrumento morto.
+**Foi o Vinícius quem pediu a reconferência antes de autorizar a edição** — o quinto achado caiu ali.
+
+**Alternativa descartada:** empurrar as quatro correções para a sessão de documentação de 06/09.
+Rejeitada porque o `plano.md` é o primeiro arquivo que toda sessão abre e três dos quatro defeitos
+**desviam trabalho** — um manda decidir o que já foi decidido, outro esconde um gabarito que existe, o
+terceiro deixa um campo obrigatório fora da fila. Corrigir agora: 15 min. Manter: uma sessão inteira
+orientada por um mapa errado.
+
 ---
 
 ## Decisões pendentes
@@ -2608,5 +2682,6 @@ as ~30 linhas do segundo.
 | **P-14** | **Quatro campos são calculados e nada os lê** | `estrategia_analise` e `exige_sinais_ia` (Query Planner), `score_recuperacao` (Retriever), `motivo_validacao` (Evidence Validator). Não é código morto — é capacidade anunciada e não entregue: a arquitetura publicada promete *"critérios de busca + estratégia de análise"*. Ou o subgrafo passa a lê-los, ou o diagrama para de prometê-los |
 | ~~P-15~~ | ~~Re-medir a abstenção do passo 8~~ | **D-040, re-medida em 02/09** — **23/24 = 96%** no modelo atual e no corpus pós-D-082, contra 20-22/24 do modelo morto. O único erro é abstenção indevida, não alucinação |
 | ~~P-20~~ | ~~O operador de borda da idade~~ | **D-085** — a borda (`idade == IDADE_MAXIMA`) vira **pendente** com a faixa impressa, não exclusão. Guardar o mês foi descartado: não consta em 6 das 8 fixtures |
-| **P-21** | **Relevância da tecnologia recomendada** | aberta por D-086. Morpheus (spear phishing, digital fingerprinting) recomendado para a dor de privacidade de uma healthtech: a recuperação casa `privacy`/`security` sem conhecer o domínio. **Nenhum seletor de trecho conserta isto** — é o motor de recomendação, e nada o mede hoje |
+| **P-21** | **Relevância da tecnologia recomendada** | aberta por D-086. Morpheus (spear phishing, digital fingerprinting) recomendado para a dor de privacidade de uma healthtech: a recuperação casa `privacy`/`security` sem conhecer o domínio. **Nenhum seletor de trecho conserta isto** — é o motor de recomendação. **O gabarito, porém, existe e não é meu:** as 7 regras de exemplo do TAPI (`contexto/01-tapi.md:143`) são pares setor/dor → tecnologia esperada, e a regra `Saúde →` cobre 4 das 8 startups da base e reprova este caso. Falta o harness — e a cobertura, que só cresce com a base (D-088) |
+| **P-22** | **`justificativa_negocio` é stub em 11 de 16 tecnologias** | aberta pela auditoria de 03/09 (D-088). `recommendation.py:63` cura texto para **5 das 16**; as outras 11 caem num fallback formulaico que o próprio comentário chama de stub e adia "para a M4" — fase que não existe mais em arquivo vivo nenhum. É o **campo 3 dos 7 obrigatórios** e o vizinho do campo que D-086 consertou |
 | **P-19** | **O sweep do RAG (dimensão, banda de chunk, `k1`/`b`)** | **reaberta por D-078.** Estava cortado porque "o critério 2 já está no teto" — razão inválida. A razão candidata para manter o corte é outra e precisa ser dita: com 24 perguntas de gabarito, grade fina ajusta ao gabarito em vez de generalizar. O que joga contra o corte é `e@1 = 79%` (D-068): a primeira citação erra 1 vez em 5. Re-decidir junto com a base ampliada |

@@ -10,11 +10,15 @@
 
 ---
 
-## 1. Estado verificado — medido em 02/09, não suposto
+## 1. Estado verificado — medido em 02/09 e **RE-CONFERIDO em 03/09**, não suposto
+
+> As seis linhas abaixo foram re-rodadas em 03/09, com `__pycache__` limpo, antes de qualquer
+> edição do dia: **todas reproduzem o valor registrado** (D-088). O que a documentação de 02/09
+> afirma sobre números é verdade hoje.
 
 | verificação | resultado |
 |---|---|
-| `smoke_nvidia.py` | **3/3 (1 LENTO)** — o chat responde HTTP 200, mediana **51 s**, faixa 17–88 s |
+| `smoke_nvidia.py` | **3/3** — e em 03/09 o chat respondeu em **7,9 s**, contra 46,8 s no dia anterior: a faixa de D-080 é mais larga por baixo do que os 17 s medidos até aqui. `LENTO` continua não sendo EOL |
 | `pytest -q` | **81 passed** (era 53 em 01/09, 67 no início de 02/09) |
 | `python -m src.graph` | roda ponta a ponta, **as duas empresas ELEGÍVEIS**, zero chamada de LLM em produção |
 | `avaliar_agentes.py` | `classe 3/7 · stack 6/7 · confianca 0/6 · elegivel **6/6**+1amb · precisão 49% · recall 100%` |
@@ -41,7 +45,7 @@ resto do trabalho, independente de qualidade.
 | Entrega fora do prazo sem alinhamento | §3.3 item 4 — **o canal de submissão não é conhecido** | **ABERTO** |
 | Ausência do vídeo | 07/09, portão inegociável | controlado |
 | **Projeto que não executa e cujo vídeo não demonstra funcionamento real** | o TAPI exige a demo **pela interface web** — logo a interface **não é os 5 pontos do critério 4, é a porta do eliminatório** | **ALTO** — zero byte hoje |
-| **Código integralmente gerado sem compreensão: o candidato precisa explicar as decisões de arquitetura do próprio projeto** | §4.1, novo | **ALTO** — 82 decisões, e D-080/081/082 saíram hoje de uma sessão com IA |
+| **Código integralmente gerado sem compreensão: o candidato precisa explicar as decisões de arquitetura do próprio projeto** | §4.1, novo | **ALTO** — 87 decisões, e D-080 a D-087 saíram de uma sessão com IA em 02/09 |
 | Plágio | autoria própria, decisões registradas com alternativa | controlado |
 
 > **A releitura que muda a ordem do plano:** a interface deixou de ser "a superfície que um
@@ -50,7 +54,7 @@ resto do trabalho, independente de qualidade.
 
 ## 3. Inventário completo — todo item aberto tem destino
 
-### 3.1 FAZER — 16 itens, cada um com dia
+### 3.1 FAZER — 14 itens abertos, cada um com dia (3 fecharam em 02/09)
 
 | item | o que é | dia | pronto quando |
 |---|---|---|---|
@@ -60,7 +64,8 @@ resto do trabalho, independente de qualidade.
 | **P-06 + interface** | zero byte. Única superfície que um não-engenheiro julga | **04–05/09** | consultar → ver → recomendações com evidência → exportar |
 | **Testes ausentes** | **três** módulos sem teste: `extractor.py` (249 linhas, primeiro nó, alimenta todos), `rag/geracao.py` (**o passo 8 do TAPI**, onde mora a abstenção de D-040) e `db.py` (o SQL da recuperação) | **05/09** | os três com teste; a abstenção do passo 8 coberta |
 | **P-11** | `confianca` é **0/6 constante** — campo do briefing com zero informação | **05/09** | ou promove o braço de D-059 (2/6), ou o campo para de ser impresso |
-| **P-21** | **novo (D-086):** Morpheus (spear phishing) recomendado para a dor de **privacidade** de uma healthtech. Não é texto, é **qual tecnologia** — e nada mede relevância de recomendação | **05/09** | ou ganha régua, ou vira ACEITAR escrito |
+| **P-21** | **novo (D-086):** Morpheus (spear phishing) recomendado para a dor de **privacidade** de uma healthtech. Não é texto, é **qual tecnologia**. **O gabarito não precisa ser inventado:** as **7 regras de exemplo do TAPI** (`contexto/01-tapi.md:143`) são pares setor/dor → tecnologia esperada, e a regra `Saúde →` sozinha cobre **4 das 8** startups da base e reprova este caso. Falta o harness | **05/09** | ou ganha régua sobre as regras do TAPI, ou vira ACEITAR — e a razão escrita é a **cobertura**: só 1-2 das 7 regras têm startup na base de hoje |
+| **`justificativa_negocio`** | **novo (auditoria de 03/09):** texto curado para **5 das 16** tecnologias (`recommendation.py:63`), fallback formulaico nas outras 11. É o **campo 3 dos 7 obrigatórios** e o irmão do campo que D-086 consertou — mesmo defeito, campo ao lado. O comentário do código adia a dívida para uma **"M4" que não existe mais** em nenhum arquivo vivo: não estava atrasada, estava **sem dono** | **05/09** | as 11 restantes ganham texto curado, **ou** o campo declara por escrito que é derivado da dor — o que não pode continuar é prometer curadoria e entregar fórmula |
 | ~~**P-20**~~ | **FEITO em 02/09 (D-085).** A borda vira `pendente` com a faixa impressa | ~~05/09~~ | ✅ |
 | ~~**P-13**~~ | **FEITO em 02/09 (D-085).** Veto de terceiro com escopo de frase: falso positivo **2/7 → 7/7**, falso negativo 7/7 sem regressão | ~~05/09~~ | ✅ |
 | **P-14** | 4 campos calculados que ninguém lê — capacidade anunciada e não entregue | **06/09** | ou o subgrafo os lê, ou o diagrama e o README param de prometê-los |
@@ -83,12 +88,23 @@ Não são esquecimento. São escopo fechado por escrito, e cada um tem a razão 
 | **P-19** — sweep do RAG | Com **24 perguntas** de gabarito, uma grade fina ajusta ao gabarito em vez de generalizar. **Esta é a razão válida** — a antiga ("o critério 2 está no teto") foi anulada por D-078. A re-medição do corpus novo (2.1) fica; o sweep não |
 | **P-09** — promover o juiz | **Medir não é promover** (D-078). Promover a 5 dias do vídeo obriga a revalidar classifier, validator e recommendation a jusante. O número entra no log e na defesa; a promoção é um segundo ato, e ele não tem dia |
 
-### 3.3 DECIDIR — 6 itens, e são seus
+> **O que três destas justificativas têm em comum, e faltava escrito:** elas se apoiam em números
+> medidos no `nemotron-3-nano-30b-a3b`, **morto em 01/09** (D-079) — o teto de `4/7` de **D-060**
+> (27/08), o braço de **D-059** (27/08) e o placar do juiz de **D-072** (28/08). O handoff de 01/09
+> declarou esses três *"não valem até serem refeitos no modelo vivo"*, e **só `--geracao` foi
+> refeito** (23/24, D-040).
+>
+> **Re-medir os outros três está sendo ACEITO como não-feito**, e a razão é a mesma da P-09: ~200
+> chamadas a um modelo de mediana 51 s, a 4 dias do vídeo, para decidir promoções que este plano já
+> decidiu não fazer. O que muda por estar escrito é a frase da defesa: *"o juiz passou o critério em
+> 28/08, no modelo anterior, e não foi re-medido"* — não *"o juiz passa"*.
+
+### 3.3 DECIDIR — 4 abertos, e são seus (2 resolvidos em 02/09)
 
 | # | decisão | por que só você decide | prazo |
 |---|---|---|---|
 | ~~**1**~~ | ~~A chave do Grok~~ | **RESOLVIDO em 02/09 (D-087).** Alinhado com a liga: se o modelo morrer não é problema — a avaliação olha a arquitetura. **O fallback não entra**, e a hora vai para a base e a interface. O risco real muda de componente: o LLM tem zero chamada no grafo; quem não tem plano B é o **embedder** | ✅ |
-| **2** | **P-10: qual das três opções** | muda o que o vídeo mostra — ver §4 | **hoje** |
+| ~~**2**~~ | ~~P-10: qual das três opções~~ | **RESOLVIDO em 02/09 (D-086):** a opção **(a)** foi implementada e medida. O que segue aberto é **(b), o LLM redigir** — e a régua dela é a de D-084 (latência que o gerente sente · fornecedor único), **não** o que o vídeo mostra. Decidir com a interface na frente | ✅ · (b) em **04/09** |
 | **3** | **P-06: escopo da interface** | sai de "o que o gerente precisa ver", não de esforço. A decidir **na frente do briefing real**, em 04/09 | **04/09** |
 | **4** | **Canal de submissão e formato da entrega** · **individual ou em grupo?** | O TAPI **não responde** nenhuma das duas, e "entrega fora do prazo sem alinhamento prévio" é **eliminatório**. Não saber o canal em 09/09 é perder por logística, com o projeto pronto | **hoje** |
 | **5** | **Executam o projeto na avaliação, e com chave de quem?** | a conta gratuita não alcança **nenhum** modelo de terceiros (0 vivos em 12), e o catálogo aposentou o LLM em 01/09 sem aviso | esta semana |
@@ -102,7 +118,7 @@ Não são esquecimento. São escopo fechado por escrito, e cada um tem a razão 
 
 **Por que isto é um item do plano e não um conselho:** *"código integralmente gerado sem
 compreensão"* é **eliminatório**, e é o critério que mais se degrada quando o ritmo aperta. O
-projeto tem **82 decisões**, e três nasceram hoje numa sessão assistida por IA.
+projeto tem **87 decisões**, e oito nasceram em 02/09 numa sessão assistida por IA.
 
 **O mecanismo, ao fim de cada dia, antes do portão:** pegar o que mudou naquele dia e responder,
 **sem abrir o arquivo**: *o que eu mudei, por quê, e qual alternativa eu descartei e por qual
@@ -192,9 +208,11 @@ Refinar o vídeo, revisar a entrega, **rodar o smoke de novo antes de entregar**
 
 ---
 
-## 5. A decisão de hoje: P-10
+## 5. De onde sai a `justificativa_tecnica` — (a) feita, (b) aberta
 
-De onde sai a `justificativa_tecnica`. As três opções, com custo medido:
+**A opção (a) foi implementada e medida em 02/09 (D-086):** seletor `15/21` contra linha trivial
+`12/21`, e num run real as justificativas que servem foram de `1/6` a `4/6`. A tabela fica porque
+**(b) continua aberta** e é decisão de **04/09**, com a interface na frente; (c) está descartada.
 
 > **A tabela abaixo foi recomparada em 02/09 (D-084).** A versão anterior tinha uma coluna
 > *"efeito no vídeo"* e concluía contra (b) porque *"12 min e o vídeo tem 7"*. Isso é D-078 com
@@ -210,10 +228,13 @@ De onde sai a `justificativa_tecnica`. As três opções, com custo medido:
 | custo | ~2 h · **zero API extra** (o rerank já pontua a união inteira) | ~2 h | ~1 h |
 | ressalva | heurística: precisa de instrumento antes | — | **frágil**: D-082 mostrou que não há assinatura estrutural |
 
-> **Recomendação: (a), e ela não compete com (b) — precede.** (a) conserta um defeito; (b) é
-> funcionalidade sobre um campo já correto. **O argumento que de fato pesa contra (b) é o
-> fornecedor único**, e a coluna do vídeo o estava escondendo. (b) fica **aberta**, com o critério
-> certo: a latência que o gerente sente, decidida com a interface na frente.
+> **(a) não competia com (b) — precedia**, e foi por isso que veio primeiro: (a) consertava um
+> defeito; (b) é funcionalidade sobre um campo que só depois de (a) ficou correto. **O argumento que
+> de fato pesa contra (b) é o fornecedor único**, e a coluna do vídeo o estava escondendo.
+>
+> **(b) segue aberta, e ficou melhor com (a) feita** (D-086): o LLM receberia um span selecionado em
+> vez de um chunk com título de case na frente. O critério para decidi-la é a **latência que o
+> gerente sente ao clicar** — logo, com a interface na frente, em 04/09.
 
 ---
 

@@ -1,10 +1,30 @@
-# Pauta corrente — 02/09, fim da sessão de execução
+# Pauta corrente — 03/09, depois da auditoria do plano
 
 > Único arquivo de sessão do repositório. Guarda **o que está aberto**, não o que já aconteceu —
 > isso está em `decisoes.md` e no git.
 >
 > **O plano dos dias finais mora em `projeto/plano.md`** e continua sendo a fonte do que falta.
 > Este arquivo só diz onde a última sessão parou.
+
+## 03/09, antes de começar: a auditoria do plano (D-088)
+
+**As réguas de 02/09 foram re-rodadas e conferem todas** — `pytest 81 passed`, smoke `3/3`, agentes
+`3/7 · 6/7 · 0/6 · 6/6`, exclusões `7/7 · 7/7`, justificativas `12/21 → 15/21`. **Nenhum número
+documentado ontem é falso.** O que faltava era o inverso: o que a fila de 01/09 mapeava e o
+`plano.md` não herdou. Quatro achados, todos já corrigidos no plano:
+
+1. **`justificativa_negocio` estava sem dono** — zero menções no plano, nunca foi P-número, stub em
+   **11 de 16** tecnologias, e o código adiava para uma "M4" que não existe mais. Virou **P-22**,
+   FAZER em 05/09.
+2. **A P-21 dizia que não havia gabarito** — as **7 regras do TAPI** são gabarito, e a de `Saúde`
+   cobre 4 das 8 startups e reprova o caso do Morpheus. Falta o harness, e a cobertura cresce com a
+   base de hoje.
+3. **P-09, P-11 e P-12 se apoiam em números de modelo morto** (D-059, D-060, D-072). Não re-medir
+   está **ACEITO e escrito** — muda a frase da defesa, não a decisão.
+4. **"Muda o que o vídeo mostra" tinha voltado** na §3.3, sete linhas acima de onde D-084 limpou.
+
+> **Um achado meu foi retirado sob conferência:** eu disse que a ACEITAR da P-09 prometia um número
+> inexistente. Ele existe (D-072, 28/08). Confundi a re-medição com a medição.
 
 ## O que a sessão de 02/09 (execução) fez
 
@@ -43,7 +63,8 @@ plano tinha fechado horas antes.
   Registrado dentro de **D-068**. **`--geracao` rodou e FECHA P-15:** a abstenção do passo 8 dá
   **23/24 = 96%** no modelo atual (era 20-22/24 no modelo morto), e o único erro é **abstenção
   indevida**, não alucinação — o lado seguro.
-- **`--juiz` (D-072)** segue não coletado. Não bloqueia nada: P-09 é ACEITAR no plano.
+- **A RE-MEDIÇÃO de `--juiz` (D-072)** segue não coletada — a medição existe, é de 28/08 e do
+  modelo morto. Não bloqueia: P-09 é ACEITAR, e desde D-088 o plano diz que aceita o número velho.
 - **A base continua em 8.** `"fintechs"` e `"agro"` devolvem zero — confirmado no banco.
 
 ## O que esta sessão comprou de método
