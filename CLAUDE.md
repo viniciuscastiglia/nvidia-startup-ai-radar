@@ -143,6 +143,11 @@ Consulta do usuário
 >   aberto uma migração desnecessária a 5 dias do vídeo.
 > - **Env var não protege o embedder.** Trocar o modelo muda o espaço vetorial e invalida os 377
 >   vetores — é `scripts/reembedar.py` mais re-medir a régua inteira (D-046).
+> - **A COTA MENSAL DA TRIAL DO COHERE ACABOU EM 03/09 (D-093).** `429` com *"limited to 1000
+>   API calls / month"* — **não é o teto por minuto, é o do mês**, e ele não recupera sozinho.
+>   **`RERANK_PROVEDOR=nenhum` roda tudo** — grafo completo e `pytest` 81 passed **em 6,5 s**,
+>   contra 150-460 s com o Cohere ligado. Use isso como **default de desenvolvimento**; o
+>   Cohere entra só quando se quer medir o passo 7.
 > - **O teto da trial do Cohere é pior que a documentação:** o 429 chega na 4ª chamada sequencial,
 >   `retry-after` vem ausente, recuperação de ~26 s. Por isso `src/rag/rerank.py` tem limitador
 >   proativo e retry. **Para o vídeo: ~2-3 min só de rerank num run completo** — a cena é uma

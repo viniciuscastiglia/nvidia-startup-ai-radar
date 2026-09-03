@@ -5,6 +5,29 @@
 >
 > **O plano dos dias finais mora em `projeto/plano.md`** e continua sendo a fonte do que falta.
 
+## ⚠️ LEIA PRIMEIRO — a cota mensal do Cohere ACABOU (D-093)
+
+`HTTP 429`: *"Trial key, limited to **1000 API calls / month**"*. **Não é o teto de 10 req/min,
+que recupera em 26 s — é a cota do mês.** A causa foi esta sessão: ~15 runs do grafo e 5 de
+`pytest`, e cada run do grafo faz 20-30 chamadas sequenciais de rerank.
+
+**O que fazer, e já está medido — não é suposição:**
+- **`RERANK_PROVEDOR=nenhum` roda tudo.** Grafo ponta a ponta com recomendação, evidência e
+  fonte; **`pytest` 81 passed em 6,5 s** (contra 150-460 s com o Cohere ligado — o throttle era o
+  gargalo do suite inteiro, e ninguém sabia porque ninguém tinha rodado sem ele).
+- **O que se perde está medido:** denso puro faz **95% r@1 e 100% r@3** (D-064). O reranking
+  comprava o critério estrito, não a capacidade de responder.
+- **Assuma que a cota NÃO volta antes de 09/09.** Planejar contando com isso repete o erro de
+  D-015 (assumir sem verificar).
+- **Para o vídeo de 07/09 isso é vantagem narrativa, não desculpa:** o provedor está isolado em
+  `src/config.py` desde o começo, e gravar com o passo 7 desligado **demonstra a arquitetura** que
+  três EOLs compraram. O número honesto ao lado é o `95% r@1` do denso puro.
+- **Decisão sua:** chave de produção paga, se quiser o caminho completo no vídeo. Abrir outra
+  trial foi **descartado** — é contornar o teto do fornecedor por outra porta, num processo
+  seletivo.
+- **Regra nova:** `RERANK_PROVEDOR=nenhum` é o **default de desenvolvimento**. O Cohere entra
+  quando se quer medir o passo 7, e aí a chamada é deliberada.
+
 ## O que 03/09 fechou
 
 **A M3 fechou: a base foi de 8 para 30** (D-090), com **93 documentos** e **93/93 `url_fonte`
@@ -18,9 +41,9 @@ aparecer.
 | `seed.py --verificar-urls` | **30 startups · 93 documentos · 93/93 URLs** |
 | `avaliar_agentes.py --validar` | exit 0 · **evidência literal ok nas 30** |
 | `avaliar_agentes.py` | `classe 3/7 · stack 6/7 · confianca 0/6 · elegivel 6/6+1amb · 49%/100%` — **idêntico ao de antes da base** |
-| `--exclusoes` | **9/9** falso negativo · **8/8** falso positivo (era 7/7 · 7/7, com 2 casos reais novos) |
+| `--exclusoes` | **9/9** falso negativo · **9/9** falso positivo (era 7/7 · 7/7, com **3 casos REAIS** novos) |
 | `--justificativas` | trivial `12/21` · seletor `15/21` — sem regressão |
-| `pytest -q` | **81 passed** |
+| `pytest -q` | **81 passed** (com `RERANK_PROVEDOR=nenhum`, em 6,5 s — ver o aviso no topo) |
 | `python -m src.graph` | roda em fintech, agro, voz, robótica, cripto e rastreabilidade |
 
 **As 22 novas entram como DADO, sem `gabarito:` nem `perfil_alvo`** (D-062) — e isso agora está
@@ -47,6 +70,12 @@ sintética escrita por nós.
 - **P-22 ganhou exemplo concreto:** `NEGOCIO` é indexado por TECNOLOGIA, não por dor — NeMo
   recomendada para `custo` traz o texto de `avaliação`. **FAZER em 05/09.**
 - **O briefing ainda imprime `ver D-059`** — P-11, uma linha, 05/09.
+- **Um falso positivo de `consultoria` que NÃO foi consertado (D-092), e a razão está escrita:** o
+  site da Automni traz o bullet *"Consultoria especializada para implantação e operação"* — serviço
+  dela mesma, na lista de entregas. É a forma do caso Axenya, mas sem marcador nenhum na frase.
+  **Distinguir "vendo consultoria como parte da entrega" de "sou uma consultoria" é leitura de
+  contexto, não lista de palavras.** Hoje não dispara porque não caiu em trecho de evidência — o
+  que é sorte (P-23), não desenho.
 - **8 empresas ficaram a 1-2 documentos do fim** e estão registradas em D-090 com o motivo: Aro,
   Creditas, alt.bank, ESGreen, YouCred, AIDA, PecSmart, iCred. Se a base voltar a crescer, é daí
   que se parte — e **buscando o documento, não chutando caminho de URL**, que foi o erro medido
@@ -64,12 +93,13 @@ sintética escrita por nós.
 
 ## As duas regras que não se negociam
 
-- **RODE O SISTEMA antes de fechar a sessão** (D-083). Em 03/09 ela pagou quatro vezes: a execução
-  achou a Core AI saindo `non-AI`, o `NEGOCIO` falando de outra dor, a **Ecotrace recusada por
-  usar blockchain para rastrear boi**, e um **falso negativo de rastreabilidade** numa fixture de
-  22/08. Nenhum dos quatro aparece em leitura de código.
+- **RODE O SISTEMA antes de fechar a sessão** (D-083). Em 03/09 ela pagou **cinco vezes**: a Core
+  AI saindo `non-AI`; o `NEGOCIO` falando de outra dor; a **Ecotrace recusada por usar blockchain
+  para rastrear boi**; a **Automni recusada pelo nome de uma parceira**; e um **falso negativo de
+  rastreabilidade** numa fixture de 22/08. **Nenhum dos cinco aparece em leitura de código — e os
+  dois últimos só apareceram porque eu LI um briefing inteiro, não porque rodei um grep.**
 - **20 minutos de arguição, todo dia** (§4.1). Sem abrir o arquivo: *o que mudei, por quê, e qual
-  alternativa descartei.* São **92 decisões**, e as duas de hoje têm alternativa registrada.
+  alternativa descartei.* São **94 decisões**, e as quatro de hoje têm alternativa registrada.
 
 > **A lição de método mais cara do dia está em D-091, e é sobre mim:** escrevi na régua um caso
 > "rede" com uma frase **que eu mesmo redigi** já contendo o termo que queria testar. Ela deu 8/8

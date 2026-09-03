@@ -133,7 +133,13 @@ IDADE_MAXIMA = 10   # o programa exige menos de 10 anos de existência
 MARCADORES_DE_TERCEIRO = [
     # (1) o SUJEITO da frase é outra empresa
     "nossos clientes", "seus clientes", "entre os clientes", "dos clientes",
-    "parceria com", "parceiro", "parceira",
+    # `parceria entre` ENTROU em 03/09 (D-092), e o episódio é sobre a natureza desta lista.
+    # D-085 previu o caso — "o termo está no NOME de uma parceira" — e escreveu `parceria com`.
+    # A frase real do site da Automni diz *"a parceria ENTRE a Davinci - Consulting & Tech e a
+    # Automni"*. O ESCOPO DE FRASE, que é o que faz o veto generalizar, estava certo; o que
+    # faltou foi a variante da preposição. Não é falha do desenho, é o custo declarado dele:
+    # lista de marcadores OBSERVADOS paga o preço de só cobrir o que já se viu.
+    "parceria com", "parceria entre", "parceiro", "parceira",
     # (2) a empresa é CONSUMIDORA do que o termo nomeia
     "contrata",            # contratamos, contratou, contratada — prefixo, como `revend` (D-071)
     "integramos", "integrou",

@@ -2927,6 +2927,79 @@ o precedente de **remover o termo ambíguo** em vez de qualificá-lo.
 
 ---
 
+## D-092 — `parceria entre`: o veto de terceiro estava certo, faltava a preposição
+**Data:** 03/09/2026 · achado LENDO um briefing inteiro, não por grep (D-083)
+
+**O defeito:** a **Automni** — deep tech de robôs móveis autônomos — saía **`NÃO ELEGÍVEL` por
+'consultoria'**, e a evidência impressa era *"destacando a **parceria entre** a Davinci -
+Consulting & Tech e a Automni"*. O termo está no **nome de uma parceira**.
+
+**D-085 previu exatamente este caso** — a nota dele diz *"o sujeito é um PARCEIRO"* — e pôs
+`parceria com` em `MARCADORES_DE_TERCEIRO`. A frase real diz `parceria ENTRE`. **O escopo de
+frase, que é o que faz o veto generalizar, estava certo; faltou a variante da preposição.**
+Não é falha do desenho: é o custo declarado dele. Lista de marcadores OBSERVADOS só cobre o que
+já se viu, e é por isso que ela precisa de base grande — com 8 fixtures esta variante não existia.
+
+**Caso REAL na régua antes do conserto**, como em D-091: o lado do falso positivo caiu para
+**9/10**, apontando a Automni, e só então o marcador entrou. Depois: **9/9 e 9/9**, com 9 dos 18
+casos vindo de fixture. E o briefing ficou mais verdadeiro em vez de mais permissivo — a Automni
+continua `NÃO ELEGÍVEL`, agora **só pelo motivo certo**: *"fundada em 2014, 12 anos"*.
+
+**O que NÃO foi consertado, e fica escrito:** o site da Automni também traz, numa lista de
+entregas, o bullet *"Consultoria especializada para implantação e operação"* — serviço dela
+mesma. É a forma do caso Axenya (*"Integramos consultoria..."*), que D-085 resolveu com o marcador
+`integramos`. Aqui não há marcador nenhum: é um bullet solto, e a frase sozinha não diz de quem é
+o serviço. **Distinguir "vendo consultoria como parte da entrega" de "sou uma consultoria" não é
+lista de palavras — é leitura de contexto.** Hoje ele não dispara porque não caiu em trecho de
+evidência (P-23), o que é sorte, não desenho.
+
+---
+
+## D-093 — A cota mensal do Cohere ACABOU, e a contingência foi medida
+**Data:** 03/09/2026 · **causa: as execuções desta própria sessão**
+
+**O fato, com a mensagem do fornecedor:** `HTTP 429` com
+*"You are using a Trial key, which is limited to **1000 API calls / month**"*. Não é o teto de
+10 req/min de D-068, que recupera em ~26 s — é a **cota do mês**, e `retry-after` vem ausente.
+
+**A causa é minha e fica registrada:** a sessão de 03/09 rodou o grafo ~15 vezes e o `pytest`
+5 vezes, e **cada run do grafo faz 20-30 chamadas SEQUENCIAIS de rerank** (D-068). Foram
+centenas de chamadas para verificar a base — trabalho legítimo, com um custo que ninguém estava
+contando. **O que faltava era um contador**, e nenhum dos instrumentos do projeto olha para o
+saldo: `smoke_nvidia.py` valida as 3 capacidades da stack NVIDIA e não toca no Cohere.
+
+**A contingência existe por desenho e foi MEDIDA agora, não suposta:**
+- `RERANK_PROVEDOR=nenhum` — o grafo roda ponta a ponta, emite recomendações com evidência e
+  fonte, e o filtro do Inception decide igual.
+- **`pytest`: 81 passed em 6,5 s**, contra 150-460 s com o Cohere ligado. **O throttle era o
+  gargalo do suite inteiro** — e isso ninguém sabia porque ninguém tinha rodado sem ele.
+- O que se perde está medido em D-064/D-068: o **denso puro faz 95% r@1 e 100% r@3** sozinho. O
+  reranking comprava o critério estrito, não a capacidade de responder.
+
+**O que isso decide, e é decisão do Vinícius:**
+1. **Assumir que a cota NÃO volta antes de 09/09.** "1000/mês" pode ser mês corrido da criação da
+   chave — não dá para saber sem o dashboard, e planejar contando com isso é o mesmo erro que
+   D-015 cometeu ao assumir que "Cohere é pago" sem verificar.
+2. **O vídeo de 07/09 grava com `RERANK_PROVEDOR=nenhum`, e isso é vantagem narrativa, não
+   desculpa:** o provedor está isolado em `src/config.py` desde o começo, e trocar por env var é
+   exatamente o que três EOLs (D-013, D-046, D-064) compraram. Mostrar o sistema rodando com o
+   passo 7 desligado **demonstra a arquitetura** — e o número honesto ao lado é `95% r@1` do
+   denso puro.
+3. **`avaliar_rag.py` não pode ser re-medido** nos braços com rerank. Os números de D-068 seguem
+   válidos como história; re-medição fica bloqueada por fornecedor, como já aconteceu em D-073.
+
+**Alternativa descartada: abrir outra trial key.** É contornar o limite do fornecedor por outra
+porta, e o TAPI é um processo seletivo — a resposta honesta na arguição (*"a cota acabou e o
+sistema roda sem o passo 7, aqui está a medição"*) vale mais que uma demo que depende de burlar
+um teto. **Alternativa em aberto para o Vinícius:** chave de produção paga, se ele quiser o
+caminho completo no vídeo.
+
+**Regra operacional que nasce daqui:** antes de qualquer sessão que rode o grafo em série,
+`RERANK_PROVEDOR=nenhum` é o **default de desenvolvimento**. O Cohere entra quando se quer medir
+o passo 7, e aí a chamada é deliberada — a mesma disciplina de `--juiz` e `--truncar-pool`.
+
+---
+
 ## Decisões pendentes
 
 | # | Decisão | Estado |

@@ -88,6 +88,19 @@ casos:
     origem: sintético
     nota: quem revende é o CLIENTE. Mesmo defeito de sujeito da Freedom AI, em outro rótulo.
 
+  # O TERCEIRO PAR DE `consultoria`, e ele é REAL (03/09, D-092). A Automni — deep tech de robôs
+  # móveis — saía NÃO ELEGÍVEL porque o site dela fala da PARCEIRA "Davinci - Consulting & Tech".
+  # D-085 previu exatamente este caso e a lista tinha "parceria com"; a frase real diz
+  # "parceria ENTRE". O escopo de frase estava certo; faltava a variante.
+  - rotulo: consultoria
+    exclui: false
+    frase: "Neste episódio, exploramos a inovação e automação logística no Brasil, destacando a parceria entre a Davinci - Consulting & Tech e a Automni."
+    origem: >-
+      data/seed/automni.yaml — frase LITERAL do site coletado em 03/09
+    nota: >-
+      o termo está no NOME de uma parceira. Se este caso voltar a excluir, a variante saiu da
+      lista de marcadores de terceiro.
+
   # ── cripto ─────────────────────────────────────────────────────────────────
   # O par que documenta D-048: "token" saiu da lista porque é ambíguo entre cripto e
   # inferência de LLM, e "custo por token" derrubava qualquer startup de infraestrutura.

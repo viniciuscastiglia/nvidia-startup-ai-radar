@@ -247,7 +247,7 @@ Refinar o vídeo, revisar a entrega, **rodar o smoke de novo antes de entregar**
 | **Fornecedor único do EMBEDDER** | **este é o que sobrou sem plano B.** Está em toda consulta (`busca.py:122`), e trocá-lo invalida os 381 vetores — não é chave, é `reembedar.py` mais re-medir a régua inteira (D-046). Contramedida única: `smoke_nvidia.py` antes de gravar e de entregar |
 | **Interface escorregar e não haver demo** | **ativo, ponto único de falha.** Mitigado por: começar em 04/09, portão diário, e a regra de corte de 05/09 |
 | ~~**A base não chegar a 30**~~ | **NÃO se materializou: fechou em 30** (D-090). A ordem por setor faltante funcionou, e o que ela revelou vale mais que o número — cinco chaves de `SETORES` sem empresa nenhuma, invisíveis enquanto a base era pequena |
-| **Trial do Cohere** (1.000/mês, 10 req/min) | conhecido. Cena do vídeo com `MAX_STARTUPS` baixo |
+| **Trial do Cohere** (1.000/mês, 10 req/min) | **MATERIALIZOU-SE em 03/09: a cota do MÊS acabou** (D-093), consumida pelas execuções de verificação da base. **Não recupera sozinha.** Contingência medida na hora: `RERANK_PROVEDOR=nenhum` roda o grafo inteiro e o `pytest` 81 passed **em 6,5 s** — o throttle era o gargalo do suite. O que se perde está medido: denso puro faz 95% r@1 (D-064). **O vídeo de 07/09 grava assim, e isso demonstra o provedor isolado em `config.py`** |
 | **O embedder morrer** | descoberto. Trocá-lo invalida os vetores e exige re-medir a régua inteira |
 | ~~Confundir lento com morto~~ | **fechado em D-080** — era real: o smoke reportava `FALHOU` para um modelo vivo |
 | ~~Créditos insuficientes~~ · ~~Estado mal modelado~~ | não se materializaram |
