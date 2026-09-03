@@ -54,13 +54,13 @@ resto do trabalho, independente de qualidade.
 
 ## 3. Inventário completo — todo item aberto tem destino
 
-### 3.1 FAZER — 14 itens abertos, cada um com dia (3 fecharam em 02/09)
+### 3.1 FAZER — 13 itens abertos, cada um com dia (4 fecharam em 02/09)
 
 | item | o que é | dia | pronto quando |
 |---|---|---|---|
 | ~~**P-10**~~ | **FEITO em 02/09 (D-086).** Régua rotulada antes do seletor; seletor `15/21` vs trivial `12/21`; num run real, justificativas que servem **1/6 → 4/6**. O case da Writer sumiu | ~~03/09~~ | ✅ |
 | **Base 8 → 30** | `"fintechs"` e `"agro"` devolvem **zero**. 27% do piso do TAPI | **03/09** | as duas consultas devolvem resultado; `seed.py --verificar-urls` passa |
-| **P-15 + `avaliar_rag`** | o corpus mudou em D-082 — `e@1=79%` é de um corpus com entulho dentro | **03/09** (background) | tabela nova registrada, com a ressalva de denominador |
+| ~~**P-15 + `avaliar_rag`**~~ | **FEITO em 02/09.** `avaliar_rag.py` rodou pós-D-082 e o caminho de produção **não se moveu em nenhuma das seis colunas** (D-068); `--geracao` deu **23/24 = 96%** no modelo atual, e o único erro é abstenção indevida, não alucinação (D-040) | ~~03/09~~ | ✅ |
 | **P-06 + interface** | zero byte. Única superfície que um não-engenheiro julga | **04–05/09** | consultar → ver → recomendações com evidência → exportar |
 | **Testes ausentes** | **três** módulos sem teste: `extractor.py` (249 linhas, primeiro nó, alimenta todos), `rag/geracao.py` (**o passo 8 do TAPI**, onde mora a abstenção de D-040) e `db.py` (o SQL da recuperação) | **05/09** | os três com teste; a abstenção do passo 8 coberta |
 | **P-11** | `confianca` é **0/6 constante** — campo do briefing com zero informação. **E pior do que se sabia (D-089):** `evidence_validator.py:210` monta e `briefing.py:258` imprime *"— **ver D-059** para por que este agregado é o defeito que a régua mede em 0/6"*. **O gerente lê isso, e o vídeo mostra isso** — é ponteiro interno de decisão dentro do entregável | **05/09** | ou promove o braço de D-059 (2/6), ou o campo para de ser impresso. **De todo jeito, o ponteiro `D-059` sai do texto do usuário** — isso não depende da decisão maior e custa uma linha |
