@@ -135,6 +135,33 @@ def validar(fixtures: list[dict]) -> list[str]:
                     f"— texto raso não dá o que extrair"
                 )
             for linha in (d.get("conteudo_texto") or "").splitlines():
+                # PONTUAÇÃO ÓRFÃ — o resto de um nome próprio que a coleta apagou (03/09, D-097)
+                # ------------------------------------------------------------------------------
+                # `coletar.py` extrai com `get_text(separator="\n")`, o que põe todo elemento
+                # inline em linha própria: `<a>Agrotools</a>` vira uma linha de UMA palavra. Aí
+                # `limpar_linhas` descarta linha de ≤2 palavras que não termina em pontuação —
+                # e a ironia é exata: **o nome morre e o "." sobrevive**, porque ele termina em
+                # pontuação. O que resta no documento é `"…afirma o CEO da"` / `"."` / `"Sergio
+                # Rocha, fundador e CEO da Agrotools"`.
+                #
+                # A REGRA É POR FORMA, NÃO POR LISTA, e essa é a diferença para `MOBILIA_DE_PAGINA`
+                # acima: aquela nomeia frases OBSERVADAS ("pular para o conteúdo") e paga o preço
+                # de só cobrir o que já se viu. Aqui a forma basta — um parágrafo sem nenhum
+                # caractere alfanumérico não é conteúdo em nenhuma língua, e as 4 variantes
+                # medidas nas 30 fixtures ('.', '!', '’.', ').') não caberiam numa lista sem que
+                # a quinta escapasse.
+                #
+                # O QUE ISTO **NÃO** CONSERTA, e precisa estar dito: o nome apagado não volta.
+                # Ele não está no texto — recuperá-lo exige re-coletar e re-recortar os 93
+                # documentos à mão, incluindo as 8 fixtures de gabarito. O que esta regra remove
+                # é o resíduo VISÍVEL, que é o que chega ao gerente dentro de uma citação. A
+                # frase decapitada ("…afirma o CEO da") continua lá, e é limitação conhecida.
+                nu = linha.strip()
+                if nu and len(nu) <= 3 and not any(ch.isalnum() for ch in nu):
+                    problemas.append(
+                        f"{arq}: pontuação órfã em {d.get('titulo')!r}: {nu!r} — resto de nome "
+                        f"próprio apagado na coleta; vira citação de evidência (D-097)"
+                    )
                 if linha.strip().lower() in MOBILIA_DE_PAGINA:
                     problemas.append(
                         f"{arq}: mobília de página em {d.get('titulo')!r}: {linha.strip()!r} "
