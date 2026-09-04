@@ -3,7 +3,10 @@
 > **Passo 0 na execução:** salvar este arquivo em `docs/superpowers/plans/2026-09-04-fechamento-ia.md`
 > (o modo plano só permite escrever no arquivo de plano; o destino pedido é aquele).
 > **Ao fim:** `projeto/achados-04-09.md` sai — ele se declara efêmero e existe para alimentar
-> exatamente esta sessão. O que sobrevive vira D-098…D-102 e itens com destino em `plano.md`.
+> exatamente esta sessão. O que sobrevive vira D-098…D-104 e itens com destino em `plano.md`.
+> **RENUMERAÇÃO, feita em 04/09:** `varrer_classes.py` e `medir_confianca.py` já citavam `(D-098)`
+> no docstring desde a manhã, para uma decisão que nunca foi escrita. O número foi honrado —
+> D-098 é a dos dois instrumentos — e as deste plano andaram uma casa.
 
 ---
 
@@ -37,12 +40,12 @@ saída do bloco 2**; construir os dois na mesma sessão é *sessão que se audit
 |---|---|---|
 | **04/09, agora** — sessão 1, ~2-3 h | Claude | blocos **1 e 2**. **Para antes de commitar**: o briefing vai para a tela com o checklist da §6 |
 | ↳ ponto de parada 1 | **Vinícius** | lê as seis linhas do checklist e diz se passou |
-| ↳ | Claude | escreve **D-098** e **D-099**, commita, fecha a sessão |
-| **04/09, resto do dia** | **Vinícius** | 20 min de arguição sobre D-098/D-099, sem abrir o arquivo · depois, **interface** |
+| ↳ | Claude | escreve **D-098 a D-101**, commita, fecha a sessão ✅ **FEITO** |
+| **04/09, resto do dia** | **Vinícius** | 20 min de arguição sobre **D-099, D-100 e D-101**, sem abrir o arquivo · depois, **interface** |
 | **05/09 à tarde** — sessão 2, nova, ~4 h | Claude | lê o plano e as decisões novas; blocos **3, 4 e 5** |
 | ↳ ponto de parada 2 | **Vinícius** | o número da P-21 decide a **parte 2** do critério do bloco 2 |
 | ↳ ponto de parada 3 | **Vinícius** | o número do `PROFUNDOS` — promover ou só registrar |
-| ↳ | Claude | **D-100, D-101, D-102**, commit |
+| ↳ | Claude | **D-102, D-103, D-104**, commit |
 
 **Sessão nova se abre quando há commit e portão limpo — nunca no meio de um bloco.**
 
@@ -175,7 +178,7 @@ unidade sobre `_resumir` — nunca corta no meio de palavra, nunca devolve `\n`.
 | `src/agents/briefing.py:_secao` | quando `sinal_verificado` é falso, imprime `? sinal de IA não verificado — nenhum dos 3 detectores disparou; N dor(es) de IA extraída(s) com evidência`. É o mesmo idioma do `?` da elegibilidade |
 | `src/agents/recommendation.py:178` | empresa com sinal não verificado recebe `prioridade` forçada a `baixa`. O sistema não deixa de recomendar; deixa de afirmar urgência sem evidência |
 
-**Alternativa descartada e por quê (vai para D-099):** o desenho A — `indeterminado` como quarta
+**Alternativa descartada e por quê (vai para D-101):** o desenho A — `indeterminado` como quarta
 classe — é semanticamente mais limpo e custa duas coisas, não uma. A medida: `classe 3/7 → 2/7`,
 porque a SunnyHUB também tem zero detector e passaria a divergir de um gabarito que diz `non-AI`.
 A não medida, e maior: **o TAPI nomeia três classes**; uma quarta no output é desvio de
@@ -245,15 +248,18 @@ protocolo, **nesta ordem, sem exceção**:
 
 ## 5. As decisões a registrar em `projeto/decisoes.md`
 
-Uma por bloco, na hora em que for tomada, com a alternativa descartada. Próximo número: **D-098**.
+Uma por bloco, na hora em que for tomada, com a alternativa descartada. **As quatro de 04/09 estão
+escritas** (D-098 a D-101); as três de 05/09 são **D-102 a D-104**.
 
 | # | assunto | alternativa descartada |
 |---|---|---|
-| D-098 | `elegibilidade` antes de `nvidia_rag`; recusada mantém recomendação rotulada | suprimir as recomendações — silenciaria a JetBov, única `AI-native` e único `sweet-spot` da base, e 3 outras recusadas por idade. Também: a variante por motivo de recusa (idade × regra do programa), mais correta e uma regra a mais para defender |
-| D-099 | desenho B: `non-AI` não verificado deixa de cortar o funil | desenho A (`indeterminado` como 4ª classe): custa 1 ponto de `classe` **e** desvia das três classes que o TAPI nomeia |
-| D-100 | `NEGOCIO` reindexado por `(tecnologia, dor)` + 8 textos por dor | curar as 11 tecnologias restantes por tecnologia — 16 × 8 células, e mantém o defeito de índice |
-| D-101 | a régua das 7 regras do TAPI, com linha trivial | seguir com o ACEITAR da P-21 — a razão escrita (*"1-2 das 7 regras têm startup"*) está desatualizada: são 5 de 7 |
-| D-102 | `PROFUNDOS` alternativo, medido sob protocolo | usar a lista de 22 termos de 04/09 — escrita conhecendo o gabarito, é o erro que D-091 já custou uma sessão |
+| ~~D-099~~ ✅ | `elegibilidade` antes de `nvidia_rag`; recusada mantém recomendação rotulada | suprimir as recomendações — silenciaria a JetBov, única `AI-native` e único `sweet-spot` da base, e 3 outras recusadas por idade. Também: a variante por motivo de recusa (idade × regra do programa), mais correta e uma regra a mais para defender |
+| ~~D-101~~ ✅ | desenho B: `non-AI` não verificado deixa de cortar o funil | desenho A (`indeterminado` como 4ª classe): custa 1 ponto de `classe` **e** desvia das três classes que o TAPI nomeia |
+| ~~D-098~~ ✅ | os dois instrumentos de varredura ganham a decisão que já citavam | pô-los como flags de `avaliar_agentes.py`: menos arquivo, e a tabela das 30 passaria a ser lida como placar sobre um gabarito de 8 (D-062) |
+| ~~D-100~~ ✅ | os três defeitos do texto que chega ao gerente (causa falsa · ponteiro `D-059` · truncagem) | o briefing INFERIR a causa a partir do quadrante: reconstruiria no consumidor uma decisão que o produtor já tomou |
+| **D-102** | `NEGOCIO` reindexado por `(tecnologia, dor)` + 8 textos por dor | curar as 11 tecnologias restantes por tecnologia — 16 × 8 células, e mantém o defeito de índice |
+| **D-103** | a régua das 7 regras do TAPI, com linha trivial | seguir com o ACEITAR da P-21 — a razão escrita (*"1-2 das 7 regras têm startup"*) está desatualizada: são 5 de 7 |
+| **D-104** | `PROFUNDOS` alternativo, medido sob protocolo | usar a lista de 22 termos de 04/09 — escrita conhecendo o gabarito, é o erro que D-091 já custou uma sessão |
 
 **Correções de documentação, no mesmo commit dos blocos:** a razão do ACEITAR da P-24 em
 `plano.md` §3.2 (hoje diz *"consertar exige gabarito"*, o que só vale para o desenho A) · a razão
