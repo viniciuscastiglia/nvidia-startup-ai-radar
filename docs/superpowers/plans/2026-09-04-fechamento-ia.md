@@ -61,18 +61,16 @@ saída do bloco 2**; construir os dois na mesma sessão é *sessão que se audit
 Agora quem compete com os blocos 3-5 é **o relógio e o cansaço**, não a interface. A nova regra:
 
 - **Corta-se 5, depois 4, depois 3** — inalterado, e o que cair vira ACEITAR escrito.
-- **NENHUMA PROMOÇÃO SE DECIDE DE MADRUGADA.** Os blocos 4 e 5 terminam em NÚMERO, e os dois
-  números pedem juízo do Vinícius: a parte 2 do critério de D-101, e promover-ou-não o `PROFUNDOS`
-  alternativo. A sessão da noite **mede, registra e para**. Decidir promoção cansado é como
-  nasceram D-091 e os três erros da manhã de 04/09. É **medir não é promover** (D-078) aplicado
-  ao relógio, e é a regra que a memória do Vinícius já chama de *"cansaço: não devolver decisões"*.
-- **O que a sessão da noite PODE fechar sozinha:** o bloco 3, que é correção com teste e não tem
+- **A sessão MEDE e REGISTRA; a promoção é ato do Vinícius** — e a razão não é a hora, é D-078:
+  *medir não é promover* são dois atos, e o segundo é dele em qualquer horário. Vale para os dois
+  números que os blocos 4 e 5 produzem: a parte 2 do critério de D-101, e promover-ou-não o
+  `PROFUNDOS` alternativo. **O bloco 3 a sessão fecha sozinha** — é correção com teste, e não tem
   número para promover.
 
-**ORÇAMENTO DO COHERE — verificar antes de começar.** 04/09 gastou ~**170 chamadas** de rerank
-(um run de 28 empresas sozinho custa ~120). A trial é **1.000/mês e já esgotou uma vez** (D-093),
-e o vídeo de 07/09 depende dela. O bloco 4 vai querer rodar o grafo sobre a base para medir as 7
-regras: **projetar o harness para rodar UMA vez e medir da saída**, não uma vez por iteração.
+**O HARNESS DO BLOCO 4 RODA O GRAFO UMA VEZ E MEDE DA SAÍDA**, não uma vez por iteração — e a
+razão é velocidade de iteração, não cota: um run sobre a base leva **~20 minutos** (medido em
+04/09: 28 empresas, rerank ligado). Um harness que re-roda a cada ajuste é inutilizável como
+instrumento. O briefing das 28 de 04/09 serve de entrada se ainda existir.
 
 ---
 
