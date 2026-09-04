@@ -3522,7 +3522,7 @@ rebaixamento que elas já carregam, não voltar ao estado que viola o princípio
 "nove empresas a mais no funil = nove vezes mais chamada no fornecedor único do passo 7". **Não é o
 caso:** `nvidia_rag` sempre rodou para TODAS as empresas — o corte de funil acontecia depois dele,
 em `recommendation`. O que as nove ganham é o aproveitamento de citações que já eram recuperadas e
-jogadas fora. Medido: o mesmo run de 5 empresas levou **3m27 antes e 3m27 depois**.
+jogadas fora. Medido: o mesmo run de 5 empresas, mesma consulta, levou **3m30 antes e 3m27 depois** — a primeira redação desta linha dizia *"3m27 e 3m27"*, que é mais forte do que a medição sustenta.
 
 **Na tela, ao fim:**
 ```
@@ -3568,6 +3568,49 @@ LER o quadrante real, com uma verificação que falha alto se alguma empresa sem
 nenhum, porque parece medido.
 
 
+---
+
+## D-102 — Os quatro números soltos de 04/09 ganham instrumento, e eu repeti o defeito que diagnostiquei
+**Data:** 04/09/2026 · fim da sessão · zero API
+
+**Decisão:** `scripts/medir_cobertura.py`, com `--terceiro`.
+
+**O QUE ACONTECEU, E É SOBRE MÉTODO, NÃO SOBRE O NÚMERO.** A sessão da manhã escreveu, na §5 do
+`achados-04-09.md`: *"dois NÃO foram salvos e precisam ser reescritos pela sessão de plano"* — os
+scripts que mediram a cobertura de `elegibilidade()` e os marcadores `PROFUNDOS`. **A sessão da
+tarde reescreveu os dois em heredoc inline, usou os números, e não salvou nenhum.** Quatro
+medições ficaram assim: a cobertura de 10,6%, o `7 → 13` da varredura ampla, os `PROFUNDOS` por
+fixture e as 86/93 datas — e **duas viraram número em `decisoes.md`** (a linha da P-23) e no plano.
+
+Um número no log sem comando que o derrube é **afirmação, não medição**. É a mesma classe de
+defeito que D-091 custou uma sessão e que D-097 apanhou. Diagnosticá-lo de manhã e repeti-lo à
+tarde é o registro mais útil desta entrada.
+
+**AS TRÊS MEDIÇÕES, E A DECISÃO QUE CADA UMA CARREGA:**
+
+1. **Cobertura conta trechos ÚNICOS, não a soma bruta** — e isso é decisão, não detalhe. A soma
+   bruta dá **11,0%**; os únicos dão **10,6%**. Uma frase que sustenta duas afirmações não amplia
+   o que o filtro enxerga. O script imprime os dois e marca o bruto como *"não é cobertura"*,
+   porque foi exatamente aí que a verificação de 04/09 divergiu do documento da manhã.
+2. **O custo do conserto óbvio é `7 → 13`**, com **6 recusas novas** e **zero sumindo** — varrer
+   mais nunca remove exclusão. Mas o argumento que decide não é a contagem: `--terceiro` imprime,
+   frase a frase, **por que o veto de terceiro quebra por construção**. `_fala_de_terceiro` é um
+   `all()`, e cada ocorrência a mais é outra chance de falhar. A Iniciador é o caso limpo: uma
+   frase TEM o marcador `mercado de stablecoin` e a outra não tem nenhum — o veto colapsa.
+3. **`PROFUNDOS` e as datas** ficam juntos porque são a mesma constatação em dois eixos: 7 de 8
+   fixtures com ZERO marcador contra um degrau que exige 3, e `data_publicacao` ausente em **86 de
+   93**. Os dois dizem que o gargalo é o DADO, não a regra.
+
+**Alternativa descartada — pôr as três em `avaliar_agentes.py --exclusoes`.** É onde mora a régua
+do filtro do Inception, e a simetria puxa para lá. Mas `--exclusoes` tem gabarito e mede os dois
+lados com denominador; isto aqui não tem resposta certa declarada — **julgar quais das 6 recusas
+novas são falso positivo é ler a frase impressa**, e é trabalho de humano. Misturar as duas coisas
+faria uma tabela de leitura virar placar, que é a razão inteira de D-098.
+
+**Alternativa descartada — não salvar, porque "os números já estão no log".** É a que eu já tinha
+tomado por omissão, e ela é o defeito.
+
+
 ## Decisões pendentes
 
 | # | Decisão | Estado |
@@ -3595,5 +3638,5 @@ nenhum, porque parece medido.
 | **P-22** | **`justificativa_negocio` é stub em 11 de 16 tecnologias** | aberta pela auditoria de 03/09 (D-088). `recommendation.py:63` cura texto para **5 das 16**; as outras 11 caem num fallback formulaico que o próprio comentário chama de stub e adia "para a M4" — fase que não existe mais em arquivo vivo nenhum. É o **campo 3 dos 7 obrigatórios** e o vizinho do campo que D-086 consertou |
 | **P-25** | **As 93 fixtures têm 203 frases decapitadas, e elas não voltam sem re-coleta** | aberta por D-097. `coletar.py` apagava o nome próprio que vinha em tag inline — `afirma o CEO da <strong>Agrotools</strong>.` virava `"afirma o CEO da"` + `"."`. **A raiz está consertada** (`unwrap` + `smooth`, medido: 0 lacunas em 5 URLs reais), então toda fixture nova nasce limpa, e a pontuação órfã já saiu das 30. **O que fica é a frase sem sujeito**, em 62 dos 93 documentos. Recuperá-la exige re-coletar e re-recortar à mão, incluindo as 8 de gabarito, com re-medição da régua inteira depois. **Efeito medido hoje: 1,7% dos trechos de evidência** (5 de 298) — o troco não fecha a 6 dias da entrega. Depois da entrega |
 | ~~**P-24**~~ | ~~`non-AI` é o default de detecção falha~~ | **FECHADA em 04/09 (D-101).** `Diagnostico.sinal_verificado` é o par que `Elegibilidade` já tinha, aplicado ao rótulo: `non-AI` continua sendo emitido — o TAPI nomeia três classes — e só o **constatado** é cortado do funil. **Custo medido antes de implementar: `classe 3/7 → 3/7`**, contra `3/7 → 2/7` do desenho com quarta classe. O ACEITAR anterior dizia *"consertar exige gabarito"*: aquilo protege os DETECTORES, e este conserto não toca em nenhum nem introduz grau de liberdade. **Fica aberta a parte 2 do critério** — o ruído das 9 que passaram a entrar no funil, a medir contra as 7 regras do TAPI em 05/09 |
-| **P-23** | **`elegibilidade()` só enxerga o que o Extractor citou** | aberta por D-091. Ela varre `perfil.afirmacoes[*].evidencias[*].trecho`, não o documento. Medido no caso real: a Liqi diz *"oferecer criptomoedas, stablecoins e tokens"* no site, `criptomoeda` **já estava na lista**, e ela passou — porque a frase não caiu em nenhum trecho de evidência. **O filtro do Inception, que é o Diferencial declarado do projeto, tem cobertura igual à do casador de dores, e isso não estava escrito em lugar nenhum.** A correção óbvia (varrer `conteudo_texto`) **quebra `_fala_de_terceiro` POR CONSTRUÇÃO**, e esse é o argumento forte, medido em 04/09: o veto exige que **toda** ocorrência do termo caia em frase com marcador, então cada caractere a mais é outra chance de o `all()` falhar. Na Iniciador, o trecho de evidência tem 1 ocorrência de `stablecoin`, coberta por `mercado de stablecoin`; o documento inteiro tem 2, e a segunda não tem marcador nenhum — o veto colapsa. **Medido: as recusas vão de 7 para 13 em 30**, e ao menos 4 das 6 novas são falso positivo claro (TideWise por *"Dados da consultoria Fortune Business Insights"*; BemAgro por *"a revenda goiana MM Agro"*). **E o lado silencioso também apareceu:** a varredura ampla recusa a **Produzindo Certo**, que *"oferece serviços de consultoria, gestão e verificação"* — a própria empresa. Hoje ela passa por SORTE, não por desenho. Não cabe a 3 dias do vídeo; o que cabe é estar escrito, e agora está com os dois lados |
+| **P-23** | **`elegibilidade()` só enxerga o que o Extractor citou** | aberta por D-091. Ela varre `perfil.afirmacoes[*].evidencias[*].trecho`, não o documento. Medido no caso real: a Liqi diz *"oferecer criptomoedas, stablecoins e tokens"* no site, `criptomoeda` **já estava na lista**, e ela passou — porque a frase não caiu em nenhum trecho de evidência. **O filtro do Inception, que é o Diferencial declarado do projeto, tem cobertura igual à do casador de dores, e isso não estava escrito em lugar nenhum.** A correção óbvia (varrer `conteudo_texto`) **quebra `_fala_de_terceiro` POR CONSTRUÇÃO**, e esse é o argumento forte, medido em 04/09: o veto exige que **toda** ocorrência do termo caia em frase com marcador, então cada caractere a mais é outra chance de o `all()` falhar. Na Iniciador, o trecho de evidência tem 1 ocorrência de `stablecoin`, coberta por `mercado de stablecoin`; o documento inteiro tem 2, e a segunda não tem marcador nenhum — o veto colapsa. **Medido (`medir_cobertura.py`, D-102): as recusas vão de 7 para 13 em 30**, e ao menos 4 das 6 novas são falso positivo claro (TideWise por *"Dados da consultoria Fortune Business Insights"*; BemAgro por *"a revenda goiana MM Agro"*). **E o lado silencioso também apareceu:** a varredura ampla recusa a **Produzindo Certo**, que *"oferece serviços de consultoria, gestão e verificação"* — a própria empresa. Hoje ela passa por SORTE, não por desenho. Não cabe a 3 dias do vídeo; o que cabe é estar escrito, e agora está com os dois lados |
 | **P-19** | **O sweep do RAG (dimensão, banda de chunk, `k1`/`b`)** | **reaberta por D-078.** Estava cortado porque "o critério 2 já está no teto" — razão inválida. A razão candidata para manter o corte é outra e precisa ser dita: com 24 perguntas de gabarito, grade fina ajusta ao gabarito em vez de generalizar. O que joga contra o corte é `e@1 = 79%` (D-068): a primeira citação erra 1 vez em 5. Re-decidir junto com a base ampliada |

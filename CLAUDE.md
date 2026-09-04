@@ -245,6 +245,8 @@ python scripts/varrer_elegibilidade.py --motivos   # com a evidência de cada re
 python scripts/varrer_classes.py               # o veredito de CLASSE das 30, com quadrante (D-098)
 python scripts/varrer_classes.py --custo-desenhos  # o que cada conserto custa NA RÉGUA
 python scripts/medir_confianca.py              # os 4 braços da confiança do diagnóstico (D-098)
+python scripts/medir_cobertura.py              # o que o filtro do Inception NÃO lê, e o custo de mostrar tudo (D-102)
+python scripts/medir_cobertura.py --terceiro   # por que varrer o documento inteiro quebra o veto
 python scripts/avaliar_agentes.py --juiz       # LIGA o juiz do Extractor — ~52 chamadas
 python scripts/avaliar_agentes.py --rubrica    # braço REPROVADO (D-060)
 python scripts/avaliar_agentes.py --confianca-diagnostico  # braço REPROVADO (D-059)

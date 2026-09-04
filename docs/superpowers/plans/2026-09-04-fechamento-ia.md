@@ -3,7 +3,7 @@
 > **Passo 0 na execução:** salvar este arquivo em `docs/superpowers/plans/2026-09-04-fechamento-ia.md`
 > (o modo plano só permite escrever no arquivo de plano; o destino pedido é aquele).
 > **Ao fim:** `projeto/achados-04-09.md` sai — ele se declara efêmero e existe para alimentar
-> exatamente esta sessão. O que sobrevive vira D-098…D-104 e itens com destino em `plano.md`.
+> exatamente esta sessão. O que sobrevive vira D-098…D-105 e itens com destino em `plano.md`.
 > **RENUMERAÇÃO, feita em 04/09:** `varrer_classes.py` e `medir_confianca.py` já citavam `(D-098)`
 > no docstring desde a manhã, para uma decisão que nunca foi escrita. O número foi honrado —
 > D-098 é a dos dois instrumentos — e as deste plano andaram uma casa.
@@ -45,7 +45,7 @@ saída do bloco 2**; construir os dois na mesma sessão é *sessão que se audit
 | **05/09 à tarde** — sessão 2, nova, ~4 h | Claude | lê o plano e as decisões novas; blocos **3, 4 e 5** |
 | ↳ ponto de parada 2 | **Vinícius** | o número da P-21 decide a **parte 2** do critério do bloco 2 |
 | ↳ ponto de parada 3 | **Vinícius** | o número do `PROFUNDOS` — promover ou só registrar |
-| ↳ | Claude | **D-102, D-103, D-104**, commit |
+| ↳ | Claude | **D-103, D-104, D-105**, commit |
 
 **Sessão nova se abre quando há commit e portão limpo — nunca no meio de um bloco.**
 
@@ -248,8 +248,9 @@ protocolo, **nesta ordem, sem exceção**:
 
 ## 5. As decisões a registrar em `projeto/decisoes.md`
 
-Uma por bloco, na hora em que for tomada, com a alternativa descartada. **As quatro de 04/09 estão
-escritas** (D-098 a D-101); as três de 05/09 são **D-102 a D-104**.
+Uma por bloco, na hora em que for tomada, com a alternativa descartada. **As CINCO de 04/09 estão
+escritas** (D-098 a D-102 — D-102 salvou como script as medições que a sessão fez em
+heredoc e não guardou); as três de 05/09 são **D-103 a D-105**.
 
 | # | assunto | alternativa descartada |
 |---|---|---|
@@ -257,9 +258,9 @@ escritas** (D-098 a D-101); as três de 05/09 são **D-102 a D-104**.
 | ~~D-101~~ ✅ | desenho B: `non-AI` não verificado deixa de cortar o funil | desenho A (`indeterminado` como 4ª classe): custa 1 ponto de `classe` **e** desvia das três classes que o TAPI nomeia |
 | ~~D-098~~ ✅ | os dois instrumentos de varredura ganham a decisão que já citavam | pô-los como flags de `avaliar_agentes.py`: menos arquivo, e a tabela das 30 passaria a ser lida como placar sobre um gabarito de 8 (D-062) |
 | ~~D-100~~ ✅ | os três defeitos do texto que chega ao gerente (causa falsa · ponteiro `D-059` · truncagem) | o briefing INFERIR a causa a partir do quadrante: reconstruiria no consumidor uma decisão que o produtor já tomou |
-| **D-102** | `NEGOCIO` reindexado por `(tecnologia, dor)` + 8 textos por dor | curar as 11 tecnologias restantes por tecnologia — 16 × 8 células, e mantém o defeito de índice |
-| **D-103** | a régua das 7 regras do TAPI, com linha trivial | seguir com o ACEITAR da P-21 — a razão escrita (*"1-2 das 7 regras têm startup"*) está desatualizada: são 5 de 7 |
-| **D-104** | `PROFUNDOS` alternativo, medido sob protocolo | usar a lista de 22 termos de 04/09 — escrita conhecendo o gabarito, é o erro que D-091 já custou uma sessão |
+| **D-103** | `NEGOCIO` reindexado por `(tecnologia, dor)` + 8 textos por dor | curar as 11 tecnologias restantes por tecnologia — 16 × 8 células, e mantém o defeito de índice |
+| **D-104** | a régua das 7 regras do TAPI, com linha trivial | seguir com o ACEITAR da P-21 — a razão escrita (*"1-2 das 7 regras têm startup"*) está desatualizada: são 5 de 7 |
+| **D-105** | `PROFUNDOS` alternativo, medido sob protocolo | usar a lista de 22 termos de 04/09 — escrita conhecendo o gabarito, é o erro que D-091 já custou uma sessão |
 
 **Correções de documentação, no mesmo commit dos blocos:** a razão do ACEITAR da P-24 em
 `plano.md` §3.2 (hoje diz *"consertar exige gabarito"*, o que só vale para o desenho A) · a razão
