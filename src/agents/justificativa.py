@@ -96,7 +96,36 @@ CONVITE = ("learn more", "get started", "getting started", "contact us", "sign u
            # (Riva), "Visit Omniverse Legacy Tools…" (Omniverse, e a ferramenta é DEPRECIADA),
            # "Watch NVIDIA Director…" (Morpheus). Alargar as âncoras em vez disto seria ajustar
            # ao gabarito, e as três âncoras que ficaram estreitas continuam contando como erro.
-           "learn how", "visit ", "watch ", "for more details")
+           "learn how", "visit ", "watch ", "for more details",
+           # ACRESCENTADOS EM 03/09 (D-097), pelo MESMO critério da revisão de D-086: só entra
+           # marcador que é convite/navegação POR CATEGORIA. Os quatro vieram de mobília que saiu
+           # IMPRESSA num briefing real — não de casos do gabarito que eu quisesse fazer passar.
+           # "feel free to post in the RAPIDS Slack workspace" (cuDF) e "please file an issue on
+           # the GitHub issue tracker" são convite de COMUNIDADE, categoria que faltava; e
+           # "Quick-Start Guide"/"Download Examples Documentation" são navegação, a mesma
+           # categoria de "- documentation", que a lista já tinha.
+           "feel free to", "file an issue", "quick-start guide", "download examples")
+
+
+# FEED DE ANÚNCIOS DENTRO DO README (03/09, D-097)
+# --------------------------------------------------
+# O README do TensorRT-LLM abre com um mural de novidades — `* [2024/07/09] ✨ …➡️ link` — e ele
+# é TECNICAMENTE DENSO: cita TensorRT, LLM, inference, quantization, speculative decoding. A
+# densidade de `pontuar()` o premia justamente por isso, e num briefing real saiu
+# `📗 DIY notebook: ➡️ link * [2024/05/28] ✨#TensorRT weight stripping` como argumento de venda.
+#
+# O reconhecimento é por FORMA e não por vocabulário, e essa é a decisão: penalizar as palavras
+# do feed exigiria penalizar `inference` e `quantization`, que são o conteúdo que se quer. A
+# forma `* [data]` e o emoji decorativo não aparecem em nenhuma prosa técnica deste corpus —
+# são a assinatura do mural.
+#
+# ALTERNATIVA DESCARTADA: limpar o corpus e re-ingerir. Mudaria os 175 chunks e invalidaria o
+# gabarito de 24 perguntas do RAG — o mesmo motivo pelo qual D-096 recusou mexer em
+# `src/rag/limpeza.py`. Aqui a penalidade é local, reversível e não move um único vetor.
+ENTRADA_DE_FEED = re.compile(r"^\*?\s*\[\d{1,4}[/\]]")
+EMOJI_DECORATIVO = re.compile(
+    "[\U0001F300-\U0001FAFF\u2190-\u21FF\u2600-\u27BF\uFE0F]"
+)
 
 
 def pontuar(texto: str) -> float:
@@ -112,6 +141,15 @@ def pontuar(texto: str) -> float:
     negativos = sum(1 for m in VITRINE if m in baixo) * 3
     negativos += sum(1 for m in CONVITE if m in baixo)
     negativos += 3 * sum(1 for l in texto.split("\n") if CABECALHO_DE_CASE.match(l.strip()))
+    # Feed pesa como vitrine (3): as duas são a mesma coisa — página falando de si, não da
+    # tecnologia. O emoji pesa 1 por ocorrência, e não mais, porque é sinal e não prova.
+    negativos += 3 * sum(1 for l in texto.split("\n") if ENTRADA_DE_FEED.match(l.strip()))
+    # EMOJI PESA 2, E O NÚMERO SAI DE UMA CONTAGEM, NÃO DE CALIBRAGEM: dos 175 chunks de
+    # produção, **11 têm emoji e os 11 são banner ou mural de README** — 10 do TensorRT-LLM e um
+    # do NeMo Guardrails (`✨✨✨ 📌 The official documentation is available at…`). Nenhum é prosa
+    # técnica. Peso 1 perdia para a densidade: `✅ Deploy the optimized models with Triton
+    # Inference Server` soma 3 marcadores técnicos e é, ainda assim, um item de mural.
+    negativos += 2 * len(EMOJI_DECORATIVO.findall(texto))
     return (positivos - negativos) / (len(texto) / 100)
 
 
