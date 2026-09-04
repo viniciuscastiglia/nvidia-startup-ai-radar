@@ -287,6 +287,35 @@ ROTULO_QUADRANTE = {
 }
 
 
+def _resumir(texto: str, limite: int) -> str:
+    r"""Corta em fronteira de PALAVRA e anuncia o corte. Ver D-100.
+
+    O que havia era `texto[:150]`, e na tela isso produzia `"...NVIDIA NIM™ microse"` e
+    `"...é a passagem citada da documentaçã"` — dois dos SETE campos obrigatórios do TAPI,
+    cortados no meio da palavra, sem sinal de que havia mais texto. Um leitor não distingue
+    "o campo acabou assim" de "o campo foi truncado".
+
+    O `\s+` colapsado resolve o segundo defeito da mesma linha: `justificativa_tecnica` sai de
+    `melhor_trecho`, que devolve um span do chunk — e chunk de página web carrega quebra de
+    linha no meio. Impresso cru, ele quebra o alinhamento da coluna e o parágrafo continua na
+    margem esquerda, como se fosse outro campo.
+
+    A reticência é `…` (U+2026) e não `...`: ela ocupa uma coluna, e o campo é impresso dentro
+    de uma tabela de largura fixa.
+    """
+    limpo = re.sub(r"\s+", " ", texto).strip()
+    if len(limpo) <= limite:
+        return limpo
+    # `limite - 1` porque o `…` conta: a saída nunca é mais larga que o `limite` pedido, e a
+    # coluna do briefing tem largura fixa.
+    cabe = limpo[:limite - 1]
+    # `rsplit` na última fronteira dentro do limite. Sem fronteira nenhuma — um "palavrão"
+    # técnico maior que o limite, como uma URL — corta no limite mesmo: melhor um corte
+    # anunciado que uma linha vazia.
+    corte = cabe.rsplit(" ", 1)[0]
+    return f"{corte or cabe}…"
+
+
 def _secao(a: AnaliseStartup) -> list[str]:
     L = [f"\n{'─' * 78}", f"  {a.nome.upper()}", f"{'─' * 78}"]
     if a.erros:
@@ -306,6 +335,18 @@ def _secao(a: AnaliseStartup) -> list[str]:
         # evidência da exclusão e `_secao` não a imprimia.
         if d.motivo_confianca:
             L.append(f"  Confiança     : {d.motivo_confianca}")
+        # D-101: o rótulo não constatado se ANUNCIA, no mesmo idioma do `?` da elegibilidade.
+        # Sem esta linha o desenho estaria pela metade: a empresa deixaria de ser cortada do
+        # funil em silêncio e passaria a ser incluída em silêncio — e o gerente continuaria
+        # sem saber que `non-AI`, ali, quer dizer "não achei sinal" e não "não tem IA".
+        if not d.sinal_verificado:
+            n_dores = len(a.perfil.dores_observadas) if a.perfil else 0
+            # Duas linhas, e não uma de ~200 caracteres: o relatório tem 78 colunas, e uma
+            # linha que estoura a largura some na dobra do terminal — que é onde ela é lida.
+            L.append(f"    ? sinal de IA NÃO VERIFICADO — nenhum dos 3 detectores disparou; "
+                     f"{n_dores} dor(es) de IA extraída(s) com evidência")
+            L.append("      o rótulo acima é o que a regra produziu, não o que a base "
+                     "constatou")
     if a.elegibilidade:
         e = a.elegibilidade
         L.append(f"\n  NVIDIA Inception: {'ELEGÍVEL' if e.elegivel else 'NÃO ELEGÍVEL'}")
@@ -317,13 +358,24 @@ def _secao(a: AnaliseStartup) -> list[str]:
             if i < len(e.evidencias):
                 ev = e.evidencias[i]
                 L.append(f"        [{ev.tipo_documento}] {ev.url_fonte}")
-                L.append(f"           \"{ev.trecho[:130]}...\"")
+                L.append(f"           \"{_resumir(ev.trecho, 130)}\"")
         for p in e.requisitos_nao_verificados:
             L.append(f"    ? {p}")
 
     L.append(f"\n  Recomendações ({len(a.recomendacoes)}):")
     if not a.recomendacoes:
-        L.append("    nenhuma — sem evidência validada que sustente uma recomendação")
+        # A CAUSA VEM DO ESTADO, NÃO DE UMA FRASE FIXA (D-100). A frase antiga — "sem evidência
+        # validada que sustente uma recomendação" — era impressa para TODA lista vazia. Medido
+        # em 04/09: Conta Simples, Core AI e Iniciador têm 3, 5 e 7 dores VALIDADAS e recebiam
+        # essa frase; a causa real era o corte de funil. O `or` cobre a análise parcial, em que
+        # `recommendation` nem chegou a rodar — e aí a única resposta honesta é dizer isso.
+        L.append(f"    nenhuma — {a.motivo_sem_recomendacao or 'a análise não chegou ao motor de recomendação'}")
+    # D-099: a recusa do Inception rotula as recomendações em vez de suprimi-las, e o rótulo
+    # aparece UMA vez, acima da lista — não repetido em cada item. `fora_do_inception` é o mesmo
+    # em todas as recomendações da empresa, porque a elegibilidade é da empresa.
+    if fora := next((r.fora_do_inception for r in a.recomendacoes if r.fora_do_inception), None):
+        L.append("    !! FORA DO INCEPTION — abordagem comercial direta, não captação para o")
+        L.append(f"       programa. Motivo da recusa: {fora}")
     for i, r in enumerate(a.recomendacoes, 1):
         L += [
             f"\n    {i}. {', '.join(r.tecnologias)}",
@@ -332,14 +384,14 @@ def _secao(a: AnaliseStartup) -> list[str]:
             # interface) e renderizava "dores      : " com nada depois dos dois-pontos, no
             # entregável que o vídeo mostra. Mesmo defeito que `proxima_acao` já guardava.
             f"       dores      : {', '.join(r.dores_enderecadas) or '— (citação não veio de uma dor)'}",
-            f"       técnica    : {r.justificativa_tecnica[:150]}",
-            f"       negócio    : {r.justificativa_negocio[:150]}",
+            f"       técnica    : {_resumir(r.justificativa_tecnica, 150)}",
+            f"       negócio    : {_resumir(r.justificativa_negocio, 150)}",
             f"       ação       : {r.proxima_acao}",
             f"       evidências : {len(r.evidencias)} trecho(s) com fonte",
         ]
         for ev in r.evidencias[:2]:
             L.append(f"          [{ev.tipo_documento}] {ev.url_fonte}")
-            L.append(f"             \"{ev.trecho[:130]}...\"")
+            L.append(f"             \"{_resumir(ev.trecho, 130)}\"")
         for c in r.citacoes_rag:
             L.append(f"          [base NVIDIA] {c.tecnologia} — {c.url_fonte}")
     return L

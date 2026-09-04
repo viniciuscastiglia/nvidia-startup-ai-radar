@@ -48,6 +48,49 @@ calibrar contra o gabarito de 8 fixtures.
 O argumento de `2a` é a pergunta norteadora do case: uma empresa que quantiza o próprio modelo não
 é wrapper de LLM, por definição.
 
+A DETECÇÃO FALHA DEIXA DE VIRAR AFIRMAÇÃO — 04/09 (D-101)
+----------------------------------------------------------
+A rubrica define `non-AI` por uma propriedade POSITIVA (`contexto/02` §4): *"o produto não
+depende de IA... sem IA no caminho crítico da entrega de valor"*. Isso é constatação sobre a
+empresa, e constatação exige evidência. Este módulo emitia esse rótulo quando `pontos == 0` —
+ou seja, quando **não encontrou sinal**. A rubrica pede *"constatamos que não há IA"*; o código
+entregava *"não achei sinal de IA"*.
+
+**E o repositório já tinha decidido o contrário, no dia 2.** A regra 4 do Evidence Validator diz
+*"ausência de sinal != sinal negativo → nada é DELETADO, só rebaixado"*, e `Elegibilidade` a
+aplica há semanas: `motivos_exclusao` (a base PROVA que é consultoria) versus
+`requisitos_nao_verificados` (a base NÃO PROVA que tem developer), e só o primeiro exclui.
+`classe` não tinha esse par.
+
+MEDIDO NA BASE DE 30, em 04/09 (`scripts/varrer_classes.py`): `AI-native` 1 · `AI-enabled` 20 ·
+`non-AI` **9** — e as nove com ZERO detector, todas com **2 a 7 dores de IA** extraídas com
+evidência pelo mesmo Extractor. Elas iam para `fora-do-funil` e recebiam zero recomendação. Na
+tela, a linha `Base` chegava a dizer *"posicionamento de copilot: vende a ferramenta"* — uma
+constatação sobre o modelo de entrega — logo abaixo de `Classificação: non-AI`.
+
+O QUE ENTROU: `sinal_verificado`, e o RÓTULO NÃO MUDA.
+`non-AI` continua sendo emitido — o TAPI nomeia três classes, e uma quarta no output seria
+desvio de especificação. O que muda é a CONSEQUÊNCIA: `derivar_quadrante` só manda para
+`fora-do-funil` quem foi constatado, e o briefing imprime `? sinal de IA não verificado` no
+mesmo idioma que a elegibilidade já usa.
+
+ALTERNATIVA DESCARTADA — `indeterminado` como quarta classe. É semanticamente mais limpa e
+custa duas coisas. A medida (`varrer_classes.py --custo-desenhos`): `classe` cai de **3/7 para
+2/7**, porque a SunnyHUB também tem zero detector e passaria a divergir de um gabarito que diz
+`non-AI`. A não medida, e maior: o desvio das três classes do TAPI. O desenho que entrou custa
+`3/7 → 3/7` — medido, não suposto.
+
+POR QUE ISTO NÃO É CALIBRAR CONTRA O GABARITO, que é o que D-062 existe para impedir e a razão
+pela qual a P-24 estava ACEITA: **nenhum grau de liberdade novo foi introduzido.** É a mesma
+regra `pontos == 0`, com outro destino. Não há limiar, peso nem lista de termos para ajustar —
+e por isso a régua não se move, o que era previsível antes de rodar.
+
+O PREÇO, DECLARADO: as nove entram no funil, e uma delas — a SunnyHUB, energia solar — é
+`non-AI` de verdade. É o mesmo preço que `Elegibilidade` já paga e reporta na Solinftec, que
+sai ELEGÍVEL com *"requisito não verificado"* porque o documento diz "há 18 anos" e não um ano.
+Troca um falso negativo SILENCIOSO por um falso positivo ANOTADO — a direção que D-052 e D-057
+já escolheram por escrito.
+
 POR QUE O EIXO 1 TEM CONTADOR PRÓPRIO, E O EIXO 2 NÃO MUDOU UMA VÍRGULA
 ------------------------------------------------------------------------
 `extractor.frases` recorta uma frase POR DOCUMENTO (o `break` em `_casar`), então
@@ -183,6 +226,19 @@ def node(state: EstadoAnalise) -> dict:
         evidencias += perfil.sinais_otimizacao_tecnica[0].evidencias
         razoes.append("vocabulário técnico de IA presente nos documentos")
 
+    # `pontos == 0` E `non-AI` SÃO COISAS DIFERENTES, E ATÉ 04/09 ESTE MÓDULO AS CONFUNDIA.
+    # Ver o bloco `A DETECÇÃO FALHA DEIXA DE VIRAR AFIRMAÇÃO` no docstring, e D-101.
+    # A variável é calculada aqui, uma vez, porque os DOIS braços fazem a mesma pergunta —
+    # "algum detector disparou?" — e ela é independente de qual rubrica está ligada.
+    algum_sinal = bool(autopilot or dado_proprio or sinal_tecnico or n_profundos)
+    if not algum_sinal:
+        # A razão diz só O QUE ACONTECEU. Quem tira a CONCLUSÃO — "o rótulo não é constatação" —
+        # é a linha `?` do briefing, que tem o número de dores em mãos e é onde o gerente lê.
+        # Dizer as duas coisas nos dois lugares fazia a linha `Base` repetir a linha de baixo, e
+        # a primeira redação ainda dizia "o rótulo abaixo" sobre um rótulo que é impresso acima.
+        razoes.append("nenhum detector de IA disparou "
+                      "(autopilot, dado proprietário, vocabulário técnico)")
+
     if RUBRICA_EM_DEGRAUS:
         # Degrau 2a e 2b. `opera_propria_ia` é a pergunta do eixo 1 em uma linha.
         profundidade_propria = n_profundos >= MARCADORES_PARA_PROFUNDIDADE
@@ -192,7 +248,7 @@ def node(state: EstadoAnalise) -> dict:
             razoes.append(f"profundidade técnica própria: {n_profundos} marcadores distintos de "
                           f"infraestrutura de IA nos documentos")
         classe: ClasseStartup = (
-            "non-AI" if not (autopilot or dado_proprio or sinal_tecnico or n_profundos)
+            "non-AI" if not algum_sinal
             else "AI-native" if opera_propria_ia
             else "AI-enabled"
         )
@@ -220,7 +276,8 @@ def node(state: EstadoAnalise) -> dict:
         "diagnostico": Diagnostico(
             classe=classe,
             maturidade_stack=maturidade,
-            quadrante=derivar_quadrante(classe, maturidade),
+            sinal_verificado=algum_sinal,
+            quadrante=derivar_quadrante(classe, maturidade, sinal_verificado=algum_sinal),
             confianca="media",          # provisória: o Evidence Validator decide a definitiva
             justificativa="; ".join(razoes),
             evidencias=evidencias,

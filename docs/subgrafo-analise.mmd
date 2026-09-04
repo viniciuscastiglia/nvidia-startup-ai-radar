@@ -20,11 +20,11 @@ graph TD;
 	__end__(<p>__end__</p>)
 	__start__ --> extractor;
 	classifier --> evidence_validator;
-	evidence_validator --> nvidia_rag;
+	elegibilidade --> nvidia_rag;
+	evidence_validator --> elegibilidade;
 	extractor --> classifier;
 	nvidia_rag --> recommendation;
-	recommendation --> elegibilidade;
-	elegibilidade --> __end__;
+	recommendation --> __end__;
 	classDef default fill:#f2f0ff,line-height:1.2
 	classDef first fill-opacity:0
 	classDef last fill:#bfb6fc

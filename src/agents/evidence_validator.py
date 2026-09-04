@@ -207,10 +207,18 @@ def node(state: EstadoAnalise) -> dict:
             # nova do briefing eram CÓDIGO MORTO na configuração que roda, e D-059 afirmava
             # "fica em produção, porque não é métrica" sobre algo que não estava em produção.
             # Achado nº 5 do code review de 27/08.
+            # O PONTEIRO `ver D-059` SAIU DO TEXTO DO USUÁRIO EM 04/09 (D-100).
+            # Ele entrou em 27/08 de propósito, para tornar o defeito visível em vez de
+            # escondido — a intenção estava certa e a SUPERFÍCIE estava errada. `motivo_confianca`
+            # é impresso no briefing executivo, uma vez por empresa: o gerente de Startups & VCs
+            # lia uma referência a uma decisão interna deste repositório, e o vídeo mostrava isso.
+            # A regra 5 de `contexto/02` §6 pede que o output carregue a confiança e o motivo
+            # dela; ela não pede o número da decisão que discute o motivo. O defeito continua
+            # NOMEADO — no bloco de `CONFIANCA_DA_EVIDENCIA_DO_DIAGNOSTICO` acima, que é onde
+            # quem mexe no código olha, e em D-059.
             diagnostico.motivo_confianca = (
                 f"mínimo sobre as {len(confs)} afirmações do perfil, incluindo "
-                f"{len(perfil.dores_observadas)} dor(es) observada(s) — ver D-059 para por que "
-                f"este agregado é o defeito que a régua mede em 0/6"
+                f"{len(perfil.dores_observadas)} dor(es) observada(s) — o elo mais fraco decide"
                 if confs else "nenhuma afirmação do perfil carrega confiança"
             )
 

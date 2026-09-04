@@ -6,14 +6,22 @@ POR QUE ISTO EXISTE (D-098)
 mesma regra: D-083 diz "rode o sistema"; o corolário é **rode-o sobre a base INTEIRA, não
 sobre uma amostra**. Ler briefing é amostragem — dá para ler três empresas, não trinta.
 
-O que ele torna visível é P-24: `pontos == 0 -> non-AI` transforma **silêncio da extração**
-em **afirmação sobre a empresa**, e `non-AI` leva a `fora-do-funil` em `derivar_quadrante`,
-que leva a `recomendacoes: []` em `recommendation.py`. A coluna `ADT` mostra qual dos três
-detectores disparou, então a linha `---` é literalmente "não achei nada" sendo reportada ao
-gerente como "esta empresa não tem IA".
+O que ele tornou visível foi a P-24: `pontos == 0 -> non-AI` transformava **silêncio da
+extração** em **afirmação sobre a empresa**, e `non-AI` levava a `fora-do-funil` em
+`derivar_quadrante`, que levava a `recomendacoes: []` em `recommendation.py`. A coluna `ADT`
+mostra qual dos três detectores disparou, então a linha `---` era literalmente "não achei nada"
+sendo reportada ao gerente como "esta empresa não tem IA".
 
-A coluna `dores` é o que fecha o argumento: as empresas com `---` **têm dores de IA
-extraídas pelo mesmo Extractor**. O sistema encontrou o sinal e depois disse que não existe.
+A coluna `dores` é o que fechava o argumento: as empresas com `---` **têm dores de IA extraídas
+pelo mesmo Extractor**. O sistema encontrava o sinal e depois dizia que não existe.
+
+DE DIAGNÓSTICO A VERIFICAÇÃO — 04/09 tarde (D-101)
+---------------------------------------------------
+A P-24 foi consertada, e este script mudou de papel junto: ele **lê o quadrante real** em vez
+de afirmar a consequência antiga. Era o próximo defeito da mesma família — um instrumento que
+descreve um sistema que não existe mais é pior que instrumento nenhum, porque parece medido.
+A coluna `quadrante` é a verificação: com `---` na coluna `ADT`, o esperado hoje é
+`prospect-de-evolucao` com `sinal_verificado=False`, e **não** `fora-do-funil`.
 
 O QUE ELE NÃO É
 ---------------
@@ -57,28 +65,42 @@ def tabela(fixtures) -> None:
         contagem[diag.classe] += 1
         linhas.append((f["nome"], diag.classe,
                        f"{'A' if a else '-'}{'D' if d else '-'}{'T' if t else '-'}",
-                       len(perfil.dores_observadas), diag.maturidade_stack))
+                       len(perfil.dores_observadas), diag.maturidade_stack,
+                       diag.quadrante, diag.sinal_verificado))
 
     print(f"{len(fixtures)} empresas · detectores: A=autopilot D=dado_proprietário T=vocab_técnico\n")
-    print(f"{'empresa':22} {'classe':12} {'ADT':5} {'dores':>5}  stack")
-    print("-" * 62)
-    for nome, classe, det, nd, mat in sorted(linhas, key=lambda x: (x[1], x[0])):
+    print(f"{'empresa':22} {'classe':12} {'ADT':5} {'dores':>5}  {'stack':6} quadrante")
+    print("-" * 84)
+    for nome, classe, det, nd, mat, quad, ver in sorted(linhas, key=lambda x: (x[1], x[0])):
         marca = "  <-- ZERO SINAL" if det == "---" else ""
-        print(f"{nome:22} {classe:12} {det:5} {nd:>5}  {mat}{marca}")
+        # `?` é o mesmo símbolo que o briefing usa para requisito não verificado. Ver D-101.
+        selo = "" if ver else " ?"
+        print(f"{nome:22} {classe:12} {det:5} {nd:>5}  {mat:6} {quad}{selo}{marca}")
 
     print(f"\nAI-native {contagem['AI-native']} · AI-enabled {contagem['AI-enabled']} · "
           f"non-AI {contagem['non-AI']}")
 
-    mudas = [(n, nd) for n, c, det, nd, _ in linhas if det == "---"]
+    mudas = [(n, nd, quad, ver) for n, c, det, nd, _, quad, ver in linhas if det == "---"]
     print(f"\n{len(mudas)} empresa(s) com ZERO detector — e `non-AI` sai daí, não de evidência.")
     com_dor = sorted([m for m in mudas if m[1] > 0], key=lambda x: -x[1])
     if com_dor:
         print("Destas, as que TÊM dores de IA extraídas pelo mesmo Extractor:")
-        for n, nd in com_dor:
-            print(f"   {n:22} {nd} dor(es) -> non-AI -> fora-do-funil -> ZERO recomendações")
+        for n, nd, quad, ver in com_dor:
+            selo = "sinal NÃO verificado" if not ver else "sinal verificado"
+            print(f"   {n:22} {nd} dor(es) -> non-AI ({selo}) -> {quad}")
         print("\nLEIA a tabela. `non-AI` aqui significa 'não achei sinal', e o briefing o")
-        print("apresenta ao gerente como 'esta empresa não tem IA'. São coisas diferentes —")
+        print("apresentava ao gerente como 'esta empresa não tem IA'. São coisas diferentes —")
         print("é a mesma distinção que `Elegibilidade` já faz entre `x` (provado) e `?`.")
+
+    # A VERIFICAÇÃO DE D-101, e ela falha ALTO: uma empresa sem detector nenhum não pode voltar
+    # a `fora-do-funil`, porque isso seria o sistema afirmando de novo o que não constatou.
+    regressao = [n for n, _, quad, ver in mudas if quad == "fora-do-funil" or ver]
+    if regressao:
+        print(f"\n*** REGRESSÃO DE D-101: {', '.join(regressao)} tem zero detector e voltou a "
+              f"ser cortada do funil (ou marcada como verificada). ***")
+    else:
+        print(f"\nD-101 verificado: as {len(mudas)} sem detector saem com `sinal_verificado=False` "
+              f"e NENHUMA foi cortada do funil por silêncio da extração.")
 
 
 def custo_dos_desenhos(fixtures) -> None:
@@ -117,7 +139,7 @@ def custo_dos_desenhos(fixtures) -> None:
     print(f"   classe {hoje}/{n}  ->  {hoje}/{n}   (a régua de `classe` não se move)")
     print("\nO trade-off NÃO é propriedade do problema: ele existe no desenho A e não no B.")
     print("O que o desenho B custa está em OUTRO lugar — o que entra no funil —, e isso")
-    print("nenhuma régua de `classe` mede. Ver o inventário em projeto/achados-04-09.md.")
+    print("nenhuma régua de `classe` mede. O desenho B entrou em 04/09 — ver D-101.")
 
 
 def main() -> int:

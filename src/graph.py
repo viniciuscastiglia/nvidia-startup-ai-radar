@@ -9,10 +9,13 @@
                                    v
                             briefing (defer=True) -> END
 
-    SUBGRAFO DE ANÁLISE (5 nós, roda 1x por startup, testável isolado)
-      extractor -> classifier -> evidence_validator -> nvidia_rag -> recommendation
-                                                                          |
-                                                                    elegibilidade
+    SUBGRAFO DE ANÁLISE (6 nós, roda 1x por startup, testável isolado)
+      extractor -> classifier -> evidence_validator -> elegibilidade -> nvidia_rag
+                                                                            |
+                                                                      recommendation
+                            ^ elegibilidade ANTES de recommendation desde 04/09 (D-099):
+                              recomendar para quem o próprio sistema recusou era defeito de
+                              ORDEM, não de motor. Ver o comentário em `construir_subgrafo`.
 
 POR QUE ASSIM E NÃO UM GRAFO LINEAR DE 8 NÓS
 ---------------------------------------------
@@ -99,13 +102,28 @@ def construir_subgrafo():
                error_handler=registrar_falha)
     g.add_node("elegibilidade", briefing.node_analise, error_handler=registrar_falha)
 
+    # A ORDEM DO FILTRO DO INCEPTION — CORRIGIDA EM 04/09 (D-099)
+    # ------------------------------------------------------------
+    # Até aqui `elegibilidade` era o ÚLTIMO nó, depois de `recommendation`. O motor de
+    # recomendação rodava antes do filtro e não tinha como saber que a empresa fora recusada.
+    # Na tela, num run real: a Liqi sai `x exclusão por 'cripto'` e sete linhas abaixo recebe
+    # "Agendar conversa técnica ... com o time de engenharia da Liqi".
+    #
+    # NÃO HAVIA DEPENDÊNCIA NENHUMA SUSTENTANDO ESSA POSIÇÃO: `briefing.node_analise` lê só
+    # `state["startup"]` e `state["perfil"]`, ambos prontos depois do `extractor`. O nó estava
+    # no fim por acidente de construção — foi o último a ser escrito.
+    #
+    # POR QUE ANTES DE `nvidia_rag` E NÃO SÓ ANTES DE `recommendation`: é onde a informação
+    # fica disponível o mais cedo possível sem custar nada. Não pulamos o RAG das recusadas
+    # (D-099 decidiu MANTER a recomendação, rotulada), mas quem quiser pular no futuro tem o
+    # dado em mãos no ponto certo, e a mudança vira uma condicional em vez de uma topologia.
     g.add_edge(START, "extractor")
     g.add_edge("extractor", "classifier")
     g.add_edge("classifier", "evidence_validator")
-    g.add_edge("evidence_validator", "nvidia_rag")
+    g.add_edge("evidence_validator", "elegibilidade")
+    g.add_edge("elegibilidade", "nvidia_rag")
     g.add_edge("nvidia_rag", "recommendation")
-    g.add_edge("recommendation", "elegibilidade")
-    g.add_edge("elegibilidade", END)
+    g.add_edge("recommendation", END)
     return g.compile()
 
 
@@ -157,6 +175,7 @@ def analisar_startup(state: EstadoAnalise) -> dict:
             diagnostico=final.get("diagnostico"),
             elegibilidade=final.get("elegibilidade"),
             recomendacoes=final.get("recomendacoes") or [],
+            motivo_sem_recomendacao=final.get("motivo_sem_recomendacao"),
             erros=final.get("erros") or [],
         )
     except Exception as exc:  # noqa: BLE001

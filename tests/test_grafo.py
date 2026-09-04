@@ -306,3 +306,118 @@ def test_o_diagnostico_carrega_o_motivo_da_confianca_em_producao():
     estado = {"perfil": _perfil_com_duas_dores(), "diagnostico": _diagnostico_sweet_spot()}
     diagnostico = evidence_validator.node(estado)["diagnostico"]
     assert diagnostico.motivo_confianca, "confiança sem motivo no braço de produção"
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# D-099, D-100 e D-101 — os três consertos de 04/09. Todos sem API.
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+def _ordem_do_subgrafo() -> list[str]:
+    """A ordem topológica dos nós do subgrafo, a partir do grafo COMPILADO.
+
+    Lê do compilado e não da lista de `add_edge` de propósito: é o que de fato roda.
+    """
+    arestas = {e.source: e.target for e in SUBGRAFO.get_graph().edges}
+    ordem, no = [], arestas["__start__"]
+    while no != "__end__":
+        ordem.append(no)
+        no = arestas[no]
+    return ordem
+
+
+def test_elegibilidade_roda_antes_do_recommendation():
+    """D-099. O motor de recomendação não pode decidir sem saber se a empresa foi recusada.
+
+    Este é o teste ESTRUTURAL, e ele existe separado do comportamental abaixo porque a ordem é
+    o que torna a informação disponível: com `elegibilidade` no fim, `recommendation` lê `None`
+    e o rótulo some em silêncio — nenhum teste de comportamento pegaria isso, porque o estado
+    montado à mão no pytest não tem a ordem do grafo.
+    """
+    ordem = _ordem_do_subgrafo()
+    assert ordem.index("elegibilidade") < ordem.index("recommendation"), ordem
+
+
+def _elegibilidade(elegivel: bool):
+    from src.state import Elegibilidade
+    return Elegibilidade(
+        elegivel=elegivel,
+        motivos_exclusao=[] if elegivel else ["exclusão por 'cripto': o termo 'stablecoin' "
+                                              "aparece nos documentos falando da própria empresa"],
+        requisitos_nao_verificados=[],
+    )
+
+
+def test_recusada_pelo_inception_mantem_recomendacao_rotulada_e_rebaixada():
+    """D-099. Suprimir seria o Recommendation DELETANDO, contra D-010.
+
+    O caso real que decidiu isto: a JetBov é a única `AI-native` e o único `sweet-spot` da base
+    de 30, e é recusada por idade. Suprimir apagaria da tela o melhor prospect do sistema.
+    """
+    from src.agents import recommendation
+    from src.state import CitacaoRAG
+    citacao = CitacaoRAG(tecnologia="NVIDIA NIM", trecho="t",
+                         url_fonte="https://build.nvidia.com/nim", dor_origem="custo")
+    estado = {"perfil": _perfil_com_duas_dores(), "diagnostico": _diagnostico_sweet_spot(),
+              "citacoes_rag": [citacao], "elegibilidade": _elegibilidade(False)}
+    recs = recommendation.node(estado)["recomendacoes"]
+    assert recs, "a recomendação sumiu quando a empresa foi recusada"
+    assert recs[0].fora_do_inception and "cripto" in recs[0].fora_do_inception
+    # Regra 3 aplicada ao eixo novo: `sweet-spot` daria `alta`; recusada nunca disputa a fila.
+    assert recs[0].prioridade == "baixa", recs[0].prioridade
+    # E o contrário, para a asserção não passar por construção:
+    estado["elegibilidade"] = _elegibilidade(True)
+    ok = recommendation.node(estado)["recomendacoes"][0]
+    assert ok.fora_do_inception is None and ok.prioridade == "alta", ok.prioridade
+
+
+def test_non_ai_sem_sinal_verificado_nao_e_cortado_do_funil():
+    """D-101. `pontos == 0` é ausência de sinal, e ausência de sinal não é sinal negativo.
+
+    O par com `test_non_ai_nao_recebe_recomendacao` é o ponto: o `non-AI` CONSTATADO continua
+    fora do funil — a rubrica autoriza esse corte. O que mudou é só o não constatado.
+    """
+    assert derivar_quadrante("non-AI", "baixa", sinal_verificado=False) == "prospect-de-evolucao"
+    assert derivar_quadrante("non-AI", "alta", sinal_verificado=False) == "prospect-de-evolucao"
+    assert derivar_quadrante("non-AI", "baixa", sinal_verificado=True) == "fora-do-funil"
+
+
+def test_classifier_marca_sinal_nao_verificado_quando_nenhum_detector_dispara():
+    """D-101, do lado do produtor: quem emite o rótulo é quem sabe se ele foi constatado."""
+    from src.agents import classifier
+    from src.state import PerfilStartup
+    perfil = PerfilStartup(startup_id=1, nome="Muda")   # zero detector, zero dor
+    diag = classifier.node({"perfil": perfil, "startup": _startup_de_teste()})["diagnostico"]
+    assert diag.classe == "non-AI"
+    assert diag.sinal_verificado is False
+    assert diag.quadrante != "fora-do-funil", diag.quadrante
+
+
+def test_briefing_nao_inventa_causa_para_zero_recomendacoes():
+    """D-100. A frase fixa "sem evidência validada" era impressa para TODA lista vazia.
+
+    Medido em 04/09: Conta Simples, Core AI e Iniciador têm 3, 5 e 7 dores VALIDADAS e recebiam
+    essa frase. A causa real era o corte de funil. Um relatório que afirma a causa errada é pior
+    que um que não afirma nenhuma, porque o gerente age sobre ela.
+    """
+    from src.agents import briefing
+    from src.state import AnaliseStartup, Diagnostico
+    fora = Diagnostico(classe="non-AI", maturidade_stack="baixa", quadrante="fora-do-funil",
+                       confianca="baixa", justificativa="j")
+    analise = AnaliseStartup(startup_id=1, nome="Acme", perfil=_perfil_com_duas_dores(),
+                             diagnostico=fora, recomendacoes=[],
+                             motivo_sem_recomendacao="fora do funil por `contexto/02` §4")
+    linha = next(l for l in briefing._secao(analise) if l.strip().startswith("nenhuma —"))
+    assert "fora do funil" in linha, linha
+    assert "sem evidência validada" not in linha, linha
+
+
+def test_resumir_nunca_corta_no_meio_da_palavra_nem_deixa_quebra_de_linha():
+    """D-100. `[:150]` cru produzia "...NVIDIA NIM™ microse" em dois dos SETE campos do TAPI."""
+    from src.agents.briefing import _resumir
+    assert _resumir("NVIDIA NIM microservices em produção", 18) == "NVIDIA NIM…"
+    assert _resumir("curto", 50) == "curto"
+    assert "\n" not in _resumir("uma linha\noutra linha", 100)
+    # Palavra única maior que o limite: corta, mas ANUNCIA o corte.
+    longo = _resumir("a" * 80, 20)
+    assert len(longo) <= 20 and longo.endswith("…")

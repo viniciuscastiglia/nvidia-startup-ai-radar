@@ -236,12 +236,32 @@ class PerfilStartup(BaseModel):
         return itens
 
 
-def derivar_quadrante(classe: ClasseStartup, maturidade: MaturidadeStack) -> Quadrante:
+def derivar_quadrante(
+    classe: ClasseStartup, maturidade: MaturidadeStack, sinal_verificado: bool = True
+) -> Quadrante:
     """Torna o modelo de dois eixos executável em vez de decorativo.
 
     O rótulo que o TAPI pede continua saindo em `Diagnostico.classe`; a PRIORIZAÇÃO da
     recomendação sai daqui. Ver a matriz em contexto/02 §4.
+
+    `sinal_verificado` É UM TERCEIRO EIXO, E NÃO UMA QUARTA CÉLULA DA MATRIZ (D-101).
+    A matriz de `contexto/02` §4 tem quatro células e continua com quatro — ela responde
+    "o que oferecer a esta empresa". A pergunta nova é outra: "o rótulo que usei para
+    responder aquilo foi constatado, ou é o silêncio da extração?". Duas perguntas, dois
+    eixos — exatamente como `confianca` já é ortogonal à `classe`.
+
+    O default `True` NÃO é conveniência: ele mantém o contrato antigo para todo chamador que
+    não faz a pergunta nova, e é o que faz `tests/test_grafo.py` seguir verde sem edição.
+    Um `non-AI` CONSTATADO continua fora do funil — a rubrica autoriza esse corte e
+    `recommendation.py` está certo em obedecê-lo. O que muda é só o caso não constatado.
     """
+    if classe == "non-AI" and not sinal_verificado:
+        # AUSÊNCIA DE SINAL NÃO É SINAL NEGATIVO — a regra 4 do Evidence Validator, escrita no
+        # dia 2 do projeto e desobedecida aqui até 04/09. `Elegibilidade` já a aplica (`x`
+        # provado versus `?` não provado); este era o componente que a contrariava. Sem
+        # constatação, a empresa não é declarada fora do funil: ela entra como qualquer outra
+        # de sinal fraco, e o briefing diz que o rótulo não foi verificado.
+        return "prospect-de-evolucao"
     if classe == "non-AI":
         return "fora-do-funil"
     if maturidade == "alta":
@@ -260,6 +280,15 @@ class Diagnostico(BaseModel):
     """
 
     classe: ClasseStartup
+    # O PAR QUE `Elegibilidade` JÁ TEM, APLICADO AO RÓTULO (D-101).
+    # `Elegibilidade` separa `motivos_exclusao` (a base PROVA) de `requisitos_nao_verificados`
+    # (a base NÃO PROVA), e só o primeiro exclui. `classe` não tinha esse par: `non-AI` saía
+    # tanto de "constatamos que não há IA no caminho crítico" quanto de "nenhum dos três
+    # detectores disparou" — e a rubrica define a classe por uma propriedade POSITIVA, que
+    # exige evidência. Medido em 04/09 na base de 30: 9 empresas com zero detector, todas com
+    # 2 a 7 dores de IA extraídas com evidência pelo MESMO Extractor.
+    # `False` significa: o rótulo é o que a regra produziu, não o que a base constatou.
+    sinal_verificado: bool = True
     maturidade_stack: MaturidadeStack
     quadrante: Quadrante
     confianca: Confianca
@@ -343,6 +372,12 @@ class Recomendacao(BaseModel):
     evidencias: list[Evidencia] = Field(default_factory=list)  # 7a — base de startups
     citacoes_rag: list[CitacaoRAG] = Field(default_factory=list)  # 7b — base NVIDIA
     dores_enderecadas: list[Dor] = Field(default_factory=list)
+    # D-099: preenchido quando a empresa é NÃO ELEGÍVEL ao Inception. A recomendação NÃO é
+    # suprimida — ela é rotulada, e a prioridade cai. Suprimir seria o Recommendation deletando,
+    # e D-010 diz o contrário: "o Validator anota e rebaixa, nunca deleta; deletar destrói
+    # informação que o humano precisa". Concretamente: a JetBov é a única `AI-native` e o único
+    # `sweet-spot` da base, e é recusada por idade — suprimir apagaria o melhor prospect da tela.
+    fora_do_inception: str | None = None
 
 
 class AnaliseStartup(BaseModel):
@@ -361,6 +396,14 @@ class AnaliseStartup(BaseModel):
     diagnostico: Diagnostico | None = None
     elegibilidade: Elegibilidade | None = None
     recomendacoes: list[Recomendacao] = Field(default_factory=list)
+    # POR QUE A CAUSA VIAJA NO ESTADO EM VEZ DE SER INFERIDA NO BRIEFING (D-100).
+    # `briefing.py` imprimia a frase fixa "nenhuma — sem evidência validada que sustente uma
+    # recomendação" para TODA lista vazia. Medido em 04/09: Conta Simples, Core AI e Iniciador
+    # têm 3, 5 e 7 dores VALIDADAS e mesmo assim recebiam essa frase — a causa real era o corte
+    # de `non-AI` em `recommendation.py`. O briefing afirmava ao gerente uma causa falsa, sob o
+    # rodapé "toda conclusão acima aponta para o documento que a sustenta".
+    # Quem sabe a causa é quem decidiu não recomendar; então é ele quem a devolve.
+    motivo_sem_recomendacao: str | None = None
     erros: list[str] = Field(default_factory=list)
 
     @property
@@ -386,6 +429,7 @@ class EstadoAnalise(TypedDict, total=False):
     elegibilidade: Elegibilidade | None
     citacoes_rag: list[CitacaoRAG]
     recomendacoes: list[Recomendacao]
+    motivo_sem_recomendacao: str | None
     erros: Annotated[list[str], operator.add]
 
 

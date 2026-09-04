@@ -75,11 +75,27 @@ NEGOCIO = {
 }
 
 
-def _prioridade(quadrante: str, confianca: str) -> Prioridade:
+def _prioridade(
+    quadrante: str,
+    confianca: str,
+    sinal_verificado: bool = True,
+    elegivel: bool = True,
+) -> Prioridade:
     """Regra 1: a prioridade sai do GAP entre maturidade AI-native e maturidade de stack.
 
     Regra 3 aplicada junto: confiança baixa nunca vira prioridade alta. A evidência não
     sustenta a urgência, então afirmar urgência seria inventar.
+
+    OS DOIS REBAIXAMENTOS DE 04/09 SÃO A MESMA REGRA 3, EM DOIS EIXOS NOVOS:
+
+    · `sinal_verificado=False` (D-101) — o rótulo veio do silêncio da extração, não de
+      constatação. Afirmar urgência sobre uma classificação não constatada é o mesmo erro que
+      afirmar urgência sobre evidência fraca.
+    · `elegivel=False` (D-099) — a empresa não entra no Inception. A recomendação continua
+      saindo, porque a NVIDIA vende fora do programa e porque suprimir seria deletar
+      informação que o gerente precisa (D-010) — mas ela não disputa a fila com um prospect
+      que o programa aceita. O rebaixamento também ordena o briefing: `briefing.node` ordena
+      as seções pela MENOR prioridade de cada empresa, então as recusadas afundam para o fim.
     """
     base: Prioridade = {
         "sweet-spot": "alta",            # AI-native com stack imatura: dor real e iminente
@@ -87,6 +103,8 @@ def _prioridade(quadrante: str, confianca: str) -> Prioridade:
         "ja-otimizada": "baixa",          # provavelmente já usa NVIDIA ou já é membro
         "fora-do-funil": "baixa",
     }.get(quadrante, "baixa")
+    if not sinal_verificado or not elegivel:
+        return "baixa"
     if confianca == "baixa" and base == "alta":
         return "media"
     return base
@@ -124,12 +142,36 @@ def _negocio_de_fallback(citacao: CitacaoRAG, nome: str) -> str:
 
 def node(state: EstadoAnalise) -> dict:
     perfil, diagnostico = state.get("perfil"), state.get("diagnostico")
+    elegibilidade = state.get("elegibilidade")
     citacoes = state.get("citacoes_rag") or []
     if perfil is None or diagnostico is None:
-        return {"recomendacoes": []}
+        return {"recomendacoes": [],
+                "motivo_sem_recomendacao": "análise incompleta: sem perfil ou sem diagnóstico"}
 
-    if diagnostico.classe == "non-AI":
-        return {"recomendacoes": []}     # regra 1: non-AI está fora do funil
+    # A CAUSA DE "ZERO RECOMENDAÇÕES" VIAJA NO ESTADO — D-100.
+    # O briefing imprimia a frase fixa "sem evidência validada que sustente uma recomendação"
+    # para TODA lista vazia. Medido em 04/09: Conta Simples, Core AI e Iniciador têm 3, 5 e 7
+    # dores VALIDADAS e recebiam essa frase; a causa real era o corte de funil daqui. Um
+    # relatório que afirma a causa errada é pior que um que não afirma nenhuma, porque o
+    # gerente age sobre ela — e o rodapé da página promete o contrário.
+    #
+    # O TESTE PASSOU A SER O QUADRANTE, NÃO A CLASSE (D-101). `derivar_quadrante` é o único
+    # lugar que decide quem está fora do funil, e desde 04/09 ele distingue o `non-AI`
+    # CONSTATADO do que veio do silêncio da extração. Perguntar `classe == "non-AI"` aqui
+    # duplicaria essa decisão em dois lugares e desfaria a correção pela porta dos fundos.
+    if diagnostico.quadrante == "fora-do-funil":
+        return {"recomendacoes": [],
+                "motivo_sem_recomendacao": (
+                    f"empresa classificada `{diagnostico.classe}` com sinal verificado — "
+                    f"fora do funil por `contexto/02` §4, não por falta de evidência")}
+
+    # D-099: a recusa do Inception NÃO suprime a recomendação; ela a rotula e a rebaixa.
+    # A NVIDIA vende fora do programa, e a JetBov — única `AI-native` e único `sweet-spot` da
+    # base de 30 — é recusada por idade. Suprimir apagaria da tela o melhor prospect que o
+    # sistema encontrou. Ver a alternativa descartada em D-099.
+    fora_do_inception = None
+    if elegibilidade is not None and not elegibilidade.elegivel:
+        fora_do_inception = "; ".join(elegibilidade.motivos_exclusao) or "não elegível"
 
     recomendacoes: list[Recomendacao] = []
     for citacao in citacoes[:TETO_RECOMENDACOES]:
@@ -175,7 +217,12 @@ def node(state: EstadoAnalise) -> dict:
             justificativa_negocio=NEGOCIO.get(citacao.tecnologia) or _negocio_de_fallback(
                 citacao, perfil.nome
             ),
-            prioridade=_prioridade(diagnostico.quadrante, diagnostico.confianca),
+            prioridade=_prioridade(
+                diagnostico.quadrante,
+                diagnostico.confianca,
+                sinal_verificado=diagnostico.sinal_verificado,
+                elegivel=fora_do_inception is None,
+            ),
             complexidade=COMPLEXIDADE.get(citacao.tecnologia, "media"),
             # Sem `dor_origem` a lista fica vazia — o caminho da interface, onde quem pergunta é
             # um humano e não uma dor. A frase precisa de outro fecho em vez de terminar em ": .".
@@ -190,5 +237,14 @@ def node(state: EstadoAnalise) -> dict:
             evidencias=evidencias,
             citacoes_rag=[citacao],
             dores_enderecadas=sorted({d.dor for d in dores}),
+            fora_do_inception=fora_do_inception,
         ))
-    return {"recomendacoes": recomendacoes}
+    # As duas causas restantes, e elas são DIFERENTES: não houve o que recuperar na base NVIDIA,
+    # ou houve e nenhuma citação tinha dor validada por trás. A segunda é a frase que o briefing
+    # imprimia para todo mundo; agora ela sai só quando é verdade.
+    motivo = None
+    if not recomendacoes:
+        motivo = ("nenhuma citação recuperada da base NVIDIA para as dores desta empresa"
+                  if not citacoes else
+                  "sem evidência validada que sustente uma recomendação")
+    return {"recomendacoes": recomendacoes, "motivo_sem_recomendacao": motivo}
