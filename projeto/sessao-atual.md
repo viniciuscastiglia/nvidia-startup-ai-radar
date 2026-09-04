@@ -5,28 +5,48 @@
 >
 > **O plano dos dias finais mora em `projeto/plano.md`** e continua sendo a fonte do que falta.
 
-## ⚠️ LEIA PRIMEIRO — a cota mensal do Cohere ACABOU (D-093)
+## ⚠️ LEIA PRIMEIRO — o passo 7 tem fornecedor ÚNICO, e o fallback da NVIDIA morreu (D-097)
 
-`HTTP 429`: *"Trial key, limited to **1000 API calls / month**"*. **Não é o teto de 10 req/min,
-que recupera em 26 s — é a cota do mês.** A causa foi esta sessão: ~15 runs do grafo e 5 de
-`pytest`, e cada run do grafo faz 20-30 chamadas sequenciais de rerank.
+**A cota do Cohere foi resolvida com uma key nova** — `smoke_nvidia.py` volta a **3/3 OK** e o
+passo 7 roda. O aviso agora é outro, e é pior:
 
-**O que fazer, e já está medido — não é suposição:**
-- **`RERANK_PROVEDOR=nenhum` roda tudo.** Grafo ponta a ponta com recomendação, evidência e
-  fonte; **`pytest` 81 passed em 6,5 s** (contra 150-460 s com o Cohere ligado — o throttle era o
-  gargalo do suite inteiro, e ninguém sabia porque ninguém tinha rodado sem ele).
-- **O que se perde está medido:** denso puro faz **95% r@1 e 100% r@3** (D-064). O reranking
-  comprava o critério estrito, não a capacidade de responder.
-- **Assuma que a cota NÃO volta antes de 09/09.** Planejar contando com isso repete o erro de
-  D-015 (assumir sem verificar).
-- **Para o vídeo de 07/09 isso é vantagem narrativa, não desculpa:** o provedor está isolado em
-  `src/config.py` desde o começo, e gravar com o passo 7 desligado **demonstra a arquitetura** que
-  três EOLs compraram. O número honesto ao lado é o `95% r@1` do denso puro.
-- **Decisão sua:** chave de produção paga, se quiser o caminho completo no vídeo. Abrir outra
-  trial foi **descartado** — é contornar o teto do fornecedor por outra porta, num processo
-  seletivo.
-- **Regra nova:** `RERANK_PROVEDOR=nenhum` é o **default de desenvolvimento**. O Cohere entra
-  quando se quer medir o passo 7, e aí a chamada é deliberada.
+**`RERANK_PROVEDOR=nvidia` NÃO EXISTE MAIS.** `sondar_catalogo.py --rerank` mostra os **9 caminhos**
+(3 modelos × 3 paths) mortos — **404** nos endpoints atuais e **410 com assinatura de EOL** em
+`.../llama-3_2-nemoretriever-500m-rerank-v2/reranking` — e `GET /v1/models` responde *"com 'rank'
+no nome: NENHUM"*. `src/config.py` oferece três provedores e **um não existe**. Houve algumas
+horas em 03/09 em que o passo 7 **não rodava em lugar nenhum**.
+
+- **Rode `smoke_nvidia.py` antes de gravar e antes de entregar.** São 4 segundos, e agora ele é a
+  única defesa de um ponto único de falha, não só do LLM.
+- **`RERANK_PROVEDOR=nenhum` continua sendo o default de DESENVOLVIMENTO** — `pytest` 81 passed em
+  6,5 s contra 150-460 s. O que se perde está medido: denso puro faz **95% r@1 e 100% r@3**
+  (D-064).
+- **MAS NUNCA JULGUE RECOMENDAÇÃO COM ELE DESLIGADO (D-097).** Em 03/09 uma auditoria quase
+  registrou como defeito grave o *"NVIDIA Healthcare recomendado para uma agtech"*. Era artefato
+  do modo barato: com o passo 7 ligado, a Solinftec recebe **NVIDIA Isaac**, e ela fabrica robô
+  agrícola. O modo barato serve para desenvolver, nunca para avaliar o que o gerente veria.
+- **Para o vídeo:** o rerank custa ~2-3 min num run completo, então a cena é uma consulta com
+  `MAX_STARTUPS` baixo (D-068).
+
+## O que a revisão de 03/09 (noite) achou — D-097
+
+A sessão da tarde foi auditada por execução, não por leitura. **Não houve alucinação de dados:**
+três trechos literais de cada um dos 93 documentos foram buscados na `url_fonte` viva, e **39 das
+50 notícias batem 3/3, nenhuma bate 0/3**. Contagens, D-095, o `pytest` de D-093, as 10 chaves de
+`SETORES` e a evidência das 7 recusas reproduziram exatos.
+
+**Quatro consertos entraram, e um "defeito" foi REFUTADO** (o Healthcare para agtech, acima).
+
+| conserto | efeito medido |
+|---|---|
+| mobília virava justificativa técnica de venda | o mural do TensorRT-LLM foi de **vencedor da página a −11,61**; `--justificativas` ficou em **15/21**, sem regressão |
+| 62 parágrafos que eram só um ponto | saíram das 30 fixtures; portão novo no `seed.py`, **por FORMA** e não por lista |
+| o nome próprio sumia na coleta | raiz consertada em `coletar.py` (**`unwrap` + `smooth`** — o primeiro sozinho não faz nada); **0 lacunas** em 5 URLs reais |
+| doc contradizia o sistema | a Solinftec **não** é caso de exclusão por idade — ela sai ELEGÍVEL; e PagSeguro está na **NYSE** |
+
+**Fica aberto — P-25:** as **203 frases decapitadas** nas fixtures já coletadas (*"…afirma o CEO
+da"*) não voltam sem re-coleta e re-recorte à mão dos 93 documentos, com re-medição da régua
+depois. Efeito medido hoje: **1,7% dos trechos de evidência**. Depois da entrega.
 
 ## O que 03/09 fechou
 
