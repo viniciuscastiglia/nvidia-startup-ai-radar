@@ -80,6 +80,35 @@ def extrair(html: str) -> tuple[str, str]:
     candidatos = [*sopa.find_all("main"), *sopa.find_all("article")]
     if sopa.body:
         candidatos.append(sopa.body)
+    # `\n` SÓ ENTRE BLOCOS — O INLINE VAI COM ESPAÇO (03/09, D-097)
+    # ---------------------------------------------------------------
+    # `get_text(separator="\n")` põe TODO elemento em linha própria, inclusive o inline. Nas
+    # matérias brasileiras o nome da empresa vem quase sempre num `<a>` — `<a>Agrotools</a>` —
+    # e virava uma linha de UMA palavra. Aí `limpar_linhas` a descartava por ser curta e não
+    # terminar em pontuação, e o que sobrava no documento era:
+    #
+    #     "…afirma o CEO da"  /  "."  /  "Sergio Rocha, fundador e CEO da Agrotools"
+    #
+    # A ironia é exata: **o nome morre e o "." sobrevive**, porque o ponto termina em pontuação.
+    # Medido nas 30 fixtures de 03/09: 62 parágrafos que eram só pontuação e 203 terminando em
+    # preposição pendurada, em 62 dos 93 documentos.
+    #
+    # O CONSERTO É DESMONTAR O INLINE ANTES, E SÃO **DUAS** CHAMADAS, NÃO UMA:
+    #   `.unwrap()` tira a tag — mas o BeautifulSoup deixa os nós de texto SEPARADOS, e
+    #   `get_text("\n")` continua pondo um `\n` entre eles. Medido: sozinho, não muda nada.
+    #   `.smooth()` funde os NavigableStrings adjacentes, e é ele que faz o nome voltar
+    #   para dentro da frase.
+    # Medido nesta mesma URL: `afirma o CEO da` / `.`  ->  `afirma o CEO da Agrotools.`
+    #
+    # ISTO NÃO CONSERTA AS 93 FIXTURES JÁ COLETADAS, e é importante dizer: o nome apagado não
+    # está mais no texto delas. Recuperá-lo exige re-coletar e re-recortar à mão, incluindo as
+    # 8 fixtures de gabarito — a 6 dias da entrega, é mexer em material medido por 1,7% das
+    # citações. Isto vale da próxima coleta em diante; o resíduo visível (a pontuação órfã) o
+    # portão do `seed.py` remove, e a frase decapitada fica como limitação conhecida.
+    for inline in sopa.find_all(["a", "strong", "b", "em", "i", "span",
+                                 "abbr", "mark", "sup", "sub", "code"]):
+        inline.unwrap()
+    sopa.smooth()
     textos = [c.get_text(separator="\n", strip=True) for c in candidatos]
     texto = max(textos, key=len) if textos else sopa.get_text(separator="\n", strip=True)
 
