@@ -1,12 +1,12 @@
 # Smoke test — build.nvidia.com
 
-Gerado por `scripts/smoke_nvidia.py` em 03/09/2026 08:07.
+Gerado por `scripts/smoke_nvidia.py` em 03/09/2026 20:48.
 
 | Capacidade | Resultado | Latência | Modelo |
 |---|---|---|---|
-| chat completion | passou | 7893 ms | `nvidia/nemotron-3.5-lightning-30b-a3b` |
-| embedding | passou | 966 ms | `nvidia/llama-nemotron-embed-vl-1b-v2` |
-| reranking | passou | 408 ms | `rerank-v3.5` |
+| chat completion | passou | 2759 ms | `nvidia/nemotron-3.5-lightning-30b-a3b` |
+| embedding | passou | 663 ms | `nvidia/llama-nemotron-embed-vl-1b-v2` |
+| reranking | passou | 245 ms | `rerank-v3.5` |
 
 ## Detalhes
 
