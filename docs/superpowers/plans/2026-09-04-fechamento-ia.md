@@ -41,17 +41,38 @@ saída do bloco 2**; construir os dois na mesma sessão é *sessão que se audit
 | **04/09, agora** — sessão 1, ~2-3 h | Claude | blocos **1 e 2**. **Para antes de commitar**: o briefing vai para a tela com o checklist da §6 |
 | ↳ ponto de parada 1 | **Vinícius** | lê as seis linhas do checklist e diz se passou |
 | ↳ | Claude | escreve **D-098 a D-101**, commita, fecha a sessão ✅ **FEITO** |
-| **04/09, resto do dia** | **Vinícius** | 20 min de arguição sobre **D-099, D-100 e D-101**, sem abrir o arquivo · depois, **interface** |
-| **05/09 à tarde** — sessão 2, nova, ~4 h | Claude | lê o plano e as decisões novas; blocos **3, 4 e 5** |
+| **04/09, tarde** | **Vinícius** | ✅ arguição feita · `/code-review` disparado, achados em mãos para a noite |
+| **04/09, NOITE** — sessão 2, nova, ~4 h | Claude | portão de revisão (30 min) → blocos **3, 4 e 5** |
 | ↳ ponto de parada 2 | **Vinícius** | o número da P-21 decide a **parte 2** do critério do bloco 2 |
 | ↳ ponto de parada 3 | **Vinícius** | o número do `PROFUNDOS` — promover ou só registrar |
 | ↳ | Claude | **D-103, D-104, D-105**, commit |
 
 **Sessão nova se abre quando há commit e portão limpo — nunca no meio de um bloco.**
 
-**Se a interface escorregar** e 05/09 virar dia de interface, a regra de corte da §4 vale: corta 5,
-depois 4, depois 3, e o que cair vira ACEITAR escrito. **Não se comprime isso numa sessão longa
-desacompanhada** — o que sobra é código que ninguém viu, que é exatamente o eliminatório.
+> **O FLUXO MUDOU EM 04/09 À TARDE, e a mudança é do Vinícius.** O plano original punha a
+> interface na tarde de 04/09 e os blocos 3-5 na tarde de 05/09. **Passou a ser: blocos 3-5 na
+> NOITE de 04/09, interface em 05/09 inteiro + a manhã de 06/09.** A razão é boa e vale escrita:
+> o sistema de IA fecha com o material fresco, e o portão do eliminatório — a interface — ganha
+> **dois dias limpos** em vez de um e meio disputado. A exigência de *sessão nova* continua
+> valendo e continua atendida: o bloco 4 é a régua que julga a saída do bloco 2, e quem a
+> constrói não pode ser quem decidiu o bloco 2.
+
+**A REGRA DE CORTE MUDOU DE OBJETO JUNTO.** Antes ela protegia a interface contra os blocos 3-5.
+Agora quem compete com os blocos 3-5 é **o relógio e o cansaço**, não a interface. A nova regra:
+
+- **Corta-se 5, depois 4, depois 3** — inalterado, e o que cair vira ACEITAR escrito.
+- **NENHUMA PROMOÇÃO SE DECIDE DE MADRUGADA.** Os blocos 4 e 5 terminam em NÚMERO, e os dois
+  números pedem juízo do Vinícius: a parte 2 do critério de D-101, e promover-ou-não o `PROFUNDOS`
+  alternativo. A sessão da noite **mede, registra e para**. Decidir promoção cansado é como
+  nasceram D-091 e os três erros da manhã de 04/09. É **medir não é promover** (D-078) aplicado
+  ao relógio, e é a regra que a memória do Vinícius já chama de *"cansaço: não devolver decisões"*.
+- **O que a sessão da noite PODE fechar sozinha:** o bloco 3, que é correção com teste e não tem
+  número para promover.
+
+**ORÇAMENTO DO COHERE — verificar antes de começar.** 04/09 gastou ~**170 chamadas** de rerank
+(um run de 28 empresas sozinho custa ~120). A trial é **1.000/mês e já esgotou uma vez** (D-093),
+e o vídeo de 07/09 depende dela. O bloco 4 vai querer rodar o grafo sobre a base para medir as 7
+regras: **projetar o harness para rodar UMA vez e medir da saída**, não uma vez por iteração.
 
 ---
 

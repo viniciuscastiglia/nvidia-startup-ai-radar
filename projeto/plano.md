@@ -166,7 +166,13 @@ re-rodá-lo custa API sem mudar decisão.
 **PORTÃO 03/09:** o grafo roda; `"fintechs AI-native"` devolve resultado; nenhuma justificativa
 técnica cita empresa alheia. *Se P-10 não fechar hoje, ele empurra a base — não a interface.*
 
-### 04/09 — interface, parte 1
+> **O DIA 04/09 FOI REORDENADO PELO VINÍCIUS, à tarde.** A interface NÃO começou hoje. A tarde
+> fechou os blocos 1 e 2 do fechamento da IA (D-098 a D-102) e **a noite fecha os blocos 3 a 5**.
+> A interface passa a ter **05/09 inteiro + a manhã de 06/09** — dois dias limpos para o portão
+> do eliminatório, em vez de um e meio disputado com a faxina. O que segue abaixo era o plano
+> anterior e fica como registro do que mudou.
+
+### 04/09 — interface, parte 1  ~~(substituído: virou o fechamento da IA)~~
 
 **Antes de escolher framework:** rodar o grafo e ler o briefing inteiro. **P-06 sai daí.**
 
@@ -178,9 +184,11 @@ Depois: esqueleto + consulta + lista de empresas com classificação.
 
 **PORTÃO 04/09:** dá para digitar uma consulta e ver empresas na tela.
 
-### 05/09 — interface parte 2 + a faxina medida
+### 05/09 — **a interface, o dia inteiro** ~~(era: parte 2 + faxina)~~
 
-Manhã: recomendações com evidência + exportar briefing. **A interface fecha hoje.**
+Manhã: esqueleto + consulta + lista de empresas com classificação.
+Tarde: recomendações com evidência + exportar briefing. **A interface fecha hoje** — e agora ela
+tem o dia inteiro, porque a faxina da IA foi para a noite de 04/09.
 Tarde, **só se a interface estiver fechada**: **P-20 e P-13 já estavam ✅ em §3.1 e não ocupam a tarde** — a lista antiga estava desatualizada. A tarde é dos blocos 3 a 5 do plano de fechamento da IA (`docs/superpowers/plans/2026-09-04-fechamento-ia.md`): `justificativa_negocio` por dor (P-22) → régua das 7 regras do TAPI (P-21) → `PROFUNDOS` sob protocolo anti-contaminação. Depois, o teste do `extractor`.
 
 > **REGRA DE CORTE:** qualquer item da tarde que não couber é **cortado e registrado**. Nenhum
