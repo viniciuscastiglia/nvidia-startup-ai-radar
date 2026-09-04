@@ -2766,8 +2766,15 @@ como material medido: critério fixado antes, e a régua reproduziu inteira.
 
 **As quatro exclusões do Inception ganharam caso REAL, e antes só tinham frase sintética:**
 consultoria (Deal, já existia) · **capital aberto → Zenvia** (Nasdaq) · **cripto → Liqi**
-(stablecoin BRLD) · **> 10 anos → Agrotools e Solinftec**. O valor do filtro está na recusa, e
+(stablecoin BRLD) · **> 10 anos → Agrotools**. O valor do filtro está na recusa, e
 recusa medida com frase que eu mesmo escrevi não é recusa medida.
+
+> **CORREÇÃO DE 03/09 (D-097):** a redação original desta linha dizia *"Agrotools e Solinftec"*, e
+> **contradizia o parágrafo sete linhas acima**, que explica corretamente por que a Solinftec fica
+> `null`. Ela sai **ELEGÍVEL** na varredura das 30 — verificado no run de produção. A exclusão por
+> idade tem **um** caso real. A Solinftec é outra coisa, e mais interessante: é o **caso-limite da
+> política de literalidade**, uma empresa de 18 anos que o sistema deixa passar de propósito
+> porque o documento dá idade e não ano.
 
 **O QUE CUSTA A CURADORIA NÃO É A EMPRESA — É O 3º DOCUMENTO.** `seed.py` exige 3 documentos e
 **≥ 2 tipos distintos**. Achar a empresa é barato; achar a terceira peça é o gargalo. Quatro
@@ -3011,8 +3018,8 @@ casos na primeira execução, e um deles eu tinha acabado de criar.**
 
 **ACHADO 1 — `capital aberto` era B3-CÊNTRICA, e isso era o caso COMUM, não o exótico.**
 A lista tinha `"listada na b3"` e `"ipo concluído"`. A **Zenvia** está na **Nasdaq desde 2021** e
-saía **ELEGÍVEL**. Metade das brasileiras que abrem capital lista fora: Nubank e VTEX na NYSE,
-PagSeguro, StoneCo, XP e Zenvia na Nasdaq. A frase *"Listada na Nasdaq, a companhia registrou um
+saía **ELEGÍVEL**. Metade das brasileiras que abrem capital lista fora: Nubank, VTEX e PagSeguro
+na NYSE, StoneCo, XP e Zenvia na Nasdaq. A frase *"Listada na Nasdaq, a companhia registrou um
 crescimento de 126% no Ebitda"* está literalmente num trecho de evidência — o filtro tinha tudo
 para vê-la e não tinha a palavra.
 **Descartado `"listada na"` genérico:** casaria *"listada na Forbes"*, e o veto de terceiro não
@@ -3174,6 +3181,132 @@ fintech pode citar o Nubank). Quem decide é o curador; o script garante que ele
 
 ---
 
+## D-097 — A revisão de 03/09: o que a auditoria confirmou, o que ela refutou, e o reranker sem fallback
+**Data:** 03/09/2026 · revisão da sessão 15:01→18:23 (D-090 a D-096) · **verificada por execução**
+
+A sessão de 03/09 rodou mais de duas horas seguidas sem revisão externa e mexeu em base, código e
+log. A pergunta era direta: **houve alucinação?** A resposta importa registrar inteira, porque as
+duas metades ensinam coisas diferentes.
+
+**NÃO HOUVE ALUCINAÇÃO DE DADOS, E ISTO FOI MEDIDO, NÃO LIDO.** Para cada um dos 93 documentos,
+três trechos literais tirados de 25%/50%/75% do `conteudo_texto` foram buscados na `url_fonte`
+VIVA. Resultado: **39 das 50 notícias batem 3/3, e nenhuma bate 0/3.** As divergências se
+concentram em documento `site`, que é página dinâmica, e nenhuma tem forma de texto inventado.
+Também reproduziram exatos: as contagens (30/93, 50·33·7·2·1), D-095 (`AI-native` 1 · `AI-enabled`
+20 · `non-AI` 9), o `pytest` de D-093 (81 em 6,5 s), as 10 chaves de `SETORES` com empresa, a
+evidência literal das 7 recusas e as 5 frases que sustentam D-091/D-092/D-094.
+
+**O QUE A REVISÃO REFUTOU, E ELE ERA O "DEFEITO" MAIS GRAVE DA LISTA.** O primeiro run mostrou
+**NVIDIA Healthcare (ex-Clara) recomendado para a Solinftec**, uma agtech. Parecia o achado do
+dia. Era artefato de ter rodado com `RERANK_PROVEDOR=nenhum`: com o passo 7 ligado, a Solinftec
+recebe **NVIDIA Isaac** — e ela fabrica robô agrícola. **Regra que sai disto: nenhum defeito de
+recomendação pode ser julgado com o rerank desligado.** O modo barato de D-093 é para desenvolver,
+não para avaliar o que o gerente veria. Duas outras acusações minhas caíram do mesmo jeito — um
+"404" que era URL que eu havia montado errada, e "5% das evidências decapitadas" que era detector
+meu somando truncamento normal com o defeito (o número honesto é **1,7%**).
+
+**O ACHADO QUE NÃO ESTAVA NA LISTA: O PASSO 7 NÃO TEM FALLBACK.** `sondar_catalogo.py --rerank`
+mostra os **9 caminhos** (3 modelos × 3 paths) mortos — **404** nos endpoints atuais e **410 com
+assinatura de EOL** em `.../llama-3_2-nemoretriever-500m-rerank-v2/reranking` — e `GET /v1/models`
+responde *"com 'rank' no nome: NENHUM"*. `src/config.py` oferece três provedores e **um deles não
+existe mais**. Com a cota mensal do Cohere esgotada (D-093), houve algumas horas em que o passo 7
+do pipeline de 9 passos do TAPI **simplesmente não rodava em lugar nenhum**. Uma key nova
+restabeleceu o Cohere (`smoke_nvidia.py` 3/3), mas o quadro fica: **fornecedor único, sem rede.**
+É D-013/D-046/D-064 pela quarta vez, agora no reranker — e é o que justifica o provedor isolado
+com evidência em vez de princípio.
+
+### Os quatro consertos
+
+**1. Mobília de página virava justificativa técnica de venda.** É a metade que D-096 deixou viva:
+aquela decisão limpou as fixtures de startup e **recusou mexer em `src/rag/limpeza.py`** para não
+invalidar os 175 chunks e o gabarito de 24 perguntas — razão que continua válida. O corpus NVIDIA
+seguiu sujo, e saiu impresso: `Download Examples Documentation / CUDA | Docker`, `SDG for Agentic
+AI / AI Agents`, `📗 DIY notebook: ➡️ link`, e um convite para o **Slack do RAPIDS** como argumento
+técnico de venda.
+
+O conserto é em `src/agents/justificativa.py`, **na penalidade e não no corpus** — local,
+reversível, sem mover um vetor. Duas categorias novas, reconhecidas por **FORMA e não por
+vocabulário**, e a distinção é a decisão: penalizar as PALAVRAS do mural exigiria penalizar
+`inference` e `quantization`, que são justamente o conteúdo que se quer.
+- `ENTRADA_DE_FEED` — a forma `* [2024/07/09]`, que é o mural de novidades do README do
+  TensorRT-LLM. Pesa 3, como vitrine: as duas são a página falando de si.
+- `EMOJI_DECORATIVO` — pesa **2**, e o número saiu de uma contagem: **dos 175 chunks de produção,
+  11 têm emoji e os 11 são banner ou mural**, 10 do TensorRT-LLM e um do NeMo Guardrails
+  (`✨✨✨ 📌 The official documentation is available at…`). Zero prosa técnica. Peso 1 perdia para
+  a densidade — `✅ Deploy the optimized models with Triton Inference Server` soma três marcadores
+  técnicos e é, ainda assim, item de mural.
+- Mais quatro marcadores em `CONVITE`, pelo mesmo critério da revisão de D-086: só entra
+  convite/navegação POR CATEGORIA. `feel free to` e `file an issue` são convite de COMUNIDADE,
+  categoria que faltava; `quick-start guide` e `download examples` são navegação.
+
+**O efeito maior foi onde eu não tinha planejado, e é o que valida a escolha do lugar:**
+`pontuar()` é compartilhado com `melhor_da_pagina()` em `nvidia_rag`, então a penalidade age
+também **no nível de PASSAGEM** — o defeito que o docstring de D-086 nomeia e que recorte interno
+nenhum resolve. Medido: o mural do TensorRT-LLM foi de **vencedor da página a −11,61**, o pior de
+16 chunks, e quem passa a representá-la é `Quantized models on Hugging Face: FP8, FP4`.
+
+**Portão, fixado ANTES:** `--justificativas` tinha de não cair de **15/21**. Ficou em 15/21 — o
+conserto tirou mobília sem mexer no placar, que é exatamente o que se queria: **o alvo era a
+saída, não a régua.** Subir a régua mexendo em detector seria calibrar contra o gabarito.
+
+**2. Pontuação órfã: 62 parágrafos que eram só um ponto.** Resto de nome próprio que a coleta
+apagou. A regra nova no `seed.py` é **por FORMA** — parágrafo sem nenhum alfanumérico — e não por
+lista, e a diferença para `MOBILIA_DE_PAGINA` está escrita lá: as 4 variantes medidas (`.`, `!`,
+`’.`, `).`) não caberiam numa lista sem que a quinta escapasse.
+
+**A LIÇÃO DE D-096 ME PEGOU, E A MESMA FRASE SERVE:** *filtro que compara linha bruta não conhece
+a serialização.* A primeira passada **quebrou `agrorobotica.yaml`** — a linha era `).'`, cujo
+`strip()` tem 3 caracteres sem alfanumérico, e a `'` era o **delimitador de fim do escalar YAML**.
+Removi a aspa junto. Duas proteções entraram e ficam: **nunca apagar linha que contenha `'`**, e
+**só escrever o arquivo se ele continuar carregando pelo parser**. A prova final compara o texto
+reaberto com o antigo menos exatamente os parágrafos de pontuação.
+
+Tratado como material MEDIDO (3 das 30 são fixtures de gabarito), critério fixado antes: *só entra
+se `classe 3/7 · stack 6/7 · confianca 0/6 · elegivel 6/6 · motivo 6/6 · 49%/100% · discriminação
+8/8 · proibidas 10 · exclusões 10/10 e 11/11 · justificativas 15/21 · 7 recusas · 81 testes`
+reproduzirem inteiros.* Reproduziram.
+
+**3. O nome próprio sumia na coleta — e o conserto tem duas chamadas, não uma.** `coletar.py`
+extraía com `get_text(separator="\n")`, que põe TODO elemento em linha própria, inclusive o
+inline. Na frase real, `afirma o CEO da <strong>Agrotools</strong>.` virava três nós, e
+`limpar_linhas` descartava `Agrotools` por ser de uma palavra e não terminar em pontuação. **A
+ironia é exata: o nome morre e o "." sobrevive**, porque o ponto termina em pontuação. Medido nas
+30: **62 parágrafos de pontuação órfã e 203 terminando em preposição pendurada, em 62 dos 93
+documentos.**
+
+**`.unwrap()` sozinho NÃO conserta — e eu quase commitei achando que sim.** Ele tira a tag, mas o
+BeautifulSoup deixa os `NavigableString` separados e o `\n` continua entrando. É `.smooth()` que
+funde os nós adjacentes. Medido na mesma URL: `afirma o CEO da` / `.` → **`afirma o CEO da
+Agrotools.`**; e em 5 URLs reais das fixtures (Core AI, Ecotrace, Tractian, Liqi, Teachy), que
+hoje carregam 6, 15, 11, 12 e 12 lacunas, a coleta nova produz **0**.
+
+**O QUE ISTO NÃO CONSERTA, E PRECISA ESTAR DITO:** as 93 fixtures já coletadas. O nome apagado não
+está mais no texto delas — recuperá-lo exige re-coletar e re-recortar à mão, incluindo as 8 de
+gabarito. A 6 dias da entrega, mexer em material medido por **1,7% das citações** é o troco
+errado. A frase decapitada (`"…afirma o CEO da"`) fica como **limitação conhecida**; o resíduo
+visível, que é o que chega ao gerente, o portão do `seed.py` remove.
+
+**4. Dois erros de documentação da própria sessão.**
+- **D-090 se contradizia sobre a Solinftec.** Ele explica corretamente por que ela fica `null` (o
+  documento diz *"Criada há 18 anos"* — idade, não ano) e **sete linhas abaixo** a lista como caso
+  real de exclusão por `> 10 anos`. `CLAUDE.md` repetia a segunda. Ela sai **ELEGÍVEL**,
+  verificado no run de produção. A exclusão por idade tem **um** caso real (Agrotools). A
+  Solinftec é melhor do que um segundo caso: é o **caso-limite da política de literalidade**, uma
+  empresa de 18 anos que o sistema deixa passar de propósito, reportando *"requisito não
+  verificado"* em vez de inventar um ano.
+- **`PagSeguro` estava na bolsa errada.** O comentário que justifica ter tirado a lista de
+  `capital aberto` do B3-centrismo dizia *"PagSeguro, StoneCo, XP e Zenvia na Nasdaq"*. PagSeguro
+  (PAGS) listou na **NYSE** em 24/01/2018 — foi o maior IPO da NYSE desde o Snap. Zero efeito em
+  código; erro factual em material de defesa, no exato ponto que o comentário existe para provar.
+
+### O que a revisão deixa aberto
+
+**P-25 — as 93 fixtures têm 203 frases decapitadas, e elas não voltam sem re-coleta.** Custo real:
+re-coletar e re-recortar 93 documentos à mão, com re-medição da régua inteira depois, porque 8 são
+gabarito. Efeito hoje: 1,7% das citações. Fica registrado para depois da entrega — e `coletar.py`
+já está consertado, então a próxima fixture nasce limpa.
+
+
 ## Decisões pendentes
 
 | # | Decisão | Estado |
@@ -3199,6 +3332,7 @@ fintech pode citar o Nubank). Quem decide é o curador; o script garante que ele
 | ~~P-20~~ | ~~O operador de borda da idade~~ | **D-085** — a borda (`idade == IDADE_MAXIMA`) vira **pendente** com a faixa impressa, não exclusão. Guardar o mês foi descartado: não consta em 6 das 8 fixtures |
 | **P-21** | **Relevância da tecnologia recomendada** | aberta por D-086. Morpheus (spear phishing, digital fingerprinting) recomendado para a dor de privacidade de uma healthtech: a recuperação casa `privacy`/`security` sem conhecer o domínio. **Nenhum seletor de trecho conserta isto** — é o motor de recomendação. **O gabarito, porém, existe e não é meu:** as 7 regras de exemplo do TAPI (`contexto/01-tapi.md:143`) são pares setor/dor → tecnologia esperada, e a regra `Saúde →` cobre 4 das 8 startups da base e reprova este caso. Falta o harness — e a cobertura, que só cresce com a base (D-088) |
 | **P-22** | **`justificativa_negocio` é stub em 11 de 16 tecnologias** | aberta pela auditoria de 03/09 (D-088). `recommendation.py:63` cura texto para **5 das 16**; as outras 11 caem num fallback formulaico que o próprio comentário chama de stub e adia "para a M4" — fase que não existe mais em arquivo vivo nenhum. É o **campo 3 dos 7 obrigatórios** e o vizinho do campo que D-086 consertou |
+| **P-25** | **As 93 fixtures têm 203 frases decapitadas, e elas não voltam sem re-coleta** | aberta por D-097. `coletar.py` apagava o nome próprio que vinha em tag inline — `afirma o CEO da <strong>Agrotools</strong>.` virava `"afirma o CEO da"` + `"."`. **A raiz está consertada** (`unwrap` + `smooth`, medido: 0 lacunas em 5 URLs reais), então toda fixture nova nasce limpa, e a pontuação órfã já saiu das 30. **O que fica é a frase sem sujeito**, em 62 dos 93 documentos. Recuperá-la exige re-coletar e re-recortar à mão, incluindo as 8 de gabarito, com re-medição da régua inteira depois. **Efeito medido hoje: 1,7% dos trechos de evidência** (5 de 298) — o troco não fecha a 6 dias da entrega. Depois da entrega |
 | **P-24** | **`non-AI` é o default de detecção falha, não um achado** | aberta por D-095. `pontos == 0 -> non-AI` transforma silêncio da extração em AFIRMAÇÃO sobre a empresa. Medido: **9 de 30** saem `non-AI`, incluindo a **Core AI** (5 dores de IA extraídas, "AI" no nome) e a **Visio.AI** (cujo site se declara *"AI-Native Operating System"*), e `non-AI` → `fora-do-funil` → **zero recomendações**. **O repositório já resolve isso em outro componente:** `Elegibilidade` separa `motivos_exclusao` de `requisitos_nao_verificados` pela regra 4 do Evidence Validator — *ausência de sinal não é sinal negativo*. O classificador não faz a separação. **Consertar exige gabarito**, e as 22 novas entram sem ele (D-062): ajustar detectores até a Core AI "sair certa" é calibrar contra o próprio julgamento |
 | **P-23** | **`elegibilidade()` só enxerga o que o Extractor citou** | aberta por D-091. Ela varre `perfil.afirmacoes[*].evidencias[*].trecho`, não o documento. Medido no caso real: a Liqi diz *"oferecer criptomoedas, stablecoins e tokens"* no site, `criptomoeda` **já estava na lista**, e ela passou — porque a frase não caiu em nenhum trecho de evidência. **O filtro do Inception, que é o Diferencial declarado do projeto, tem cobertura igual à do casador de dores, e isso não estava escrito em lugar nenhum.** A correção óbvia (varrer `conteudo_texto`) reintroduz o falso positivo por MENÇÃO que D-085 gastou uma sessão para matar — o veto de terceiro teria de rodar sobre o documento inteiro. Não cabe a 4 dias do vídeo; o que cabe é estar escrito |
 | **P-19** | **O sweep do RAG (dimensão, banda de chunk, `k1`/`b`)** | **reaberta por D-078.** Estava cortado porque "o critério 2 já está no teto" — razão inválida. A razão candidata para manter o corte é outra e precisa ser dita: com 24 perguntas de gabarito, grade fina ajusta ao gabarito em vez de generalizar. O que joga contra o corte é `e@1 = 79%` (D-068): a primeira citação erra 1 vez em 5. Re-decidir junto com a base ampliada |

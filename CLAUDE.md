@@ -143,11 +143,23 @@ Consulta do usuário
 >   aberto uma migração desnecessária a 5 dias do vídeo.
 > - **Env var não protege o embedder.** Trocar o modelo muda o espaço vetorial e invalida os 377
 >   vetores — é `scripts/reembedar.py` mais re-medir a régua inteira (D-046).
+> - **O PASSO 7 NÃO TEM FALLBACK: O RERANKER DA NVIDIA MORREU INTEIRO (D-097).**
+>   `sondar_catalogo.py --rerank` mostra os **9 caminhos** (3 modelos × 3 paths) mortos — **404**
+>   nos endpoints atuais e **410 com assinatura de EOL** em
+>   `.../llama-3_2-nemoretriever-500m-rerank-v2/reranking` — e a listagem responde *"com 'rank' no
+>   nome: NENHUM"*. `src/config.py` oferece três provedores e **um não existe mais**. Somado à cota
+>   do Cohere, houve horas em que o passo 7 não rodava em lugar nenhum. **Rode a sonda antes de
+>   gravar**, e trate o Cohere como ponto único de falha.
 > - **A COTA MENSAL DA TRIAL DO COHERE ACABOU EM 03/09 (D-093).** `429` com *"limited to 1000
 >   API calls / month"* — **não é o teto por minuto, é o do mês**, e ele não recupera sozinho.
 >   **`RERANK_PROVEDOR=nenhum` roda tudo** — grafo completo e `pytest` 81 passed **em 6,5 s**,
 >   contra 150-460 s com o Cohere ligado. Use isso como **default de desenvolvimento**; o
 >   Cohere entra só quando se quer medir o passo 7.
+> - **MAS NÃO JULGUE RECOMENDAÇÃO COM O RERANK DESLIGADO (D-097).** Em 03/09 uma auditoria quase
+>   registrou como defeito grave o *"NVIDIA Healthcare recomendado para uma agtech"*. Era artefato
+>   de `RERANK_PROVEDOR=nenhum`: com o passo 7 ligado, a Solinftec recebe **NVIDIA Isaac**, e ela
+>   fabrica robô agrícola. **O modo barato serve para desenvolver, nunca para avaliar o que o
+>   gerente veria.**
 > - **O teto da trial do Cohere é pior que a documentação:** o 429 chega na 4ª chamada sequencial,
 >   `retry-after` vem ausente, recuperação de ~26 s. Por isso `src/rag/rerank.py` tem limitador
 >   proativo e retry. **Para o vídeo: ~2-3 min só de rerank num run completo** — a cena é uma
@@ -184,7 +196,11 @@ critério, e sem ela 49% de precisão parece bom em vez de "17 pontos acima de e
   esse filtro a precisão cai de 49% para 24% **em silêncio** (contrafactual medido em D-090).
   **As 10 chaves de `SETORES` têm empresa** — nenhuma consulta do vocabulário do planner devolve
   zero. **As 4 exclusões do Inception têm caso REAL:** consultoria (Deal), capital aberto
-  (Zenvia/Nasdaq), cripto (Liqi/stablecoin), > 10 anos (Agrotools, Solinftec).
+  (Zenvia/Nasdaq), cripto (Liqi/stablecoin), > 10 anos (**Agrotools**, e só ela). **A Solinftec
+  é o CASO-LIMITE, não um segundo caso** (D-097): tem 18 anos, o documento diz *"Criada há 18
+  anos"* — idade, não ano — e a política de literalidade mantém `ano_fundacao: null`, então ela
+  sai **ELEGÍVEL** com *"requisito não verificado"*. É o preço declarado da literalidade, e o
+  Briefing o reporta em vez de inventar um ano.
   > **O gargalo da curadoria é o 3º documento, não a empresa** (D-090): `seed.py` exige 3
   > documentos e ≥ 2 TIPOS distintos, e 4 empresas boas caíram já coletadas.
 - **16 tecnologias NVIDIA**, 175 chunks estruturais + 202 de controle, gabarito de **24 perguntas**

@@ -99,8 +99,8 @@ EXCLUSOES = {
     "revenda": ["revend", "distribuidor", "reseller"],   # prefixo: cobre revenda E revendedor (D-071)
     # A LISTA ERA B3-CÊNTRICA, E ISSO ERA O CASO MAIS COMUM, NÃO O EXÓTICO (03/09, D-094).
     # Tinha "listada na b3" e "ipo concluído", e a Zenvia — listada na NASDAQ desde 2021 — saía
-    # ELEGÍVEL. Metade das brasileiras que abrem capital lista fora do Brasil: Nubank e VTEX na
-    # NYSE, PagSeguro, StoneCo, XP e Zenvia na Nasdaq. O conceito estava certo; o vocabulário
+    # ELEGÍVEL. Metade das brasileiras que abrem capital lista fora do Brasil: Nubank, VTEX e
+    # PagSeguro na NYSE, StoneCo, XP e Zenvia na Nasdaq. O conceito estava certo; o vocabulário
     # cobria uma bolsa só.
     #
     # POR QUE NÃO `"listada na"` GENÉRICO: casaria "listada na Forbes", "listada na pesquisa".
