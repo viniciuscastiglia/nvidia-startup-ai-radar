@@ -74,8 +74,42 @@ aparecer.
 `recall` idênticos: corrupção silenciosa, medida.
 
 **As 4 exclusões do Inception ganharam caso real:** consultoria (Deal) · **capital aberto →
-Zenvia** · **cripto → Liqi** · **> 10 anos → Agrotools e Solinftec**. Antes só havia frase
+Zenvia** · **cripto → Liqi** · **> 10 anos → Agrorobótica, Agrotools, Automni e JetBov** (a linha original dizia *"Agrotools e Solinftec"* e contradizia a tabela de consertos deste mesmo arquivo, que registra a Solinftec saindo ELEGÍVEL — corrigido em 04/09). Antes só havia frase
 sintética escrita por nós.
+
+## O que 04/09 fechou — os dois consertos que o gerente vê na tela
+
+A sessão da manhã escreveu `projeto/achados-04-09.md` (efêmero, já removido) e **errou três vezes
+dentro do próprio documento**. A sessão da tarde **reproduziu tudo antes de escrever plano**, e o
+plano vive em `docs/superpowers/plans/2026-09-04-fechamento-ia.md`.
+
+| o que fechou | decisão |
+|---|---|
+| **O filtro do Inception rodava DEPOIS de quem consome o resultado dele.** Na tela: a Liqi saía `x exclusão por 'cripto'` e sete linhas abaixo recebia *"Agendar conversa técnica com o time de engenharia da Liqi"*. Uma aresta — `elegibilidade` não dependia de nada que rodasse antes dela | **D-099** |
+| **Recusada MANTÉM recomendação, rotulada e rebaixada.** Decisão do Vinícius, e o fato que a decidiu: **a JetBov é a única `AI-native` e o único `sweet-spot` das 30 — e é NÃO ELEGÍVEL por idade.** Suprimir apagaria o melhor prospect da tela | **D-099** |
+| **Três defeitos no texto que chega ao gerente:** a causa falsa do "zero recomendações" (Conta Simples tem 3 dores VALIDADAS e lia *"sem evidência validada"*), o ponteiro `ver D-059` impresso uma vez por empresa, e os cortes no meio da palavra em dois dos 7 campos do TAPI | **D-100** |
+| **`non-AI` deixou de ser o default de detecção falha (P-24 FECHADA).** `sinal_verificado` é o par que `Elegibilidade` já tinha. Custo medido ANTES: `classe 3/7 → 3/7` | **D-101** |
+| **Os dois instrumentos de 04/09 ganharam registro** — eles citavam `(D-098)` antes de D-098 existir | **D-098** |
+
+**Verificação:** `pytest` **87 passed** (era 81) · `avaliar_agentes` `classe 3/7 · stack 6/7 ·
+confianca 0/6 · elegivel 6/6 · 49%/100%` **idêntico** · `varrer_elegibilidade` **as mesmas 7
+recusas** · o grafo rodou com `RERANK_PROVEDOR=cohere` e o briefing foi **lido inteiro**.
+
+**Duas divergências investigadas** contra o que o documento da manhã afirmava: os `10,6%` de
+cobertura de `elegibilidade()` são **trechos ÚNICOS** (a soma bruta dá 11,0%), e o conserto amplo
+dá **13 recusas, não 11** — e o argumento bom contra ele não é a contagem, é que **varrer o
+documento inteiro quebra `_fala_de_terceiro` por construção**, porque o veto exige que TODA
+ocorrência tenha marcador.
+
+## O que fica para 05/09 à tarde — blocos 3 a 5 do plano
+
+- **P-22** — `NEGOCIO` indexado por tecnologia; passa a ser por `(tecnologia, dor)`. Na tela hoje:
+  NIM sob `latencia` traz *"Reduz o custo por token"*; NeMo sob `custo` traz o texto de avaliação.
+- **P-21** — a régua das 7 regras do TAPI. A razão do ACEITAR (*"só 1-2 das 7 regras têm startup"*)
+  está **desatualizada**: com 30 empresas são **5 de 7** por setor, e as outras 2 são por dor.
+  Ela também é **a parte 2 do critério de D-101** — o ruído das 9 que entraram no funil.
+- **`PROFUNDOS`** — a hipótese 2 de D-060, sob protocolo anti-contaminação: lista derivada de
+  `contexto/02` §4, **commitada antes de medir**, constante separada atrás de flag.
 
 ## O que 03/09 abriu, e é para amanhã
 

@@ -3321,6 +3321,252 @@ re-coletar e re-recortar 93 documentos à mão, com re-medição da régua intei
 gabarito. Efeito hoje: 1,7% das citações. Fica registrado para depois da entrega — e `coletar.py`
 já está consertado, então a próxima fixture nasce limpa.
 
+---
+
+## D-098 — Dois instrumentos de varredura, e a razão de eles não serem réguas
+**Data:** 04/09/2026 · dívida de registro da sessão da manhã, paga à tarde
+**Decisão:** `scripts/varrer_classes.py` e `scripts/medir_confianca.py` entram no repositório
+como **instrumentos de leitura sobre a base inteira**, não como réguas.
+
+**Por que existem.** É o corolário de D-083 que D-094 escreveu ao criar `varrer_elegibilidade.py`:
+*rode o sistema* → **rode-o sobre TUDO, não sobre uma amostra**. Ler briefing é amostragem — dá
+para ler três empresas, não trinta. `varrer_elegibilidade.py` fez isso para o filtro do Inception
+e achou dois defeitos na primeira execução. Faltavam os outros dois eixos do Classifier: a
+**classe** e a **confiança**.
+
+**Por que não são réguas, e isto é a decisão e não um detalhe.** Régua tem gabarito, e o gabarito
+deste projeto são 8 fixtures (D-062) — as 22 novas entraram como DADO, sem anotação, justamente
+para não calibrar contra o próprio julgamento. Um instrumento que imprime as 30 **não pode**
+virar placar sem desfazer D-062. Então ele imprime uma tabela para um humano LER, e o que ele
+mede sobre gabarito fica em `avaliar_agentes.py`, com o denominador certo.
+
+**Alternativa descartada — pôr as duas varreduras dentro de `avaliar_agentes.py` como flags.**
+Seria menos arquivo, e é o que a simetria sugere. Mas `avaliar_agentes.py` é a régua: tudo que
+mora lá tem denominador de gabarito e é lido como placar. Uma tabela das 30 dentro dela seria
+lida como "o sistema acerta X de 30" no dia em que alguém tivesse pressa — e a corrupção
+silenciosa que D-090 mediu (precisão caindo de 49% para 24% sem o filtro de gabarito) mostra que
+essa confusão custa caro e não avisa.
+
+**O que cada um respondeu, no dia em que foi escrito:**
+- `varrer_classes.py` → **D-095/P-24**: `AI-native` 1 · `AI-enabled` 20 · `non-AI` **9**, as nove
+  com zero detector e 2 a 7 dores de IA extraídas pelo mesmo Extractor.
+- `varrer_classes.py --custo-desenhos` → **refutou uma afirmação feita por inferência** ("consertar
+  a P-24 custa 1 ponto de `classe`"): vale para o desenho A (`3/7 → 2/7`) e **não** para o B
+  (`3/7 → 3/7`). Foi o que tornou D-101 decidível.
+- `medir_confianca.py` → **refutou a hipótese que D-059 deixou escrita e ninguém testou por 8
+  dias**: *"melhorar isso é fazer o Classifier anexar evidência mais larga"*. O braço C mede
+  exatamente isso e dá **2, idêntico ao braço B**. O que move o campo é a **recência**, e ela
+  depende de `data_publicacao`, ausente em **86 dos 93 documentos**.
+
+**Nota de método, e ela é o motivo de esta entrada existir com atraso:** os dois scripts entraram
+citando `(D-098)` no docstring antes de D-098 existir. Um arquivo que aponta para uma decisão que
+não foi escrita é a mesma classe de defeito que D-097 apanhou — a documentação afirmando algo que
+o repositório não tem. O número foi honrado em vez de reaproveitado.
+
+---
+
+## D-099 — O filtro do Inception rodava DEPOIS de quem consome o resultado dele
+**Data:** 04/09/2026 · achado por execução, não por leitura · zero régua se move
+**Decisão:** `elegibilidade` passa a rodar **antes** de `nvidia_rag` e de `recommendation` no
+subgrafo; e empresa NÃO ELEGÍVEL **mantém** as recomendações, agora **rotuladas e rebaixadas**.
+
+**O DEFEITO, na tela, num run real de 04/09** (`python -m src.graph "startups de fintech
+AI-native"`, com `RERANK_PROVEDOR=cohere`):
+
+```
+  NVIDIA Inception: NÃO ELEGÍVEL
+    x exclusão por 'cripto': o termo 'stablecoin' aparece nos documentos falando da própria empresa
+  ...
+    ação       : Agendar conversa técnica sobre NVIDIA Morpheus com o time de engenharia da Liqi
+```
+
+Sete linhas separam a recusa da instrução de agendar a conversa. `src/graph.py` tinha
+`recommendation -> elegibilidade`: o motor rodava antes do filtro e **não tinha como saber**.
+
+**E não havia dependência nenhuma sustentando essa ordem.** `briefing.node_analise` lê só
+`state["startup"]` e `state["perfil"]`, ambos prontos depois do `extractor`. O nó estava no fim
+porque foi o último a ser escrito — defeito de ORDEM, não de motor. Uma aresta.
+
+**A DECISÃO DE PRODUTO, que é do Vinícius e não é técnica:** empresa recusada **continua
+recebendo** recomendação, com o cabeçalho `!! FORA DO INCEPTION — abordagem comercial direta` e
+prioridade forçada a `baixa`.
+
+**Alternativa descartada — suprimir as recomendações da recusada.** É a leitura mais alinhada com
+o propósito declarado ("o sistema existe para captar PARA o Inception") e ainda economizaria
+chamada de API no fornecedor único do passo 7. Caiu por um fato da base: **a JetBov é a única
+`AI-native` das 30 e o único `sweet-spot` que o sistema encontrou — e é NÃO ELEGÍVEL por idade
+(2015, 11 anos).** Sob supressão, o melhor prospect do radar sai da tela em branco. E **4 das 7
+recusas são por idade**, que diz respeito ao programa, não à empresa: consultoria, capital aberto
+e cripto dizem o que a empresa É; idade diz apenas qual porta ela não alcança.
+
+**Segunda alternativa descartada — tratar diferente por MOTIVO de recusa** (idade mantém, regra de
+programa suprime). É mais correta que a escolhida e foi recusada por custo de defesa: introduz uma
+regra nova, não pedida pelo TAPI, que teria de ser justificada na arguição. A escolhida se defende
+com uma frase que o repositório já usa em dois lugares.
+
+**POR QUE A ESCOLHIDA É A COERENTE, e é o mesmo argumento de D-101:** é **D-010 aplicada às
+recomendações**. *"O Validator anota e rebaixa, e nunca deleta — deletar destrói informação que o
+humano precisa."* `Elegibilidade` já opera assim, com `x` (provado) e `?` (não provado). Suprimir
+a recomendação seria o Recommendation deletando. **Anota, rebaixa, e quem decide é o gerente.**
+
+**Efeito colateral verificado e desejado:** `briefing.node` ordena as seções pela MENOR prioridade
+de cada empresa. Com a recusada em `baixa`, ela **afunda para o fim do relatório** — no run de
+verificação, a Liqi saiu de primeira para última, e a Ume (elegível) passou a abrir o briefing.
+
+**Verificação:** `pytest` 87 passed · `avaliar_agentes` `classe 3/7 · stack 6/7 · confianca 0/6 ·
+elegivel 6/6 · 49%/100%`, idêntico · `varrer_elegibilidade` as mesmas 7 recusas. Nenhuma régua se
+move, porque nenhuma régua olhava a ordem — que é exatamente o motivo de o defeito ter durado.
+Dois testes novos: um ESTRUTURAL sobre o grafo compilado (`elegibilidade` antes de
+`recommendation`) e um de comportamento. O estrutural existe porque o comportamental não pegaria
+a regressão: um estado montado à mão no pytest não tem a ordem do grafo.
+
+---
+
+## D-100 — Três defeitos no texto que chega ao gerente, e nenhum aparecia em teste verde
+**Data:** 04/09/2026 · achados lendo o briefing inteiro, não o código
+**Decisão:** consertar os três. São o entregável, não o motor.
+
+**1. O relatório afirmava uma CAUSA FALSA.** `briefing.py` imprimia
+*"nenhuma — sem evidência validada que sustente uma recomendação"* para **toda** lista vazia.
+Medido em 04/09: **Conta Simples, Core AI e Iniciador têm 3, 5 e 7 dores VALIDADAS** — e a régua
+confirma que o filtro `if d.validada` não barra nada (D-074). A causa real era o corte de funil em
+`recommendation.py`. Um relatório que afirma a causa errada é **pior** que um que não afirma
+nenhuma, porque o gerente age sobre ela — e o rodapé da página promete *"toda conclusão acima
+aponta para o documento que a sustenta"*.
+**O conserto:** a causa viaja no estado (`motivo_sem_recomendacao`), preenchida por quem decidiu
+não recomendar. **Alternativa descartada — o briefing inferir a causa** a partir do quadrante e das
+citações: reconstruiria no consumidor uma decisão que o produtor já tomou, e ficaria errada de
+novo no dia em que `recommendation` ganhasse um caminho novo.
+
+**2. Um ponteiro de decisão INTERNA dentro do relatório executivo.**
+`evidence_validator.py` montava e o briefing imprimia, **uma vez por empresa**:
+*"— ver D-059 para por que este agregado é o defeito que a régua mede em 0/6"*.
+Entrou em 27/08 (`git log -S "ver D-059"` → `6fae6c5`), **deliberadamente**, para tornar o defeito
+visível em vez de escondido. **A intenção estava certa e a SUPERFÍCIE estava errada:** o gerente de
+Startups & VCs lia uma referência ao log deste repositório, e o vídeo mostraria isso.
+A regra 5 de `contexto/02` §6 pede que o output carregue a confiança **e o motivo dela**; ela não
+pede o número da decisão que discute o motivo. O texto passa a terminar em *"o elo mais fraco
+decide"*, que é a mesma informação sem o ponteiro.
+**Alternativa descartada — deixar de imprimir `motivo_confianca`.** Apagaria a regra 5 junto e
+devolveria o briefing ao estado que D-066 corrigiu: `(confiança baixa)` sem dizer qual regra
+produziu o grau. O defeito continua NOMEADO onde quem mexe no código o lê.
+
+**3. Dois dos SETE campos obrigatórios do TAPI cortados no meio da palavra.**
+`[:150]` cru produzia `"...NVIDIA NIM™ microse"` e `"...é a passagem citada da documentaçã"`, sem
+sinal de que havia mais texto — um leitor não distingue *"o campo acabou assim"* de *"foi
+truncado"*. Na mesma linha, o segundo defeito: `justificativa_tecnica` sai de `melhor_trecho`, que
+devolve um span de chunk de página web, e a **quebra de linha crua** desmontava a coluna.
+`_resumir()` corta em fronteira de palavra, colapsa `\s+` e fecha com `…`.
+
+**O que os três têm em comum, e é o registro que importa:** nenhum aparecia em teste verde, e
+nenhum foi achado lendo código. Os três saíram de LER um briefing inteiro — a mesma lição que
+D-083 comprou em 02/09 e D-094 ampliou em 03/09. **`pytest` verde nunca foi evidência de que o
+relatório está correto: ele não lê o relatório.**
+
+---
+
+## D-101 — `non-AI` continua sendo emitido; o que muda é o que acontece depois
+**Data:** 04/09/2026 · fecha a P-24 (D-095) · **critério fixado ANTES de medir**
+**Decisão:** o Classifier passa a marcar `sinal_verificado=False` quando nenhum detector dispara, e
+`derivar_quadrante` só corta do funil o `non-AI` **constatado**. O rótulo não muda.
+
+**A VIOLAÇÃO, e ela é de um princípio que este repositório escreveu no dia 2.** A rubrica define
+`non-AI` por uma propriedade **positiva** (`contexto/02` §4): *"o produto não depende de IA… sem IA
+no caminho crítico da entrega de valor"*. Isso é constatação, e constatação exige evidência. O
+código emitia esse rótulo quando `pontos == 0` — quando **não encontrou sinal**. A rubrica pede
+*"constatamos que não há IA"*; o código entregava *"não achei sinal de IA"*.
+
+E a regra 4 do Evidence Validator (`evidence_validator.py:11`, D-010) diz, desde 22/08:
+*"ausência de sinal != sinal negativo → nada é DELETADO, só rebaixado"*. `Elegibilidade` a obedece
+há semanas, separando `motivos_exclusao` (a base PROVA) de `requisitos_nao_verificados` (a base NÃO
+PROVA), e só o primeiro exclui. **O Classifier era o componente que a contrariava.**
+
+Medido nas 30 (`varrer_classes.py`): **9 empresas com zero detector, todas com 2 a 7 dores de IA
+extraídas com evidência pelo mesmo Extractor** — e todas indo para `fora-do-funil` → zero
+recomendação. A **Core AI**, cujo produto É modelo de crédito com IA, sumia do funil em silêncio.
+
+**ALTERNATIVA DESCARTADA — `indeterminado` como quarta classe (o "desenho A").** É semanticamente
+mais limpa, e custa **duas** coisas, não uma:
+1. **Medida:** `classe` cai de **3/7 para 2/7** (`varrer_classes.py --custo-desenhos`), porque a
+   SunnyHUB também tem zero detector e passaria a divergir de um gabarito que diz `non-AI`.
+2. **Não medida, e maior:** o TAPI nomeia **três** classes. Uma quarta no output é desvio de
+   especificação — defensável, mas é uma defesa a mais, e ela não compra nada além do que o
+   desenho escolhido compra. O escolhido custa `3/7 → 3/7`, **medido antes de ser implementado**.
+
+**POR QUE ISTO NÃO CONTRARIA O ACEITAR DA P-24, que dizia "consertar exige gabarito".** Aquela
+razão foi escrita antes da medição que separa os dois desenhos, e ela protege corretamente **os
+detectores**: ajustar `PROFUNDOS`, pesos ou limiares até a Core AI "sair certa" é calibrar contra
+o próprio julgamento sobre fixtures curadas pela mesma pessoa (D-062). **Este conserto não toca em
+detector nenhum e não introduz um único grau de liberdade** — é a mesma regra `pontos == 0`, com
+outro destino. Não há nada para calibrar, e é por isso que a régua não se move: era previsível
+antes de rodar, e foi previsto.
+
+**CRITÉRIO DE ACEITAÇÃO, FIXADO ANTES DE MEDIR** (parte 1, que decide sozinha): nenhuma piora em
+`classe 3/7` · `maturidade_stack 6/7` · `confianca 0/6` · `elegivel 6/6` · precisão ≥ 49% ·
+recall 100% · as mesmas 7 recusas em `varrer_elegibilidade` · `pytest` verde.
+**Resultado: todos idênticos, `pytest` 87 passed.** O `non-AI` CONSTATADO continua indo para
+`fora-do-funil` — `tests/test_grafo.py:110` seguiu verde **sem edição**, e isso é a evidência de
+que a mudança é aditiva, não uma reescrita da rubrica.
+
+**O PREÇO, DECLARADO E AINDA NÃO MEDIDO:** as nove entram no funil, e uma delas — a **SunnyHUB**,
+energia solar — é `non-AI` de verdade. É o mesmo preço que `Elegibilidade` já paga e **reporta** na
+Solinftec, que sai ELEGÍVEL com *"requisito não verificado"* porque o documento diz "há 18 anos" e
+não um ano. A troca é deliberada: **um falso negativo SILENCIOSO por um falso positivo ANOTADO** —
+a direção que D-052 e D-057 já escolheram por escrito, porque o silencioso não aparece em lugar
+nenhum. **A parte 2 do critério** (o ruído das nove, medido contra as 7 regras do TAPI) fica para
+05/09, e ela não pode reverter esta decisão: se as nove pontuarem pior, a resposta é apertar o
+rebaixamento que elas já carregam, não voltar ao estado que viola o princípio.
+
+**CUSTO DE LATÊNCIA E DE API: ZERO, e isto foi verificado e não suposto.** A régua de D-084 é
+*defeito · latência que o usuário sente · robustez · reversibilidade*, e a preocupação óbvia seria
+"nove empresas a mais no funil = nove vezes mais chamada no fornecedor único do passo 7". **Não é o
+caso:** `nvidia_rag` sempre rodou para TODAS as empresas — o corte de funil acontecia depois dele,
+em `recommendation`. O que as nove ganham é o aproveitamento de citações que já eram recuperadas e
+jogadas fora. Medido: o mesmo run de 5 empresas levou **3m27 antes e 3m27 depois**.
+
+**Na tela, ao fim:**
+```
+  Classificação : non-AI   (confiança baixa)
+  Quadrante     : PROSPECT DE EVOLUÇÃO — a conversa é sair do wrapper
+    ? sinal de IA NÃO VERIFICADO — nenhum dos 3 detectores disparou neste documento;
+      5 dor(es) de IA extraída(s) com evidência. O rótulo acima é o que a regra
+      produziu, não o que a base constatou
+```
+
+**O PREÇO FOI VISTO NA TELA, E ELE EXPÕE UM DEFEITO QUE JÁ EXISTIA.** Rodando o grafo sobre **28
+das 30** (`"todas as startups"`, `MAX_STARTUPS=30`, rerank ligado): **9 seções com `? sinal de IA
+NÃO VERIFICADO`, ZERO com `FORA DO FUNIL`, zero seção sem recomendação, e as 45 recomendações
+dessas nove e das sete recusadas saíram em `prioridade baixa`** — os números batem um a um com
+`varrer_classes.py` e `varrer_elegibilidade.py`, com a Zenvia contada nos dois grupos.
+
+A SunnyHUB é o caso a ler, e ela **não** mostra um defeito de D-101: mostra um defeito de
+EXTRAÇÃO que D-101 tornou visível. Ela recebe `NeMo Guardrails` para a dor de `observabilidade`,
+com lastro em *"Seguro contra danos, **monitoramento** e troca de equipamentos"* — monitoramento
+de placa solar lido como observabilidade DE IA. **É literalmente o exemplo que o docstring de
+`JULGAR_SUSTENTACAO` (D-074) usa para explicar por que "não contradizer não é sustentar"**, e a
+flag está `False` porque foi reprovada em D-075. Antes de D-101 essa dor era extraída, validada e
+**descartada em silêncio** junto com a empresa; agora ela aparece com `?` e prioridade `baixa`.
+**A troca é essa, e ela é a que o projeto já escolheu duas vezes:** um erro que se vê custa menos
+que um erro que não deixa rastro.
+
+**E o caso que decidiu D-099 apareceu junto, na mesma execução:**
+```
+  JETBOV
+  Classificação : AI-native   (confiança baixa)
+  Quadrante     : SWEET SPOT — AI-native com stack imatura: melhor prospect
+  NVIDIA Inception: NÃO ELEGÍVEL
+    x exclusão por idade: fundada em 2015, 11 anos (o programa exige menos de 10)
+  Recomendações (3):
+    !! FORA DO INCEPTION — abordagem comercial direta, não captação para o programa.
+```
+Sob a alternativa descartada, este bloco teria três linhas e nenhuma recomendação — o único
+`sweet-spot` das 30 saindo em branco.
+
+**`varrer_classes.py` mudou de papel junto:** era o instrumento que DIAGNOSTICOU a P-24 e passou a
+LER o quadrante real, com uma verificação que falha alto se alguma empresa sem detector voltar a
+`fora-do-funil`. Um instrumento que descreve um sistema que não existe mais é pior que instrumento
+nenhum, porque parece medido.
+
 
 ## Decisões pendentes
 
@@ -3336,7 +3582,7 @@ já está consertado, então a próxima fixture nasce limpa.
 | **P-06** | **Framework de frontend** | aberta. É a única superfície pela qual alguém que não lê código julga o sistema. O escopo sai da pergunta de produto — o que o gerente precisa ver, e em que ordem, para abordar a startup no dia seguinte — não de um orçamento de esforço |
 | **P-09** | **Promover o juiz do Extractor?** | D-072 passou o critério; falta decidir a lacuna de recall (100% → 71-79%) |
 | ~~P-10~~ | ~~Régua do motor de recomendação~~ | **D-086** — a régua existe (`--justificativas`, 30 chunks, amostra semeada, rotulada antes do seletor) e o seletor bate a linha trivial: **15/21 vs 12/21**. Num run real, justificativas que servem: **1/6 → 4/6**. A parte de RELEVÂNCIA da recomendação virou **P-21** |
-| **P-11** | **O `min()` da confiança** | 0/6 constante. Barato, mas exige critério fixado antes — uma tentativa já foi reprovada (D-059) |
+| **P-11** | **O `min()` da confiança** | 0/6 constante. Barato, mas exige critério fixado antes — uma tentativa já foi reprovada (D-059). **METADE FECHADA em 04/09 (D-100):** o ponteiro `ver D-059` saiu do texto do usuário. **E a hipótese de D-059 foi REFUTADA (D-098):** o braço C de `medir_confianca.py` — evidência mais larga — dá 2, idêntico ao B. O que move o campo é a recência, e ela depende de `data_publicacao`, ausente em **86 dos 93 documentos**. O `min()` fica: consertá-lo hoje é consertar a coleta, que é P-25 |
 | ~~P-16~~ | ~~Julgamento semântico no Evidence Validator~~ | **medido e REPROVADO em D-075** — 4 de 5 alvos passam, o recall no Recommendation falha nas três execuções |
 | **P-17** | **`recommendation.py` trata `validada` como booleano** | **D-077: a gradação total foi aplicada e é INERTE** — flag desligada, `confianca` sem leitor, régua espelhando o código antigo. E o critério (recall ≥ 88% com precisão ≥ 80%) é inalcançável assim: admitir tudo dá 100%/49%. Falta a admissão PARCIAL, por `dores_enderecadas` e não por `confianca` |
 | ~~P-18~~ | ~~`src/llm.py` sem `timeout`~~ | **D-076** — `LLM_TIMEOUT` por tentativa, `max_retries=2` do SDK mantido. **O valor subiu para 120 em D-080**, porque com 30 s cinco de oito chamadas estouravam a primeira tentativa: teto combinado ~360 s (D-089) |
@@ -3348,6 +3594,6 @@ já está consertado, então a próxima fixture nasce limpa.
 | **P-21** | **Relevância da tecnologia recomendada** | aberta por D-086. Morpheus (spear phishing, digital fingerprinting) recomendado para a dor de privacidade de uma healthtech: a recuperação casa `privacy`/`security` sem conhecer o domínio. **Nenhum seletor de trecho conserta isto** — é o motor de recomendação. **O gabarito, porém, existe e não é meu:** as 7 regras de exemplo do TAPI (`contexto/01-tapi.md:143`) são pares setor/dor → tecnologia esperada, e a regra `Saúde →` cobre 4 das 8 startups da base e reprova este caso. Falta o harness — e a cobertura, que só cresce com a base (D-088) |
 | **P-22** | **`justificativa_negocio` é stub em 11 de 16 tecnologias** | aberta pela auditoria de 03/09 (D-088). `recommendation.py:63` cura texto para **5 das 16**; as outras 11 caem num fallback formulaico que o próprio comentário chama de stub e adia "para a M4" — fase que não existe mais em arquivo vivo nenhum. É o **campo 3 dos 7 obrigatórios** e o vizinho do campo que D-086 consertou |
 | **P-25** | **As 93 fixtures têm 203 frases decapitadas, e elas não voltam sem re-coleta** | aberta por D-097. `coletar.py` apagava o nome próprio que vinha em tag inline — `afirma o CEO da <strong>Agrotools</strong>.` virava `"afirma o CEO da"` + `"."`. **A raiz está consertada** (`unwrap` + `smooth`, medido: 0 lacunas em 5 URLs reais), então toda fixture nova nasce limpa, e a pontuação órfã já saiu das 30. **O que fica é a frase sem sujeito**, em 62 dos 93 documentos. Recuperá-la exige re-coletar e re-recortar à mão, incluindo as 8 de gabarito, com re-medição da régua inteira depois. **Efeito medido hoje: 1,7% dos trechos de evidência** (5 de 298) — o troco não fecha a 6 dias da entrega. Depois da entrega |
-| **P-24** | **`non-AI` é o default de detecção falha, não um achado** | aberta por D-095. `pontos == 0 -> non-AI` transforma silêncio da extração em AFIRMAÇÃO sobre a empresa. Medido: **9 de 30** saem `non-AI`, incluindo a **Core AI** (5 dores de IA extraídas, "AI" no nome) e a **Visio.AI** (cujo site se declara *"AI-Native Operating System"*), e `non-AI` → `fora-do-funil` → **zero recomendações**. **O repositório já resolve isso em outro componente:** `Elegibilidade` separa `motivos_exclusao` de `requisitos_nao_verificados` pela regra 4 do Evidence Validator — *ausência de sinal não é sinal negativo*. O classificador não faz a separação. **Consertar exige gabarito**, e as 22 novas entram sem ele (D-062): ajustar detectores até a Core AI "sair certa" é calibrar contra o próprio julgamento |
-| **P-23** | **`elegibilidade()` só enxerga o que o Extractor citou** | aberta por D-091. Ela varre `perfil.afirmacoes[*].evidencias[*].trecho`, não o documento. Medido no caso real: a Liqi diz *"oferecer criptomoedas, stablecoins e tokens"* no site, `criptomoeda` **já estava na lista**, e ela passou — porque a frase não caiu em nenhum trecho de evidência. **O filtro do Inception, que é o Diferencial declarado do projeto, tem cobertura igual à do casador de dores, e isso não estava escrito em lugar nenhum.** A correção óbvia (varrer `conteudo_texto`) reintroduz o falso positivo por MENÇÃO que D-085 gastou uma sessão para matar — o veto de terceiro teria de rodar sobre o documento inteiro. Não cabe a 4 dias do vídeo; o que cabe é estar escrito |
+| ~~**P-24**~~ | ~~`non-AI` é o default de detecção falha~~ | **FECHADA em 04/09 (D-101).** `Diagnostico.sinal_verificado` é o par que `Elegibilidade` já tinha, aplicado ao rótulo: `non-AI` continua sendo emitido — o TAPI nomeia três classes — e só o **constatado** é cortado do funil. **Custo medido antes de implementar: `classe 3/7 → 3/7`**, contra `3/7 → 2/7` do desenho com quarta classe. O ACEITAR anterior dizia *"consertar exige gabarito"*: aquilo protege os DETECTORES, e este conserto não toca em nenhum nem introduz grau de liberdade. **Fica aberta a parte 2 do critério** — o ruído das 9 que passaram a entrar no funil, a medir contra as 7 regras do TAPI em 05/09 |
+| **P-23** | **`elegibilidade()` só enxerga o que o Extractor citou** | aberta por D-091. Ela varre `perfil.afirmacoes[*].evidencias[*].trecho`, não o documento. Medido no caso real: a Liqi diz *"oferecer criptomoedas, stablecoins e tokens"* no site, `criptomoeda` **já estava na lista**, e ela passou — porque a frase não caiu em nenhum trecho de evidência. **O filtro do Inception, que é o Diferencial declarado do projeto, tem cobertura igual à do casador de dores, e isso não estava escrito em lugar nenhum.** A correção óbvia (varrer `conteudo_texto`) **quebra `_fala_de_terceiro` POR CONSTRUÇÃO**, e esse é o argumento forte, medido em 04/09: o veto exige que **toda** ocorrência do termo caia em frase com marcador, então cada caractere a mais é outra chance de o `all()` falhar. Na Iniciador, o trecho de evidência tem 1 ocorrência de `stablecoin`, coberta por `mercado de stablecoin`; o documento inteiro tem 2, e a segunda não tem marcador nenhum — o veto colapsa. **Medido: as recusas vão de 7 para 13 em 30**, e ao menos 4 das 6 novas são falso positivo claro (TideWise por *"Dados da consultoria Fortune Business Insights"*; BemAgro por *"a revenda goiana MM Agro"*). **E o lado silencioso também apareceu:** a varredura ampla recusa a **Produzindo Certo**, que *"oferece serviços de consultoria, gestão e verificação"* — a própria empresa. Hoje ela passa por SORTE, não por desenho. Não cabe a 3 dias do vídeo; o que cabe é estar escrito, e agora está com os dois lados |
 | **P-19** | **O sweep do RAG (dimensão, banda de chunk, `k1`/`b`)** | **reaberta por D-078.** Estava cortado porque "o critério 2 já está no teto" — razão inválida. A razão candidata para manter o corte é outra e precisa ser dita: com 24 perguntas de gabarito, grade fina ajusta ao gabarito em vez de generalizar. O que joga contra o corte é `e@1 = 79%` (D-068): a primeira citação erra 1 vez em 5. Re-decidir junto com a base ampliada |

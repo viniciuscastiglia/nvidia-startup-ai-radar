@@ -178,6 +178,8 @@ Nenhum número vive aqui: números envelhecem e este arquivo é carregado em tod
 | filtro do Inception (falso positivo E negativo) | **D-085** | `--exclusoes` |
 | `justificativa_tecnica`: seletor × os 150 primeiros | **D-086** | `--justificativas` |
 | filtro do Inception, os 30 vereditos numa tabela | **D-094** | `varrer_elegibilidade.py` |
+| classe das 30 + o custo de cada conserto na régua | **D-098, D-101** | `varrer_classes.py` |
+| confiança do diagnóstico, os 4 braços | **D-098** | `medir_confianca.py` |
 
 **A linha de base trivial é obrigatória em toda tabela de agente** (D-051) — é o `denso puro` deste
 critério, e sem ela 49% de precisão parece bom em vez de "17 pontos acima de emitir tudo".
@@ -194,7 +196,7 @@ critério, e sem ela 49% de precisão parece bom em vez de "17 pontos acima de e
   esse filtro a precisão cai de 49% para 24% **em silêncio** (contrafactual medido em D-090).
   **As 10 chaves de `SETORES` têm empresa** — nenhuma consulta do vocabulário do planner devolve
   zero. **As 4 exclusões do Inception têm caso REAL:** consultoria (Deal), capital aberto
-  (Zenvia/Nasdaq), cripto (Liqi/stablecoin), > 10 anos (**Agrotools**, e só ela). **A Solinftec
+  (Zenvia/Nasdaq), cripto (Liqi/stablecoin), > 10 anos (**4 casos**: Agrorobótica, Agrotools, Automni e JetBov). **A Solinftec
   é o CASO-LIMITE, não um segundo caso** (D-097): tem 18 anos, o documento diz *"Criada há 18
   anos"* — idade, não ano — e a política de literalidade mantém `ano_fundacao: null`, então ela
   sai **ELEGÍVEL** com *"requisito não verificado"*. É o preço declarado da literalidade, e o
@@ -240,6 +242,9 @@ python scripts/avaliar_agentes.py --exclusoes  # filtro do Inception: falso posi
 python scripts/avaliar_agentes.py --justificativas  # o seletor do trecho técnico vs. os 150 primeiros
 python scripts/varrer_elegibilidade.py         # o veredito das 30 numa tabela, zero API (D-094)
 python scripts/varrer_elegibilidade.py --motivos   # com a evidência de cada recusa
+python scripts/varrer_classes.py               # o veredito de CLASSE das 30, com quadrante (D-098)
+python scripts/varrer_classes.py --custo-desenhos  # o que cada conserto custa NA RÉGUA
+python scripts/medir_confianca.py              # os 4 braços da confiança do diagnóstico (D-098)
 python scripts/avaliar_agentes.py --juiz       # LIGA o juiz do Extractor — ~52 chamadas
 python scripts/avaliar_agentes.py --rubrica    # braço REPROVADO (D-060)
 python scripts/avaliar_agentes.py --confianca-diagnostico  # braço REPROVADO (D-059)
