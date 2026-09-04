@@ -3354,9 +3354,23 @@ essa confusão custa caro e não avisa.
   a P-24 custa 1 ponto de `classe`"): vale para o desenho A (`3/7 → 2/7`) e **não** para o B
   (`3/7 → 3/7`). Foi o que tornou D-101 decidível.
 - `medir_confianca.py` → **refutou a hipótese que D-059 deixou escrita e ninguém testou por 8
-  dias**: *"melhorar isso é fazer o Classifier anexar evidência mais larga"*. O braço C mede
-  exatamente isso e dá **2, idêntico ao braço B**. O que move o campo é a **recência**, e ela
-  depende de `data_publicacao`, ausente em **86 dos 93 documentos**.
+  dias**: *"melhorar isso é fazer o Classifier anexar evidência mais larga"*. Os quatro braços,
+  contra o alvo que **D-058 fixou antes de medir — 4 acertos absolutos em 6**, com o trivial
+  fazendo 3:
+
+  | braço | o que é | acertos |
+  |---|---|---|
+  | A | produção hoje: `min()` sobre o perfil inteiro | **0** |
+  | B | D-059: evidência do diagnóstico | 2 |
+  | C | B + evidência LARGA — **a hipótese de D-059** | **2, idêntico a B** |
+  | D | C + datas de publicação preenchidas | **3** |
+  | — | linha trivial (responde sempre `alta`) | 3 |
+
+  **NENHUM braço passa o alvo de 4**, e C == B mata a hipótese: evidência mais larga não move o
+  campo. **O que move é a recência** — o braço D é o único que sobe, e ele depende de
+  `data_publicacao`, ausente em **86 dos 93 documentos** porque `coletar.py` não captura data
+  nenhuma. É o que liga este defeito ao da regra 2/3 desligada: **são o mesmo defeito visto de
+  dois lados**, e consertar `confianca` é consertar a coleta (P-25).
 
 **Nota de método, e ela é o motivo de esta entrada existir com atraso:** os dois scripts entraram
 citando `(D-098)` no docstring antes de D-098 existir. Um arquivo que aponta para uma decisão que
@@ -3476,7 +3490,7 @@ no caminho crítico da entrega de valor"*. Isso é constatação, e constataçã
 código emitia esse rótulo quando `pontos == 0` — quando **não encontrou sinal**. A rubrica pede
 *"constatamos que não há IA"*; o código entregava *"não achei sinal de IA"*.
 
-E a regra 4 do Evidence Validator (`evidence_validator.py:11`, D-010) diz, desde 22/08:
+E a regra 4 do Evidence Validator (`evidence_validator.py:12`, D-010) diz, desde 22/08:
 *"ausência de sinal != sinal negativo → nada é DELETADO, só rebaixado"*. `Elegibilidade` a obedece
 há semanas, separando `motivos_exclusao` (a base PROVA) de `requisitos_nao_verificados` (a base NÃO
 PROVA), e só o primeiro exclui. **O Classifier era o componente que a contrariava.**
@@ -3504,7 +3518,30 @@ antes de rodar, e foi previsto.
 **CRITÉRIO DE ACEITAÇÃO, FIXADO ANTES DE MEDIR** (parte 1, que decide sozinha): nenhuma piora em
 `classe 3/7` · `maturidade_stack 6/7` · `confianca 0/6` · `elegivel 6/6` · precisão ≥ 49% ·
 recall 100% · as mesmas 7 recusas em `varrer_elegibilidade` · `pytest` verde.
-**Resultado: todos idênticos, `pytest` 87 passed.** O `non-AI` CONSTATADO continua indo para
+**Resultado: todos idênticos, `pytest` 87 passed.**
+
+**E A LINHA TRIVIAL, QUE D-051 TORNA OBRIGATÓRIA E QUE A PRIMEIRA REDAÇÃO DESTA DECISÃO OMITIU:**
+
+| campo | trivial (sempre `AI-native`, todas as 8 dores) | produção |
+|---|---|---|
+| `classe` | **4/7** | 3/7 |
+| `maturidade_stack` | 6/7 | 6/7 |
+| `confianca` | **3/8** | 0/6 |
+| precisão de dor | 32% | **49%** |
+| discriminação | 1/8 | **8/8** |
+
+**O sistema PERDE de uma constante em `classe` e em `confianca`, e ganha em precisão e
+discriminação.** Escrever "classe 3/7" sem essa coluna é exatamente o que D-051 existe para
+impedir — *"sem ela, 49% de precisão parece bom em vez de 17 pontos acima de emitir tudo"*, e o
+inverso também vale: 3/7 parece um placar até se ver que responder sempre a mesma coisa faz 4/7.
+D-101 **não move nenhum dos dois lados**; a tabela está aqui porque a frase da defesa precisa
+dela, não porque a decisão dependa dela.
+
+**Como isto foi apanhado, e o registro vale mais que a correção:** por um `/code-review high`
+disparado em 04/09 sobre o commit ERRADO — ele revisou o documento da manhã, não este código. Achou
+assim mesmo, porque o defeito era **herdado**: o documento da manhã tinha removido a comparação com
+o trivial, e eu escrevi a decisão a partir dele sem repor. Um revisor com o alvo trocado achou o
+que eu não achei com o alvo certo. O `non-AI` CONSTATADO continua indo para
 `fora-do-funil` — `tests/test_grafo.py:110` seguiu verde **sem edição**, e isso é a evidência de
 que a mudança é aditiva, não uma reescrita da rubrica.
 

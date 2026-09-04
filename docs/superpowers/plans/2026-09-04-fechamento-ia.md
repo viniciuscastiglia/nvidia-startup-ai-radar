@@ -20,7 +20,7 @@ com duas divergências investigadas e resolvidas** (registradas abaixo). O run r
 
 O que ordena este plano não é placar. É o que a §1.1 identifica corretamente: **o repositório
 desobedece um princípio que ele mesmo escreveu no dia 2** — *ausência de sinal não é sinal
-negativo* (D-010, `evidence_validator.py:11`). O Classifier emite `non-AI` — uma afirmação positiva
+negativo* (D-010, `evidence_validator.py:12`). O Classifier emite `non-AI` — uma afirmação positiva
 sobre a empresa — quando os detectores voltam vazios. Nove empresas de trinta saem do funil por
 silêncio da extração, e o briefing informa ao gerente uma causa falsa para isso.
 
