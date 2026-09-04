@@ -3205,15 +3205,30 @@ não para avaliar o que o gerente veria. Duas outras acusações minhas caíram 
 "404" que era URL que eu havia montado errada, e "5% das evidências decapitadas" que era detector
 meu somando truncamento normal com o defeito (o número honesto é **1,7%**).
 
-**O ACHADO QUE NÃO ESTAVA NA LISTA: O PASSO 7 NÃO TEM FALLBACK.** `sondar_catalogo.py --rerank`
-mostra os **9 caminhos** (3 modelos × 3 paths) mortos — **404** nos endpoints atuais e **410 com
-assinatura de EOL** em `.../llama-3_2-nemoretriever-500m-rerank-v2/reranking` — e `GET /v1/models`
-responde *"com 'rank' no nome: NENHUM"*. `src/config.py` oferece três provedores e **um deles não
-existe mais**. Com a cota mensal do Cohere esgotada (D-093), houve algumas horas em que o passo 7
-do pipeline de 9 passos do TAPI **simplesmente não rodava em lugar nenhum**. Uma key nova
-restabeleceu o Cohere (`smoke_nvidia.py` 3/3), mas o quadro fica: **fornecedor único, sem rede.**
-É D-013/D-046/D-064 pela quarta vez, agora no reranker — e é o que justifica o provedor isolado
-com evidência em vez de princípio.
+**O PASSO 7 TEM FORNECEDOR ÚNICO — E ISTO NÃO É ACHADO NOVO, É D-013 QUE NUNCA FOI REVERTIDO.**
+A primeira redação desta entrada anunciava *"o fallback da NVIDIA MORREU"* como descoberta da
+revisão. **Está errada, e o erro foi apanhado pelo Vinícius**, que respondeu *"é impossível esse
+modelo ter morrido"* e mandou verificar. Verificado, o quadro é este:
+
+- **O reranker da NVIDIA está morto desde 2026-05-18, e o D-013 registrou isso no PRIMEIRO DIA
+  do projeto** — mesmo modelo (`llama-3.2-nv-rerankqa-1b-v2`), mesmo `410`, mesma data no corpo.
+  Foi essa morte que trouxe o Cohere. Anunciá-la em setembro como novidade é não ter lido o
+  próprio log.
+- **`404` NÃO É MORTE, e o repositório já sabia disso** (D-070/D-079): o corpo diz
+  *"Function …: **Not found for account** …"* — é **entitlement**. Juntei os `404` com o `410`
+  e chamei o conjunto de "9 caminhos mortos". Só os que respondem `410` estão mortos.
+- **A sonda NÃO tinha defeito.** Cheguei a "corrigir" `sondar_catalogo.py` supondo que o nome
+  antigo devolvesse `404` e que ela estivesse medindo a própria digitação. **Medido: os dois
+  nomes devolvem `410` idêntico** — o `410` vem do PATH, não do nome do modelo. A mudança foi
+  descartada, e fica a lição: *conserto sem defeito medido é ruído, e o comentário que eu já
+  tinha escrito nela afirmava um `404` que não existe.*
+
+**O que sobra de verdadeiro, e basta:** `src/config.py` oferece três provedores de rerank e
+**`nvidia` não é opção desde maio**. Com a cota do Cohere esgotada (D-093), houve horas em 03/09
+com o passo 7 sem nenhum provedor vivo. Uma key nova restabeleceu o Cohere (`smoke_nvidia.py`
+3/3). O quadro é **fornecedor único, sem rede** — e o valor disso para a arguição não é o susto,
+é que a arquitetura de provedor isolado em `src/config.py` foi comprada por quatro EOLs medidos,
+não por princípio.
 
 ### Os quatro consertos
 

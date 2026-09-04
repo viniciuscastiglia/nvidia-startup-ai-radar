@@ -5,16 +5,17 @@
 >
 > **O plano dos dias finais mora em `projeto/plano.md`** e continua sendo a fonte do que falta.
 
-## ⚠️ LEIA PRIMEIRO — o passo 7 tem fornecedor ÚNICO, e o fallback da NVIDIA morreu (D-097)
+## ⚠️ LEIA PRIMEIRO — o Cohere é ponto ÚNICO de falha no passo 7
 
 **A cota do Cohere foi resolvida com uma key nova** — `smoke_nvidia.py` volta a **3/3 OK** e o
-passo 7 roda. O aviso agora é outro, e é pior:
+passo 7 roda.
 
-**`RERANK_PROVEDOR=nvidia` NÃO EXISTE MAIS.** `sondar_catalogo.py --rerank` mostra os **9 caminhos**
-(3 modelos × 3 paths) mortos — **404** nos endpoints atuais e **410 com assinatura de EOL** em
-`.../llama-3_2-nemoretriever-500m-rerank-v2/reranking` — e `GET /v1/models` responde *"com 'rank'
-no nome: NENHUM"*. `src/config.py` oferece três provedores e **um não existe**. Houve algumas
-horas em 03/09 em que o passo 7 **não rodava em lugar nenhum**.
+**`RERANK_PROVEDOR=nvidia` não é opção — e isto NÃO é notícia de 03/09.** O reranker da NVIDIA
+está morto **desde 2026-05-18**, com `410` e a data no corpo, e **D-013 registrou no primeiro dia
+do projeto**: foi essa morte que trouxe o Cohere. A revisão de 03/09 chegou a anunciar isso como
+achado novo e **estava errada** (D-097). Os `404` que aparecem no mesmo teste são **entitlement**,
+não morte (D-070). O que importa operacionalmente é só isto: **sobrou um provedor**, e em 03/09
+houve horas com a cota dele esgotada e o passo 7 sem ninguém.
 
 - **Rode `smoke_nvidia.py` antes de gravar e antes de entregar.** São 4 segundos, e agora ele é a
   única defesa de um ponto único de falha, não só do LLM.

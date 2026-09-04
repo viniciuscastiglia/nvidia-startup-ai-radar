@@ -143,13 +143,11 @@ Consulta do usuário
 >   aberto uma migração desnecessária a 5 dias do vídeo.
 > - **Env var não protege o embedder.** Trocar o modelo muda o espaço vetorial e invalida os 377
 >   vetores — é `scripts/reembedar.py` mais re-medir a régua inteira (D-046).
-> - **O PASSO 7 NÃO TEM FALLBACK: O RERANKER DA NVIDIA MORREU INTEIRO (D-097).**
->   `sondar_catalogo.py --rerank` mostra os **9 caminhos** (3 modelos × 3 paths) mortos — **404**
->   nos endpoints atuais e **410 com assinatura de EOL** em
->   `.../llama-3_2-nemoretriever-500m-rerank-v2/reranking` — e a listagem responde *"com 'rank' no
->   nome: NENHUM"*. `src/config.py` oferece três provedores e **um não existe mais**. Somado à cota
->   do Cohere, houve horas em que o passo 7 não rodava em lugar nenhum. **Rode a sonda antes de
->   gravar**, e trate o Cohere como ponto único de falha.
+> - **O PASSO 7 TEM FORNECEDOR ÚNICO: `RERANK_PROVEDOR=nvidia` NÃO É OPÇÃO DESDE MAIO (D-097).**
+>   `src/config.py` oferece três provedores e um deles está morto **desde 2026-05-18** — é a morte
+>   que **D-013 registrou no primeiro dia** e que trouxe o Cohere, não novidade. `410` com a data
+>   no corpo; os `404` do mesmo teste são **entitlement**, não morte (D-070). Consequência prática:
+>   **o Cohere é ponto único de falha.** Rode `smoke_nvidia.py` antes de gravar e de entregar.
 > - **A COTA MENSAL DA TRIAL DO COHERE ACABOU EM 03/09 (D-093).** `429` com *"limited to 1000
 >   API calls / month"* — **não é o teto por minuto, é o do mês**, e ele não recupera sozinho.
 >   **`RERANK_PROVEDOR=nenhum` roda tudo** — grafo completo e `pytest` 81 passed **em 6,5 s**,
