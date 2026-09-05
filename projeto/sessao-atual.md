@@ -1,4 +1,4 @@
-# Pauta corrente — fim de 03/09, base fechada em 30, interface pela frente
+# Pauta corrente — 05/09 madrugada: a IA fechou, a interface é o que resta
 
 > Único arquivo de sessão do repositório. Guarda **o que está aberto**, não o que já aconteceu —
 > isso está em `decisoes.md` e no git.
@@ -101,7 +101,73 @@ dá **13 recusas, não 11** — e o argumento bom contra ele não é a contagem,
 documento inteiro quebra `_fala_de_terceiro` por construção**, porque o veto exige que TODA
 ocorrência tenha marcador.
 
-## O que fica para 05/09 à tarde — blocos 3 a 5 do plano
+## O que a madrugada de 05/09 fechou — os blocos 3, 4 e 5, e o número é ruim
+
+**A sessão começou verificando a anterior, e os quatro itens conferem.** A força bruta de D-103
+foi refeita nos dois braços (504 combinações), a bateria inteira reproduziu, a injeção de falha
+preserva os quatro campos, e a caça a afirmação sem comando achou **três em D-103**.
+
+| bloco | o que fechou | decisão |
+|---|---|---|
+| **3** | `justificativa_negocio` era **defeito de ÍNDICE**, não falta de texto: `NEGOCIO` chaveado só por tecnologia, com `citacao.dor_origem` disponível desde D-043. Na tela: NIM sob `latencia` dizendo *"reduz o custo por token"*. **2 de 15 → 15 de 15** no mesmo run | **D-104** |
+| **4** | A régua das 7 regras do TAPI existe — e **o motor faz 38% contra 44% da linha trivial** | **D-105** |
+| **5** | O `PROFUNDOS` alternativo dá **`classe 4/7`** contra a barra de 5/7. **REPROVADO** — e com ele **as duas hipóteses de D-060 estão mortas** | **D-106** |
+
+### O número do bloco 4 é o mais importante da noite, e ele é ruim
+
+**13/34 = 38% do motor contra 15/34 = 44% de um recomendador constante.** O corte que explica:
+
+- onde o conjunto esperado contém uma das 3 dominantes: trivial **15/15 por construção**, motor 7/15
+- onde só o domínio resolve: **trivial 0/19**, motor **6/19** — ele é o único que recupera
+  Isaac, Omniverse e RAPIDS
+
+**A causa está na distribuição, não no placar:** `NVIDIA NeMo` (21) e `NVIDIA AI Enterprise` (20)
+somam **46% das 89 recomendações**. Duas páginas genéricas ocupam metade de um teto de 3 por
+empresa. É a P-21 com denominador: **a recuperação casa vocabulário e não domínio.**
+
+**A PARTE 2 DO CRITÉRIO DE D-101 REPROVOU:** as 9 fazem **27%** contra **43%** das 21.
+O plano se contradiz no mesmo parágrafo (*"B não sai"* vs *"apertar, não reverter"*); **D-101
+resolveu por escrito na direção de apertar**. Não apertei nada — apertar é promover, e a
+**decisão é do Vinícius** (D-078). O denominador de 11 é fino: a diferença é de 2 acertos.
+
+### O que a caça a afirmação sem comando achou, e já foi pago
+
+D-102 escreveu *"número sem comando é afirmação, não medição"*. **D-103, a entrada seguinte,
+cometeu o defeito três vezes.** As três foram refeitas em 05/09 e **as três reproduzem**:
+
+| afirmação | comando, desde 05/09 |
+|---|---|
+| `fora-do-funil` inalcançável | `varrer_classes.py --forca-bruta` |
+| `media` 30 → 15·15 → **21·9** → 23·7 | `varrer_classes.py --prioridades` |
+| falha em `elegibilidade` preserva o trabalho | `pytest -k falha_na_elegibilidade`, **com braço de controle** |
+
+**A que mais faltava era o teste: não existia NENHUM** para `seguir_sem_elegibilidade`. Reverter
+o handler de D-099/D-103 deixava a suíte **verde**.
+
+**Ficam sem comando, declarados:** a latência 3m30 → 3m27 e a linha `?` de 110 colunas — as duas
+descrevem um estado anterior que não existe mais.
+
+### Dois defeitos meus que a execução pegou, e nenhum apareceria em leitura
+
+1. **As 8 frases novas de D-104 estouravam os 150 do briefing** em sete das oito, e teriam
+   chegado ao gerente cortadas — D-100 de volta por outra porta, três decisões depois.
+2. **A minha própria força bruta cobria menos do que anunciava:** `extractor.frases` descarta
+   trechos com ≤ 40 caracteres, então `n_prof` valia 0 em silêncio e o braço em degraus nunca
+   alcançava o degrau 2a. O mesmo erro no teste do bloco 5, que ficou **verde sobre um
+   `TypeError`** por não chamar a função que ele guarda.
+
+### O estado ao fim
+
+`pytest` **93 passed** (era 87) · `classe 3/7 · stack 6/7 · confianca 0/6 · elegivel 6/6 ·
+49%/100%` **idênticos** · trivial `4/7` e `32%` · as mesmas **7 recusas** · **9** com `?` ·
+cobertura **10,6%** · **7→13** · grafo rodado com `RERANK_PROVEDOR=cohere` e briefing lido.
+
+**A interface tem 05/09 inteiro + a manhã de 06/09, e é o único eliminatório em aberto no
+produto.**
+
+---
+
+## O que ficava para 05/09 à tarde — blocos 3 a 5 do plano (FECHADOS na madrugada)
 
 - **P-22** — `NEGOCIO` indexado por tecnologia; passa a ser por `(tecnologia, dor)`. Na tela hoje:
   NIM sob `latencia` traz *"Reduz o custo por token"*; NeMo sob `custo` traz o texto de avaliação.
