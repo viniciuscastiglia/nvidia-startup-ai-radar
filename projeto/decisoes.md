@@ -3817,6 +3817,107 @@ Três testes novos: o irmão de D-063 para a dor, o teto do briefing, e a cobert
 
 ---
 
+## D-106 — A hipótese 2 de D-060 foi medida sob protocolo e REFUTADA; as duas de D-060 estão mortas
+**Data:** 05/09/2026 · **lista commitada em `dca9212`, ANTES de qualquer medição** · zero API
+**Decisão:** `PROFUNDOS_CANDIDATO` entra atrás de `USAR_PROFUNDOS_CANDIDATO`, **desligado**.
+**Medido: `classe 4/7`, contra a barra de 5/7 fixada em D-058. Não promove.**
+
+**O QUE ESTAVA EM JOGO.** D-060 mediu que a rubrica em degraus empata com o trivial e com uma
+linha de controle de um caractere, e deixou **duas hipóteses, e só duas**, para o teto de
+`classe`: *"ou os documentos coletados não contêm o sinal (curadoria), ou a lista `PROFUNDOS`
+não cobre como uma healthtech descreve a própria stack (rubrica)"*. A hipótese 1 foi
+**REFUTADA em 03/09** (D-095). Esta entrada mede a 2.
+
+**O PROTOCOLO, QUE É METADE DA DECISÃO.** A tentativa de 04/09 escreveu uma lista alternativa
+**conhecendo o gabarito** e foi descartada sem medir — é o erro que D-091 custou uma sessão
+inteira (*"rede tricotada em volta da resposta não é rede"*). O protocolo, nesta ordem:
+
+1. derivar **só** de `contexto/02` §4 linha 148 e da coluna de justificativa técnica de
+   `contexto/03` §4 — os dois escritos em **22/08**, antes de qualquer medição deste projeto;
+2. gravar em `data/avaliacao/profundos-candidato.yaml` com **`origem` por termo**, e
+   **commitar antes de rodar** — o commit é o carimbo de data;
+3. só então medir.
+
+**O PRIMEIRO ACHADO SAIU DA DERIVAÇÃO, ANTES DO NÚMERO.** A rubrica nomeia **cinco** formas de
+otimização técnica própria — *"self-hosting, quantização, avaliação, guardrails, MLOps real"* — e
+a produção cobre **três**. `avaliação` e `guardrails` **nunca tiveram marcador**, e são
+exatamente as duas que não exigem falar de GPU. Oito dos 13 termos de produção são nome de
+produto NVIDIA ou vocabulário de serving: **a lista mede quem fala como fornecedor de infra**.
+
+**A CORREÇÃO AO PLANO, e ela é a razão de `marcadores_de_profundidade()` existir.** O plano de
+04/09 pedia *"constante separada atrás de flag, nunca editar `PROFUNDOS`, porque a lista é
+compartilhada pelos dois eixos e mexer nela moveria a `maturidade_stack`"*. **Isso inverte a
+razão de D-060.** A lista é compartilhada **de propósito**, para que calibrar `classe` mexa na
+`maturidade_stack` no mesmo movimento e a calibração fique **visível**. Um candidato que
+alcançasse só o eixo 1 faria o critério *"sem derrubar 6/7"* passar **por construção** — a
+armadilha do instrumento que parece medido, que D-103 apanhou em `varrer_classes.py`. A flag
+troca a lista nos **dois** eixos; `PROFUNDOS` de produção segue intocado.
+
+**CRITÉRIO, FIXADO EM D-058 E REAFIRMADO NO PLANO ANTES DA MEDIÇÃO:** promove só se
+`classe ≥ 5/7` **sem** derrubar `maturidade_stack` abaixo de 6/7.
+
+| braço | `classe` | `maturidade_stack` |
+|---|---|---|
+| trivial (D-051, obrigatória) | **4/7** | 6/7 |
+| produção (aritmética 2/2/1) | 3/7 | 6/7 |
+| rubrica em degraus, lista de produção (D-060) | **4/7** | 6/7 |
+| **rubrica em degraus + candidato (este braço)** | **4/7** | 6/7 |
+
+**REPROVADO.** Não alcança 5/7, empata com o braço de D-060 e **empata com o trivial** — não
+compra nada que responder sempre a mesma coisa não compre.
+
+**POR QUE NÃO SE MOVE, E ISTO VALE MAIS QUE O PLACAR.** Três medições, e a terceira é a que
+decide:
+
+1. **O candidato acrescenta 5 marcadores à ÚNICA empresa que já passava** — Maritaca, de 3 para
+   8 (`avaliaç`, `benchmark`, `embedding`, `fp8`, `fp4`) — e **zero às outras 29**. Nenhuma das
+   sete fixtures de profundidade zero ganha um único marcador.
+2. **Nove dos 17 termos novos não ocorrem em NENHUMA das 30**: `self-host`, `batching`,
+   `kv cache`, `int4`, `decoding`, `kernel`, `profiling`, `rerank`, `sim-to-real`,
+   `dado sintétic`. `guardrail` ocorre em **uma** (Resolva AI, que não é fixture de gabarito);
+   `fine-tun`, `fp8`, `fp4` e `embedding`, só na Maritaca.
+3. **`avaliaç` ocorre em 13 das 30 — e em 12 é outro sentido.** Avaliação dos dados da
+   propriedade (Agrorobótica), avaliações médicas descentralizadas (Axenya), *"nosso atendimento
+   tem avaliação de 4,5"* (Conta Simples), avaliações de melhoramento genético de gado
+   (iRancho), *"na avaliação de Daniel"* (Liqi). **A única ocorrência técnica é a da Maritaca**:
+   *"a única forma de pegar isso é rodar a avaliação inteira"*. O termo que a rubrica nomeia
+   literalmente é o mais polissêmico da lista em português — **o risco foi declarado no YAML
+   antes de medir, e a medição o confirmou.**
+
+**AS DUAS HIPÓTESES DE D-060 ESTÃO REFUTADAS, E A CONCLUSÃO É SOBRE O MUNDO, NÃO SOBRE O CÓDIGO.**
+Não é que a lista seja estreita demais: as sete empresas que o classificador chama de
+`AI-enabled` contra um gabarito `AI-native` **não têm vocabulário de profundidade técnica
+nenhum**, em 29 termos derivados da própria rubrica e do documento da stack — nem `avaliação`,
+nem `guardrails`, nem `fine-tuning`, nem `benchmark`. **Talvez o classificador esteja certo sobre
+profundidade**, e o gabarito é que chama de `AI-native` empresa que não publica sinal de operar
+IA própria. Se uma healthtech não escreve uma linha sobre avaliação de modelo ou guardrails na
+comunicação pública, ela consome API — **que é a tese do TAPI**. É a mesma leitura que D-095
+chegou pela porta da curadoria; agora ela vem pelas duas portas.
+
+**ALTERNATIVA DESCARTADA — usar a lista de 22 termos escrita em 04/09.** Ela conhecia o
+gabarito. Mesmo que desse 5/7, o número não seria interpretável: não haveria como distinguir
+"a lista cobre o vocabulário" de "a lista foi ajustada até a fixture sair certa". D-091 é o
+precedente, e custou uma sessão.
+
+**SEGUNDA ALTERNATIVA DESCARTADA — baixar `MARCADORES_PARA_PROFUNDIDADE` de 3 para 2.** Com o
+candidato, Axenya e Deal chegariam a 2 se o recorte de frases as contasse. É **exatamente** o
+grau de liberdade que o ACEITAR da P-24 protege (D-062): ajustar o limiar até a fixture sair
+certa é calibrar contra o próprio julgamento. E o número é compartilhado com o eixo 2, então
+mexer nele moveria a `maturidade_stack` junto — que é o desenho de D-060 funcionando.
+
+**UM ACHADO DE BORDA, e ele é sorte e não desenho:** as duas ocorrências da Axenya
+(`Benchmark -54% vs média de mercado` e `avaliações críticas descentralizadas`) são fragmentos de
+**34 e 36 caracteres**, e o piso de 40 de `extractor.frases` as descarta. Os dois são falso
+positivo — benchmark de custo e avaliação médica —, então o piso acertou. **Acertou por acaso:**
+ele existe para produzir trecho citável, não para filtrar sentido.
+
+**O QUE FICA EM PRODUÇÃO:** nada muda. `USAR_PROFUNDOS_CANDIDATO = False`, `RUBRICA_EM_DEGRAUS =
+False`, `PROFUNDOS` intocado. Verificado: `classe 3/7 · maturidade_stack 6/7 · confianca 0/6 ·
+elegivel 6/6 · 49%/100%` idênticos, `pytest` **92 passed**. **Medir não é promover** (D-078), e
+aqui nem há o que promover — o braço foi reprovado pelo critério que o precedia.
+
+---
+
 ## Decisões pendentes
 
 | # | Decisão | Estado |

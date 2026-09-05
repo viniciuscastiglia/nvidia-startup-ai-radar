@@ -177,7 +177,7 @@ PROFUNDOS_CANDIDATO = [
 USAR_PROFUNDOS_CANDIDATO = False
 
 
-def marcadores() -> list[str]:
+def marcadores_de_profundidade() -> list[str]:
     """A lista que os DOIS eixos leem — e ser uma só é o que D-060 protege.
 
     D-060 deixou `profundidade_tecnica()` compartilhado justamente para que mexer na lista para
@@ -221,7 +221,7 @@ RUBRICA_EM_DEGRAUS = False
 
 
 def profundidade_tecnica(docs: list[DocumentoRef]) -> tuple[int, list[Evidencia]]:
-    """Quantos marcadores DISTINTOS de `marcadores()` os documentos inteiros contêm, e as frases.
+    """Quantos marcadores DISTINTOS de `marcadores_de_profundidade()` os documentos contêm, e as frases.
 
     Distintos, e não ocorrências: uma página que repete "latência" oito vezes tem um sinal, não
     oito. É a mesma leitura que o eixo 2 já fazia (`sum(1 for p in PROFUNDOS if p in texto)`).
@@ -238,7 +238,7 @@ def profundidade_tecnica(docs: list[DocumentoRef]) -> tuple[int, list[Evidencia]
         primeira_do_doc = True
         for frase in frases(doc):
             baixa = frase.lower()
-            if casados := [m for m in marcadores() if m in baixa]:
+            if casados := [m for m in marcadores_de_profundidade() if m in baixa]:
                 marcadores.update(casados)
                 if primeira_do_doc:
                     evidencias.append(Evidencia.de_documento(doc, frase[:400]))
@@ -326,7 +326,7 @@ def node(state: EstadoAnalise) -> dict:
     texto_tecnico = " ".join(
         e.trecho.lower() for a in perfil.sinais_otimizacao_tecnica for e in a.evidencias
     )
-    achados = sum(1 for p in marcadores() if p in texto_tecnico)
+    achados = sum(1 for p in marcadores_de_profundidade() if p in texto_tecnico)
     maturidade: MaturidadeStack = (
         "alta" if achados >= MARCADORES_PARA_PROFUNDIDADE else "media" if achados >= 1 else "baixa"
     )

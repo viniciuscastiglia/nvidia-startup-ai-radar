@@ -551,26 +551,49 @@ def test_profundos_candidato_bate_com_o_yaml():
 
 
 def test_a_flag_do_candidato_alcanca_os_dois_eixos():
-    """A GUARDA DE D-060, E ELA É A RAZÃO DE `marcadores()` EXISTIR.
+    """A GUARDA DE D-060, E ELA É A RAZÃO DE `marcadores_de_profundidade()` EXISTIR.
 
     D-060 deixou a lista compartilhada de propósito: mexer nela para consertar `classe` move a
     `maturidade_stack` no mesmo movimento, o que torna a calibração visível. Um candidato que
     alcançasse só o eixo 1 faria o critério de D-106 — *"sem derrubar maturidade_stack abaixo
     de 6/7"* — passar POR CONSTRUÇÃO, que é a armadilha do instrumento que parece medido.
+
+    A PRIMEIRA VERSÃO DESTE TESTE NÃO CHAMAVA `profundidade_tecnica`, e por isso ficou verde
+    sobre um `TypeError` — o acessor colidia com a variável local `marcadores`. Era o mesmo
+    defeito que ele existe para impedir: uma checagem que parece verificação e não executa o
+    caminho. Ele agora EXERCITA os dois eixos com um documento que só o candidato casa.
     """
     from src.agents import classifier
+    from src.state import Afirmacao, DocumentoRef, Evidencia, PerfilStartup, StartupRef
 
-    original = classifier.USAR_PROFUNDOS_CANDIDATO
+    # `guardrails` e `avaliação` estão SÓ no candidato; nenhum termo de produção aparece aqui.
+    frase = ("A equipe mantém guardrails proprietários e um processo de avaliação contínua "
+             "com fine-tuning sobre dado de domínio, sem depender de terceiro.")
+    doc = DocumentoRef(documento_id=1, tipo="site", titulo="t",
+                       url_fonte="https://exemplo.test/x", conteudo_texto=frase)
+    perfil = PerfilStartup(
+        startup_id=1, nome="Acme",
+        sinais_otimizacao_tecnica=[Afirmacao(texto=frase,
+                                             evidencias=[Evidencia.de_documento(doc, frase)])])
+    estado = {"perfil": perfil, "startup": StartupRef(startup_id=1, nome="Acme",
+                                                      documentos=[doc])}
+
+    original_lista = classifier.USAR_PROFUNDOS_CANDIDATO
+    original_rubrica = classifier.RUBRICA_EM_DEGRAUS
     try:
-        assert classifier.marcadores() is classifier.PROFUNDOS
-        classifier.USAR_PROFUNDOS_CANDIDATO = True
-        assert classifier.marcadores() is classifier.PROFUNDOS_CANDIDATO
-    finally:
-        classifier.USAR_PROFUNDOS_CANDIDATO = original
+        assert classifier.marcadores_de_profundidade() is classifier.PROFUNDOS
+        classifier.RUBRICA_EM_DEGRAUS = True
 
-    # O eixo 2 tem de LER o acessor, não a constante de produção — é o que o teste acima não
-    # mostraria sozinho, porque `marcadores()` pode existir e ninguém chamá-la.
-    import inspect
-    fonte = inspect.getsource(classifier.node)
-    assert "marcadores()" in fonte.split("Eixo 2")[1], \
-        "o eixo 2 voltou a ler PROFUNDOS direto — a calibração ficou silenciosa"
+        # EIXO 1 (`profundidade_tecnica`, documentos inteiros) e EIXO 2 (`maturidade_stack`,
+        # trechos de evidência) — os dois têm de se mexer, e nenhum se mexe hoje.
+        assert classifier.profundidade_tecnica([doc])[0] == 0
+        assert classifier.node(estado)["diagnostico"].maturidade_stack == "baixa"
+
+        classifier.USAR_PROFUNDOS_CANDIDATO = True
+        assert classifier.marcadores_de_profundidade() is classifier.PROFUNDOS_CANDIDATO
+        assert classifier.profundidade_tecnica([doc])[0] >= 3, "o eixo 1 não leu o candidato"
+        assert classifier.node(estado)["diagnostico"].maturidade_stack == "alta", \
+            "o eixo 2 não leu o candidato — a calibração ficou silenciosa"
+    finally:
+        classifier.USAR_PROFUNDOS_CANDIDATO = original_lista
+        classifier.RUBRICA_EM_DEGRAUS = original_rubrica
