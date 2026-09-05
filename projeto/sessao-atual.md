@@ -5,6 +5,174 @@
 >
 > **O plano dos dias finais mora em `projeto/plano.md`** e continua sendo a fonte do que falta.
 
+## 🔜 PARA A PRÓXIMA SESSÃO — o RAG e o Grok
+
+> Escrito ao fim da madrugada de 05/09, **antes** de qualquer implementação. Nada aqui virou
+> código nem decisão: é o estado de uma investigação que mudou o diagnóstico do sistema, e ela
+> não existe em `decisoes.md` porque **nenhuma decisão foi tomada**. A próxima sessão decide.
+
+### 1. O que a investigação achou, e ela contradiz o que eu tinha concluído uma hora antes
+
+O bloco 4 mediu o motor de recomendação em **38% contra 44% da linha trivial**, e a primeira
+leitura pôs a culpa na recuperação. **A evidência seguinte diz que o gargalo está ANTES dela.**
+
+Compare as duas perguntas que a mesma máquina recebe:
+
+| | |
+|---|---|
+| **A régua do RAG** (95% r@1 · 79% e@1) pergunta | *"Que servidor de inferência da NVIDIA faz **dynamic batching** e executa vários modelos ao mesmo tempo?"* |
+| **A recomendação** (38%) pergunta | `custo — com a diversificação das fontes de receita — e um controle dos custos… Análise por centros de custos, usuários e categorias de despesas` |
+
+A primeira tem a agulha escrita na pergunta: `dynamic batching` está literal na página do Triton.
+A segunda é uma fintech falando de **categorização de despesa em cartão corporativo** — sem uma
+única palavra técnica para ancorar. Sem âncora, o recuperador devolve a página de maior
+superfície temática, que é a `AI Enterprise`.
+
+**E a dor às vezes nem é real.** Consulta literal capturada da Conta Simples:
+
+```
+latencia Emita quantos cartões corporativos precisar, concentre seus gastos em um só lugar
+         e gerencie tudo o que acontece em tempo real.
+```
+
+Isso não é queixa de latência: é marketing de painel. `GATILHOS_DOR` casou *"tempo real"*.
+
+### 2. As três medições que sustentam isso — todas de 05/09, todas reproduzíveis
+
+| medição | número | comando |
+|---|---|---|
+| a página guarda-chuva ocupa vaga e nunca ganha | `AI Enterprise` em **17 de 34 pares**, razão de acerto em **0**, ocupando vaga em **11 que erram** | ler `run-recomendacoes.json` |
+| ela é 3,1× a própria fatia do corpus | 7% dos chunks, **22%** das recomendações, sob **5 das 8 dores**. Contraste: Guardrails 0,6× sob 2 dores | `psql` + o mesmo json |
+| **o corte que aponta o culpado** | regra chaveada por **setor** (vem da curadoria): **10/16 = 62%** · chaveada por **dor** (vem do casador, precisão 49%): **3/18 = 17%** | `--regras-tapi` |
+
+> **O confundidor, declarado:** a regra de setor julga todas as ~3 recomendações da empresa
+> (2,94 tecnologias por par medidas); a de dor julga ~1 (1,06). **Não é comparação limpa.** 62
+> contra 17 é grande demais para ser só isso, mas quem quiser usar o número na defesa precisa
+> dizer a ressalva junto.
+
+**O número que já dizia tudo estava na régua há semanas: a precisão de dor é 49%.** Metade das
+dores extraídas não confere com o gabarito, e a recomendação é função da dor.
+
+**Consequência para a ordem do conserto:** mexer no reranking seria consertar a peça que
+funciona. **O RAG continua sendo o ponto forte e os 95% continuam de pé** — o que os 38%
+mediram pela primeira vez não foi a recuperação isolada, foi a **composição** (extração de dor →
+consulta → recuperação). Nenhuma régua anterior atravessava essa fronteira.
+
+**Candidato a D-107**, se a próxima sessão confirmar: *o gargalo do motor de recomendação é a
+extração de dor, não a recuperação*.
+
+### 3. O Grok — e aqui eu errei, o repositório estava certo desde 28/08
+
+Eu rodei `sondar_catalogo.py`, que fala **só com a NVIDIA**, e concluí "não existem dois
+modelos". A conclusão correta daquele teste era *"a conta NVIDIA alcança 1 de 10"* — ela não
+diz nada sobre um segundo provedor. **D-067 registrou em 28/08 que o Grok está pré-autorizado
+pela liga e que NÃO foi descartado por mérito: não foi testado, porque a chave não existia.**
+`revisao-pontos-cegos.md` já dizia a frase inteira: *"a cadeia certa é entre PROVEDORES… o
+bloqueio é a chave, não o código."*
+
+**Verificado hoje: o custo é três variáveis de ambiente e ZERO código.**
+
+```
+LLM_BASE_URL=https://api.x.ai/v1
+LLM_MODEL=grok-...
+LLM_API_KEY=xai-...
+```
+
+- `src/llm.py` é um `ChatOpenAI` sobre `base_url`/`api_key`/`model`, tudo vindo do config;
+- `src/config.py` já aceita **`LLM_API_KEY` como nome neutro**, escrito com o comentário
+  *"para que trocar de provedor não exija renomear variável"*;
+- `smoke_nvidia.py` lê tudo de `LLM.*` — **ele já valida qualquer provedor**, sem uma linha.
+
+**Para os DOIS rodando juntos** o custo sobe: hoje `LLM` é singleton no config. Precisa de uma
+segunda config e de um jeito de o nó pedir qual quer. Pequeno, não zero.
+
+### 4. A consequência que vale mais que o fallback — e é HIPÓTESE, não medição
+
+O modelo atual tem **mediana de 51 s** (D-080), e esse número fechou decisões pelo repositório:
+
+- a opção **(b)** da `justificativa_tecnica` (o LLM redigir) caiu em parte por *"~2,5 min mesmo
+  para uma startup"*;
+- o **juiz do Extractor** (P-09) custa ~52 chamadas ≈ 45 min de relógio;
+- o **passo 8** está fora do caminho do grafo em parte por custo.
+
+**Se o Grok responder em segundos, as três reabrem** — não por mérito técnico novo, mas porque a
+régua de D-084 é *latência que o gerente sente*, e o número que as fechou muda de ordem de
+grandeza. **Isso não está medido. É a primeira coisa a medir, e custa 4 segundos.**
+
+### 5. Por que o LLM é a ferramenta certa PARA ESTE gargalo
+
+O juiz LLM do Extractor já existe, atrás de `USAR_JUIZ_LLM`, e D-072 mediu:
+
+| | casador (produção) | com o juiz |
+|---|---|---|
+| **precisão de dor** | **49%** | **83-96%** |
+| recall de dor | 100% | **71-79%** |
+| dor proibida emitida | 10 | **1-2** |
+
+É exatamente o número que a §2 apontou como gargalo. **Mas os 83-96% são do
+`nemotron-3-nano-30b-a3b`, que a sondagem de hoje confirmou EOL** — o número não vale até ser
+refeito no modelo vivo. E o custo declarado continua: **recall cai 25 pontos.** O argumento a
+favor está pronto em D-072 (*"erro por omissão é recuperável; erro por afirmação, não"*), e a
+promoção é **P-09**, aberta desde 28/08.
+
+**E o que um LLM NÃO conserta:** reescrever a consulta. A dor está errada, não mal escrita —
+reescrever *"cartões corporativos… em tempo real"* produz uma consulta de latência fluente e
+igualmente errada. O conserto tem que ser não gerar a dor falsa.
+
+### 6. A ordem sugerida para a próxima sessão
+
+```bash
+python scripts/smoke_nvidia.py                  # 4 s. VIVE? e em QUANTO TEMPO? decide o resto
+python scripts/avaliar_agentes.py --juiz        # ~52 chamadas: precisão de dor no modelo vivo
+python scripts/avaliar_rag.py --geracao         # abstenção do passo 8 (23/24 hoje) — ele mente?
+python scripts/medir_saida_estruturada.py -n 5  # respeita `json_schema`? é a base de D-040
+```
+
+Nenhum toca a cota do Cohere. **Fixar o critério antes de rodar cada um** — e lembrar que
+**medir não é promover**.
+
+### 7. O que é decisão sua, não minha
+
+- **Reabrir a D-087?** Ela decidiu em 02/09 que *"o fallback não entra, e a hora vai para a base
+  e a interface"* — por **alocação de tempo, não por mérito**. O contexto mudou: a base fechou, e
+  o gargalo medido hoje é onde o LLM é a ferramenta. Mas são 2 dias até o vídeo.
+- **Apertar o rebaixamento das 9?** A parte 2 do critério de D-101 reprovou (27% contra 43%).
+  D-101 diz *"apertar, não reverter"*. Eu medi e parei.
+- **A interface.** Continua sendo o **único eliminatório em aberto no produto**, e tem 05/09
+  inteiro + a manhã de 06/09. Nada acima vale atrasá-la.
+
+---
+
+### 8. Os outros problemas abertos, para pesquisar com calma
+
+> Verificados um a um em 05/09, não copiados do plano — **um item caiu na verificação**: os
+> diagramas `.mmd` NÃO estão desatualizados (`diagramas.py` dá zero diff hoje); `plano.md` foi
+> corrigido.
+
+| # | problema | o que é, em uma frase | o que pesquisar |
+|---|---|---|---|
+| 1 | **A interface não existe** | zero byte, e o vídeo tem de demonstrar pela interface web — sem ela o eliminatório dispara | nada: é execução |
+| 2 | **`confianca` é "baixa" nas 30** | é o `min()` sobre ~9 afirmações; basta uma fraca. **Já medido: o que move o campo é a recência, e `data_publicacao` falta em 86 de 93 documentos** | extração confiável de data de publicação: `article:published_time`, JSON-LD `datePublished`, microdata |
+| 3 | **O filtro do Inception lê 10,6% do texto** | varre trechos de evidência, não o documento. Varrer tudo quebra o veto de terceiro por construção: **7 → 13 recusas, ≥ 4 falso positivo** | atribuição de sujeito: distinguir *"sou uma consultoria"* de *"cito uma consultoria"* — coreference, entity attribution |
+| 4a | **As 16 fontes do RAG não têm cache** | `ingerir_nvidia.py` baixa ao vivo; a deriva já foi MEDIDA (mesma contagem, hash diferente). O gabarito aponta frase-âncora, então `avaliar_rag.py` quebra na mão do avaliador | cache de conteúdo com `--refetch`; decidir o que cachear (HTML cru × texto limpo × chunks) |
+| 4b | **O README não ensina a rodar** | 4 buracos do clone limpo: sem `environment.yml`, `createdb` não escrito, `DATABASE_URL` do Docker não escrita, `COHERE_REQ_POR_MIN` | nada: é escrita |
+| 5 | **2 módulos sem teste** | **verificado: zero** arquivos de teste citam `rag/geracao.py` (o passo 8, onde mora a abstenção) e `db.py` (o SQL da recuperação). Os 93 verdes dão cobertura aparente | nada: é execução |
+| 6 | **4 campos calculados que ninguém lê** | `estrategia_analise`, `exige_sinais_ia`, `score_recuperacao`, `motivo_validacao`. Não é código morto — a arquitetura PUBLICADA promete "estratégia de análise" e o sistema a joga fora | decisão, não pesquisa: ou o subgrafo lê, ou o diagrama para de prometer |
+| 7 | **3 docstrings dizem "STUB DA SESSÃO 01"** | `query_planner`, `recommendation`, `briefing` — e dois são escolhas medidas, não trabalho inacabado. Avaliador que lê "STUB" conclui projeto incompleto | nada: 10 minutos, e é risco de nota puro |
+| 8 | **Embedder e Cohere sem plano B** | o embedder está em toda consulta e trocá-lo invalida os 377 vetores (re-embedar + re-medir tudo); o Cohere é o único reranker desde maio, trial de 1.000/mês que já estourou. **O Grok não resolve nenhum dos dois** | embedding local como plano B: `sentence-transformers`, BGE-M3 (fala português) |
+| 9 | **203 frases sem sujeito nas fixtures** | o coletor apagava nome próprio em tag inline. **Raiz consertada**; o dado velho não. Efeito medido: **1,7%** dos trechos | nada: re-coleta manual, depois da entrega |
+
+**A ordem sugerida, se for para escolher:**
+
+- **antes do vídeo:** a interface (1) e as docstrings (7) — a segunda são 10 minutos e é nota;
+- **junto com o README de 06/09:** o cache das fontes (4a), porque *"projeto que não executa na
+  mão de quem avalia"* é eliminatório e a deriva já aconteceu uma vez;
+- **depois da entrega, por valor de aprendizado:** (3) e (2). As duas são **o mesmo tipo de
+  problema** — o sistema decide com lista de palavras onde precisaria entender contexto — e são
+  exatamente onde um LLM tem chance de valer a pena.
+
+---
+
 ## ⚠️ LEIA PRIMEIRO — o Cohere é ponto ÚNICO de falha no passo 7
 
 **A cota do Cohere foi resolvida com uma key nova** — `smoke_nvidia.py` volta a **3/3 OK** e o
