@@ -1,0 +1,115 @@
+# `PROFUNDOS` ALTERNATIVO — a hipótese 2 de D-060, sob protocolo anti-contaminação (D-106)
+#
+# O QUE ESTA LISTA TESTA
+# -----------------------
+# D-060 mediu que a rubrica em degraus empata com o trivial e com uma linha de controle de um
+# caractere, e explicou por quê: **sete das oito fixtures têm profundidade ZERO**. Daí saíram
+# duas hipóteses, e só duas:
+#
+#   1. os documentos não contêm o sinal  -> trabalho de CURADORIA.
+#      **REFUTADA em 03/09** (D-095): 29 das 30 têm zero dos 13 marcadores, e 1 de 7 vagas reais
+#      da Zenvia — uma empresa da Nasdaq — tem 2, abaixo do limiar. Se nem ali há vocabulário de
+#      inferência, a empresa consome API. Que é a tese do TAPI.
+#   2. a lista `PROFUNDOS` não cobre como uma empresa que não é de infra descreve a própria
+#      stack -> trabalho de RUBRICA. **É esta lista.**
+#
+# O PROTOCOLO, E ELE É A DECISÃO
+# -------------------------------
+# A tentativa de 04/09 escreveu uma lista alternativa CONHECENDO o gabarito, e é imprestável —
+# é o erro que D-091 custou uma sessão inteira ("rede tricotada em volta da resposta não é
+# rede"). Esta lista foi derivada de dois documentos escritos em 22/08, **antes de qualquer
+# medição deste projeto**, e commitada ANTES de rodar qualquer coisa. O commit é o carimbo.
+#
+# `origem` é obrigatória por termo, com documento e trecho literal. Um termo sem origem é um
+# termo que eu inventei olhando o resultado, e não há como distinguir depois.
+#
+# OS DOIS ACHADOS DA DERIVAÇÃO, ANTES DE MEDIR
+# ---------------------------------------------
+# Ler `contexto/02` §4 linha 148 com a lista de produção do lado responde sozinho:
+# a rubrica nomeia CINCO formas de otimização técnica própria — *"self-hosting, quantização,
+# avaliação, guardrails, MLOps real"* — e a produção cobre TRÊS. **`avaliação` e `guardrails`
+# nunca tiveram marcador**, e são exatamente as duas que uma healthtech ou uma legaltech usaria
+# para descrever a própria stack, porque não exigem falar de GPU.
+#
+# O segundo: dos 13 de produção, oito são NOME DE PRODUTO (`cuda`, `gpu`, `tensorrt`, `triton`,
+# `vllm`) ou vocabulário de infraestrutura (`throughput`, `on-premise`, `self-hosted`). A lista
+# mede quem fala como fornecedor de infra — que é a Maritaca, a única que ela acerta.
+
+candidato:
+
+  # ── os cinco que a própria rubrica nomeia (contexto/02 §4, linha 148) ────────────────────
+  # "otimização técnica própria: self-hosting, quantização, avaliação, guardrails, MLOps real"
+
+  - termo: "self-host"
+    origem: 'contexto/02-rubrica-ai-native.md:148 — "self-hosting"'
+    nota: >-
+      superset de `self-hosted`, que é o termo de produção. A rubrica escreve "self-hosting";
+      a produção só casa a forma com `-ed`.
+  - termo: "quantiz"
+    origem: 'contexto/02-rubrica-ai-native.md:148 — "quantização"'
+  - termo: "avaliaç"
+    origem: 'contexto/02-rubrica-ai-native.md:148 — "avaliação"'
+    nota: >-
+      AUSENTE DA PRODUÇÃO. É também o termo de maior risco de falso positivo em português
+      ("avaliação de crédito", "avaliação de imóvel"), e é por isso que ele é medido em vez de
+      promovido: o risco é real e a medição é quem decide.
+  - termo: "guardrail"
+    origem: 'contexto/02-rubrica-ai-native.md:148 — "guardrails"'
+    nota: AUSENTE DA PRODUÇÃO, e nomeado literalmente pela rubrica.
+  - termo: "mlops"
+    origem: 'contexto/02-rubrica-ai-native.md:148 — "MLOps real"'
+
+  # ── os oito de produção que sobrevivem, com a origem que faltava ─────────────────────────
+
+  - termo: "cuda"
+    origem: 'contexto/03-stack-nvidia.md:142 — "CUDA Toolkit"'
+  - termo: "gpu"
+    origem: 'contexto/03-stack-nvidia.md:369 §4 — "GPU subutilizada"'
+  - termo: "tensorrt"
+    origem: 'contexto/03-stack-nvidia.md:32 — "TensorRT-LLM — otimização de inferência"'
+  - termo: "triton"
+    origem: 'contexto/03-stack-nvidia.md:50 — "Triton Inference Server — serving em produção"'
+  - termo: "vllm"
+    origem: 'contexto/03-stack-nvidia.md — alternativa de self-hosting citada na §NIM'
+  - termo: "inferência"
+    origem: 'contexto/03-stack-nvidia.md:13 — "NVIDIA NIM — microservices de inferência"'
+  - termo: "latência"
+    origem: 'contexto/03-stack-nvidia.md:369 §4 — "Latência de inferência de LLM"'
+  - termo: "throughput"
+    origem: 'contexto/02-rubrica-ai-native.md — vocabulário de serving citado na rubrica'
+  - termo: "on-premise"
+    origem: 'contexto/02-rubrica-ai-native.md — vocabulário de self-hosting citado na rubrica'
+  - termo: "observabilidade"
+    origem: 'contexto/03-stack-nvidia.md:369 §4 — "observabilidade de agentes"'
+
+  # ── a coluna de justificativa técnica de contexto/03 §4 ──────────────────────────────────
+  # O que uma empresa diria sobre a PRÓPRIA stack, e que não exige falar de GPU.
+
+  - termo: "fine-tun"
+    origem: 'contexto/03-stack-nvidia.md:369 §4 — "fine-tuning e alinhamento com dado de domínio"'
+  - termo: "benchmark"
+    origem: 'contexto/03-stack-nvidia.md:369 §4 — "benchmark acadêmico, LLM-as-judge, custom"'
+  - termo: "batching"
+    origem: 'contexto/03-stack-nvidia.md:369 §4 — "dynamic batching, execução concorrente"'
+  - termo: "kv cache"
+    origem: 'contexto/03-stack-nvidia.md:369 §4 — "paged KV cache"'
+  - termo: "fp8"
+    origem: 'contexto/03-stack-nvidia.md:369 §4 — "quantização FP8/FP4/INT4-AWQ"'
+  - termo: "fp4"
+    origem: 'contexto/03-stack-nvidia.md:369 §4 — "quantização FP8/FP4/INT4-AWQ"'
+  - termo: "int4"
+    origem: 'contexto/03-stack-nvidia.md:369 §4 — "quantização FP8/FP4/INT4-AWQ"'
+  - termo: "decoding"
+    origem: 'contexto/03-stack-nvidia.md:369 §4 — "speculative decoding ~3x"'
+  - termo: "kernel"
+    origem: 'contexto/03-stack-nvidia.md:369 §4 — "kernels custom, Nsight para profiling"'
+  - termo: "profiling"
+    origem: 'contexto/03-stack-nvidia.md:369 §4 — "kernels custom, Nsight para profiling"'
+  - termo: "embedding"
+    origem: 'contexto/03-stack-nvidia.md:306 — "NeMo Retriever — embedding e reranking"'
+  - termo: "rerank"
+    origem: 'contexto/03-stack-nvidia.md:306 — "NeMo Retriever — embedding e reranking"'
+  - termo: "sim-to-real"
+    origem: 'contexto/03-stack-nvidia.md:369 §4 — "sim-to-real com dado sintético"'
+  - termo: "dado sintétic"
+    origem: 'contexto/03-stack-nvidia.md:369 §4 — "sim-to-real com dado sintético"'

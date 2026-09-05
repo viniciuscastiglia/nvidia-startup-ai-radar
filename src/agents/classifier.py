@@ -144,6 +144,57 @@ from src.state import (
 PROFUNDOS = ["cuda", "gpu", "tensorrt", "triton", "vllm", "quantiz", "self-hosted",
              "on-premise", "inferência", "latência", "throughput", "mlops", "observabilidade"]
 
+# A HIPÓTESE 2 DE D-060, SOB PROTOCOLO ANTI-CONTAMINAÇÃO — D-106.
+#
+# D-060 deixou duas hipóteses para o teto de `classe`. A 1 (os documentos não têm o sinal) foi
+# REFUTADA em 03/09 (D-095). A 2 é esta: a lista acima não cobre como uma empresa que não é de
+# infraestrutura descreve a própria stack. Oito dos 13 termos são nome de produto NVIDIA ou
+# vocabulário de serving — ela mede quem fala como fornecedor de infra.
+#
+# A LISTA FOI DERIVADA E COMMITADA ANTES DE QUALQUER MEDIÇÃO, de dois documentos escritos em
+# 22/08: `contexto/02` §4 linha 148 e a coluna de justificativa técnica de `contexto/03` §4.
+# A origem de cada termo está em `data/avaliacao/profundos-candidato.yaml`, e
+# `test_profundos_candidato_bate_com_o_yaml` impede as duas de divergirem. É o que separa isto
+# da tentativa de 04/09, escrita conhecendo o gabarito — o erro que D-091 já custou uma sessão.
+#
+# O ACHADO ESTAVA NA DERIVAÇÃO, ANTES DO NÚMERO: a rubrica nomeia CINCO formas de otimização
+# técnica própria — "self-hosting, quantização, avaliação, guardrails, MLOps real" — e produção
+# cobre TRÊS. `avaliação` e `guardrails` nunca tiveram marcador, e são justamente as duas que
+# não exigem falar de GPU.
+PROFUNDOS_CANDIDATO = [
+    # os cinco que a rubrica nomeia (contexto/02 §4:148)
+    "self-host", "quantiz", "avaliaç", "guardrail", "mlops",
+    # os de produção que sobrevivem
+    "cuda", "gpu", "tensorrt", "triton", "vllm", "inferência", "latência", "throughput",
+    "on-premise", "observabilidade",
+    # a coluna de justificativa técnica de contexto/03 §4
+    "fine-tun", "benchmark", "batching", "kv cache", "fp8", "fp4", "int4", "decoding",
+    "kernel", "profiling", "embedding", "rerank", "sim-to-real", "dado sintétic",
+]
+
+# O DEFAULT É `False`, e a promoção é um segundo ato (D-078). `avaliar_agentes.py --profundos`
+# liga. Ver o critério fixado em D-106, antes de medir.
+USAR_PROFUNDOS_CANDIDATO = False
+
+
+def marcadores() -> list[str]:
+    """A lista que os DOIS eixos leem — e ser uma só é o que D-060 protege.
+
+    D-060 deixou `profundidade_tecnica()` compartilhado justamente para que mexer na lista para
+    consertar `classe` mexesse na `maturidade_stack` no mesmo movimento: **a calibração fica
+    VISÍVEL em vez de silenciosa**. O acoplamento não é a função, é a LISTA — o eixo 2 faz o
+    próprio `sum(...)` sobre os trechos de evidência.
+
+    POR ISSO A FLAG TROCA A LISTA NOS DOIS EIXOS, e não só no eixo 1. O plano de 04/09 pedia o
+    contrário — "constante separada, para não mover a `maturidade_stack`" —, e isso inverte a
+    razão de D-060: um candidato que não alcança o eixo 2 faz o critério *"sem derrubar
+    maturidade_stack abaixo de 6/7"* passar POR CONSTRUÇÃO. Um teste satisfeito pelo desenho
+    não é teste, é a armadilha que D-103 apanhou em `varrer_classes.py`.
+
+    `PROFUNDOS` continua intocado: é a lista de PRODUÇÃO, e nenhuma medição a edita.
+    """
+    return PROFUNDOS_CANDIDATO if USAR_PROFUNDOS_CANDIDATO else PROFUNDOS
+
 # UM número, usado nos DOIS eixos, e é isso que impede que ele seja calibrado contra o gabarito:
 # mexer nele para consertar a classe mexeria na maturidade no mesmo movimento, e a maturidade é a
 # guarda desta sessão (6/7). Ver o docstring, "o `>= 3` de 2a não é parâmetro novo".
@@ -170,7 +221,7 @@ RUBRICA_EM_DEGRAUS = False
 
 
 def profundidade_tecnica(docs: list[DocumentoRef]) -> tuple[int, list[Evidencia]]:
-    """Quantos marcadores DISTINTOS de `PROFUNDOS` os documentos inteiros contêm, e as frases.
+    """Quantos marcadores DISTINTOS de `marcadores()` os documentos inteiros contêm, e as frases.
 
     Distintos, e não ocorrências: uma página que repete "latência" oito vezes tem um sinal, não
     oito. É a mesma leitura que o eixo 2 já fazia (`sum(1 for p in PROFUNDOS if p in texto)`).
@@ -187,7 +238,7 @@ def profundidade_tecnica(docs: list[DocumentoRef]) -> tuple[int, list[Evidencia]
         primeira_do_doc = True
         for frase in frases(doc):
             baixa = frase.lower()
-            if casados := [m for m in PROFUNDOS if m in baixa]:
+            if casados := [m for m in marcadores() if m in baixa]:
                 marcadores.update(casados)
                 if primeira_do_doc:
                     evidencias.append(Evidencia.de_documento(doc, frase[:400]))
@@ -275,7 +326,7 @@ def node(state: EstadoAnalise) -> dict:
     texto_tecnico = " ".join(
         e.trecho.lower() for a in perfil.sinais_otimizacao_tecnica for e in a.evidencias
     )
-    achados = sum(1 for p in PROFUNDOS if p in texto_tecnico)
+    achados = sum(1 for p in marcadores() if p in texto_tecnico)
     maturidade: MaturidadeStack = (
         "alta" if achados >= MARCADORES_PARA_PROFUNDIDADE else "media" if achados >= 1 else "baixa"
     )
