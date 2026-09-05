@@ -34,6 +34,8 @@ USO
 ---
     python scripts/varrer_classes.py                  # a tabela das 30
     python scripts/varrer_classes.py --custo-desenhos # o que cada conserto custa NA RÉGUA
+    python scripts/varrer_classes.py --forca-bruta    # PROVA o que a tabela afirma (D-103)
+    python scripts/varrer_classes.py --prioridades    # os 4 desenhos de `prioridade` (D-103)
 """
 
 import argparse
@@ -151,18 +153,164 @@ def custo_dos_desenhos(fixtures) -> None:
     print("nenhuma régua de `classe` mede. O desenho B entrou em 04/09 — ver D-101.")
 
 
+def forca_bruta() -> None:
+    """A PROVA DA AFIRMAÇÃO QUE ESTE SCRIPT JÁ IMPRIMIA SEM PROVAR — D-103, paga em 05/09.
+
+    `tabela()` termina dizendo que *"`non-AI` CONSTATADO não existe e `fora-do-funil` é
+    inalcançável"*. Isso é uma afirmação sobre TODO o espaço de entradas, e a tabela das 30
+    não a sustenta: 30 empresas são 30 pontos, não uma prova de inalcançabilidade. A força
+    bruta que D-103 rodou ficou num heredoc e não entrou no repositório — **número sem comando
+    é afirmação, não medição** (D-102), e a entrada que mais insiste nisso é a que o repetiu.
+
+    O QUE ELA VARRE: `(autopilot, modelo_entrega, dado_proprietário, vocab_técnico, marcadores
+    nos documentos, marcadores no trecho)` nos **dois braços da rubrica**, exercitando
+    `classifier.node` de verdade — não uma reimplementação da aritmética, que é o modo de a
+    força bruta concordar consigo mesma.
+
+    UMA ARMADILHA MEDIDA NO CAMINHO: as frases sintéticas precisam ter **mais de 40 caracteres**,
+    porque `extractor.frases` descarta o que for menor. Com frases curtas, `n_prof` vale 0 em
+    silêncio e a varredura cobre menos do que anuncia — a primeira versão desta função caiu
+    nisso e "verificou" o braço em degraus sem nunca alcançar o degrau 2a.
+    """
+    from itertools import product
+
+    from src.state import (Afirmacao, DocumentoRef, Evidencia, PerfilStartup, StartupRef,
+                           derivar_quadrante)
+
+    def doc(i, texto):
+        return DocumentoRef(documento_id=i, tipo="site", titulo=f"d{i}",
+                            url_fonte=f"https://exemplo.test/{i}", conteudo_texto=texto)
+
+    def af(trecho, i=900):
+        return Afirmacao(texto=trecho, evidencias=[Evidencia.de_documento(doc(i, trecho), trecho)])
+
+    def montar(autopilot, entrega, dado, tecnico, n_prof, n_mat):
+        modelo = (af("entrega em modo autopilot, com o resultado pronto para o cliente")
+                  if autopilot else
+                  af("posicionamento de copilot: o time do cliente usa a ferramenta")
+                  if entrega else None)
+        tecnicos = ([af(f"stack tecnica declarada: {' '.join(classifier.PROFUNDOS[:n_mat])}", 901)]
+                    if tecnico else [])
+        perfil = PerfilStartup(
+            startup_id=1, nome="Fixture", modelo_entrega=modelo,
+            sinais_dado_proprietario=[af("base de dados propria e rotulada internamente", 902)]
+                                     if dado else [],
+            sinais_otimizacao_tecnica=tecnicos)
+        # > 40 caracteres por frase, senão `extractor.frases` as descarta e `n_prof` vira 0.
+        corpo = ". ".join(f"a plataforma de producao da empresa opera {m} em escala de cluster"
+                          for m in classifier.PROFUNDOS[:n_prof]) or "texto sem marcador algum"
+        return {"perfil": perfil,
+                "startup": StartupRef(startup_id=1, nome="Fixture", documentos=[doc(1, corpo + ".")])}
+
+    print("FORÇA BRUTA SOBRE `classifier.node` — os dois braços da rubrica\n")
+    todos = {}
+    for em_degraus in (False, True):
+        original = classifier.RUBRICA_EM_DEGRAUS
+        classifier.RUBRICA_EM_DEGRAUS = em_degraus
+        vistos, n = {}, 0
+        try:
+            for a, e, d, t, np_, nm in product([False, True], [False, True], [False, True],
+                                               [False, True], range(6), range(6)):
+                if (a and not e) or (nm and not t):
+                    continue     # autopilot exige modelo_entrega; sem afirmação técnica não há trecho
+                n += 1
+                diag = classifier.node(montar(a, e, d, t, np_, nm))["diagnostico"]
+                vistos.setdefault((diag.classe, diag.sinal_verificado, diag.quadrante),
+                                  (a, e, d, t, np_, nm))
+        finally:
+            classifier.RUBRICA_EM_DEGRAUS = original
+        todos.update(vistos)
+        rotulo = "RUBRICA_EM_DEGRAUS=True (o braço de D-060)" if em_degraus else "aritmética de PRODUÇÃO"
+        print(f"── {rotulo} — {n} combinações")
+        for (classe, ver, quad), args in sorted(vistos.items()):
+            print(f"   classe={classe:<11} verificado={str(ver):<5} {quad:<21} "
+                  f"testemunha (a,e,d,t,np,nm)={args}")
+        print()
+
+    quadrantes = sorted({q for _, _, q in todos})
+    viola = [(c, v, q) for c, v, q in todos if (c == "non-AI") != (not v)]
+    print(f"quadrantes alcançáveis:              {quadrantes}")
+    print(f"`fora-do-funil` alcançável?          {'SIM' if 'fora-do-funil' in quadrantes else 'NÃO'}")
+    print(f"existe (`non-AI`, verificado=True)?  "
+          f"{'SIM -> ' + str(viola) if viola else 'NÃO'}")
+    print(f"`sinal_verificado` == `classe != non-AI` em TODO o espaço?  "
+          f"{'SIM' if not viola else 'NÃO'}")
+
+    livre = sorted({derivar_quadrante(c, m, v)
+                    for c in ("AI-native", "AI-enabled", "non-AI")
+                    for m in ("alta", "media", "baixa") for v in (True, False)})
+    print(f"\nCONTRAPROVA — a função `derivar_quadrante` isolada, espaço livre: {livre}")
+    print("A célula da matriz de `contexto/02` §4 EXISTE na função; o que nenhum caminho de")
+    print("`classifier.node` produz é a ENTRADA que a alcança. É por isso que o ramo fica.")
+
+
+def prioridades() -> None:
+    """A TABELA QUE DECIDIU TIRAR O REBAIXAMENTO POR NÃO-ELEGIBILIDADE — D-103, sem comando.
+
+    O segundo achado de D-103 se apoia numa distribuição sobre as 30 sob quatro desenhos, e a
+    entrada a publicou sem instrumento. Ela é a razão de `prioridade` — um dos 7 campos
+    obrigatórios do TAPI — ter só um dos dois rebaixamentos: com os dois, a JetBov (único
+    `sweet-spot` da base) empatava com a SunnyHUB (energia solar) no piso.
+
+    Zero API: `_prioridade` é função pura sobre `(quadrante, confianca, sinal_verificado)`.
+    """
+    from src.agents import briefing, evidence_validator
+    from src.agents.recommendation import _prioridade
+
+    desenhos = {"antes de 04/09 (nenhum rebaixamento)": (False, False),
+                "os dois rebaixamentos": (True, True),
+                "só verificação (o escolhido, D-103)": (True, False),
+                "só elegibilidade": (False, True)}
+
+    linhas = []
+    for i, f in enumerate(regua.carregar()):
+        startup = regua.como_startup(f, i)
+        perfil = extractor.node({"startup": startup})["perfil"]
+        diag = classifier.node({"perfil": perfil, "startup": startup})["diagnostico"]
+        estado = {"perfil": perfil, "diagnostico": diag, "startup": startup}
+        diag = evidence_validator.node(estado).get("diagnostico", diag)
+        eleg = briefing.node_analise({"startup": startup, "perfil": perfil})["elegibilidade"]
+        linhas.append((f["nome"], diag, eleg.elegivel))
+
+    print(f"{len(linhas)} empresas · `_prioridade` sob os quatro desenhos de D-103\n")
+    print(f"{'desenho':38} {'alta':>5} {'media':>6} {'baixa':>6}   {'JetBov':>7} {'SunnyHUB':>9}")
+    print("-" * 80)
+    for nome, (usa_ver, usa_eleg) in desenhos.items():
+        conta = {"alta": 0, "media": 0, "baixa": 0}
+        por_empresa = {}
+        for empresa, diag, elegivel in linhas:
+            p = _prioridade(diag.quadrante, diag.confianca,
+                            sinal_verificado=(diag.sinal_verificado if usa_ver else True))
+            if usa_eleg and not elegivel:
+                p = "baixa"
+            conta[p] += 1
+            por_empresa[empresa] = p
+        print(f"{nome:38} {conta['alta']:>5} {conta['media']:>6} {conta['baixa']:>6}   "
+              f"{por_empresa['JetBov']:>7} {por_empresa['SunnyHUB']:>9}")
+    print("\nLEIA as duas últimas colunas. A JetBov é o único `sweet-spot` das 30; a SunnyHUB é")
+    print("energia solar. Achatar as duas no piso destrói o que a regra 1 de `contexto/03` §4")
+    print("existe para produzir — *a prioridade sai do GAP, não do rótulo*.")
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--custo-desenhos", action="store_true",
                     help="o que cada conserto de P-24 custa na régua de `classe`")
+    ap.add_argument("--forca-bruta", action="store_true",
+                    help="PROVA a inalcançabilidade de `fora-do-funil` que a tabela afirma (D-103)")
+    ap.add_argument("--prioridades", action="store_true",
+                    help="a distribuição de `prioridade` sob os 4 desenhos de D-103")
     args = ap.parse_args()
 
-    fixtures = regua.carregar()
-    if args.custo_desenhos:
-        custo_dos_desenhos(fixtures)
+    if args.forca_bruta:
+        forca_bruta()
+    elif args.prioridades:
+        prioridades()
+    elif args.custo_desenhos:
+        custo_dos_desenhos(regua.carregar())
     else:
-        tabela(fixtures)
+        tabela(regua.carregar())
     return 0
 
 

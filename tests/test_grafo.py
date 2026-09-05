@@ -597,3 +597,64 @@ def test_a_flag_do_candidato_alcanca_os_dois_eixos():
     finally:
         classifier.USAR_PROFUNDOS_CANDIDATO = original_lista
         classifier.RUBRICA_EM_DEGRAUS = original_rubrica
+
+
+def test_falha_na_elegibilidade_nao_destroi_a_analise(monkeypatch):
+    """A REDE QUE FALTAVA PARA O TERCEIRO ACHADO DE D-103, e ela é uma lacuna de rede.
+
+    D-099 moveu `elegibilidade` para antes de `nvidia_rag`. O `error_handler` compartilhado
+    (`registrar_falha`) faz `goto=END`, o que era correto quando o nó era o ÚLTIMO — a falha
+    custava só o veredito. Movido para cima, o MESMO handler passou a destruir as citações do
+    RAG e as recomendações, contra o objetivo declarado do próprio handler: *"PRESERVAR O
+    TRABALHO PARCIAL"*. `seguir_sem_elegibilidade` anota e vai para `nvidia_rag`.
+
+    D-103 mediu isso por injeção de falha em heredoc, e o número foi para o log **sem comando
+    ao lado** — o defeito que D-102 diagnosticou na entrada anterior (*"número sem comando é
+    afirmação, não medição"*). Reverter o handler hoje deixa a suíte VERDE.
+
+    O TESTE COMPARA OS DOIS HANDLERS, e não só afirma uma propriedade do escolhido: sem o braço
+    de controle, `recomendacoes is not None` poderia estar passando porque o campo tem default,
+    e não porque o nó rodou. O controle mostra os quatro campos MORRENDO com `goto=END`.
+
+    Zero API: `nvidia_rag` é substituído por um nó que devolve uma citação montada à mão — o
+    que se afirma aqui é sobre a TOPOLOGIA do erro, não sobre a recuperação.
+    """
+    import src.graph as g
+    from src.agents import briefing, nvidia_rag
+    from src.state import CitacaoRAG, DocumentoRef, StartupRef
+
+    doc = DocumentoRef(
+        documento_id=1, tipo="site", titulo="t", url_fonte="https://exemplo.test/x",
+        conteudo_texto=("A plataforma reduz o custo de inferência de LLM em produção e mantém "
+                        "a latência de resposta baixa mesmo em horário de pico de uso."))
+    startup = StartupRef(startup_id=1, nome="Acme", setor="saude", documentos=[doc])
+
+    def explode(state):
+        raise ValueError("veredito impossível nesta startup")
+
+    def rag_falso(state):
+        return {"citacoes_rag": [CitacaoRAG(tecnologia="NVIDIA NIM", trecho="t",
+                                            url_fonte="https://build.nvidia.com/nim",
+                                            dor_origem="custo")]}
+
+    monkeypatch.setattr(briefing, "node_analise", explode)
+    monkeypatch.setattr(nvidia_rag, "node", rag_falso)
+
+    def rodar():
+        return g.construir_subgrafo().invoke(
+            {"plano": PlanoDeBusca(consulta_original="x"), "startup": startup})
+
+    final = rodar()
+    assert final.get("erros") and "elegibilidade" in final["erros"][0]
+    assert final.get("elegibilidade") is None, "a falha era para custar o veredito"
+    assert final.get("recomendacoes"), \
+        "a análise não seguiu: o handler voltou a fazer goto=END (D-103)"
+    for campo in ("perfil", "diagnostico", "citacoes_rag"):
+        assert final.get(campo) is not None, f"`{campo}` foi descartado (D-103)"
+
+    # BRAÇO DE CONTROLE — o handler antigo neste nó, que é o estado que D-103 mediu e recusou.
+    monkeypatch.setattr(g, "seguir_sem_elegibilidade", g.registrar_falha)
+    antes = rodar()
+    assert antes.get("citacoes_rag") is None and antes.get("recomendacoes") is None, \
+        ("o braço de controle não reproduz o defeito de D-103 — se `goto=END` também preserva, "
+         "a asserção acima não está medindo o que diz")

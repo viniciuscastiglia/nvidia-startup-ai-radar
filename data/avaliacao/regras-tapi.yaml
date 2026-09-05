@@ -1,0 +1,101 @@
+# A RÉGUA DE RELEVÂNCIA DO MOTOR DE RECOMENDAÇÃO — P-21, D-105
+#
+# POR QUE ELA EXISTE
+# -------------------
+# D-086 deu régua para a JUSTIFICATIVA (de onde sai o trecho técnico) e deixou aberta a pergunta
+# anterior: a TECNOLOGIA recomendada é a certa? O caso que abriu a P-21 foi `NVIDIA Morpheus`
+# — spear phishing, digital fingerprinting — recomendado para a dor de PRIVACIDADE de uma
+# healthtech: a recuperação casa `privacy`/`security` sem conhecer o domínio. Nenhum seletor de
+# trecho conserta isso; é o motor.
+#
+# POR QUE ESTE GABARITO NÃO É MEU, E ISSO É A DECISÃO INTEIRA
+# ------------------------------------------------------------
+# As sete regras abaixo são copiadas de `contexto/01-tapi.md:143`, que as transcreve do TAPI.
+# São **exemplos de regra dados pelo enunciado** — pares (setor ou dor) → tecnologias esperadas,
+# escritos por quem propôs o case, antes de este projeto existir.
+#
+# Isso é o que permite medir sobre as 30 empresas sem desfazer D-062. As 22 fixtures novas
+# entraram como DADO, sem `gabarito:`, porque anotá-las seria calibrar contra o próprio
+# julgamento. Aqui não há julgamento meu para calibrar: a resposta certa está no enunciado, e o
+# que a base fornece é só o SETOR — um campo de curadoria, não uma opinião sobre a resposta.
+#
+# `origem` é obrigatória pela mesma razão que em `exclusoes.yaml` (D-091): uma régua tricotada em
+# volta da resposta não é régua. Cada linha aponta o arquivo e o texto de onde saiu.
+#
+# CHAVE: `setor` ou `dor`
+# ------------------------
+# Cinco das sete são chaveadas por SETOR — a regra fala de um tipo de empresa. Duas falam de uma
+# dor observável, e o sistema tem esse eixo: `citacao.dor_origem`, carimbado por `nvidia_rag`.
+# Uma regra chaveada por dor se aplica a QUALQUER empresa cuja recomendação veio daquela dor.
+#
+# `casa_setor` são os fragmentos que têm de ocorrer no campo `setor` da fixture. Fragmento e não
+# igualdade porque a curadoria produziu rótulos compostos (`agro — pecuária digital`,
+# `voz e call center — CX conversacional`), e é a mesma armadilha de `SETORES` em
+# `query_planner.py`: chave que não casa literalmente é empresa que a régua perde em silêncio.
+#
+# O QUE ELA NÃO É
+# ----------------
+# Não é critério de promoção. É instrumento — o passo 9 do TAPI (avaliação de qualidade) e o
+# material do critério 2. **Medir não é promover** (D-078).
+
+regras:
+  - id: atendimento-api-externa
+    chave: setor
+    casa_setor: ["voz e call center", "marketing e vendas", "automação corporativa"]
+    tecnologias_esperadas: ["NVIDIA NIM", "NeMo Guardrails", "Triton Inference Server"]
+    origem: >-
+      contexto/01-tapi.md:143 — "LLM em atendimento ao cliente, mas só com APIs externas →
+      NIM, NeMo Guardrails, Triton + benchmark de custo/latência"
+    nota: >-
+      A condição do TAPI tem duas partes — o setor E "só com APIs externas". A segunda é
+      diagnóstico, não dado de cadastro, e o sistema a produz em `classe`. Esta régua aplica só
+      a primeira: mede a regra onde ela é verificável e NÃO inventa a metade que não é. É a
+      escolha que deixa a régua mais frouxa do que o TAPI, nunca mais apertada.
+
+  - id: dados-tabulares
+    chave: setor
+    casa_setor: ["dados tabulares"]
+    tecnologias_esperadas: ["RAPIDS / CUDA-X Data Science", "cuDF", "cuML"]
+    origem: >-
+      contexto/01-tapi.md:143 — "Grandes volumes de dados tabulares → RAPIDS, cuDF, cuML"
+
+  - id: voz
+    chave: setor
+    casa_setor: ["voz e call center"]
+    tecnologias_esperadas: ["NVIDIA Riva", "NVIDIA NIM"]
+    origem: >-
+      contexto/01-tapi.md:143 — "Voz, call center ou transcrição → Riva, NIM"
+
+  - id: saude
+    chave: setor
+    casa_setor: ["saúde"]
+    tecnologias_esperadas: ["NVIDIA Healthcare (ex-Clara)", "NVIDIA NIM",
+                            "NeMo Guardrails", "NVIDIA AI Enterprise"]
+    origem: >-
+      contexto/01-tapi.md:143 — "Saúde → Clara, MONAI, NIM, NeMo Guardrails, AI Enterprise"
+    nota: >-
+      MONAI não é uma das 16 tecnologias da base (o TAPI lista "Clara", que virou
+      "NVIDIA Healthcare (ex-Clara)" em contexto/03 §"Saúde"). Fora do esperado porque o
+      sistema não pode recuperar o que não foi ingerido — cobrar isso mediria o corpus, não o
+      motor.
+
+  - id: robotica
+    chave: setor
+    casa_setor: ["robótic"]
+    tecnologias_esperadas: ["NVIDIA Isaac", "NVIDIA Omniverse"]
+    origem: >-
+      contexto/01-tapi.md:143 — "Robotics ou simulação → Isaac, Omniverse, GPUs NVIDIA"
+
+  - id: latencia-de-inferencia
+    chave: dor
+    casa_dor: latencia
+    tecnologias_esperadas: ["Triton Inference Server", "TensorRT-LLM"]
+    origem: >-
+      contexto/01-tapi.md:143 — "Latência de inferência → Triton, TensorRT-LLM, batching"
+
+  - id: governanca-em-agentes
+    chave: dor
+    casa_dor: governanca
+    tecnologias_esperadas: ["NeMo Guardrails", "NVIDIA NeMo"]
+    origem: >-
+      contexto/01-tapi.md:143 — "Governança em agentes → NeMo Guardrails, avaliação com NeMo"

@@ -3755,6 +3755,34 @@ confianca 0/6 · elegivel 6/6 · 49%/100%` **idênticos** · as mesmas **7 recus
 **87 passed** · injeção de falha preserva os quatro campos · o grafo roda com
 `RERANK_PROVEDOR=cohere` e o briefing foi lido.
 
+> ### ⚠️ A DÍVIDA DE D-102 QUE ESTA ENTRADA CONTRAIU, PAGA EM 05/09
+>
+> **Três das afirmações centrais desta decisão foram publicadas SEM COMANDO AO LADO** — a força
+> bruta sobre o espaço de detectores, a tabela de distribuição de `prioridade`, e a injeção de
+> falha no subgrafo. Todas rodaram em heredoc e nenhuma entrou no repositório. É **exatamente**
+> o defeito que D-102 diagnosticou na entrada imediatamente anterior — *"um número no log sem
+> comando que o derrube é afirmação, não medição"* —, cometido pela entrada que mais insiste
+> que *"nenhuma régua deste projeto teria pego qualquer um deles"*.
+>
+> **As três foram refeitas em 05/09 e as três reproduzem**, com uma correção de método na
+> primeira: a força bruta original precisava de frases com **mais de 40 caracteres**, senão
+> `extractor.frases` as descarta e `n_prof` vale 0 em silêncio — a varredura cobria menos do
+> que anunciava, e "verificava" o braço em degraus sem nunca alcançar o degrau 2a.
+>
+> | afirmação | comando, desde 05/09 |
+> |---|---|
+> | `fora-do-funil` inalcançável · `sinal_verificado ≡ classe != non-AI` | `varrer_classes.py --forca-bruta` — 252 combinações **por braço**, testemunhas distintas |
+> | `media` 30 → 15·15 → **21·9** → 23·7, JetBov × SunnyHUB | `varrer_classes.py --prioridades` |
+> | falha em `elegibilidade` preserva perfil, diagnóstico, citações e recomendações | `pytest -k falha_na_elegibilidade` — **com braço de controle**: o teste mostra os quatro campos MORRENDO sob `registrar_falha`, senão a asserção poderia passar por default de campo |
+>
+> **A que mais faltava era o teste**, e não por elegância: **não havia nenhum** para
+> `seguir_sem_elegibilidade`. Reverter o handler de D-099/D-103 deixava `pytest` **verde**.
+>
+> Fica sem comando, e declarado: a latência **3m30 → 3m27** e a linha `?` de **110 colunas** —
+> os dois descrevem um estado ANTERIOR que não existe mais, e não há como reproduzi-los sem
+> reverter o código. A frase *"as 45 recomendações … saíram em `prioridade baixa`"*, em D-101,
+> descreve o desenho dos **dois** rebaixamentos, que esta decisão desfez.
+
 
 ## D-104 — `justificativa_negocio` era um defeito de ÍNDICE, e o conserto tropeçou no teto do briefing
 **Data:** 05/09/2026 · fecha a P-22 · achado por execução (D-083), não por leitura
