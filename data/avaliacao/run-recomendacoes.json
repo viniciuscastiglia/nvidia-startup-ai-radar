@@ -1,0 +1,839 @@
+{
+  "rerank_provedor": "cohere",
+  "n": 30,
+  "empresas": [
+    {
+      "nome": "Agrorobótica",
+      "setor": "agro — sensoriamento e robótica de solo",
+      "sinal_verificado": true,
+      "recomendacoes": [
+        {
+          "tecnologia": "NVIDIA AI Enterprise",
+          "dores": [
+            "custo"
+          ],
+          "prioridade": "media"
+        },
+        {
+          "tecnologia": "cuDF",
+          "dores": [
+            "avaliacao"
+          ],
+          "prioridade": "media"
+        },
+        {
+          "tecnologia": "NVIDIA NeMo",
+          "dores": [
+            "custo"
+          ],
+          "prioridade": "media"
+        }
+      ]
+    },
+    {
+      "nome": "Agrotools",
+      "setor": "agro — dados tabulares e geointeligência",
+      "sinal_verificado": true,
+      "recomendacoes": [
+        {
+          "tecnologia": "NVIDIA Omniverse",
+          "dores": [
+            "latencia"
+          ],
+          "prioridade": "media"
+        },
+        {
+          "tecnologia": "NVIDIA AI Enterprise",
+          "dores": [
+            "escalabilidade"
+          ],
+          "prioridade": "media"
+        },
+        {
+          "tecnologia": "cuDF",
+          "dores": [
+            "avaliacao"
+          ],
+          "prioridade": "media"
+        }
+      ]
+    },
+    {
+      "nome": "Automni",
+      "setor": "logística — robótica móvel autônoma",
+      "sinal_verificado": true,
+      "recomendacoes": [
+        {
+          "tecnologia": "NVIDIA Isaac",
+          "dores": [
+            "custo"
+          ],
+          "prioridade": "media"
+        },
+        {
+          "tecnologia": "NeMo Guardrails",
+          "dores": [
+            "observabilidade"
+          ],
+          "prioridade": "media"
+        },
+        {
+          "tecnologia": "NVIDIA NeMo",
+          "dores": [
+            "custo"
+          ],
+          "prioridade": "media"
+        }
+      ]
+    },
+    {
+      "nome": "Axenya",
+      "setor": "saúde corporativa",
+      "sinal_verificado": true,
+      "recomendacoes": [
+        {
+          "tecnologia": "NVIDIA Healthcare (ex-Clara)",
+          "dores": [
+            "custo"
+          ],
+          "prioridade": "media"
+        },
+        {
+          "tecnologia": "NVIDIA AI Enterprise",
+          "dores": [
+            "governanca"
+          ],
+          "prioridade": "media"
+        },
+        {
+          "tecnologia": "NVIDIA NeMo",
+          "dores": [
+            "observabilidade"
+          ],
+          "prioridade": "media"
+        }
+      ]
+    },
+    {
+      "nome": "BemAgro",
+      "setor": "agro — agricultura digital",
+      "sinal_verificado": true,
+      "recomendacoes": [
+        {
+          "tecnologia": "NVIDIA NeMo",
+          "dores": [
+            "custo"
+          ],
+          "prioridade": "media"
+        },
+        {
+          "tecnologia": "NVIDIA AI Enterprise",
+          "dores": [
+            "latencia"
+          ],
+          "prioridade": "media"
+        },
+        {
+          "tecnologia": "cuDF",
+          "dores": [
+            "dependencia_fornecedor"
+          ],
+          "prioridade": "media"
+        }
+      ]
+    },
+    {
+      "nome": "Conta Simples",
+      "setor": "fintech B2B",
+      "sinal_verificado": false,
+      "recomendacoes": [
+        {
+          "tecnologia": "NVIDIA AI Enterprise",
+          "dores": [
+            "custo"
+          ],
+          "prioridade": "baixa"
+        },
+        {
+          "tecnologia": "NVIDIA NIM",
+          "dores": [
+            "latencia"
+          ],
+          "prioridade": "baixa"
+        },
+        {
+          "tecnologia": "NVIDIA NeMo",
+          "dores": [
+            "escalabilidade"
+          ],
+          "prioridade": "baixa"
+        }
+      ]
+    },
+    {
+      "nome": "Core AI",
+      "setor": "fintech de crédito",
+      "sinal_verificado": false,
+      "recomendacoes": [
+        {
+          "tecnologia": "NVIDIA NeMo",
+          "dores": [
+            "custo"
+          ],
+          "prioridade": "baixa"
+        },
+        {
+          "tecnologia": "RAPIDS / CUDA-X Data Science",
+          "dores": [
+            "escalabilidade"
+          ],
+          "prioridade": "baixa"
+        },
+        {
+          "tecnologia": "NVIDIA AI Enterprise",
+          "dores": [
+            "dependencia_fornecedor"
+          ],
+          "prioridade": "baixa"
+        }
+      ]
+    },
+    {
+      "nome": "Deal",
+      "setor": "consultoria de tecnologia",
+      "sinal_verificado": true,
+      "recomendacoes": [
+        {
+          "tecnologia": "NVIDIA Morpheus",
+          "dores": [
+            "custo"
+          ],
+          "prioridade": "media"
+        },
+        {
+          "tecnologia": "NVIDIA NIM",
+          "dores": [
+            "escalabilidade"
+          ],
+          "prioridade": "media"
+        },
+        {
+          "tecnologia": "NVIDIA AI Enterprise",
+          "dores": [
+            "governanca"
+          ],
+          "prioridade": "media"
+        }
+      ]
+    },
+    {
+      "nome": "Doutor-AI",
+      "setor": "saúde",
+      "sinal_verificado": true,
+      "recomendacoes": [
+        {
+          "tecnologia": "NVIDIA Healthcare (ex-Clara)",
+          "dores": [
+            "custo"
+          ],
+          "prioridade": "media"
+        },
+        {
+          "tecnologia": "NeMo Guardrails",
+          "dores": [
+            "latencia"
+          ],
+          "prioridade": "media"
+        },
+        {
+          "tecnologia": "NVIDIA NeMo",
+          "dores": [
+            "custo"
+          ],
+          "prioridade": "media"
+        }
+      ]
+    },
+    {
+      "nome": "Ecotrace",
+      "setor": "agro — rastreabilidade de cadeias",
+      "sinal_verificado": true,
+      "recomendacoes": [
+        {
+          "tecnologia": "NVIDIA Healthcare (ex-Clara)",
+          "dores": [
+            "custo"
+          ],
+          "prioridade": "media"
+        },
+        {
+          "tecnologia": "NeMo Guardrails",
+          "dores": [
+            "latencia"
+          ],
+          "prioridade": "media"
+        },
+        {
+          "tecnologia": "NVIDIA AI Enterprise",
+          "dores": [
+            "escalabilidade"
+          ],
+          "prioridade": "media"
+        }
+      ]
+    },
+    {
+      "nome": "Freedom AI",
+      "setor": "automação corporativa",
+      "sinal_verificado": true,
+      "recomendacoes": [
+        {
+          "tecnologia": "NVIDIA Healthcare (ex-Clara)",
+          "dores": [
+            "custo"
+          ],
+          "prioridade": "media"
+        },
+        {
+          "tecnologia": "NVIDIA AI Enterprise",
+          "dores": [
+            "escalabilidade"
+          ],
+          "prioridade": "media"
+        },
+        {
+          "tecnologia": "NVIDIA NeMo",
+          "dores": [
+            "governanca"
+          ],
+          "prioridade": "media"
+        }
+      ]
+    },
+    {
+      "nome": "Iniciador",
+      "setor": "fintech de infraestrutura",
+      "sinal_verificado": false,
+      "recomendacoes": [
+        {
+          "tecnologia": "TensorRT-LLM",
+          "dores": [
+            "latencia"
+          ],
+          "prioridade": "baixa"
+        },
+        {
+          "tecnologia": "NVIDIA AI Enterprise",
+          "dores": [
+            "governanca"
+          ],
+          "prioridade": "baixa"
+        },
+        {
+          "tecnologia": "NVIDIA NeMo",
+          "dores": [
+            "avaliacao"
+          ],
+          "prioridade": "baixa"
+        }
+      ]
+    },
+    {
+      "nome": "iRancho",
+      "setor": "agro — pecuária digital",
+      "sinal_verificado": true,
+      "recomendacoes": [
+        {
+          "tecnologia": "cuDF",
+          "dores": [
+            "custo"
+          ],
+          "prioridade": "media"
+        },
+        {
+          "tecnologia": "NeMo Guardrails",
+          "dores": [
+            "observabilidade"
+          ],
+          "prioridade": "media"
+        },
+        {
+          "tecnologia": "NVIDIA NeMo",
+          "dores": [
+            "custo"
+          ],
+          "prioridade": "media"
+        }
+      ]
+    },
+    {
+      "nome": "JetBov",
+      "setor": "agro — pecuária digital",
+      "sinal_verificado": true,
+      "recomendacoes": [
+        {
+          "tecnologia": "NVIDIA AI Enterprise",
+          "dores": [
+            "custo"
+          ],
+          "prioridade": "media"
+        },
+        {
+          "tecnologia": "TensorRT-LLM",
+          "dores": [
+            "latencia"
+          ],
+          "prioridade": "media"
+        },
+        {
+          "tecnologia": "NVIDIA NIM",
+          "dores": [
+            "custo"
+          ],
+          "prioridade": "media"
+        }
+      ]
+    },
+    {
+      "nome": "Laura Networks",
+      "setor": "saúde",
+      "sinal_verificado": true,
+      "recomendacoes": [
+        {
+          "tecnologia": "NVIDIA Healthcare (ex-Clara)",
+          "dores": [
+            "escalabilidade"
+          ],
+          "prioridade": "media"
+        },
+        {
+          "tecnologia": "NVIDIA AI Enterprise",
+          "dores": [
+            "escalabilidade"
+          ],
+          "prioridade": "media"
+        },
+        {
+          "tecnologia": "NVIDIA Morpheus",
+          "dores": [
+            "privacidade"
+          ],
+          "prioridade": "media"
+        }
+      ]
+    },
+    {
+      "nome": "Lexter.AI",
+      "setor": "jurídico — legaltech",
+      "sinal_verificado": false,
+      "recomendacoes": [
+        {
+          "tecnologia": "TensorRT-LLM",
+          "dores": [
+            "custo"
+          ],
+          "prioridade": "baixa"
+        },
+        {
+          "tecnologia": "NeMo Guardrails",
+          "dores": [
+            "latencia"
+          ],
+          "prioridade": "baixa"
+        },
+        {
+          "tecnologia": "NVIDIA NeMo",
+          "dores": [
+            "escalabilidade"
+          ],
+          "prioridade": "baixa"
+        }
+      ]
+    },
+    {
+      "nome": "Liqi",
+      "setor": "fintech — tokenização de ativos",
+      "sinal_verificado": true,
+      "recomendacoes": [
+        {
+          "tecnologia": "NVIDIA Morpheus",
+          "dores": [
+            "custo"
+          ],
+          "prioridade": "media"
+        },
+        {
+          "tecnologia": "NVIDIA NIM",
+          "dores": [
+            "latencia"
+          ],
+          "prioridade": "media"
+        },
+        {
+          "tecnologia": "TensorRT-LLM",
+          "dores": [
+            "escalabilidade"
+          ],
+          "prioridade": "media"
+        }
+      ]
+    },
+    {
+      "nome": "Maritaca AI",
+      "setor": "infraestrutura de IA",
+      "sinal_verificado": true,
+      "recomendacoes": [
+        {
+          "tecnologia": "NVIDIA NIM",
+          "dores": [
+            "latencia"
+          ],
+          "prioridade": "media"
+        },
+        {
+          "tecnologia": "NVIDIA Morpheus",
+          "dores": [
+            "privacidade"
+          ],
+          "prioridade": "media"
+        },
+        {
+          "tecnologia": "TensorRT-LLM",
+          "dores": [
+            "avaliacao"
+          ],
+          "prioridade": "media"
+        }
+      ]
+    },
+    {
+      "nome": "PhoneTrack",
+      "setor": "voz e call center — speech analytics",
+      "sinal_verificado": false,
+      "recomendacoes": [
+        {
+          "tecnologia": "NVIDIA NeMo",
+          "dores": [
+            "latencia"
+          ],
+          "prioridade": "baixa"
+        },
+        {
+          "tecnologia": "NVIDIA AI Enterprise",
+          "dores": [
+            "latencia"
+          ],
+          "prioridade": "baixa"
+        },
+        {
+          "tecnologia": "NVIDIA Riva",
+          "dores": [
+            "escalabilidade"
+          ],
+          "prioridade": "baixa"
+        }
+      ]
+    },
+    {
+      "nome": "Produzindo Certo",
+      "setor": "agro — rastreabilidade socioambiental",
+      "sinal_verificado": true,
+      "recomendacoes": [
+        {
+          "tecnologia": "NVIDIA AI Enterprise",
+          "dores": [
+            "escalabilidade"
+          ],
+          "prioridade": "media"
+        },
+        {
+          "tecnologia": "NVIDIA Healthcare (ex-Clara)",
+          "dores": [
+            "avaliacao"
+          ],
+          "prioridade": "media"
+        },
+        {
+          "tecnologia": "NVIDIA NeMo",
+          "dores": [
+            "observabilidade"
+          ],
+          "prioridade": "media"
+        }
+      ]
+    },
+    {
+      "nome": "RD Station",
+      "setor": "marketing e vendas",
+      "sinal_verificado": true,
+      "recomendacoes": [
+        {
+          "tecnologia": "NVIDIA AI Enterprise",
+          "dores": [
+            "escalabilidade"
+          ],
+          "prioridade": "media"
+        },
+        {
+          "tecnologia": "NVIDIA NeMo",
+          "dores": [
+            "escalabilidade"
+          ],
+          "prioridade": "media"
+        }
+      ]
+    },
+    {
+      "nome": "Resolva AI",
+      "setor": "voz e call center",
+      "sinal_verificado": true,
+      "recomendacoes": [
+        {
+          "tecnologia": "NVIDIA NeMo",
+          "dores": [
+            "custo"
+          ],
+          "prioridade": "media"
+        },
+        {
+          "tecnologia": "NVIDIA NIM",
+          "dores": [
+            "latencia"
+          ],
+          "prioridade": "media"
+        },
+        {
+          "tecnologia": "TensorRT-LLM",
+          "dores": [
+            "privacidade"
+          ],
+          "prioridade": "media"
+        }
+      ]
+    },
+    {
+      "nome": "Solinftec",
+      "setor": "agro — agricultura digital e robótica",
+      "sinal_verificado": true,
+      "recomendacoes": [
+        {
+          "tecnologia": "NVIDIA Omniverse",
+          "dores": [
+            "latencia"
+          ],
+          "prioridade": "media"
+        },
+        {
+          "tecnologia": "NVIDIA AI Enterprise",
+          "dores": [
+            "escalabilidade"
+          ],
+          "prioridade": "media"
+        },
+        {
+          "tecnologia": "NVIDIA Isaac",
+          "dores": [
+            "avaliacao"
+          ],
+          "prioridade": "media"
+        }
+      ]
+    },
+    {
+      "nome": "SunnyHUB",
+      "setor": "energia",
+      "sinal_verificado": false,
+      "recomendacoes": [
+        {
+          "tecnologia": "NeMo Guardrails",
+          "dores": [
+            "observabilidade"
+          ],
+          "prioridade": "baixa"
+        },
+        {
+          "tecnologia": "NVIDIA NeMo",
+          "dores": [
+            "custo"
+          ],
+          "prioridade": "baixa"
+        },
+        {
+          "tecnologia": "NVIDIA AI Enterprise",
+          "dores": [
+            "custo"
+          ],
+          "prioridade": "baixa"
+        }
+      ]
+    },
+    {
+      "nome": "Teachy",
+      "setor": "educação",
+      "sinal_verificado": true,
+      "recomendacoes": [
+        {
+          "tecnologia": "NVIDIA Isaac",
+          "dores": [
+            "custo"
+          ],
+          "prioridade": "media"
+        },
+        {
+          "tecnologia": "NVIDIA AI Enterprise",
+          "dores": [
+            "escalabilidade"
+          ],
+          "prioridade": "media"
+        },
+        {
+          "tecnologia": "NVIDIA NIM",
+          "dores": [
+            "dependencia_fornecedor"
+          ],
+          "prioridade": "media"
+        }
+      ]
+    },
+    {
+      "nome": "TideWise",
+      "setor": "robótica — embarcações autônomas",
+      "sinal_verificado": false,
+      "recomendacoes": [
+        {
+          "tecnologia": "NVIDIA AI Enterprise",
+          "dores": [
+            "custo"
+          ],
+          "prioridade": "baixa"
+        },
+        {
+          "tecnologia": "NVIDIA Isaac",
+          "dores": [
+            "observabilidade"
+          ],
+          "prioridade": "baixa"
+        },
+        {
+          "tecnologia": "NVIDIA NeMo",
+          "dores": [
+            "escalabilidade"
+          ],
+          "prioridade": "baixa"
+        }
+      ]
+    },
+    {
+      "nome": "Tractian",
+      "setor": "indústria — manutenção preditiva",
+      "sinal_verificado": true,
+      "recomendacoes": [
+        {
+          "tecnologia": "NVIDIA Isaac",
+          "dores": [
+            "custo"
+          ],
+          "prioridade": "media"
+        },
+        {
+          "tecnologia": "NVIDIA NeMo",
+          "dores": [
+            "observabilidade"
+          ],
+          "prioridade": "media"
+        },
+        {
+          "tecnologia": "NVIDIA Omniverse",
+          "dores": [
+            "dependencia_fornecedor"
+          ],
+          "prioridade": "media"
+        }
+      ]
+    },
+    {
+      "nome": "Ume",
+      "setor": "fintech de crédito no varejo",
+      "sinal_verificado": true,
+      "recomendacoes": [
+        {
+          "tecnologia": "NVIDIA NeMo",
+          "dores": [
+            "custo"
+          ],
+          "prioridade": "media"
+        },
+        {
+          "tecnologia": "TensorRT-LLM",
+          "dores": [
+            "escalabilidade"
+          ],
+          "prioridade": "media"
+        },
+        {
+          "tecnologia": "RAPIDS / CUDA-X Data Science",
+          "dores": [
+            "avaliacao"
+          ],
+          "prioridade": "media"
+        }
+      ]
+    },
+    {
+      "nome": "Visio.AI",
+      "setor": "varejo — operação de lojas",
+      "sinal_verificado": false,
+      "recomendacoes": [
+        {
+          "tecnologia": "NVIDIA NeMo",
+          "dores": [
+            "custo"
+          ],
+          "prioridade": "baixa"
+        },
+        {
+          "tecnologia": "NVIDIA NIM",
+          "dores": [
+            "avaliacao"
+          ],
+          "prioridade": "baixa"
+        },
+        {
+          "tecnologia": "RAPIDS / CUDA-X Data Science",
+          "dores": [
+            "custo"
+          ],
+          "prioridade": "baixa"
+        }
+      ]
+    },
+    {
+      "nome": "Zenvia",
+      "setor": "voz e call center — CX conversacional",
+      "sinal_verificado": false,
+      "recomendacoes": [
+        {
+          "tecnologia": "NVIDIA AI Enterprise",
+          "dores": [
+            "custo"
+          ],
+          "prioridade": "baixa"
+        },
+        {
+          "tecnologia": "NVIDIA NeMo",
+          "dores": [
+            "latencia"
+          ],
+          "prioridade": "baixa"
+        },
+        {
+          "tecnologia": "NVIDIA Healthcare (ex-Clara)",
+          "dores": [
+            "custo"
+          ],
+          "prioridade": "baixa"
+        }
+      ]
+    }
+  ]
+}

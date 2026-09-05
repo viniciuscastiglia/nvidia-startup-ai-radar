@@ -180,6 +180,8 @@ Nenhum número vive aqui: números envelhecem e este arquivo é carregado em tod
 | filtro do Inception, os 30 vereditos numa tabela | **D-094** | `varrer_elegibilidade.py` |
 | classe das 30 + o custo de cada conserto na régua | **D-098, D-101** | `varrer_classes.py` |
 | confiança do diagnóstico, os 4 braços | **D-098** | `medir_confianca.py` |
+| relevância: as 7 regras do TAPI × a linha trivial | **D-105** | `--regras-tapi` |
+| `PROFUNDOS` alternativo — braço REPROVADO | **D-106** | `--profundos` |
 
 **A linha de base trivial é obrigatória em toda tabela de agente** (D-051) — é o `denso puro` deste
 critério, e sem ela 49% de precisão parece bom em vez de "17 pontos acima de emitir tudo".
@@ -240,15 +242,20 @@ python scripts/avaliar_agentes.py --baseline   # a linha trivial, obrigatória n
 python scripts/avaliar_agentes.py              # extrator + classificador + validador (zero API)
 python scripts/avaliar_agentes.py --exclusoes  # filtro do Inception: falso positivo E negativo
 python scripts/avaliar_agentes.py --justificativas  # o seletor do trecho técnico vs. os 150 primeiros
+python scripts/avaliar_agentes.py --regras-tapi     # relevância: as 7 regras do TAPI, com trivial (D-105)
+python scripts/avaliar_agentes.py --regras-tapi --rodar-motor  # refaz o run das 30 antes: CUSTA API, ~17 min
 python scripts/varrer_elegibilidade.py         # o veredito das 30 numa tabela, zero API (D-094)
 python scripts/varrer_elegibilidade.py --motivos   # com a evidência de cada recusa
 python scripts/varrer_classes.py               # o veredito de CLASSE das 30, com quadrante (D-098)
 python scripts/varrer_classes.py --custo-desenhos  # o que cada conserto custa NA RÉGUA
+python scripts/varrer_classes.py --forca-bruta     # PROVA que `fora-do-funil` é inalcançável (D-103)
+python scripts/varrer_classes.py --prioridades     # os 4 desenhos de `prioridade` (D-103)
 python scripts/medir_confianca.py              # os 4 braços da confiança do diagnóstico (D-098)
 python scripts/medir_cobertura.py              # o que o filtro do Inception NÃO lê, e o custo de mostrar tudo (D-102)
 python scripts/medir_cobertura.py --terceiro   # por que varrer o documento inteiro quebra o veto
 python scripts/avaliar_agentes.py --juiz       # LIGA o juiz do Extractor — ~52 chamadas
 python scripts/avaliar_agentes.py --rubrica    # braço REPROVADO (D-060)
+python scripts/avaliar_agentes.py --profundos  # braço REPROVADO (D-106) — implica --rubrica
 python scripts/avaliar_agentes.py --confianca-diagnostico  # braço REPROVADO (D-059)
 python scripts/avaliar_agentes.py --motor ponta-a-ponta    # inclui nvidia_rag: CUSTA API
 
@@ -302,6 +309,8 @@ Para avaliar sem Postgres local: `docker compose up -d` (porta 5433) e ajustar `
 | `data/avaliacao/gabarito.yaml` | as 24 perguntas do RAG, com documento-fonte esperado |
 | `data/avaliacao/exclusoes.yaml` | a régua do filtro do Inception, com os dois lados medidos separados |
 | `data/avaliacao/justificativas.yaml` | a régua da `justificativa_tecnica` — 30 chunks de amostra semeada, rotulados **antes** do seletor |
+| `data/avaliacao/regras-tapi.yaml` | a régua de RELEVÂNCIA: as 7 regras de exemplo do TAPI, gabarito que **não é nosso** |
+| `data/avaliacao/profundos-candidato.yaml` | a lista alternativa de `PROFUNDOS`, com `origem` por termo — **commitada antes de medir** |
 | `data/nvidia/fontes.yaml` | manifesto curado das 16 fontes do RAG |
 
 `TAPI Processo Seletivo.md` é a fonte original — não editar.

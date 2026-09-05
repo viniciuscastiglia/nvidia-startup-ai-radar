@@ -3946,6 +3946,105 @@ aqui nem há o que promover — o braço foi reprovado pelo critério que o prec
 
 ---
 
+## D-105 — A régua das 7 regras do TAPI existe, e o motor de recomendação PERDE da linha trivial
+**Data:** 05/09/2026 · fecha a P-21 como ACEITAR-com-régua · **critério e gabarito fixados antes**
+**Decisão:** entra `data/avaliacao/regras-tapi.yaml` (as 7 regras de exemplo do TAPI, com
+`origem` por regra) e `avaliar_agentes.py --regras-tapi`. **Instrumento, não promoção — nada
+muda em produção.**
+
+**O NÚMERO, E ELE É A MANCHETE:**
+
+| | pares (empresa × regra) | linha trivial | motor |
+|---|---|---|---|
+| **TOTAL** | **34** | **15/34 = 44%** | **13/34 = 38%** |
+
+**O motor de recomendação perde de um recomendador constante** — as 3 tecnologias mais
+frequentes da base, dadas a todo mundo. É a linha que D-051 torna obrigatória, e é a segunda vez
+neste projeto que ela vira a manchete em vez de rodapé.
+
+**O GABARITO NÃO É MEU, E ISSO É METADE DA DECISÃO.** As 7 regras são copiadas de
+`contexto/01-tapi.md:143`, que as transcreve do enunciado — pares (setor ou dor) → tecnologias
+esperadas, escritos por quem propôs o case. É o que permite medir sobre as **30** sem desfazer
+D-062: as 22 fixtures novas entraram como DADO porque anotá-las seria calibrar contra o próprio
+julgamento, e aqui não há julgamento meu para calibrar. O que a base fornece é só o `setor`, que
+é campo de curadoria. **`origem` é obrigatória por regra**, pela razão de D-091.
+
+**A RAZÃO DO ACEITAR ANTERIOR CAIU, E ERA VERIFICÁVEL.** `plano.md` §3.2 aceitava a P-21 com
+*"só 1-2 das 7 regras têm startup na base de hoje"*. Medido: **7 de 7 têm** — 5 por setor
+(atendimento 5 · voz 3 · saúde 3 · robótica 4 · tabulares 1) e 2 por dor
+(`latencia` 14 · `governanca` 4). A razão foi escrita quando a base tinha 8 empresas e não foi
+re-conferida quando ela virou 30.
+
+**O CORTE QUE EXPLICA O AGREGADO, e sem ele o número engana nos dois sentidos:**
+
+| as tecnologias esperadas incluem alguma das 3 do trivial? | pares | motor | trivial |
+|---|---|---|---|
+| **SIM** (atendimento, voz, saúde, governança) | 15 | 7/15 | **15/15** |
+| **NÃO** — só o domínio resolve (tabulares, robótica, latência) | 19 | **6/19** | **0/19** |
+
+**O trivial não "ganha": ele acerta por construção onde o conjunto esperado contém uma
+tecnologia dominante da base, e faz ZERO onde não contém.** O motor é o único que alguma vez
+recupera `Isaac`, `Omniverse`, `RAPIDS` e `cuDF` — ele **lê o domínio**. E perde 8 dos 15 pares
+onde uma constante teria acertado, o que é o defeito de verdade.
+
+**A CAUSA APARECE NA DISTRIBUIÇÃO, NÃO NO PLACAR — e é o achado desta entrada.** Nas 89
+recomendações das 30 empresas: **`NVIDIA NeMo` 21 (24%) e `NVIDIA AI Enterprise` 20 (22%) somam
+46%.** Duas páginas genéricas ocupam metade da saída de um teto de 3 por empresa, expulsando a
+tecnologia certa. É a mesma família do caso que abriu a P-21 — Morpheus para a privacidade de
+uma healthtech —, agora com denominador: **a recuperação casa vocabulário e não domínio**, e as
+páginas mais genéricas do corpus casam com quase tudo. 12 das 16 tecnologias aparecem; nenhuma
+empresa fica sem recomendação.
+
+**A PARTE 2 DO CRITÉRIO DE D-101 — E ELA REPROVA.**
+
+| grupo | pares | acertos |
+|---|---|---|
+| sinal verificado (as 21 de sempre) | 23 | 10 = **43%** |
+| sinal NÃO verificado (as 9 de D-101) | 11 | 3 = **27%** |
+
+O critério, fixado no plano **antes desta régua existir**, dizia *"a taxa das 9 não pode ser pior
+que a das 21"*. **É pior, em 16 pontos.** Registro isso antes de qualquer atenuante, porque
+relativizar depois do placar é o que fixar critério antes existe para impedir. **O atenuante,
+declarado como fato sobre o instrumento e não como resgate:** 11 pares é denominador fino, e a
+diferença é de 2 acertos.
+
+**O QUE A REPROVAÇÃO DECIDE, E O QUE ELA NÃO DECIDE.** O plano se contradiz no mesmo parágrafo —
+*"Se for pior, B não sai"* seguido de *"a resposta é apertar isso, não voltar ao estado que
+viola o princípio"*. **D-101 resolveu a contradição por escrito**, e na direção da segunda
+cláusula: *"ela não pode reverter esta decisão; se as nove pontuarem pior, a resposta é apertar
+o rebaixamento que elas já carregam"*. Fico com a leitura de D-101, e **não aperto nada**:
+apertar é promover, e **medir não é promover** (D-078). A decisão é do Vinícius.
+
+**ALTERNATIVA DESCARTADA — seguir com o ACEITAR da P-21 sem régua.** A razão escrita estava
+desatualizada, e sem instrumento a frase da defesa seria *"a relevância não foi medida"*. Com
+ele, é *"a relevância foi medida contra as regras do próprio enunciado, dá 38% contra 44% de uma
+constante, e a causa está na distribuição"* — que é uma frase melhor mesmo sendo um número pior.
+
+**SEGUNDA ALTERNATIVA DESCARTADA — escrever eu mesmo um gabarito de relevância** por setor ou
+por dor, que teria cobertura maior que 34 pares. Seria medir o motor contra o meu julgamento
+sobre as mesmas fixtures que eu curei: D-062, e o erro que D-091 custou uma sessão.
+
+**DUAS ESCOLHAS DE DESENHO, DECLARADAS PORQUE MUDAM O DENOMINADOR:**
+1. **A regra 1 do TAPI tem duas partes** — *"atendimento ao cliente"* **e** *"só com APIs
+   externas"* —, e a segunda é diagnóstico, não cadastro. A régua aplica **só a primeira**: mede
+   onde é verificável e não inventa a metade que não é. Fica mais **frouxa** que o TAPI, nunca
+   mais apertada.
+2. **A unidade é o par (empresa, regra).** Regra de setor julga todas as recomendações da
+   empresa; regra de dor julga só as que entraram por aquela dor — cobrar uma empresa que não
+   tem a dor mediria a extração, não o motor.
+
+**O HARNESS RODA O GRAFO UMA VEZ E MEDE DA SAÍDA PERSISTIDA** (`run-recomendacoes.json`, ~17 min
+sobre as 30 com o rerank ligado). Não é cache de conveniência: um harness que re-roda o motor a
+cada ajuste da régua não é iterável, e a régua deixa de ser algo que se conserta. **O arquivo
+carimba `rerank_provedor`, e `--regras-tapi` RECUSA um run feito com `nenhum`** — é D-097 virando
+código: julgar relevância com o passo 7 desligado é medir outro sistema, e em 03/09 isso quase
+virou um defeito grave registrado.
+
+**Verificação:** nenhuma régua de produção se move — `classe 3/7 · maturidade_stack 6/7 ·
+confianca 0/6 · elegivel 6/6 · 49%/100%`. `pytest` **93 passed**.
+
+---
+
 ## Decisões pendentes
 
 | # | Decisão | Estado |

@@ -455,6 +455,129 @@ def rodar(f: dict, motor: str, indice: int = 0) -> dict:
     return estado
 
 
+# ─────────────────────────────────────────────────────────────────────────────
+# A RÉGUA DAS 7 REGRAS DO TAPI — P-21, D-105
+# ─────────────────────────────────────────────────────────────────────────────
+
+ARQ_REGRAS = Path(__file__).resolve().parent.parent / "data" / "avaliacao" / "regras-tapi.yaml"
+ARQ_RUN = Path(__file__).resolve().parent.parent / "data" / "avaliacao" / "run-recomendacoes.json"
+
+
+def produzir_run() -> dict:
+    """RODA O MOTOR UMA VEZ SOBRE AS 30 E PERSISTE. **Custa API** — embedding e rerank por dor.
+
+    POR QUE PERSISTIR, E POR QUE ISSO É DESENHO E NÃO CACHE DE CONVENIÊNCIA
+    -----------------------------------------------------------------------
+    Um run sobre a base leva ~20 minutos (medido em 04/09: 28 empresas, rerank ligado). Um
+    harness que re-roda o motor a cada ajuste da régua é inutilizável COMO INSTRUMENTO: a
+    régua deixa de ser algo que se itera. Separando as duas fases, ajustar `regras-tapi.yaml`
+    e re-medir custa segundos, e o número continua vindo de uma execução real.
+
+    O ARQUIVO CARIMBA O PROVEDOR DE RERANK, E ISSO É D-097 VIRANDO CÓDIGO. Em 03/09 uma
+    auditoria quase registrou como defeito grave o "NVIDIA Healthcare recomendado para uma
+    agtech" — era artefato de `RERANK_PROVEDOR=nenhum`. Julgar RELEVÂNCIA DE RECOMENDAÇÃO com o
+    passo 7 desligado é medir outro sistema. `medir_regras_tapi` recusa um run assim.
+
+    O caminho é o mesmo de `--motor ponta-a-ponta`, sobre as 30 fixtures e não sobre as 8 da
+    régua: a resposta certa aqui vem do TAPI, não do meu gabarito, então D-062 não é violado.
+    """
+    import json
+    from src.config import RERANK
+
+    fixtures = carregar()
+    empresas = []
+    for i, f in enumerate(fixtures):
+        estado = rodar(f, "ponta-a-ponta", i)
+        recs = estado.get("recomendacoes") or []
+        diag = estado.get("diagnostico")
+        empresas.append({
+            "nome": f["nome"],
+            "setor": f.get("setor") or "",
+            "sinal_verificado": bool(diag.sinal_verificado) if diag else True,
+            "recomendacoes": [
+                {"tecnologia": r.tecnologias[0] if r.tecnologias else None,
+                 "dores": r.dores_enderecadas,
+                 "prioridade": r.prioridade}
+                for r in recs
+            ],
+        })
+        print(f"  {i + 1:>2}/{len(fixtures)}  {f['nome']:22} {len(recs)} recomendação(ões)")
+
+    run = {"rerank_provedor": RERANK.provedor, "n": len(empresas), "empresas": empresas}
+    ARQ_RUN.write_text(json.dumps(run, ensure_ascii=False, indent=2), encoding="utf-8")
+    return run
+
+
+def _cobre(regra: dict, empresa: dict) -> list[dict] | None:
+    """As recomendações desta empresa que a regra julga, ou `None` se a regra não a cobre.
+
+    O par (empresa, regra) É A UNIDADE, e é isso que mantém as duas chaves comparáveis:
+      - `setor`: a regra fala de um TIPO DE EMPRESA, então julga todas as recomendações dela;
+      - `dor`:   a regra fala de uma DOR OBSERVÁVEL, então julga só as recomendações que
+                 entraram por aquela dor. Uma empresa sem essa dor não é coberta — cobrá-la
+                 mediria a extração de dores, não o motor de recomendação.
+    """
+    if regra["chave"] == "setor":
+        setor = empresa["setor"].lower()
+        if not any(frag.lower() in setor for frag in regra["casa_setor"]):
+            return None
+        return empresa["recomendacoes"]
+    alvo = regra["casa_dor"]
+    casadas = [r for r in empresa["recomendacoes"] if alvo in (r["dores"] or [])]
+    return casadas or None
+
+
+def medir_regras_tapi(run: dict) -> dict:
+    """Para cada par (empresa, regra) coberto: o conjunto recomendado intersecta o esperado?
+
+    A LINHA TRIVIAL É OBRIGATÓRIA (D-051) e aqui ela é forte, não decorativa: o recomendador
+    constante — as 3 tecnologias mais recomendadas na base inteira, para todo mundo — acerta
+    toda regra cujo conjunto esperado contenha uma delas. Sem essa coluna, "acertou 60%" não
+    diz se o motor leu a empresa ou se o corpus tem uma tecnologia dominante.
+
+    O CORTE POR `sinal_verificado` responde a PARTE 2 DO CRITÉRIO DE D-101, e ele foi fixado no
+    plano ANTES desta medição existir: *a taxa das 9 que D-101 pôs no funil não pode ser pior
+    que a das 21 que já estavam*. Se for pior, a resposta é apertar o rebaixamento que elas já
+    carregam — não voltar ao estado que viola D-010.
+    """
+    from collections import Counter
+
+    regras = yaml.safe_load(ARQ_REGRAS.read_text(encoding="utf-8"))["regras"]
+
+    frequencia = Counter(r["tecnologia"] for e in run["empresas"] for r in e["recomendacoes"]
+                         if r["tecnologia"])
+    trivial = {t for t, _ in frequencia.most_common(3)}
+
+    por_regra, pares = [], []
+    for regra in regras:
+        esperadas = set(regra["tecnologias_esperadas"])
+        cobertas, acertos, acertos_triviais = [], 0, 0
+        for empresa in run["empresas"]:
+            julgadas = _cobre(regra, empresa)
+            if julgadas is None:
+                continue
+            recomendadas = {r["tecnologia"] for r in julgadas if r["tecnologia"]}
+            acertou = bool(recomendadas & esperadas)
+            cobertas.append(empresa["nome"])
+            acertos += acertou
+            acertos_triviais += bool(trivial & esperadas)
+            pares.append({"empresa": empresa["nome"], "regra": regra["id"],
+                          "acertou": acertou, "verificado": empresa["sinal_verificado"],
+                          "recomendadas": sorted(recomendadas)})
+        por_regra.append({"id": regra["id"], "chave": regra["chave"], "n": len(cobertas),
+                          "acertos": acertos, "trivial": acertos_triviais,
+                          "empresas": cobertas})
+
+    grupos = {}
+    for verificado in (True, False):
+        do_grupo = [p for p in pares if p["verificado"] is verificado]
+        grupos[verificado] = (sum(p["acertou"] for p in do_grupo), len(do_grupo))
+
+    return {"por_regra": por_regra, "pares": pares, "trivial": sorted(trivial),
+            "frequencia": frequencia.most_common(6), "grupos": grupos,
+            "n_regras_cobertas": sum(1 for r in por_regra if r["n"])}
+
+
 def baseline(f: dict, indice: int = 0) -> dict:
     """A LINHA DE BASE TRIVIAL, e ela é obrigatória na tabela.
 
@@ -660,11 +783,23 @@ def main() -> int:
                     help="LIGA a confiança tirada da evidência do diagnóstico (default desligado, D-059)")
     ap.add_argument("--sustentacao", action="store_true",
                     help="LIGA o julgamento de sustentação no Evidence Validator (D-074). CUSTA API")
+    ap.add_argument("--profundos", action="store_true",
+                    help="LIGA `PROFUNDOS_CANDIDATO` nos dois eixos (D-106). Implica --rubrica")
+    ap.add_argument("--regras-tapi", action="store_true",
+                    help="a régua das 7 regras do TAPI sobre o run persistido (D-105)")
+    ap.add_argument("--rodar-motor", action="store_true",
+                    help="produz o run das 30 antes de medir --regras-tapi. CUSTA API, ~20 min")
     args = ap.parse_args()
 
     # Braço ligado que o modo escolhido nunca executa é pior que erro: o título ANUNCIA o braço
     # e a tabela sai da produção. Mesma disciplina que `--juiz --validar` já tinha.
     # Achado nº 12 do code review de 27/08.
+    if args.profundos:
+        # A lista alternativa só é LIDA pelo eixo 1 dentro do braço em degraus
+        # (`profundidade_tecnica` só é chamada com `RUBRICA_EM_DEGRAUS`). Ligar uma sem a outra
+        # mediria metade do candidato e imprimiria um título que promete o todo.
+        args.rubrica = True
+
     inertes = [n for n, on in (("--rubrica", args.rubrica),
                                ("--sustentacao", args.sustentacao),
                                ("--confianca-diagnostico", args.confianca_diagnostico)) if on]
@@ -678,6 +813,8 @@ def main() -> int:
 
     if args.rubrica:
         classifier.RUBRICA_EM_DEGRAUS = True
+    if args.profundos:
+        classifier.USAR_PROFUNDOS_CANDIDATO = True
     if args.confianca_diagnostico:
         evidence_validator.CONFIANCA_DA_EVIDENCIA_DO_DIAGNOSTICO = True
 
@@ -720,6 +857,78 @@ def main() -> int:
               f"   <- falso positivo: aparece no briefing")
         for f in r["falhas"]:
             print(f"      x {f}")
+        return 0
+
+    if args.regras_tapi:
+        import json
+        from src.config import RERANK
+
+        if args.rodar_motor:
+            if RERANK.provedor == "nenhum":
+                # D-097 VIRANDO CÓDIGO. O modo barato serve para desenvolver, nunca para julgar
+                # o que o gerente veria: em 03/09 uma auditoria quase registrou como defeito
+                # grave o "NVIDIA Healthcare para uma agtech", que era artefato do passo 7
+                # desligado. Um run assim não é entrada válida para uma régua de RELEVÂNCIA.
+                print("  RERANK_PROVEDOR=nenhum: um run sem o passo 7 não julga relevância "
+                      "(D-097). Rode com `cohere`.")
+                return 1
+            print(f"rodando o motor sobre as 30 — CUSTA API, rerank `{RERANK.provedor}`\n")
+            run = produzir_run()
+            print(f"\n  run salvo em {ARQ_RUN.relative_to(ARQ_RUN.parents[2])}")
+        elif not ARQ_RUN.exists():
+            print(f"  {ARQ_RUN.name} não existe — rode com --rodar-motor primeiro (CUSTA API)")
+            return 1
+        else:
+            run = json.loads(ARQ_RUN.read_text(encoding="utf-8"))
+
+        if run["rerank_provedor"] == "nenhum":
+            print(f"  o run em {ARQ_RUN.name} foi produzido com RERANK_PROVEDOR=nenhum — "
+                  f"ele não julga relevância (D-097). Refaça com --rodar-motor.")
+            return 1
+
+        r = medir_regras_tapi(run)
+        print(f"{run['n']} empresa(s) no run · rerank `{run['rerank_provedor']}` · "
+              f"{r['n_regras_cobertas']} de 7 regras com empresa na base\n")
+        print(f"  linha TRIVIAL: as 3 mais recomendadas da base para TODO MUNDO — "
+              f"{', '.join(r['trivial'])}")
+        print(f"  (frequência: {', '.join(f'{t} {n}' for t, n in r['frequencia'])})\n")
+        print(f"  {'regra':26} {'chave':7} {'n':>3}  {'trivial':>8}  {'motor':>8}")
+        print("  " + "-" * 62)
+        soma_n = soma_ok = soma_tri = 0
+        for reg in r["por_regra"]:
+            if not reg["n"]:
+                print(f"  {reg['id']:26} {reg['chave']:7} {'—':>3}   "
+                      f"{'sem empresa na base':>28}")
+                continue
+            soma_n += reg["n"]; soma_ok += reg["acertos"]; soma_tri += reg["trivial"]
+            print(f"  {reg['id']:26} {reg['chave']:7} {reg['n']:>3}  "
+                  f"{reg['trivial']:>4}/{reg['n']:<3}  {reg['acertos']:>4}/{reg['n']:<3}")
+        print("  " + "-" * 62)
+        print(f"  {'TOTAL (pares empresa x regra)':26} {'':7} {soma_n:>3}  "
+              f"{soma_tri:>4}/{soma_n:<3}  {soma_ok:>4}/{soma_n:<3}"
+              f"   = {soma_ok / soma_n:.0%} contra {soma_tri / soma_n:.0%}")
+
+        print(f"\n  PARTE 2 DO CRITÉRIO DE D-101 — o ruído das 9 que entraram no funil.")
+        print(f"  Fixado no plano ANTES desta régua existir: a taxa das não verificadas não")
+        print(f"  pode ser PIOR que a das que já estavam no funil.")
+        for verificado, rotulo in ((True, "sinal verificado (as 21 de sempre)"),
+                                   (False, "sinal NÃO verificado (as 9 de D-101)")):
+            ok, n = r["grupos"][verificado]
+            taxa = f"{ok / n:.0%}" if n else "—"
+            print(f"    {rotulo:40} {ok:>3}/{n:<3} = {taxa}")
+        (ok_v, n_v), (ok_n, n_n) = r["grupos"][True], r["grupos"][False]
+        if n_n and n_v:
+            veredito = ("as 9 NÃO são mais ruidosas que as 21"
+                        if ok_n / n_n >= ok_v / n_v else
+                        "as 9 SÃO mais ruidosas — apertar o rebaixamento, não reverter D-101")
+            print(f"    -> {veredito}")
+
+        print(f"\n  LEIA os pares que erram — a régua diz SE errou, não POR QUE:")
+        for par in r["pares"]:
+            if not par["acertou"]:
+                selo = "" if par["verificado"] else " ?"
+                print(f"    x {par['empresa']:20}{selo:2} {par['regra']:24} "
+                      f"recebeu {par['recomendadas']}")
         return 0
 
     if args.justificativas:
@@ -796,6 +1005,7 @@ def main() -> int:
 
     r = medir(regua, args.motor, args.baseline)
     bracos = [n for n, ligado in (("juiz LLM", args.juiz), ("rubrica em degraus", args.rubrica),
+                                  ("PROFUNDOS candidato", args.profundos),
                                   ("confiança do diagnóstico", args.confianca_diagnostico)) if ligado]
     titulo = ("linha de base TRIVIAL (sempre AI-native, todas as 8 dores)" if args.baseline
               else f"motor: {args.motor}"
