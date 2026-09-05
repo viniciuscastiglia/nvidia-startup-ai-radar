@@ -53,26 +53,116 @@ COMPLEXIDADE: dict[str, Complexidade] = {
     "TensorRT-LLM": "alta",
 }
 
-# Texto curado para as 5 tecnologias que o stub da sessão 01 conhecia. NÃO cobre as 16 da base —
-# e depois que `nvidia_rag` passou a consultar o RAG de verdade (24/08), chegam aqui tecnologias
-# fora desta tabela. O fallback abaixo é derivado das DORES observadas, que o nó já tem em mãos:
-# formulaico e visivelmente de stub, mas nunca vazio — `justificativa_negocio` é um dos 7 campos
-# obrigatórios do TAPI, e um briefing que chega ao usuário com esse campo vazio não é "quase lá":
-# é uma recomendação que ele não consegue levar para dentro da conversa com a startup.
-# Escrever as outras 11 à mão seria curadoria; na M4 este texto sai do LLM com o perfil na frente.
-NEGOCIO = {
-    "NVIDIA NIM": ("Reduz o custo por token e tira a empresa da dependência de um fornecedor "
-                   "externo, com migração sem reescrever código — o que preserva o roadmap."),
-    "TensorRT-LLM": ("Latência menor melhora a experiência do usuário final e permite atender "
-                     "mais requisições no mesmo orçamento de GPU."),
-    "Triton Inference Server": ("Melhor utilização de GPU baixa o COGS, que na contabilidade de "
-                                "AI-native services é o que separa margem de software de margem "
-                                "de serviço."),
-    "NeMo Guardrails": ("Governança sobre o comportamento do agente é pré-requisito de venda "
-                        "para cliente corporativo e setor regulado."),
-    "NVIDIA NeMo": ("Sem processo de avaliação não há como provar melhoria de qualidade ao "
-                    "cliente — é o gap mais comum e mais invisível."),
+# OS CINCO TEXTOS CURADOS, cada um escrito para uma DOR e não para uma tecnologia — é o que o
+# índice de `NEGOCIO` perdia. Ver D-104 e a tabela de `contexto/03` §4.
+_NIM = ("Reduz o custo por token e tira a empresa da dependência de um fornecedor "
+        "externo, com migração sem reescrever código — o que preserva o roadmap.")
+_TENSORRT = ("Latência menor melhora a experiência do usuário final e permite atender "
+             "mais requisições no mesmo orçamento de GPU.")
+_TRITON = ("Melhor utilização de GPU baixa o COGS, que na contabilidade de "
+           "AI-native services é o que separa margem de software de margem de serviço.")
+_GUARDRAILS = ("Governança sobre o comportamento do agente é pré-requisito de venda "
+               "para cliente corporativo e setor regulado.")
+_NEMO = ("Sem processo de avaliação não há como provar melhoria de qualidade ao "
+         "cliente — é o gap mais comum e mais invisível.")
+
+# O ÍNDICE ERA O DEFEITO, NÃO O TEXTO — P-22, D-104.
+# ------------------------------------------------------------------------------------------
+# Estes cinco textos SEMPRE foram escritos para um par (tecnologia, dor): o do NIM fala de custo
+# e de dependência de fornecedor; o do NeMo fala de avaliação. O dicionário, porém, era indexado
+# só pela TECNOLOGIA, e a dor pela qual a citação entrou vive em `citacao.dor_origem`. O
+# resultado chegava à tela do gerente assim, num run real de 05/09 com o rerank ligado:
+#
+#     NVIDIA NIM   dores: latencia   -> "Reduz o custo por token..."
+#     NVIDIA NeMo  dores: custo      -> "Sem processo de avaliação..."
+#
+# A linha `dores:` e a justificativa de negócio, uma embaixo da outra, falando de coisas
+# diferentes. É a família de D-100 nº 1 — texto que afirma o que não é o caso — no campo 3 dos 7
+# obrigatórios do TAPI, e o vizinho do campo que D-086 consertou.
+#
+# A FONTE É `contexto/03` §4 — a tabela *dor observável -> tecnologia*, escrita em 22/08 a partir
+# das fontes que o próprio TAPI lista, ANTES de qualquer medição deste projeto. Reatribuir cada
+# texto ao seu par é leitura de documento, não calibração contra resultado.
+NEGOCIO: dict[tuple[str, str], str] = {
+    ("NVIDIA NIM", "custo"): _NIM,
+    ("NVIDIA NIM", "dependencia_fornecedor"): _NIM,
+    ("TensorRT-LLM", "latencia"): _TENSORRT,
+    ("TensorRT-LLM", "escalabilidade"): _TENSORRT,
+    ("Triton Inference Server", "custo"): _TRITON,
+    ("Triton Inference Server", "escalabilidade"): _TRITON,
+    ("NeMo Guardrails", "governanca"): _GUARDRAILS,
+    ("NeMo Guardrails", "privacidade"): _GUARDRAILS,
+    ("NVIDIA NeMo", "avaliacao"): _NEMO,
 }
+
+# O QUE MATA O FALLBACK FORMULAICO — 8 frases em vez de 16 x 8 células.
+# ------------------------------------------------------------------------------------------
+# `NEGOCIO` cobre 9 das 128 combinações possíveis. As outras caíam num fallback que o próprio
+# comentário chamava de stub e adiava "para a M4" — fase que não existe em arquivo vivo nenhum
+# (D-088). Curar as 11 tecnologias restantes POR TECNOLOGIA seria repetir o defeito de índice
+# num denominador maior; o que o campo precisa dizer é o que RESOLVER AQUELA DOR compra para o
+# negócio, e isso é propriedade da dor, não da tecnologia. Daí 8 frases.
+#
+# Cada uma NOMEIA a tecnologia recebida, e isso não é enfeite: sem o nome, duas tecnologias
+# recomendadas pela mesma dor trariam justificativa byte a byte idêntica, e
+# `test_justificativa_negocio_fala_da_tecnologia_recomendada` (D-063) voltaria a ser satisfeito
+# por construção — a falha detectável que um fallback tornou indetectável.
+#
+# Cada frase diz o que a dor CUSTA ao negócio, sem afirmar nada sobre a startup específica:
+# afirmação sobre a empresa exige `list[Evidencia]`, e é por isso que a frase "São gargalos que
+# hoje limitam margem ou velocidade de entrega" saiu do fallback na revisão da sessão 03.
+#
+# O TAMANHO É RESTRIÇÃO MEDIDA, NÃO ESTILO: `briefing` corta em 150 com `…` (D-100), e o nome
+# de tecnologia mais longo da base — `RAPIDS / CUDA-X Data Science`, 28 caracteres — entra na
+# conta. A primeira redação destas oito frases estourava em SETE delas, e teriam chegado ao
+# gerente cortadas: o defeito que D-100 acabou de tirar da tela, de volta por outra porta.
+# `test_justificativa_negocio_cabe_no_briefing` é a rede.
+NEGOCIO_POR_DOR: dict[str, str] = {
+    "custo": ("{tecnologia} ataca o custo unitário da inferência, que é o que separa margem de "
+              "software de margem de serviço."),
+    "latencia": ("{tecnologia} reduz a latência de resposta: melhor experiência para o usuário "
+                 "final e mais requisições por GPU."),
+    "escalabilidade": ("{tecnologia} sustenta mais carga sem infraestrutura proporcional — evita "
+                       "o custo subir na curva da receita."),
+    "governanca": ("{tecnologia} dá controle auditável do comportamento do sistema, "
+                   "pré-requisito de venda a cliente corporativo e regulado."),
+    "privacidade": ("{tecnologia} mantém o dado sensível sob controle da empresa, que é o que "
+                    "destrava cliente de setor regulado."),
+    "avaliacao": ("{tecnologia} torna mensurável a qualidade entregue — sem avaliação não há "
+                  "como provar melhoria ao cliente."),
+    "observabilidade": ("{tecnologia} mostra quando o comportamento regride em produção, antes "
+                        "de o cliente ser quem avisa."),
+    "dependencia_fornecedor": ("{tecnologia} reduz a dependência de um fornecedor externo de "
+                               "modelo — o risco de quem só empacota API de terceiro."),
+}
+
+
+def justificativa_negocio(citacao: CitacaoRAG, nome: str) -> str:
+    """O campo 3 dos 7 obrigatórios, resolvido em três degraus (D-104).
+
+    1. par curado `(tecnologia, dor)` — os cinco textos que sempre foram escritos para um par;
+    2. frase por DOR, nomeando a tecnologia — cobre as 128 combinações com 8 frases curadas;
+    3. `_negocio_de_fallback`, e só quando `dor_origem` é `None`.
+
+    O DEGRAU 3 NÃO MORREU, E O MOTIVO É UM CAMINHO REAL: `dor_origem` é `None` quando a citação
+    não veio de uma consulta por dor — o caminho da interface, onde quem pergunta é um humano
+    (ver `CitacaoRAG.dor_origem`). Sem dor não há frase por dor, e o fallback é o que sobra.
+    Ele deixa de atender 11 das 16 tecnologias e passa a atender um caso, que é o que ele
+    sempre deveria ter sido.
+
+    Função e não expressão inline porque é o que a torna testável sem montar um `EstadoAnalise`
+    inteiro — `test_justificativa_negocio_fala_da_dor_declarada` chama daqui.
+    """
+    dor = citacao.dor_origem
+    if dor is None:
+        return _negocio_de_fallback(citacao, nome)
+    if texto := NEGOCIO.get((citacao.tecnologia, dor)):
+        return texto
+    if modelo := NEGOCIO_POR_DOR.get(dor):
+        return modelo.format(tecnologia=citacao.tecnologia)
+    # Dor fora das oito de `state.Dor`: não deveria acontecer, e se acontecer o fallback diz a
+    # verdade (nomeia a dor que entrou) em vez de esta função inventar uma frase.
+    return _negocio_de_fallback(citacao, nome)
 
 
 def _prioridade(
@@ -224,9 +314,7 @@ def node(state: EstadoAnalise) -> dict:
             # o span de maior densidade técnica dentro dele. Continua sendo citação literal da
             # documentação, com `url_fonte` — não é prosa gerada, e segue verificável.
             justificativa_tecnica=melhor_trecho(citacao.trecho),
-            justificativa_negocio=NEGOCIO.get(citacao.tecnologia) or _negocio_de_fallback(
-                citacao, perfil.nome
-            ),
+            justificativa_negocio=justificativa_negocio(citacao, perfil.nome),
             prioridade=_prioridade(
                 diagnostico.quadrante,
                 diagnostico.confianca,

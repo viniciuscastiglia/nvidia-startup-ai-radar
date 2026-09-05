@@ -3756,6 +3756,67 @@ confianca 0/6 · elegivel 6/6 · 49%/100%` **idênticos** · as mesmas **7 recus
 `RERANK_PROVEDOR=cohere` e o briefing foi lido.
 
 
+## D-104 — `justificativa_negocio` era um defeito de ÍNDICE, e o conserto tropeçou no teto do briefing
+**Data:** 05/09/2026 · fecha a P-22 · achado por execução (D-083), não por leitura
+**Decisão:** `NEGOCIO` passa a ser indexado por **`(tecnologia, dor)`**, e entra
+`NEGOCIO_POR_DOR` com **8 frases curadas**, uma por dor, cada uma nomeando a tecnologia
+recebida. `_negocio_de_fallback` fica, e só para `dor_origem is None`.
+
+**O DEFEITO, NA TELA, NUM RUN REAL DE 05/09** (`python -m src.graph "startups de fintech
+AI-native"`, `RERANK_PROVEDOR=cohere` como D-097 exige):
+
+```
+  NVIDIA NIM    dores: latencia   -> "Reduz o custo por token e tira a empresa da dependência…"
+  NVIDIA NeMo   dores: custo      -> "Sem processo de avaliação não há como provar melhoria…"
+```
+
+A linha `dores:` e a justificativa de negócio, uma embaixo da outra, falando de coisas
+diferentes. **Medido no briefing inteiro: 2 das 15 recomendações traziam texto coerente com a
+dor declarada** — 8 traziam texto de outra dor e 5 caíam no fallback formulaico.
+
+**O DEFEITO ERA DE ÍNDICE, NÃO DE TEXTO, e isso é o que torna o conserto barato.** Os cinco
+textos curados **sempre foram escritos para um par**: o do NIM fala de custo e de dependência de
+fornecedor; o do NeMo fala de avaliação. O dicionário era indexado só pela tecnologia, e a dor
+que puxou a citação vive em `citacao.dor_origem` desde D-043. **O código tinha a informação e
+jogava fora.** É a família de D-100 nº 1 — texto que afirma o que não é o caso — no **campo 3
+dos 7 obrigatórios do TAPI**, e o vizinho do campo que D-086 consertou.
+
+**A FONTE DAS 8 FRASES É `contexto/03` §4**, a tabela *dor observável → tecnologia*, escrita em
+22/08 a partir das fontes que o próprio TAPI lista, **antes de qualquer medição deste projeto**.
+Reatribuir cada texto ao seu par é leitura de documento, não calibração.
+
+**ALTERNATIVA DESCARTADA — curar as 11 tecnologias restantes, por TECNOLOGIA.** É o que o
+comentário do código prometia desde a sessão 01 ("na M4 este texto sai do LLM"), e o que a
+simetria sugere. Ela **mantém o defeito de índice num denominador maior**: 16 × 8 = 128 células,
+curadas por 16 chaves. O que o campo precisa dizer é o que RESOLVER AQUELA DOR compra para o
+negócio — e isso é propriedade da dor, não da tecnologia. **8 frases cobrem as 128 células**, e
+o par curado continua ganhando quando existe.
+
+**O QUE EU ERREI, E FOI MEDIÇÃO QUE PEGOU: as 8 frases não cabiam no briefing.**
+`briefing._resumir` corta em 150 com `…` (D-100), e o nome de tecnologia mais longo da base —
+`RAPIDS / CUDA-X Data Science`, 28 caracteres — entra na conta. A primeira redação estourava em
+**sete das oito**, e teriam chegado ao gerente **cortadas no meio**: o defeito que D-100 tinha
+acabado de tirar da tela, de volta por outra porta, três decisões depois. Reescritas para caber
+com folga (114-136). **`test_justificativa_negocio_cabe_no_briefing` é a rede**, e ela lê o nome
+mais longo de `fontes.yaml` em vez de assumir um.
+
+**O RESULTADO, no mesmo run, mesma consulta, rerank ligado: 15 de 15** falam da dor declarada,
+contra 2 de 15. Zero fallback, zero truncagem em `negócio`.
+
+**O ELO MAIS FRACO, DECLARADO:** `TensorRT-LLM` sob `escalabilidade` recebe o par curado, cujo
+texto **abre** falando de latência e só depois diz *"atender mais requisições no mesmo orçamento
+de GPU"*, que é a parte que responde a dor. Mesmo caso em `Triton`/`escalabilidade`. É defensável
+— a segunda cláusula está no alvo — e é a versão branda do próprio defeito. **A alternativa é
+reservar cada texto curado para a dor que ele ABRE e deixar a segunda cair na frase por dor**;
+fica registrada e não foi tomada, porque o pareamento saiu do plano escrito antes do run e mudá-lo
+depois de ver a tela é o que a disciplina de fixar critério antes existe para impedir.
+
+**Não é medição, é correção com teste — nenhuma régua se move:** `classe 3/7 · maturidade_stack
+6/7 · confianca 0/6 · elegivel 6/6 · 49%/100%` idênticos, `pytest` **90 passed** (era 87).
+Três testes novos: o irmão de D-063 para a dor, o teto do briefing, e a cobertura das 8 dores.
+
+---
+
 ## Decisões pendentes
 
 | # | Decisão | Estado |

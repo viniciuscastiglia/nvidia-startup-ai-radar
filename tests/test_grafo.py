@@ -449,3 +449,128 @@ def test_resumir_nunca_corta_no_meio_da_palavra_nem_deixa_quebra_de_linha():
     # A borda (D-103): `limite - 1` virava fatia NEGATIVA e devolvia quase o texto inteiro.
     assert _resumir("texto longo", 0) == "…"
     assert _resumir("", 0) == ""
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# D-104 — `justificativa_negocio` por (tecnologia, dor). P-22.
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+def test_justificativa_negocio_fala_da_dor_declarada():
+    """IRMÃO de `test_justificativa_negocio_fala_da_tecnologia_recomendada`, pelo mesmo motivo
+    e no campo ao lado (D-063 → D-104).
+
+    Aquele impede o campo de virar texto que não fala da TECNOLOGIA; este impede que ele fale
+    de uma DOR diferente da que a linha `dores:` declara duas linhas acima. Medido na tela em
+    05/09, com o rerank ligado: `NVIDIA NIM · dores: latencia · "Reduz o custo por token…"` e
+    `NVIDIA NeMo · dores: custo · "Sem processo de avaliação…"` — 13 das 15 recomendações do
+    briefing traziam texto de outra dor ou o fallback formulaico.
+
+    A rede é o CONTRAPOSITIVO, e não a coincidência: nenhum texto curado para um par pode sair
+    sob uma dor que não é a dele. Verificar "o texto casa com a dor" exigiria julgar prosa;
+    verificar "o texto de OUTRA dor não aparece aqui" é mecânico e pega a regressão de índice,
+    que é o defeito real — `NEGOCIO` indexado só por tecnologia.
+    """
+    from src.agents.recommendation import NEGOCIO, justificativa_negocio
+    from src.state import CitacaoRAG, Dor
+    from typing import get_args
+
+    tecnologias = {t for t, _ in NEGOCIO}
+    for tecnologia in sorted(tecnologias):
+        proprias = {d for t, d in NEGOCIO if t == tecnologia}
+        for dor in get_args(Dor):
+            citacao = CitacaoRAG(tecnologia=tecnologia, trecho="t",
+                                 url_fonte="https://exemplo.test/x", dor_origem=dor)
+            texto = justificativa_negocio(citacao, "Acme")
+            if dor in proprias:
+                assert texto == NEGOCIO[(tecnologia, dor)], f"{tecnologia}/{dor}"
+            else:
+                assert texto not in NEGOCIO.values(), (
+                    f"{tecnologia} sob a dor `{dor}` recebeu texto curado para outra dor: "
+                    f"{texto[:70]!r}")
+
+
+def test_justificativa_negocio_cabe_no_briefing():
+    """O tamanho é restrição MEDIDA, não estilo — e a primeira redação de D-104 a violou.
+
+    `briefing` corta em 150 com `…` (D-100). Sete das oito frases por dor estouravam quando
+    formatadas com `RAPIDS / CUDA-X Data Science`, o nome mais longo da base: teriam chegado ao
+    gerente cortadas no meio, que é exatamente o defeito que D-100 tinha acabado de tirar da
+    tela. O teto entra aqui para que a próxima frase curada nasça sabendo dele.
+    """
+    from src.agents.recommendation import NEGOCIO, NEGOCIO_POR_DOR
+    import yaml
+    from pathlib import Path
+
+    fontes = yaml.safe_load(Path("data/nvidia/fontes.yaml").read_text(encoding="utf-8"))
+    nomes = [f["tecnologia"] for f in (fontes["fontes"] if isinstance(fontes, dict) else fontes)]
+    mais_longo = max(nomes, key=len)
+    for dor, modelo in NEGOCIO_POR_DOR.items():
+        texto = modelo.format(tecnologia=mais_longo)
+        assert len(texto) <= 150, f"`{dor}` estoura o briefing com {len(texto)}: {texto!r}"
+    for chave, texto in NEGOCIO.items():
+        assert len(texto) <= 150, f"{chave} estoura o briefing com {len(texto)}"
+
+
+def test_toda_dor_tem_texto_de_negocio():
+    """As oito dores de `state.Dor` são o domínio do campo; uma sem frase cai no fallback
+    formulaico, que é a dívida que D-104 existe para pagar."""
+    from src.agents.recommendation import NEGOCIO_POR_DOR
+    from src.state import Dor
+    from typing import get_args
+
+    assert set(NEGOCIO_POR_DOR) == set(get_args(Dor)), \
+        f"faltam: {set(get_args(Dor)) - set(NEGOCIO_POR_DOR)}"
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# D-106 — `PROFUNDOS` alternativo, sob protocolo anti-contaminação.
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+def test_profundos_candidato_bate_com_o_yaml():
+    """O CARIMBO DE DATA SÓ VALE SE OS DOIS LADOS NÃO PUDEREM DIVERGIR.
+
+    `data/avaliacao/profundos-candidato.yaml` guarda a ORIGEM de cada termo — documento e
+    trecho literal —, e foi commitado antes de qualquer medição. A constante em `classifier.py`
+    é o que roda. Se as duas divergirem, o YAML vira decoração e a lista volta a poder ser
+    ajustada olhando o resultado, que é exatamente o erro que D-091 custou uma sessão.
+    """
+    import yaml
+    from pathlib import Path
+    from src.agents.classifier import PROFUNDOS_CANDIDATO
+
+    dados = yaml.safe_load(
+        Path("data/avaliacao/profundos-candidato.yaml").read_text(encoding="utf-8"))
+    do_yaml = [t["termo"] for t in dados["candidato"]]
+    assert set(do_yaml) == set(PROFUNDOS_CANDIDATO), (
+        f"só no yaml: {sorted(set(do_yaml) - set(PROFUNDOS_CANDIDATO))} · "
+        f"só no código: {sorted(set(PROFUNDOS_CANDIDATO) - set(do_yaml))}")
+    sem_origem = [t["termo"] for t in dados["candidato"] if not t.get("origem")]
+    assert not sem_origem, f"termo sem origem — foi inventado olhando o resultado? {sem_origem}"
+
+
+def test_a_flag_do_candidato_alcanca_os_dois_eixos():
+    """A GUARDA DE D-060, E ELA É A RAZÃO DE `marcadores()` EXISTIR.
+
+    D-060 deixou a lista compartilhada de propósito: mexer nela para consertar `classe` move a
+    `maturidade_stack` no mesmo movimento, o que torna a calibração visível. Um candidato que
+    alcançasse só o eixo 1 faria o critério de D-106 — *"sem derrubar maturidade_stack abaixo
+    de 6/7"* — passar POR CONSTRUÇÃO, que é a armadilha do instrumento que parece medido.
+    """
+    from src.agents import classifier
+
+    original = classifier.USAR_PROFUNDOS_CANDIDATO
+    try:
+        assert classifier.marcadores() is classifier.PROFUNDOS
+        classifier.USAR_PROFUNDOS_CANDIDATO = True
+        assert classifier.marcadores() is classifier.PROFUNDOS_CANDIDATO
+    finally:
+        classifier.USAR_PROFUNDOS_CANDIDATO = original
+
+    # O eixo 2 tem de LER o acessor, não a constante de produção — é o que o teste acima não
+    # mostraria sozinho, porque `marcadores()` pode existir e ninguém chamá-la.
+    import inspect
+    fonte = inspect.getsource(classifier.node)
+    assert "marcadores()" in fonte.split("Eixo 2")[1], \
+        "o eixo 2 voltou a ler PROFUNDOS direto — a calibração ficou silenciosa"
