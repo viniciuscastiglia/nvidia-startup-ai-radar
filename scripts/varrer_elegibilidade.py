@@ -49,7 +49,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import avaliar_agentes as regua  # noqa: E402
-from src.agents import extractor  # noqa: E402
+from src.agents import briefing, extractor  # noqa: E402
 from src.agents.briefing import elegibilidade  # noqa: E402
 
 
@@ -87,7 +87,11 @@ def main() -> int:
             for m in e.motivos_exclusao:
                 print(f"{'':29}   x {m}")
             for ev in e.evidencias:
-                print(f"{'':31}   « {ev.trecho.strip()[:100]}…")
+                # `_resumir` e não `[:100]…` (D-103): o corte cru parte a palavra ao meio e
+                # acrescenta `…` mesmo quando NÃO truncou, então o leitor não distingue citação
+                # completa de citação cortada. Mesma evidência que o briefing imprime; mesma
+                # regra. Importado de `briefing` em vez de reescrito — é uma função, não duas.
+                print(f"{'':31}   « {briefing._resumir(ev.trecho, 100)}»")
 
     print(f"\n{len(excluidas)} de {len(fixtures)} recusadas: "
           + " · ".join(f"{n} ({r})" for n, r in excluidas))

@@ -279,6 +279,21 @@ def node_analise(state: EstadoAnalise) -> dict:
     return {"elegibilidade": elegibilidade(state["startup"], state.get("perfil"))}
 
 
+# D-103: o quadrante NÃO é `fora-do-funil` para quem tem sinal não verificado (D-101), mas
+# `PROSPECT DE EVOLUÇÃO — a conversa é sair do wrapper` também não serve: a SunnyHUB é energia
+# solar e NÃO TEM WRAPPER NENHUM. É a mesma família do "sem evidência validada" que D-100
+# removeu — rótulo cujo texto explicativo não vale para o caso.
+#
+# POR QUE TEXTO VARIANTE E NÃO UM QUINTO VALOR DE `Quadrante`: a matriz de `contexto/02` §4 é
+# publicada com QUATRO células, e o que muda aqui não é a célula — é o que se pode DIZER sobre
+# ela quando o rótulo que a produziu não foi constatado. Um quinto valor seria mais uma coisa
+# a defender na arguição, e o tipo passaria a misturar "onde a empresa está" com "quanto eu
+# sei disso" — que é a ortogonalidade que `sinal_verificado` existe para preservar.
+# 50 colunas + as 18 do prefixo `  Quadrante     : ` = 68, dentro das 78 do relatório. O detalhe
+# — quantos detectores, quantas dores — está na linha `?` logo abaixo; repeti-lo aqui estouraria
+# a largura pela terceira vez no mesmo dia.
+ROTULO_SEM_SINAL = "A VERIFICAR — nenhum sinal de IA encontrado na base"
+
 ROTULO_QUADRANTE = {
     "sweet-spot": "SWEET SPOT — AI-native com stack imatura: melhor prospect",
     "prospect-de-evolucao": "PROSPECT DE EVOLUÇÃO — a conversa é sair do wrapper",
@@ -304,6 +319,12 @@ def _resumir(texto: str, limite: int) -> str:
     de uma tabela de largura fixa.
     """
     limpo = re.sub(r"\s+", " ", texto).strip()
+    # `limite <= 1` não tem saída válida: o `…` sozinho já ocupa uma coluna. Sem esta guarda,
+    # `limite=0` produzia `limpo[:-1]` — uma fatia NEGATIVA que devolve quase o texto inteiro,
+    # o oposto do contrato. Inalcançável pelos dois chamadores de hoje (130 e 150), e este é um
+    # helper de uso geral: contrato que falha em silêncio na borda é contrato que não vale.
+    if limite <= 1:
+        return "…" if limpo else ""
     if len(limpo) <= limite:
         return limpo
     # `limite - 1` porque o `…` conta: a saída nunca é mais larga que o `limite` pedido, e a
@@ -325,7 +346,8 @@ def _secao(a: AnaliseStartup) -> list[str]:
         L += [
             f"  Classificação : {d.classe}   (confiança {d.confianca})",
             f"  Stack técnica : maturidade {d.maturidade_stack}",
-            f"  Quadrante     : {ROTULO_QUADRANTE.get(d.quadrante, d.quadrante)}",
+            f"  Quadrante     : "
+            f"{ROTULO_SEM_SINAL if not d.sinal_verificado else ROTULO_QUADRANTE.get(d.quadrante, d.quadrante)}",
             f"  Base          : {d.justificativa}",
         ]
         # A regra 5 de contexto/02 §6 é "o output carrega a confiança, NÃO SÓ O RÓTULO". Imprimir
@@ -339,14 +361,24 @@ def _secao(a: AnaliseStartup) -> list[str]:
         # Sem esta linha o desenho estaria pela metade: a empresa deixaria de ser cortada do
         # funil em silêncio e passaria a ser incluída em silêncio — e o gerente continuaria
         # sem saber que `non-AI`, ali, quer dizer "não achei sinal" e não "não tem IA".
+        #
+        # TRÊS LINHAS DE <= 78 COLUNAS, E ISSO FOI MEDIDO (D-103). A primeira versão dizia no
+        # comentário que estava dividida "porque o relatório tem 78 colunas" e entregava 110 —
+        # dividiu o estouro ao meio em vez de removê-lo, num texto impresso uma vez por empresa.
+        #
+        # E O TEXTO NÃO DIZ MAIS "dor(es) DE IA" (D-103): `extractor.GATILHOS_DOR` casa dor de
+        # NEGÓCIO, sem nenhuma trava de IA — a dor de `custo` da Conta Simples se apoia em
+        # "análise por centros de custos". Contar essas como prova de que o Extractor achou
+        # sinal de IA que os detectores perderam é a mesma afirmação sem lastro que D-100
+        # removeu do campo ao lado. O número é honesto; a etiqueta dele não era.
         if not d.sinal_verificado:
             n_dores = len(a.perfil.dores_observadas) if a.perfil else 0
-            # Duas linhas, e não uma de ~200 caracteres: o relatório tem 78 colunas, e uma
-            # linha que estoura a largura some na dobra do terminal — que é onde ela é lida.
-            L.append(f"    ? sinal de IA NÃO VERIFICADO — nenhum dos 3 detectores disparou; "
-                     f"{n_dores} dor(es) de IA extraída(s) com evidência")
-            L.append("      o rótulo acima é o que a regra produziu, não o que a base "
-                     "constatou")
+            L += [
+                "    ? sinal de IA NÃO VERIFICADO — nenhum dos 3 detectores do eixo 1",
+                f"      disparou neste documento, e o Extractor achou {n_dores} dor(es)",
+                "      observada(s) com evidência. O rótulo acima é o que a regra",
+                "      produziu, não o que a base constatou",
+            ]
     if a.elegibilidade:
         e = a.elegibilidade
         L.append(f"\n  NVIDIA Inception: {'ELEGÍVEL' if e.elegivel else 'NÃO ELEGÍVEL'}")
@@ -371,11 +403,16 @@ def _secao(a: AnaliseStartup) -> list[str]:
         # `recommendation` nem chegou a rodar — e aí a única resposta honesta é dizer isso.
         L.append(f"    nenhuma — {a.motivo_sem_recomendacao or 'a análise não chegou ao motor de recomendação'}")
     # D-099: a recusa do Inception rotula as recomendações em vez de suprimi-las, e o rótulo
-    # aparece UMA vez, acima da lista — não repetido em cada item. `fora_do_inception` é o mesmo
-    # em todas as recomendações da empresa, porque a elegibilidade é da empresa.
-    if fora := next((r.fora_do_inception for r in a.recomendacoes if r.fora_do_inception), None):
-        L.append("    !! FORA DO INCEPTION — abordagem comercial direta, não captação para o")
-        L.append(f"       programa. Motivo da recusa: {fora}")
+    # aparece UMA vez, acima da lista.
+    #
+    # LÊ `a.elegibilidade`, QUE JÁ ESTÁ EM MÃOS (D-103). A primeira versão lia um campo
+    # `fora_do_inception` carimbado em cada `Recomendacao` — estado derivável, duplicado até 3
+    # vezes por empresa. E ELA REPETIA O MOTIVO: a string byte a byte já saiu cinco linhas
+    # acima, no `x` do bloco de elegibilidade, ali COM a evidência. O que é informação nova
+    # aqui é só o enquadramento comercial; o motivo, o leitor acabou de ler.
+    if a.recomendacoes and a.elegibilidade and not a.elegibilidade.elegivel:
+        L.append("    !! FORA DO INCEPTION — abordagem comercial direta, não captação")
+        L.append("       para o programa. O motivo da recusa está no bloco acima.")
     for i, r in enumerate(a.recomendacoes, 1):
         L += [
             f"\n    {i}. {', '.join(r.tecnologias)}",

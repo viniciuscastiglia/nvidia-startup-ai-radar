@@ -3561,6 +3561,12 @@ caso:** `nvidia_rag` sempre rodou para TODAS as empresas — o corte de funil ac
 em `recommendation`. O que as nove ganham é o aproveitamento de citações que já eram recuperadas e
 jogadas fora. Medido: o mesmo run de 5 empresas, mesma consulta, levou **3m30 antes e 3m27 depois** — a primeira redação desta linha dizia *"3m27 e 3m27"*, que é mais forte do que a medição sustenta.
 
+> **⚠️ CORRIGIDA EM 04/09 POR D-103.** A frase *"um `non-AI` CONSTATADO continua fora do funil"*,
+> acima, **descreve um estado que o código não produz** — provado por força bruta sobre o espaço de
+> detectores. `sinal_verificado` é exatamente `classe != "non-AI"`, e o sistema não tem detector
+> POSITIVO de `non-AI`. A decisão continua de pé; a descrição estava errada. E o rebaixamento de
+> `prioridade` por não-elegibilidade, descrito nesta entrada, **saiu** — ver D-103.
+
 **Na tela, ao fim:**
 ```
   Classificação : non-AI   (confiança baixa)
@@ -3646,6 +3652,108 @@ faria uma tabela de leitura virar placar, que é a razão inteira de D-098.
 
 **Alternativa descartada — não salvar, porque "os números já estão no log".** É a que eu já tinha
 tomado por omissão, e ela é o defeito.
+
+---
+
+## D-103 — Um code review derrubou a redação de D-101, e os 15 achados procedem
+**Data:** 04/09/2026 · `/code-review max af0281b` · **zero achado refutado**
+
+**O QUE ACONTECEU.** As decisões D-099 a D-101 foram escritas pela sessão que fez as mudanças —
+o mesmo defeito que essa sessão existiu para corrigir na sessão da manhã. Um review externo sobre
+o commit `af0281b` devolveu **15 achados**, verificados por execução: `pytest` completo, dois runs
+reais do grafo, varredura das 30, **força bruta sobre o espaço de detectores** e **injeção de falha
+no subgrafo reordenado**. **Nenhum foi refutado.**
+
+**ACHADO CENTRAL — `fora-do-funil` É INALCANÇÁVEL, E D-101 DESCREVIA UM ESTADO IMPOSSÍVEL.**
+Força bruta sobre `(autopilot, dado, técnico, n_profundos, maturidade)` nos DOIS braços da rubrica:
+
+```
+quadrantes alcançáveis: ['ja-otimizada', 'prospect-de-evolucao', 'sweet-spot']
+`fora-do-funil` alcançável?          NÃO
+existe (`non-AI`, verificado=True)?  NÃO
+```
+
+`sinal_verificado` **não é um terceiro eixo**: é exatamente `classe != "non-AI"`. O único caminho
+para `non-AI` é `pontos == 0`, que é a própria definição de "nenhum sinal". D-101 dizia *"um
+`non-AI` CONSTATADO continua fora do funil"* — **esse estado não existe.**
+
+**A verdade é mais forte que o que eu tinha escrito, e é o achado de verdade:** o sistema **não tem
+detector POSITIVO de `non-AI`**. A rubrica define a classe por AUSÊNCIA de IA no caminho crítico, e
+os três detectores do Extractor só sabem afirmar presença. Enquanto for assim, `fora-do-funil`
+descreve um caso que este classificador não produz — e sempre descreveu, desde antes de D-101.
+
+**A decisão de D-101 continua de pé; a descrição dela estava errada.** O que muda:
+- `derivar_quadrante` mantém o ramo (é a matriz PUBLICADA de `contexto/02` §4) com a
+  inalcançabilidade **declarada** em vez de descoberta por quem ler depois;
+- o guard de `recommendation.py` idem;
+- **`varrer_classes.py` parava de mentir:** ele imprimia *"D-101 verificado"* numa checagem cujos
+  dois disjuntos são insatisfazíveis — e o `else` também rodava com a lista vazia, dizendo *"as 0
+  sem detector saem…"*. Passa a imprimir a TAUTOLOGIA e a sua causa. O docstring do próprio
+  arquivo condena isso: *"instrumento que descreve um sistema que não existe é pior que instrumento
+  nenhum, porque parece medido"*.
+
+**SEGUNDO ACHADO — O REBAIXAMENTO POR NÃO-ELEGIBILIDADE SAI (decisão do Vinícius).**
+Medido sobre as 30: ele levava **15 empresas de `media` para `baixa`**, e nelas a **JetBov**
+— único `sweet-spot` da base — empatava com a **SunnyHUB**, que é energia solar. Achatar as duas
+no piso destrói o que a regra 1 de `contexto/03` §4 existe para produzir: *"a prioridade sai do
+GAP, não do rótulo"*. `prioridade` é um dos 7 campos obrigatórios do TAPI.
+
+| desenho | distribuição | JetBov | SunnyHUB |
+|---|---|---|---|
+| antes de 04/09 | **`media` nas 30** | media | media |
+| os dois rebaixamentos | 15 · 15 | **baixa** | **baixa** |
+| **só verificação (escolhido)** | 21 · 9 | **media** | **baixa** |
+| só elegibilidade | 23 · 7 | baixa | media |
+
+**Alternativa descartada — tirar os dois.** Voltaria ao estado anterior, que o próprio
+levantamento revelou: **`media` para as 30, constante, informação zero**, porque `confianca` é
+`baixa` em todo mundo e isso já rebaixava todo `alta`. Não era um campo bom que eu estraguei; era
+um campo morto. Fica o eixo de verificação, que é a mesma regra 3 aplicada a uma base fraca — e a
+recusa do Inception não precisa ser codificada duas vezes, porque o banner já a grita.
+
+**TERCEIRO — MOVER `elegibilidade` AMPLIOU O RAIO DE FALHA, E ISSO NÃO ESTAVA NO CUSTO DE D-099.**
+`registrar_falha` faz `goto=END`. Isso era correto quando `elegibilidade` era o ÚLTIMO nó: a falha
+custava só o veredito. Movido para cima, o MESMO handler passou a destruir as citações do RAG e as
+recomendações — **medido por injeção de falha**: `citacoes_rag=None`, `recomendacoes=None`. Contra
+o objetivo declarado do próprio `registrar_falha`, que é *"PRESERVAR O TRABALHO PARCIAL"*.
+Conserto: `seguir_sem_elegibilidade`, que anota e vai para `nvidia_rag`. Nada a jusante lê a
+elegibilidade, então uma falha aqui deve custar um veredito, não a análise. Re-medido depois:
+perfil, diagnóstico, citações e recomendações **todos preservados**.
+
+**QUARTO — `PROSPECT DE EVOLUÇÃO — a conversa é sair do wrapper` para quem não tem wrapper.**
+Vale para as 9 sem sinal, e a SunnyHUB é energia solar. Mesma família do *"sem evidência validada"*
+que D-100 removeu: rótulo cujo texto explicativo não vale para o caso. Entra `ROTULO_SEM_SINAL` —
+*"A VERIFICAR — nenhum sinal de IA encontrado na base; confirmar antes de abordar"*.
+**Alternativa descartada — um quinto valor de `Quadrante`:** a matriz de `contexto/02` §4 é
+publicada com quatro células, e o que muda aqui não é a célula, é o que se pode DIZER sobre ela
+quando o rótulo não foi constatado. O tipo passaria a misturar *"onde a empresa está"* com
+*"quanto eu sei disso"* — a ortogonalidade que `sinal_verificado` existe para preservar.
+
+**OS ONZE RESTANTES, todos confirmados e corrigidos:** a linha `?` tinha **110 colunas** sob um
+comentário que afirmava respeitar 78 (dividi o estouro ao meio em vez de removê-lo) · ela dizia
+*"N dor(es) DE IA"* sobre dores que `GATILHOS_DOR` casa **sem trava de IA** — a de `custo` da Conta
+Simples se apoia em *"análise por centros de custos"* · o banner repetia, byte a byte, o motivo da
+recusa impresso cinco linhas acima **com** a evidência · `Recomendacao.fora_do_inception` era
+estado 100% derivável, copiado em até 3 objetos por empresa, para um leitor que já tinha a fonte ·
+a linha `Base` justapunha *"posicionamento de copilot"* a *"nenhum detector disparou"* · o teste de
+ordem colapsava arestas paralelas num dict e caminhava com `while` sem teto — a primeira
+condicional o quebraria, um ciclo o penduraria · `varrer_elegibilidade.py` ainda cortava evidência
+com `[:100]…`, o defeito que `_resumir` foi escrito para matar · `_resumir(x, 0)` virava fatia
+NEGATIVA · o docstring de `construir_subgrafo` ainda dizia *"as cinco etapas"* de um subgrafo com
+seis nós.
+
+**A LIÇÃO DE MÉTODO, E ELA É O MOTIVO DESTA ENTRADA EXISTIR.** O primeiro review deste dia foi
+disparado sobre o **commit errado** — revisou o documento da manhã, não o código — e mesmo assim
+achou a linha de base trivial faltando em D-101, porque o defeito era HERDADO. O segundo, no alvo
+certo, achou 15. **Nenhuma régua deste projeto teria pego qualquer um deles**: as réguas não se
+moveram uma casa em nenhuma das duas rodadas de conserto. O que os pegou foi um leitor sem o meu
+enquadramento, com permissão para rodar força bruta e injetar falha. *Sessão que se audita não é
+auditoria* vale para código, não só para documento.
+
+**Verificação, com o mesmo critério fixado em D-101:** `classe 3/7 · maturidade_stack 6/7 ·
+confianca 0/6 · elegivel 6/6 · 49%/100%` **idênticos** · as mesmas **7 recusas** · `pytest`
+**87 passed** · injeção de falha preserva os quatro campos · o grafo roda com
+`RERANK_PROVEDOR=cohere` e o briefing foi lido.
 
 
 ## Decisões pendentes

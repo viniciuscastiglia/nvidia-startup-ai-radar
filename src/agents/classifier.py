@@ -236,8 +236,17 @@ def node(state: EstadoAnalise) -> dict:
         # é a linha `?` do briefing, que tem o número de dores em mãos e é onde o gerente lê.
         # Dizer as duas coisas nos dois lugares fazia a linha `Base` repetir a linha de baixo, e
         # a primeira redação ainda dizia "o rótulo abaixo" sobre um rótulo que é impresso acima.
-        razoes.append("nenhum detector de IA disparou "
-                      "(autopilot, dado proprietário, vocabulário técnico)")
+        # A CLÁUSULA VEM PRIMEIRO, E O TEXTO DIZ POR QUE O COPILOT NÃO CONTA (D-103).
+        # A linha `Base` do briefing saía como "posicionamento de copilot: vende a ferramenta;
+        # nenhum detector de IA disparou" — o Extractor LEU o modelo de entrega, e a cláusula
+        # seguinte dizia que nada foi encontrado. Lidas em sequência, as duas se contradizem;
+        # lidas com a rubrica na mão, não: `copilot` é sinal NEGATIVO em `contexto/02` §4, não
+        # ausência de leitura. O texto passa a dizer isso, em vez de deixar o leitor concluir.
+        # Curta de propósito: `justificativa` é um `join` de todas as razões e já é a linha mais
+        # larga do briefing (~180 col). A versão longa desta cláusula somava mais 100 — piorava
+        # o mesmo defeito de largura que D-103 estava corrigindo em outras três linhas.
+        razoes.insert(0, "nenhum dos 3 detectores do eixo 1 disparou — o que segue foi lido, "
+                         "não é sinal de IA operada")
 
     if RUBRICA_EM_DEGRAUS:
         # Degrau 2a e 2b. `opera_propria_ia` é a pergunta do eixo 1 em uma linha.

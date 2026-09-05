@@ -86,8 +86,23 @@ def registrar_falha(state: EstadoAnalise, error: NodeError) -> Command:
     )
 
 
+def seguir_sem_elegibilidade(state: EstadoAnalise, error: NodeError) -> Command:
+    """Anota a falha e SEGUE — o oposto de `registrar_falha`, e por um motivo (D-103).
+
+    O filtro do Inception não alimenta nada a jusante: `recommendation.node` não lê
+    `elegibilidade`, e `briefing._secao` já trata `elegibilidade=None` como ausência. Uma falha
+    aqui custa um veredito; com `goto=END` ela passaria a custar TAMBÉM as citações do RAG e as
+    recomendações, que são o resto da análise. É a mesma lógica de `registrar_falha` — preservar
+    o trabalho parcial —, e é justamente por isso que ela pede outro `goto` neste nó.
+    """
+    return Command(
+        update={"erros": [f"{error.node}: {type(error.error).__name__}: {error.error}"]},
+        goto="nvidia_rag",
+    )
+
+
 def construir_subgrafo():
-    """As cinco etapas de análise de UMA startup.
+    """As SEIS etapas de análise de UMA startup.
 
     Compilado separado de propósito: dá para invocar no pytest com um `EstadoAnalise` montado
     à mão, sem subir o grafo pai nem tocar no banco.
@@ -100,7 +115,17 @@ def construir_subgrafo():
     g.add_node("nvidia_rag", nvidia_rag.node, retry_policy=RETENTAR, error_handler=registrar_falha)
     g.add_node("recommendation", recommendation.node, retry_policy=RETENTAR,
                error_handler=registrar_falha)
-    g.add_node("elegibilidade", briefing.node_analise, error_handler=registrar_falha)
+    # ERROR HANDLER PRÓPRIO — D-103, e é consequência direta de D-099 ter movido este nó.
+    # `registrar_falha` faz `goto=END`, o que era correto quando `elegibilidade` era o ÚLTIMO
+    # nó: a falha custava só o veredito de elegibilidade. Movido para cima, o MESMO handler
+    # passou a destruir as citações do RAG e as recomendações da empresa — medido por injeção
+    # de falha: `citacoes_rag=None`, `recomendacoes=None`. Isso contraria o objetivo declarado
+    # de `registrar_falha`, que é PRESERVAR O TRABALHO PARCIAL.
+    #
+    # Nada a jusante depende da elegibilidade — `recommendation.node` não a lê, e o briefing
+    # trata `elegibilidade=None` como ausência —, então a falha aqui deve ANOTAR e SEGUIR.
+    # `goto` é o próximo nó, não `END`.
+    g.add_node("elegibilidade", briefing.node_analise, error_handler=seguir_sem_elegibilidade)
 
     # A ORDEM DO FILTRO DO INCEPTION — CORRIGIDA EM 04/09 (D-099)
     # ------------------------------------------------------------

@@ -313,17 +313,30 @@ def test_o_diagnostico_carrega_o_motivo_da_confianca_em_producao():
 # ─────────────────────────────────────────────────────────────────────────────
 
 
-def _ordem_do_subgrafo() -> list[str]:
-    """A ordem topológica dos nós do subgrafo, a partir do grafo COMPILADO.
+def _alcanca(origem: str, destino: str) -> bool:
+    """`destino` é alcançável a partir de `origem` no subgrafo COMPILADO?
 
-    Lê do compilado e não da lista de `add_edge` de propósito: é o que de fato roda.
+    BUSCA EM LARGURA, E NÃO UMA CAMINHADA PELA CADEIA (D-103). A primeira versão montava
+    `{e.source: e.target}` e andava com um `while` sem teto: um dict COLAPSA arestas paralelas
+    (fica só a última), então a primeira aresta condicional acrescentada ao subgrafo faria o
+    teste afirmar um ramo arbitrário, ou estourar `ValueError`/`KeyError` — e um ciclo faria o
+    `while` pendurar a suíte em vez de falhar. O próprio comentário de `construir_subgrafo`
+    prevê a condicional ("a mudança vira uma condicional"), então o teste não pode assumir linha
+    reta. Lê do compilado, e não da lista de `add_edge`: é o que de fato roda.
     """
-    arestas = {e.source: e.target for e in SUBGRAFO.get_graph().edges}
-    ordem, no = [], arestas["__start__"]
-    while no != "__end__":
-        ordem.append(no)
-        no = arestas[no]
-    return ordem
+    saidas: dict[str, list[str]] = {}
+    for e in SUBGRAFO.get_graph().edges:
+        saidas.setdefault(e.source, []).append(e.target)
+    vistos, fila = {origem}, [origem]
+    while fila:
+        no = fila.pop()
+        for prox in saidas.get(no, []):
+            if prox == destino:
+                return True
+            if prox not in vistos:
+                vistos.add(prox)
+                fila.append(prox)
+    return False
 
 
 def test_elegibilidade_roda_antes_do_recommendation():
@@ -334,8 +347,8 @@ def test_elegibilidade_roda_antes_do_recommendation():
     e o rótulo some em silêncio — nenhum teste de comportamento pegaria isso, porque o estado
     montado à mão no pytest não tem a ordem do grafo.
     """
-    ordem = _ordem_do_subgrafo()
-    assert ordem.index("elegibilidade") < ordem.index("recommendation"), ordem
+    assert _alcanca("elegibilidade", "recommendation"), "elegibilidade não precede recommendation"
+    assert not _alcanca("recommendation", "elegibilidade"), "a ordem antiga voltou"
 
 
 def _elegibilidade(elegivel: bool):
@@ -360,15 +373,27 @@ def test_recusada_pelo_inception_mantem_recomendacao_rotulada_e_rebaixada():
                          url_fonte="https://build.nvidia.com/nim", dor_origem="custo")
     estado = {"perfil": _perfil_com_duas_dores(), "diagnostico": _diagnostico_sweet_spot(),
               "citacoes_rag": [citacao], "elegibilidade": _elegibilidade(False)}
+    from src.agents import briefing
+    from src.state import AnaliseStartup
     recs = recommendation.node(estado)["recomendacoes"]
     assert recs, "a recomendação sumiu quando a empresa foi recusada"
-    assert recs[0].fora_do_inception and "cripto" in recs[0].fora_do_inception
-    # Regra 3 aplicada ao eixo novo: `sweet-spot` daria `alta`; recusada nunca disputa a fila.
-    assert recs[0].prioridade == "baixa", recs[0].prioridade
+
+    # O RÓTULO É DO BRIEFING, LENDO `a.elegibilidade` (D-103) — não um campo em `Recomendacao`.
+    # E a `prioridade` NÃO cai por causa da recusa: medido em 04/09, esse rebaixamento achatava
+    # 15 das 30 e empatava a JetBov (único `sweet-spot`) com a SunnyHUB (energia solar).
+    assert recs[0].prioridade == "alta", recs[0].prioridade
+    analise = AnaliseStartup(startup_id=1, nome="Acme", perfil=_perfil_com_duas_dores(),
+                             diagnostico=_diagnostico_sweet_spot(), recomendacoes=recs,
+                             elegibilidade=_elegibilidade(False))
+    banner = [l for l in briefing._secao(analise) if "FORA DO INCEPTION" in l]
+    assert banner, "recusada sem o banner comercial"
+    # O motivo aparece UMA vez, no bloco de elegibilidade, com a evidência — não duas.
+    motivos = [l for l in briefing._secao(analise) if "cripto" in l]
+    assert len(motivos) == 1, motivos
+
     # E o contrário, para a asserção não passar por construção:
-    estado["elegibilidade"] = _elegibilidade(True)
-    ok = recommendation.node(estado)["recomendacoes"][0]
-    assert ok.fora_do_inception is None and ok.prioridade == "alta", ok.prioridade
+    analise.elegibilidade = _elegibilidade(True)
+    assert not [l for l in briefing._secao(analise) if "FORA DO INCEPTION" in l]
 
 
 def test_non_ai_sem_sinal_verificado_nao_e_cortado_do_funil():
@@ -421,3 +446,6 @@ def test_resumir_nunca_corta_no_meio_da_palavra_nem_deixa_quebra_de_linha():
     # Palavra única maior que o limite: corta, mas ANUNCIA o corte.
     longo = _resumir("a" * 80, 20)
     assert len(longo) <= 20 and longo.endswith("…")
+    # A borda (D-103): `limite - 1` virava fatia NEGATIVA e devolvia quase o texto inteiro.
+    assert _resumir("texto longo", 0) == "…"
+    assert _resumir("", 0) == ""

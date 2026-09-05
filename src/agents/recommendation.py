@@ -79,23 +79,29 @@ def _prioridade(
     quadrante: str,
     confianca: str,
     sinal_verificado: bool = True,
-    elegivel: bool = True,
 ) -> Prioridade:
     """Regra 1: a prioridade sai do GAP entre maturidade AI-native e maturidade de stack.
 
     Regra 3 aplicada junto: confiança baixa nunca vira prioridade alta. A evidência não
     sustenta a urgência, então afirmar urgência seria inventar.
 
-    OS DOIS REBAIXAMENTOS DE 04/09 SÃO A MESMA REGRA 3, EM DOIS EIXOS NOVOS:
+    `sinal_verificado=False` (D-101) É A MESMA REGRA 3, NUM EIXO NOVO: o rótulo veio do silêncio
+    da extração, não de constatação, e afirmar urgência sobre classificação não constatada é o
+    mesmo erro que afirmar urgência sobre evidência fraca.
 
-    · `sinal_verificado=False` (D-101) — o rótulo veio do silêncio da extração, não de
-      constatação. Afirmar urgência sobre uma classificação não constatada é o mesmo erro que
-      afirmar urgência sobre evidência fraca.
-    · `elegivel=False` (D-099) — a empresa não entra no Inception. A recomendação continua
-      saindo, porque a NVIDIA vende fora do programa e porque suprimir seria deletar
-      informação que o gerente precisa (D-010) — mas ela não disputa a fila com um prospect
-      que o programa aceita. O rebaixamento também ordena o briefing: `briefing.node` ordena
-      as seções pela MENOR prioridade de cada empresa, então as recusadas afundam para o fim.
+    O REBAIXAMENTO POR NÃO-ELEGIBILIDADE ENTROU EM 04/09 E SAIU NO MESMO DIA (D-103). No papel
+    fazia sentido — "a recusada não disputa a fila". Medido, fazia outra coisa: **15 das 30 caíam
+    para `baixa`, e a JetBov empatava com a SunnyHUB.** A JetBov é o único `sweet-spot` da base;
+    a SunnyHUB é energia solar. Achatar as duas no piso destrói exatamente o que a regra 1 existe
+    para produzir — *"a prioridade sai do GAP, não do rótulo"*. E a informação não se perde: o
+    banner `!! FORA DO INCEPTION` já grita a recusa. Codificá-la duas vezes custava o único eixo
+    que o campo ainda discriminava.
+
+    CONTEXTO QUE FALTAVA: antes de 04/09 o campo era **`media` para as 30** — constante,
+    informação zero, porque `confianca` é `baixa` em todo mundo (o defeito 0/6) e isso já
+    rebaixava todo `alta`. Com só o eixo de verificação ele vai a 21 `media` e 9 `baixa`. Ele só
+    volta a medir o GAP quando `confianca` sair do 0/6 — P-11, que depende de `coletar.py`
+    capturar data (P-25).
     """
     base: Prioridade = {
         "sweet-spot": "alta",            # AI-native com stack imatura: dor real e iminente
@@ -103,7 +109,7 @@ def _prioridade(
         "ja-otimizada": "baixa",          # provavelmente já usa NVIDIA ou já é membro
         "fora-do-funil": "baixa",
     }.get(quadrante, "baixa")
-    if not sinal_verificado or not elegivel:
+    if not sinal_verificado:
         return "baixa"
     if confianca == "baixa" and base == "alta":
         return "media"
@@ -142,7 +148,6 @@ def _negocio_de_fallback(citacao: CitacaoRAG, nome: str) -> str:
 
 def node(state: EstadoAnalise) -> dict:
     perfil, diagnostico = state.get("perfil"), state.get("diagnostico")
-    elegibilidade = state.get("elegibilidade")
     citacoes = state.get("citacoes_rag") or []
     if perfil is None or diagnostico is None:
         return {"recomendacoes": [],
@@ -155,24 +160,29 @@ def node(state: EstadoAnalise) -> dict:
     # relatório que afirma a causa errada é pior que um que não afirma nenhuma, porque o
     # gerente age sobre ela — e o rodapé da página promete o contrário.
     #
-    # O TESTE PASSOU A SER O QUADRANTE, NÃO A CLASSE (D-101). `derivar_quadrante` é o único
-    # lugar que decide quem está fora do funil, e desde 04/09 ele distingue o `non-AI`
-    # CONSTATADO do que veio do silêncio da extração. Perguntar `classe == "non-AI"` aqui
-    # duplicaria essa decisão em dois lugares e desfaria a correção pela porta dos fundos.
+    # O TESTE É O QUADRANTE, NÃO A CLASSE (D-101): `derivar_quadrante` é o único lugar que
+    # decide quem está fora do funil, e perguntar `classe == "non-AI"` aqui duplicaria a decisão.
+    #
+    # E ESTE RAMO É INALCANÇÁVEL VINDO DO GRAFO — D-103, provado por força bruta sobre o espaço
+    # de detectores. `fora-do-funil` exige `non-AI` CONSTATADO, e o classificador não tem
+    # detector positivo de `non-AI`: o único caminho para o rótulo é ausência de sinal. Fica
+    # porque é a regra da rubrica e `node()` é invocável com um `Diagnostico` montado à mão — e
+    # fica DECLARADO, porque guard morto que ninguém sabe que está morto é a mesma armadilha em
+    # que `varrer_classes.py` caiu ao imprimir "D-101 verificado".
     if diagnostico.quadrante == "fora-do-funil":
         return {"recomendacoes": [],
                 "motivo_sem_recomendacao": (
                     f"empresa classificada `{diagnostico.classe}` com sinal verificado — "
                     f"fora do funil por `contexto/02` §4, não por falta de evidência")}
 
-    # D-099: a recusa do Inception NÃO suprime a recomendação; ela a rotula e a rebaixa.
-    # A NVIDIA vende fora do programa, e a JetBov — única `AI-native` e único `sweet-spot` da
-    # base de 30 — é recusada por idade. Suprimir apagaria da tela o melhor prospect que o
-    # sistema encontrou. Ver a alternativa descartada em D-099.
-    fora_do_inception = None
-    if elegibilidade is not None and not elegibilidade.elegivel:
-        fora_do_inception = "; ".join(elegibilidade.motivos_exclusao) or "não elegível"
-
+    # D-099: a recusa do Inception NÃO suprime a recomendação. A NVIDIA vende fora do programa,
+    # e a JetBov — única `AI-native` e único `sweet-spot` da base — é recusada por idade;
+    # suprimir apagaria da tela o melhor prospect que o sistema encontrou.
+    #
+    # QUEM ROTULA É O BRIEFING, LENDO `a.elegibilidade` (D-103). A primeira versão carimbava o
+    # motivo num campo novo de `Recomendacao` — estado 100% derivável, copiado em até 3 objetos
+    # por empresa, para um leitor que já tinha a fonte em mãos. `Recomendacao` modela UMA
+    # tecnologia recomendada; a elegibilidade é fato da EMPRESA.
     recomendacoes: list[Recomendacao] = []
     for citacao in citacoes[:TETO_RECOMENDACOES]:
         # Regra 3: só as dores cuja afirmação passou pelo validator entram.
@@ -221,7 +231,6 @@ def node(state: EstadoAnalise) -> dict:
                 diagnostico.quadrante,
                 diagnostico.confianca,
                 sinal_verificado=diagnostico.sinal_verificado,
-                elegivel=fora_do_inception is None,
             ),
             complexidade=COMPLEXIDADE.get(citacao.tecnologia, "media"),
             # Sem `dor_origem` a lista fica vazia — o caminho da interface, onde quem pergunta é
@@ -237,7 +246,6 @@ def node(state: EstadoAnalise) -> dict:
             evidencias=evidencias,
             citacoes_rag=[citacao],
             dores_enderecadas=sorted({d.dor for d in dores}),
-            fora_do_inception=fora_do_inception,
         ))
     # As duas causas restantes, e elas são DIFERENTES: não houve o que recuperar na base NVIDIA,
     # ou houve e nenhuma citação tinha dor validada por trás. A segunda é a frase que o briefing

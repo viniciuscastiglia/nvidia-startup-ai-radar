@@ -244,16 +244,31 @@ def derivar_quadrante(
     O rótulo que o TAPI pede continua saindo em `Diagnostico.classe`; a PRIORIZAÇÃO da
     recomendação sai daqui. Ver a matriz em contexto/02 §4.
 
-    `sinal_verificado` É UM TERCEIRO EIXO, E NÃO UMA QUARTA CÉLULA DA MATRIZ (D-101).
-    A matriz de `contexto/02` §4 tem quatro células e continua com quatro — ela responde
-    "o que oferecer a esta empresa". A pergunta nova é outra: "o rótulo que usei para
-    responder aquilo foi constatado, ou é o silêncio da extração?". Duas perguntas, dois
-    eixos — exatamente como `confianca` já é ortogonal à `classe`.
+    `sinal_verificado` responde à pergunta "o rótulo foi constatado, ou é o silêncio da
+    extração?" — que é diferente de "o que oferecer a esta empresa", respondida pela matriz de
+    `contexto/02` §4. A matriz continua com quatro células; este parâmetro não acrescenta uma.
 
-    O default `True` NÃO é conveniência: ele mantém o contrato antigo para todo chamador que
-    não faz a pergunta nova, e é o que faz `tests/test_grafo.py` seguir verde sem edição.
-    Um `non-AI` CONSTATADO continua fora do funil — a rubrica autoriza esse corte e
-    `recommendation.py` está certo em obedecê-lo. O que muda é só o caso não constatado.
+    `fora-do-funil` É INALCANÇÁVEL A PARTIR DO CLASSIFIER DE HOJE, E ISSO NÃO É BUG — É O
+    ACHADO (D-103). A primeira redação de D-101 dizia *"um `non-AI` CONSTATADO continua fora do
+    funil"*, e um code review de 04/09 provou por força bruta sobre o espaço de detectores que
+    **esse estado não existe**: o único caminho para `non-AI` em `classifier.node` é
+    `pontos == 0`, que é exatamente `sinal_verificado=False`. Logo `classe == "non-AI"` implica
+    `not sinal_verificado`, e a linha abaixo nunca dispara vinda do grafo.
+
+    A razão é mais funda que a implementação: **o sistema não tem detector POSITIVO de
+    `non-AI`.** A rubrica define a classe por ausência de IA no caminho crítico, e os três
+    detectores do Extractor só sabem afirmar presença. Enquanto for assim, `fora-do-funil`
+    descreve um caso que este classificador não produz.
+
+    ENTÃO POR QUE O RAMO FICA: `derivar_quadrante` implementa a matriz PUBLICADA em
+    `contexto/02` §4, e a célula `non-AI -> fora do funil` faz parte dela. Apagá-la faria a
+    função divergir da rubrica que ela existe para executar, e faria o dia em que um detector
+    positivo de `non-AI` existir custar uma re-leitura da rubrica em vez de um argumento a mais.
+    Fica, com a inalcançabilidade DECLARADA aqui em vez de descoberta por quem ler depois.
+
+    O default `True` mantém o contrato antigo para quem não faz a pergunta nova, e é o que faz
+    `tests/test_grafo.py::test_non_ai_nao_recebe_recomendacao` seguir verde sem edição — esse
+    teste passou a cobrir a matriz, não o caminho de produção.
     """
     if classe == "non-AI" and not sinal_verificado:
         # AUSÊNCIA DE SINAL NÃO É SINAL NEGATIVO — a regra 4 do Evidence Validator, escrita no
@@ -263,6 +278,8 @@ def derivar_quadrante(
         # de sinal fraco, e o briefing diz que o rótulo não foi verificado.
         return "prospect-de-evolucao"
     if classe == "non-AI":
+        # INALCANÇÁVEL a partir de `classifier.node` — ver o docstring. É a célula da matriz de
+        # `contexto/02` §4 para um `non-AI` CONSTATADO, e nenhum detector de hoje constata isso.
         return "fora-do-funil"
     if maturidade == "alta":
         return "ja-otimizada" if classe == "AI-native" else "prospect-de-evolucao"
@@ -372,12 +389,6 @@ class Recomendacao(BaseModel):
     evidencias: list[Evidencia] = Field(default_factory=list)  # 7a — base de startups
     citacoes_rag: list[CitacaoRAG] = Field(default_factory=list)  # 7b — base NVIDIA
     dores_enderecadas: list[Dor] = Field(default_factory=list)
-    # D-099: preenchido quando a empresa é NÃO ELEGÍVEL ao Inception. A recomendação NÃO é
-    # suprimida — ela é rotulada, e a prioridade cai. Suprimir seria o Recommendation deletando,
-    # e D-010 diz o contrário: "o Validator anota e rebaixa, nunca deleta; deletar destrói
-    # informação que o humano precisa". Concretamente: a JetBov é a única `AI-native` e o único
-    # `sweet-spot` da base, e é recusada por idade — suprimir apagaria o melhor prospect da tela.
-    fora_do_inception: str | None = None
 
 
 class AnaliseStartup(BaseModel):

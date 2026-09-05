@@ -92,15 +92,24 @@ def tabela(fixtures) -> None:
         print("apresentava ao gerente como 'esta empresa não tem IA'. São coisas diferentes —")
         print("é a mesma distinção que `Elegibilidade` já faz entre `x` (provado) e `?`.")
 
-    # A VERIFICAÇÃO DE D-101, e ela falha ALTO: uma empresa sem detector nenhum não pode voltar
-    # a `fora-do-funil`, porque isso seria o sistema afirmando de novo o que não constatou.
-    regressao = [n for n, _, quad, ver in mudas if quad == "fora-do-funil" or ver]
-    if regressao:
-        print(f"\n*** REGRESSÃO DE D-101: {', '.join(regressao)} tem zero detector e voltou a "
-              f"ser cortada do funil (ou marcada como verificada). ***")
+    # ESTA CHECAGEM NÃO É UMA VERIFICAÇÃO, E DIZER QUE ERA FOI O DEFEITO (D-103).
+    # A versão de 04/09 imprimia "D-101 verificado" quando `quad == "fora-do-funil" or ver` dava
+    # falso para todas as linhas de `mudas`. Um code review provou que os DOIS disjuntos são
+    # insatisfazíveis por construção: `mudas` é exatamente o conjunto sem detector, logo `ver` é
+    # falso, logo `derivar_quadrante` devolve `prospect-de-evolucao`. A checagem nunca podia
+    # falhar — e o `else` também rodava com `mudas` vazio, imprimindo "as 0 sem detector saem…".
+    # É literalmente o que o docstring deste arquivo condena: *instrumento que parece medido*.
+    #
+    # O que se pode afirmar honestamente é a TAUTOLOGIA e a sua causa, que é o achado de verdade.
+    incoerentes = [n for n, _, quad, ver in mudas if ver or quad == "fora-do-funil"]
+    if incoerentes:
+        print(f"\n*** INCOERÊNCIA: {', '.join(incoerentes)} tem zero detector e mesmo assim sai "
+              f"verificada ou fora do funil. O invariante do classificador quebrou. ***")
     else:
-        print(f"\nD-101 verificado: as {len(mudas)} sem detector saem com `sinal_verificado=False` "
-              f"e NENHUMA foi cortada do funil por silêncio da extração.")
+        print(f"\nAs {len(mudas)} sem detector saem com `sinal_verificado=False` — o que é "
+              f"TAUTOLÓGICO,\ne é esse o ponto: `pontos == 0` É a definição de `non-AI` neste "
+              f"classificador, então\n`non-AI` CONSTATADO não existe e `fora-do-funil` é "
+              f"inalcançável. Ver D-103.")
 
 
 def custo_dos_desenhos(fixtures) -> None:
