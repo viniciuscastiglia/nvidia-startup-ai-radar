@@ -1,12 +1,12 @@
 # Smoke test — build.nvidia.com
 
-Gerado por `scripts/smoke_nvidia.py` em 05/09/2026 01:03.
+Gerado por `scripts/smoke_nvidia.py` em 06/09/2026 13:20.
 
 | Capacidade | Resultado | Latência | Modelo |
 |---|---|---|---|
-| chat completion | passou | 3769 ms | `nvidia/nemotron-3.5-lightning-30b-a3b` |
-| embedding | passou | 586 ms | `nvidia/llama-nemotron-embed-vl-1b-v2` |
-| reranking | passou | 235 ms | `rerank-v3.5` |
+| chat completion | lento | 19946 ms | `nvidia/nemotron-3.5-lightning-30b-a3b` |
+| embedding | passou | 739 ms | `nvidia/llama-nemotron-embed-vl-1b-v2` |
+| reranking | passou | 315 ms | `rerank-v3.5` |
 
 ## Detalhes
 
@@ -18,10 +18,11 @@ tokens: 37 prompt + 120 completion
 resposta: Here's a thinking process:
 
 1.  **Analyze User Input:**
-   - **Language:** Portuguese
-   - **Constraint:** One sentence only ("uma frase curta")
-   - **Question
+   - **Constraint 1:** Respond in one sentence only ("uma frase curta")
+   - **Constraint 2:** Language:
 NOTA: o `content` cru comeca com o raciocinio do modelo. Isto e esperado (D-079) e NAO afeta a producao — `json_schema` devolve so o schema.
+LENTO: 20 s contra ~10 s esperados. A capacidade EXISTE — isto nao e EOL.
+-> NAO MIGRE. Subir LLM_TIMEOUT, ou aceitar a latencia e planejar o video com ela.
 ```
 
 ### embedding

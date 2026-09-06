@@ -22,6 +22,8 @@ que é a linha de base de D-032: é o botão de desligar o braço lexical sem to
 
 from __future__ import annotations
 
+from dataclasses import dataclass
+
 from src.config import RERANK
 from src.rag.busca import ESTRATEGIA_PADRAO, Passagem, buscar_denso_bruto, para_citacao
 from src.rag.fusao import fundir_rrf, fundir_soma
@@ -130,6 +132,51 @@ def buscar_com_rerank(
         para_citacao(p, denso=sd.get(p.chunk_id), lexical=sl.get(p.chunk_id), rerank=logit)
         for p, logit in reranquear(consulta, [p for p, _ in fundido], top_n=k)
     ]
+
+
+@dataclass(frozen=True)
+class RastroRecuperacao:
+    """As DUAS ordens de uma mesma recuperação — o que `buscar_com_rerank` descarta.
+
+    `fusao` é a união INTEIRA na ordem do passo 6; `rerank` é o que o passo 7 devolveu.
+    Guardar a união toda, e não só o topo, é o que permite dizer *"este trecho era o 15º e o
+    cross-encoder o trouxe para 1º"* — que é a única forma de mostrar o passo 7 trabalhando.
+    """
+
+    fusao: list[Passagem]
+    rerank: list[tuple[Passagem, float]]
+    scores_denso: dict[int, float]
+    scores_lexical: dict[int, float]
+
+
+def recuperar_com_rastro(
+    consulta: str, k: int = 8, estrategia: str = ESTRATEGIA_PADRAO, **kwargs
+) -> RastroRecuperacao:
+    """Passos 6 e 7 com o rastro preservado. Existe para a interface, e é ADITIVA (06/09).
+
+    POR QUE UMA FUNÇÃO IRMÃ E NÃO UM PARÂMETRO EM `buscar_com_rerank`
+    ------------------------------------------------------------------
+    `buscar_com_rerank` é o caminho de produção: é o que `nvidia_rag.node` chama e o que a
+    ablação de D-068 mede. Acrescentar um modo a ela poria a régua do critério 2 no caminho de
+    uma mudança feita para uma tela, a um dia do vídeo. Esta função **chama as mesmas duas
+    peças na mesma ordem** — `recuperar` e `reranquear` — e não altera nenhuma; se ela sumir,
+    nada no sistema muda. Reversibilidade custou seis linhas de duplicação de composição, e a
+    duplicação está aqui, não na lógica.
+
+    O CUSTO É O MESMO DE UMA RECUPERAÇÃO NORMAL, e não é zero: um embedding para a consulta e
+    uma ou duas chamadas de rerank (a união passa de `LOTE`=32 em 9 das 24 consultas do
+    gabarito). A cota mensal do Cohere é de 1.000 e já acabou uma vez (D-093) — por isso quem
+    chama isto é um clique, nunca o carregamento de uma tela.
+    """
+    fundido, sd, sl = recuperar(consulta, estrategia=estrategia, **kwargs)
+    passagens = [p for p, _ in fundido]
+    # `provedor == "nenhum"` devolve `rerank` VAZIO, e não a mesma lista repetida: a segunda
+    # coluna estaria afirmando que o passo 7 produziu aquela ordem, quando ele não rodou. É a
+    # mesma convenção de `score_rerank=None` em `buscar_com_rerank` — "este motor não votou" é
+    # diferente de "votou igual".
+    rerank = ([] if RERANK.provedor == "nenhum" or not passagens
+              else reranquear(consulta, passagens, top_n=k))
+    return RastroRecuperacao(fusao=passagens, rerank=rerank, scores_denso=sd, scores_lexical=sl)
 
 
 def responder(

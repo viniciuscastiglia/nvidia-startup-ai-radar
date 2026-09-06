@@ -4045,6 +4045,106 @@ confianca 0/6 · elegivel 6/6 · 49%/100%`. `pytest` **93 passed**.
 
 ---
 
+## D-107 — A interface web existe: FastAPI, run ao vivo por SSE, e o passo 7 mostrando o que faz
+
+**Data:** 06/09/2026 · **fecha a P-06** (framework, escopo e modelo de execução) · nada em
+`src/rag/`, `src/agents/` ou `src/graph.py` muda de comportamento
+
+**Decisão:** `src/web/` — FastAPI + uvicorn servindo uma API JSON e um front HTML/CSS/JS
+escrito à mão. Escopo: **consultar → ver empresas com diagnóstico → recomendações com evidência
+→ exportar briefing**, mais a **vitrine do passo 7**, que entrou como etapa aditiva.
+
+### Por que FastAPI, e o que decidiu não foi preferência
+
+O que decidiu foi a **latência**: um run com o passo 7 ligado custou **2m18 para 3 empresas**,
+medido hoje. Streamlit re-executa o script a cada interação, o que briga de frente com um
+processo longo, e traz ~15 dependências transitivas. **Alternativa descartada — `http.server` da
+stdlib:** economizaria as 5 dependências (`fastapi`, `starlette`, `uvicorn`, `click`,
+`annotated-doc`) e custaria roteamento e SSE escritos à mão — mais código para manter e
+defender, sem nada em troca. **SSE e não WebSocket:** o tráfego é de mão única e SSE é HTTP puro.
+
+### A regra que organiza a camada: a tela não pode discordar do `.txt` que ela exporta
+
+Nenhuma regra de negócio mora em `src/web/`. Toda vez que a tela precisou de uma, foi buscar a
+existente — e onde a regra era um *closure*, ela foi **extraída**, não copiada:
+
+| a tela precisava de | veio de | o que aconteceu |
+|---|---|---|
+| ordem das empresas | `briefing.node` | virou `briefing.ordenar_analises` |
+| rótulo do quadrante, com a ressalva de D-101 | `briefing._secao` | virou `briefing.rotulo_do_quadrante` |
+| a consulta que foi ao RAG por dor | `nvidia_rag.consulta_da_dor` | reusada, sem tocar o agente |
+| o texto exportado | `state["briefing"]` | devolvido **byte a byte**, sem redação nova |
+
+**Alternativa descartada — duplicar as quatro linhas da ordenação na camada web:** o gerente
+veria uma ordem na tela e outra no briefing exportado do **mesmo run**, e nada na saída
+denunciaria a diferença. Duas definições da mesma regra são uma divergência esperando a data.
+
+### Os três avisos que a tela dá, e cada um é uma decisão anterior virando pixel
+
+- `rerank_provedor == "nenhum"` → faixa dizendo que **este run não serve para julgar
+  recomendação** (D-097). É o mesmo carimbo que `--regras-tapi` usa para RECUSAR um run.
+- `plano.discrimina() == False` → o aviso de D-081, agora na primeira tela e não só no rodapé.
+- `sinal_verificado == False` → `A VERIFICAR`, com traço tracejado e cor de "não sei" (D-101).
+
+**A paleta tem TRÊS cores de veredito** — provado-sim, provado-não e **não-provado** — porque é
+essa a distinção que o sistema inteiro sustenta (`motivos_exclusao` × `requisitos_nao_verificados`,
+`sinal_verificado`). **Alternativa descartada — o preto com verde neon da marca:** é o desenho
+automático para qualquer coisa com NVIDIA no nome, e ele afoga essa distinção num tom de destaque só.
+
+### `MAX_STARTUPS` passou a ser por RUN, e não por processo
+
+`config.MAX_STARTUPS` é lido no import, então mudá-lo exigia editar o `.env` e reiniciar.
+`EstadoRadar.max_startups` é opcional e o `query_planner` o lê antes da constante — quem não
+pede nada continua recebendo o default, e o CLI não muda. **A cena do vídeo exige isso** (D-068).
+
+### A vitrine do passo 7 — e o argumento NÃO é "fica bonito no vídeo" (D-084)
+
+O argumento é de **defeito**: o briefing imprime `[base NVIDIA] NeMo — <url>` e **não diz por
+que aquela tecnologia**. A rastreabilidade que o TAPI grifa duas vezes estava entregue para a
+base de startups — todo `Afirmacao` carrega `list[Evidencia]` — e **não** para a base NVIDIA.
+
+`pipeline.recuperar_com_rastro` devolve **as duas ordens** de uma mesma recuperação; a posição de
+origem é calculada sobre a **união inteira**, não sobre o topo que a tela mostra.
+**Alternativa descartada — acrescentar um modo a `buscar_com_rerank`:** é o caminho que
+`nvidia_rag` usa e que a ablação de D-068 mede; pôr a régua do critério 2 no caminho de uma
+mudança feita para uma tela, a um dia do vídeo, troca reversibilidade por seis linhas de
+composição duplicada. **A consulta é a do grafo**, guardada no payload por
+`payload.consultas_do_perfil` — uma consulta reescrita na tela mostraria o reranker trabalhando
+sobre uma pergunta que o grafo nunca fez.
+
+**O que a vitrine mostrou na primeira execução real, e é a P-21 na tela:** para a Agrotools, dor
+`latencia`, a busca híbrida devolve **`NVIDIA AI Enterprise` em 1º, 2º E 3º** — a página
+guarda-chuva que D-105 mediu ocupando 22% das recomendações. Depois do passo 7, **Omniverse sobe
+da 6ª para 1ª e da 23ª para 2ª**, e Omniverse é a resposta certa para uma agtech de
+geointeligência. O reranker corrige exatamente o defeito que a régua mediu — e agora isso é
+visível em vez de ser um número numa tabela.
+
+### O que a EXECUÇÃO achou e a leitura de código não acharia (D-083, de novo)
+
+1. **`[hidden]` não escondia nada.** `.resultado { display: grid }` é regra de AUTOR e vence o
+   `[hidden]` da folha do NAVEGADOR, independente de especificidade — sobrava um retângulo
+   branco na tela inicial. Só apareceu no screenshot.
+2. **A vitrine mostrava duas linhas idênticas.** `caminho_secao` **não distingue chunks**: os
+   chunks 361 e 366 têm a mesma trilha (`NVIDIA AI Enterprise > NVIDIA AI Enterprise`), e a tela
+   exibia um subindo 26 posições e o outro descendo 3, iguais. O que distingue um chunk é o
+   **texto** dele — que é também o que o leitor quer, já que a pergunta é *qual passagem*.
+3. **O diálogo estourava a janela** e o 8º item — onde moram as promoções grandes — ficava fora.
+
+### Ressalva declarada, e ela não é minha para consertar hoje
+
+A tela **expõe** defeitos já registrados, sem criá-los: a `justificativa_tecnica` da NeMo saiu
+*"More Customer Stories / View All Blogs / View All Sessions"* (mobília de página, D-086), e a
+dor de `custo` da BemAgro se apoia em *"Fava Neves foi professor de Johann Coelho na
+faculdade"* — que é a precisão de 49% do casador, e o candidato a D-108 do handoff de 05/09.
+**A interface tornou os dois visíveis a quem não lê tabela.**
+
+**Verificação:** `pytest` **102 passed** (era 93; 9 novos em `tests/test_web.py`, sem Postgres e
+sem API) · `avaliar_agentes` `classe 3/7 · maturidade_stack 6/7 · confianca 0/6 · elegivel 6/6 ·
+49%/100%` **idêntico** · `--exclusoes` `10/10` e `11/11` · `varrer_elegibilidade` **as mesmas 7
+recusas** · `smoke_nvidia` **3/3** · o grafo rodado pela interface COM `RERANK_PROVEDOR=cohere` e
+o dossiê **lido inteiro na tela**, não por `curl`.
+
+
 ## Decisões pendentes
 
 | # | Decisão | Estado |
@@ -4056,7 +4156,7 @@ confianca 0/6 · elegivel 6/6 · 49%/100%`. `pytest` **93 passed**.
 | ~~P-05~~ | ~~Topologia do grafo~~ | **D-007** — subgrafo de análise + fan-out por `Send` |
 | ~~P-07~~ | ~~Gerenciamento de dependências~~ | **D-004** — conda + `requirements.txt` pinado |
 | ~~P-08~~ | ~~Como o Postgres sobe para quem avaliar~~ | **D-017** — os dois |
-| **P-06** | **Framework de frontend** | aberta. É a única superfície pela qual alguém que não lê código julga o sistema. O escopo sai da pergunta de produto — o que o gerente precisa ver, e em que ordem, para abordar a startup no dia seguinte — não de um orçamento de esforço |
+| ~~P-06~~ | ~~Framework de frontend~~ | **D-107** — FastAPI + uvicorn, front à mão, run ao vivo por SSE. Escopo: consultar → ver → recomendações com evidência → exportar, mais a vitrine do passo 7. A camada não tem regra de negócio: onde a tela precisava de uma, a regra foi **extraída** de `briefing.py` em vez de copiada |
 | **P-09** | **Promover o juiz do Extractor?** | D-072 passou o critério; falta decidir a lacuna de recall (100% → 71-79%) |
 | ~~P-10~~ | ~~Régua do motor de recomendação~~ | **D-086** — a régua existe (`--justificativas`, 30 chunks, amostra semeada, rotulada antes do seletor) e o seletor bate a linha trivial: **15/21 vs 12/21**. Num run real, justificativas que servem: **1/6 → 4/6**. A parte de RELEVÂNCIA da recomendação virou **P-21** |
 | **P-11** | **O `min()` da confiança** | 0/6 constante. Barato, mas exige critério fixado antes — uma tentativa já foi reprovada (D-059). **METADE FECHADA em 04/09 (D-100):** o ponteiro `ver D-059` saiu do texto do usuário. **E a hipótese de D-059 foi REFUTADA (D-098):** o braço C de `medir_confianca.py` — evidência mais larga — dá 2, idêntico ao B. O que move o campo é a recência, e ela depende de `data_publicacao`, ausente em **86 dos 93 documentos**. O `min()` fica: consertá-lo hoje é consertar a coleta, que é P-25 |

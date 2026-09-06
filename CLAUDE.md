@@ -100,7 +100,7 @@ Consulta do usuário
   -> Reranker
   -> Recommendation Agent     cruza perfil x tecnologias
   -> Briefing Agent           relatório final
-  -> Interface web
+  -> Interface web            src/web/ — FastAPI + SSE; a tela reusa as regras do briefing
 ```
 
 ## Stack
@@ -258,6 +258,12 @@ python scripts/avaliar_agentes.py --rubrica    # braço REPROVADO (D-060)
 python scripts/avaliar_agentes.py --profundos  # braço REPROVADO (D-106) — implica --rubrica
 python scripts/avaliar_agentes.py --confianca-diagnostico  # braço REPROVADO (D-059)
 python scripts/avaliar_agentes.py --motor ponta-a-ponta    # inclui nvidia_rag: CUSTA API
+
+# Interface web — o entregável 4 do TAPI (D-107)
+python -m src.web                          # sobe em 127.0.0.1:8000 · WEB_HOST/WEB_PORT mudam
+RERANK_PROVEDOR=cohere python -m src.web   # PARA JULGAR A TELA e para gravar: D-097
+# um run de 3 empresas com o rerank ligado custou 2m18 medidos — a cena do vídeo usa o
+# seletor "empresas" baixo, e há um run commitado em data/runs/exemplo-*.json como rede
 
 python -m src.graph "sua consulta aqui"    # roda o pipeline ponta a ponta (thread novo por run)
 python -m src.graph --thread <id> "..."    # retoma um run pelo thread_id que o CLI imprime

@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NVIDIA Startup AI Radar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Serif:ital,wght@0,400;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/estatico/estilo.css">
+</head>
+<body>
+
+<header class="topo">
+  <div class="marca">
+    <span class="marca-nome">Startup AI Radar</span>
+    <span class="marca-sub">captação para o NVIDIA Inception</span>
+  </div>
+  <form class="busca" id="form-busca" autocomplete="off">
+    <input id="consulta" name="consulta" type="text" required
+           placeholder="fintechs brasileiras usando IA"
+           aria-label="Consulta em linguagem natural">
+    <label class="teto" for="max-startups">
+      empresas
+      <input id="max-startups" type="number" min="1" max="30" value="5" aria-label="Máximo de empresas">
+    </label>
+    <button type="submit" id="btn-analisar">Analisar</button>
+  </form>
+  <button type="button" class="secundario" id="btn-salvos">Runs salvos</button>
+</header>
+
+<div id="avisos" class="avisos"></div>
+
+<main id="palco">
+
+  <section id="vazio" class="vazio">
+    <h1>Quais startups brasileiras abordar, e com qual argumento.</h1>
+    <p>
+      Descreva o que procura em português. O Radar recupera empresas da base, diagnostica a
+      maturidade AI-native de cada uma a partir dos documentos públicos, checa a elegibilidade
+      para o Inception e cruza as dores encontradas com a base de tecnologias NVIDIA.
+    </p>
+    <p class="sugestoes">
+      Experimente:
+      <button type="button" class="sugestao">fintechs brasileiras usando IA</button>
+      <button type="button" class="sugestao">startups de agro com visão computacional</button>
+      <button type="button" class="sugestao">saúde com LLM em atendimento</button>
+    </p>
+    <p class="rodape-vazio">Toda conclusão do sistema aponta para o documento que a sustenta.</p>
+  </section>
+
+  <section id="progresso" class="progresso" hidden>
+    <h2>Executando o grafo</h2>
+    <ol class="trilha-pai" id="trilha-pai"></ol>
+    <div class="fanout" id="fanout"></div>
+  </section>
+
+  <section id="resultado" class="resultado" hidden>
+    <aside class="rail">
+      <div class="rail-cabeca">
+        <span id="rail-contagem"></span>
+        <span id="rail-consulta"></span>
+      </div>
+      <ul id="lista-empresas" class="lista-empresas"></ul>
+      <div class="exportar">
+        <a id="link-briefing" href="#" download>Exportar briefing (.txt)</a>
+        <a id="link-json" href="#" download>Exportar run (.json)</a>
+      </div>
+    </aside>
+    <article id="dossie" class="dossie"></article>
+  </section>
+
+</main>
+
+<dialog id="dialogo-salvos">
+  <h2>Runs salvos</h2>
+  <ul id="lista-salvos"></ul>
+  <form method="dialog"><button>Fechar</button></form>
+</dialog>
+
+<dialog id="dialogo-vitrine">
+  <div id="conteudo-vitrine"></div>
+  <form method="dialog"><button>Fechar</button></form>
+</dialog>
+
+<script src="/estatico/app.js"></script>
+</body>
+</html>

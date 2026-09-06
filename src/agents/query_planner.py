@@ -75,7 +75,10 @@ def node(state: EstadoRadar) -> dict:
         estagios=estagios,
         palavras_chave=list(dict.fromkeys(palavras)),
         exige_sinais_ia=any(t in baixa for t in ["ia", "inteligência", "inteligencia", "ai", "ml"]),
-        max_startups=MAX_STARTUPS,
+        # O estado ganha prioridade sobre a constante do processo — ver `EstadoRadar.max_startups`.
+        # `or` e não `if is None`: um `0` vindo da tela não é "sem teto", é entrada inválida, e
+        # cair no default é a leitura certa dele.
+        max_startups=state.get("max_startups") or MAX_STARTUPS,
         estrategia_analise=(
             "Classificar cada empresa pela rubrica AI-native/AI-enabled/non-AI, medir a "
             "maturidade da stack técnica como eixo separado, e priorizar pelo gap entre os dois."

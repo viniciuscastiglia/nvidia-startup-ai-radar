@@ -1,0 +1,1143 @@
+{
+  "thread_id": "exemplo-agro-visao-computacional",
+  "consulta": "startups de agro com visão computacional",
+  "gerado_em": "2026-09-06T13:23:25-03:00",
+  "rerank_provedor": "cohere",
+  "plano": {
+    "setores": [
+      "agro"
+    ],
+    "estagios": [],
+    "localizacoes": [],
+    "palavras_chave": [
+      "agro",
+      "visão",
+      "computacional"
+    ],
+    "max_startups": 3
+  },
+  "discrimina": true,
+  "erros": [],
+  "startups": [
+    {
+      "startup_id": 51,
+      "nome": "Agrotools",
+      "site": "https://agrotools.com.br/",
+      "setor": "agro — dados tabulares e geointeligência",
+      "estagio": null,
+      "localizacao": null,
+      "ano_fundacao": 2007,
+      "tamanho_time": null,
+      "descricao_curta": "Plataforma de 'BI territorial' que monitora mais de 200 milhões de hectares com mais de 300 mil análises diárias sobre dados de satélite, vendida por assinatura a mais de 200 clientes para decisão de compra de commodities, crédito rural e conformidade socioambiental.",
+      "documentos": [
+        {
+          "documento_id": 151,
+          "tipo": "noticia",
+          "titulo": "Agrotools, a 'big data do campo', planeja M&As e internacionalização",
+          "url_fonte": "https://braziljournal.com/agrotools-a-big-data-do-campo-planeja-mas-e-internacionalizacao/",
+          "data_publicacao": null
+        },
+        {
+          "documento_id": 152,
+          "tipo": "noticia",
+          "titulo": "Depois de sondar a América, Agrotools ajusta a bússola da expansão e pensa até na África",
+          "url_fonte": "https://agfeed.com.br/agtech/depois-de-sondar-a-america-agrotools-ajusta-a-bussola-da-expansao-e-pensa-ate-na-africa/",
+          "data_publicacao": null
+        },
+        {
+          "documento_id": 153,
+          "tipo": "noticia",
+          "titulo": "Agrotools prova que startups e governo podem trabalhar juntos",
+          "url_fonte": "https://startups.com.br/negocios/agtech/agrotools-prova-que-startups-e-governo-podem-trabalhar-juntos/",
+          "data_publicacao": null
+        },
+        {
+          "documento_id": 154,
+          "tipo": "site",
+          "titulo": "Agrotools — inteligência territorial para o agronegócio",
+          "url_fonte": "https://agrotools.com.br/",
+          "data_publicacao": null
+        }
+      ],
+      "score_recuperacao": 1.3000001
+    },
+    {
+      "startup_id": 59,
+      "nome": "Ecotrace",
+      "site": "https://ecotrace.info/",
+      "setor": "agro — rastreabilidade de cadeias",
+      "estagio": null,
+      "localizacao": null,
+      "ano_fundacao": 2018,
+      "tamanho_time": null,
+      "descricao_curta": "Rastreabilidade de commodities integrando blockchain, IA, visão computacional, IoT e geointeligência, com registros imutáveis e APIs para ERPs; clientes na cadeia de proteína animal.",
+      "documentos": [
+        {
+          "documento_id": 176,
+          "tipo": "noticia",
+          "titulo": "Agtech Ecotrace recebe investimento da GS1 Ventures para expansão internacional",
+          "url_fonte": "https://startups.com.br/negocios/rodada-de-investimento/com-a-agtech-ecotrace-gs1-ventures-faz-seu-primeiro-aporte/",
+          "data_publicacao": null
+        },
+        {
+          "documento_id": 177,
+          "tipo": "noticia",
+          "titulo": "Depois da pecuária, startup EcoTrace tem nova captação para expandir na agricultura",
+          "url_fonte": "https://agfeed.com.br/agtech/depois-da-pecuaria-startup-ecotrace-tem-nova-captacao-para-expandir-na-agricultura/",
+          "data_publicacao": null
+        },
+        {
+          "documento_id": 178,
+          "tipo": "site",
+          "titulo": "Ecotrace — rastreabilidade de cadeias produtivas",
+          "url_fonte": "https://ecotrace.info/",
+          "data_publicacao": null
+        }
+      ],
+      "score_recuperacao": 1.0
+    },
+    {
+      "startup_id": 21,
+      "nome": "BemAgro",
+      "site": "https://bemagro.com/",
+      "setor": "agro — agricultura digital",
+      "estagio": "pré-série a",
+      "localizacao": "Ribeirão Preto, SP",
+      "ano_fundacao": 2018,
+      "tamanho_time": null,
+      "descricao_curta": "Agtech de visão computacional e IA para gestão de safras: inspeção dirigida e monitoramento em larga escala, com integração às máquinas agrícolas para coletar dado no campo.",
+      "documentos": [
+        {
+          "documento_id": 61,
+          "tipo": "noticia",
+          "titulo": "Encorpada após duas captações em 2024, BemAgro cresce 141% no primeiro trimestre",
+          "url_fonte": "https://agfeed.com.br/agtech/encorpada-apos-duas-captacoes-em-2024-bemagro-cresce-141-no-primeiro-trimestre/",
+          "data_publicacao": null
+        },
+        {
+          "documento_id": 62,
+          "tipo": "noticia",
+          "titulo": "Bem Agro levanta R$ 10,2M em rodada liderada por gigante internacional",
+          "url_fonte": "https://startups.com.br/negocios/agtech/bem-agro-levanta-r-102m-em-rodada-liderada-por-gigante-internacional/",
+          "data_publicacao": null
+        },
+        {
+          "documento_id": 63,
+          "tipo": "site",
+          "titulo": "BemAgro — agricultura digital com visão computacional",
+          "url_fonte": "https://bemagro.com/",
+          "data_publicacao": null
+        }
+      ],
+      "score_recuperacao": 0.90000004
+    }
+  ],
+  "analises": [
+    {
+      "startup_id": 51,
+      "nome": "Agrotools",
+      "perfil": {
+        "startup_id": 51,
+        "nome": "Agrotools",
+        "proposta_valor": {
+          "texto": "Plataforma de 'BI territorial' que monitora mais de 200 milhões de hectares com mais de 300 mil análises diárias sobre dados de satélite, vendida por assinatura a mais de 200 clientes para decisão de compra de commodities, crédito rural e conformidade socioambiental.",
+          "evidencias": [
+            {
+              "documento_id": 151,
+              "tipo_documento": "noticia",
+              "url_fonte": "https://braziljournal.com/agrotools-a-big-data-do-campo-planeja-mas-e-internacionalizacao/",
+              "trecho": "A Agrotools — uma startup focada em soluções de analytics e big data para o agronegócio — acaba de levantar R$ 85 milhões para perseguir uma estratégia de M&A e internacionalização.\nOs recursos vieram de investidores como Horácio Lafer Piva, da Klabin; Henry James Salomon, da BrProp; além do fundo Inovabra, do Bradesco.\nHá dois anos, a startup já havia levantado R$ 15 milhões junto ao fundo KPTL e",
+              "data_publicacao": null
+            }
+          ],
+          "confianca": "baixa",
+          "validada": true,
+          "motivo_validacao": "fonte única do tipo noticia e fora da janela de 24 meses"
+        },
+        "modelo_entrega": {
+          "texto": "Posicionamento de copilot: vende a ferramenta que o profissional opera",
+          "evidencias": [
+            {
+              "documento_id": 151,
+              "tipo_documento": "noticia",
+              "url_fonte": "https://braziljournal.com/agrotools-a-big-data-do-campo-planeja-mas-e-internacionalizacao/",
+              "trecho": "Basicamente, a ferramenta permite que o cliente analise se seus fornecedores estão alinhados com suas políticas de sustentabilidade.",
+              "data_publicacao": null
+            },
+            {
+              "documento_id": 152,
+              "tipo_documento": "noticia",
+              "url_fonte": "https://agfeed.com.br/agtech/depois-de-sondar-a-america-agrotools-ajusta-a-bussola-da-expansao-e-pensa-ate-na-africa/",
+              "trecho": "No Brasil, empresa lança, em parceria com o Imaflora, ferramenta que promete trazer mais credibilidade ao CAR",
+              "data_publicacao": null
+            }
+          ],
+          "confianca": "baixa",
+          "validada": true,
+          "motivo_validacao": "fonte única do tipo noticia e fora da janela de 24 meses"
+        },
+        "stack_declarada": [],
+        "sinais_dado_proprietario": [],
+        "sinais_otimizacao_tecnica": [
+          {
+            "texto": "Indício de profundidade técnica própria na stack de IA",
+            "evidencias": [
+              {
+                "documento_id": 152,
+                "tipo_documento": "noticia",
+                "url_fonte": "https://agfeed.com.br/agtech/depois-de-sondar-a-america-agrotools-ajusta-a-bussola-da-expansao-e-pensa-ate-na-africa/",
+                "trecho": "No Brasil, empresa lança, em parceria com o Imaflora, ferramenta que promete trazer mais credibilidade ao CAR",
+                "data_publicacao": null
+              }
+            ],
+            "confianca": "baixa",
+            "validada": true,
+            "motivo_validacao": "fonte única do tipo noticia e fora da janela de 24 meses"
+          }
+        ],
+        "dores_observadas": [
+          {
+            "texto": "Sinal de dor em latencia encontrado nos documentos",
+            "evidencias": [
+              {
+                "documento_id": 154,
+                "tipo_documento": "site",
+                "url_fonte": "https://agrotools.com.br/",
+                "trecho": "Somos um ecossistema de soluções digitais que oferecem mais controle e visibilidade de toda a cadeia do agronegócio em tempo real.",
+                "data_publicacao": null
+              }
+            ],
+            "confianca": "baixa",
+            "validada": true,
+            "motivo_validacao": "fonte única do tipo site e fora da janela de 24 meses",
+            "dor": "latencia"
+          },
+          {
+            "texto": "Sinal de dor em escalabilidade encontrado nos documentos",
+            "evidencias": [
+              {
+                "documento_id": 151,
+                "tipo_documento": "noticia",
+                "url_fonte": "https://braziljournal.com/agrotools-a-big-data-do-campo-planeja-mas-e-internacionalizacao/",
+                "trecho": "Já temos 4,5 milhões dessas geo-ids cadastradas,” disse Sergio.",
+                "data_publicacao": null
+              },
+              {
+                "documento_id": 152,
+                "tipo_documento": "noticia",
+                "url_fonte": "https://agfeed.com.br/agtech/depois-de-sondar-a-america-agrotools-ajusta-a-bussola-da-expansao-e-pensa-ate-na-africa/",
+                "trecho": "Para Rocha, o crescimento acelerado do agronegócio brasileiro nos últimos anos fez com que as oportunidades de desenvolvimento de novas tecnologias avançassem de forma mais rápida se comparado aos demais mercados, justamente por conta dos desafios de estrutura, legislação e segurança de dados.",
+                "data_publicacao": null
+              }
+            ],
+            "confianca": "baixa",
+            "validada": true,
+            "motivo_validacao": "fonte única do tipo noticia e fora da janela de 24 meses",
+            "dor": "escalabilidade"
+          },
+          {
+            "texto": "Sinal de dor em governanca encontrado nos documentos",
+            "evidencias": [
+              {
+                "documento_id": 154,
+                "tipo_documento": "site",
+                "url_fonte": "https://agrotools.com.br/",
+                "trecho": "Resolução CMN 5.268/2025: sua operação está pronta para sustentar uma auditoria?​​",
+                "data_publicacao": null
+              }
+            ],
+            "confianca": "baixa",
+            "validada": true,
+            "motivo_validacao": "fonte única do tipo site e fora da janela de 24 meses",
+            "dor": "governanca"
+          },
+          {
+            "texto": "Sinal de dor em avaliacao encontrado nos documentos",
+            "evidencias": [
+              {
+                "documento_id": 152,
+                "tipo_documento": "noticia",
+                "url_fonte": "https://agfeed.com.br/agtech/depois-de-sondar-a-america-agrotools-ajusta-a-bussola-da-expansao-e-pensa-ate-na-africa/",
+                "trecho": "Segundo Felix, o grande gargalo do CAR é a demora no tempo de validação do documento, depois que os dados são registrados.",
+                "data_publicacao": null
+              },
+              {
+                "documento_id": 153,
+                "tipo_documento": "noticia",
+                "url_fonte": "https://startups.com.br/negocios/agtech/agrotools-prova-que-startups-e-governo-podem-trabalhar-juntos/",
+                "trecho": "Nesse projeto, a ela é responsável pela inserção de dados pelos usuários, geração de relatórios de desempenho ambiental e pelos processos associados de certificação e validação externa dos dados registrados na calculadora.",
+                "data_publicacao": null
+              }
+            ],
+            "confianca": "baixa",
+            "validada": true,
+            "motivo_validacao": "fonte única do tipo noticia e fora da janela de 24 meses",
+            "dor": "avaliacao"
+          },
+          {
+            "texto": "Sinal de dor em observabilidade encontrado nos documentos",
+            "evidencias": [
+              {
+                "documento_id": 153,
+                "tipo_documento": "noticia",
+                "url_fonte": "https://startups.com.br/negocios/agtech/agrotools-prova-que-startups-e-governo-podem-trabalhar-juntos/",
+                "trecho": "fornece uma plataforma digital para reinserção de produtores rurais com bloqueios socioambientais no mercado formal por meio do Programa de Reinserção e Monitoramento (PREM), do Instituto Mato-Grossense da Carne (IMAC).",
+                "data_publicacao": null
+              },
+              {
+                "documento_id": 154,
+                "tipo_documento": "site",
+                "url_fonte": "https://agrotools.com.br/",
+                "trecho": "Oferece visibilidade e monitoramento de riscos",
+                "data_publicacao": null
+              }
+            ],
+            "confianca": "media",
+            "validada": true,
+            "motivo_validacao": "regra 2 atendida (2 tipos), mas regra 3 rebaixa: nenhum documento dentro da janela de 24 meses",
+            "dor": "observabilidade"
+          }
+        ]
+      },
+      "diagnostico": {
+        "classe": "AI-enabled",
+        "sinal_verificado": true,
+        "maturidade_stack": "baixa",
+        "quadrante": "prospect-de-evolucao",
+        "confianca": "baixa",
+        "justificativa": "posicionamento de copilot: vende a ferramenta; vocabulário técnico de IA presente nos documentos; 0 marcador(es) de profundidade de infraestrutura nos documentos",
+        "evidencias": [
+          {
+            "documento_id": 152,
+            "tipo_documento": "noticia",
+            "url_fonte": "https://agfeed.com.br/agtech/depois-de-sondar-a-america-agrotools-ajusta-a-bussola-da-expansao-e-pensa-ate-na-africa/",
+            "trecho": "No Brasil, empresa lança, em parceria com o Imaflora, ferramenta que promete trazer mais credibilidade ao CAR",
+            "data_publicacao": null
+          }
+        ],
+        "motivo_confianca": "mínimo sobre as 8 afirmações do perfil, incluindo 5 dor(es) observada(s) — o elo mais fraco decide"
+      },
+      "elegibilidade": {
+        "elegivel": false,
+        "motivos_exclusao": [
+          "exclusão por idade: fundada em 2007, 19 anos (o programa exige menos de 10)"
+        ],
+        "requisitos_nao_verificados": [
+          "incorporação formal da empresa não verificável pelos documentos públicos"
+        ],
+        "evidencias": []
+      },
+      "recomendacoes": [
+        {
+          "tecnologias": [
+            "NVIDIA Omniverse"
+          ],
+          "justificativa_tecnica": "Connect OpenUSD scene data across design, engineering, and simulation workflows.",
+          "justificativa_negocio": "NVIDIA Omniverse reduz a latência de resposta: melhor experiência para o usuário final e mais requisições por GPU.",
+          "prioridade": "media",
+          "complexidade": "media",
+          "proxima_acao": "Agendar conversa técnica sobre NVIDIA Omniverse com o time de engenharia da Agrotools, partindo das dores observadas: latencia.",
+          "evidencias": [
+            {
+              "documento_id": 154,
+              "tipo_documento": "site",
+              "url_fonte": "https://agrotools.com.br/",
+              "trecho": "Somos um ecossistema de soluções digitais que oferecem mais controle e visibilidade de toda a cadeia do agronegócio em tempo real.",
+              "data_publicacao": null
+            }
+          ],
+          "citacoes_rag": [
+            {
+              "tecnologia": "NVIDIA Omniverse",
+              "trecho": "Choose How to Build With Omniverse / Explore Samples and Labs\nTry experimental samples, integration patterns, and proof-of-concept apps that show how Omniverse libraries can be used in real workflows.\nBest fo r: Developers evaluating early patterns before building their own integration.\nExplore Omniverse Labs\nHow Teams Use Omniverse for Physical AI\nIndustrial Facility Digital Twins\nSynthetic Data Generation\nAutonomous Vehicle Simulation\nHow Teams Use Omniverse for Physical AI / Industrial Facility Digital Twins\nPrepare industrial environments for testing, optimizing, and validating physical AI workflows before real-world deployment.\nConnect OpenUSD scene data across design, engineering, and simulation workflows.\nAdd RTX rendering, physics, sensors, and validation to make facilities simulation-ready.\nInspect environments, surface issues, and return evidence for review with agent-ready tools.\nExplore Digital Twin Workflows",
+              "url_fonte": "https://www.nvidia.com/en-us/omniverse/",
+              "score_denso": null,
+              "score_lexical": 1.2575348615646362,
+              "score_rerank": 0.027546074,
+              "dor_origem": "latencia"
+            }
+          ],
+          "dores_enderecadas": [
+            "latencia"
+          ]
+        },
+        {
+          "tecnologias": [
+            "NVIDIA AI Enterprise"
+          ],
+          "justificativa_tecnica": "Increase GPU availability for data scientists by up to 10x via advanced orchestration. Accelerate development with ready-to-deploy NVIDIA NIM™ microservices and NVIDIA Blueprints. Simplify infrastructure deployment with validated deployment guides.",
+          "justificativa_negocio": "NVIDIA AI Enterprise sustenta mais carga sem infraestrutura proporcional — evita o custo subir na curva da receita.",
+          "prioridade": "media",
+          "complexidade": "media",
+          "proxima_acao": "Agendar conversa técnica sobre NVIDIA AI Enterprise com o time de engenharia da Agrotools, partindo das dores observadas: escalabilidade.",
+          "evidencias": [
+            {
+              "documento_id": 151,
+              "tipo_documento": "noticia",
+              "url_fonte": "https://braziljournal.com/agrotools-a-big-data-do-campo-planeja-mas-e-internacionalizacao/",
+              "trecho": "Já temos 4,5 milhões dessas geo-ids cadastradas,” disse Sergio.",
+              "data_publicacao": null
+            },
+            {
+              "documento_id": 152,
+              "tipo_documento": "noticia",
+              "url_fonte": "https://agfeed.com.br/agtech/depois-de-sondar-a-america-agrotools-ajusta-a-bussola-da-expansao-e-pensa-ate-na-africa/",
+              "trecho": "Para Rocha, o crescimento acelerado do agronegócio brasileiro nos últimos anos fez com que as oportunidades de desenvolvimento de novas tecnologias avançassem de forma mais rápida se comparado aos demais mercados, justamente por conta dos desafios de estrutura, legislação e segurança de dados.",
+              "data_publicacao": null
+            }
+          ],
+          "citacoes_rag": [
+            {
+              "tecnologia": "NVIDIA AI Enterprise",
+              "trecho": "Reliable Production Deployment\nLeverage leading AI tools, open models, and a broad partner ecosystem. Increase reliability with extended-lifetime production branches and enterprise support. Reduce risk via a secure software supply chain, vulnerability mitigation, and security technical implementation guide (STIG)-hardened containers.\nFaster Time to Value\nIncrease GPU availability for data scientists by up to 10x via advanced orchestration. Accelerate development with ready-to-deploy NVIDIA NIM™ microservices and NVIDIA Blueprints. Simplify infrastructure deployment with validated deployment guides.\nAI Workloads at Scale\nMaximize GPU utilization up to 5x by dynamically adapting compute across workloads. Increase AI workload throughput by up to 20x on existing infrastructure. Centralize policy, governance, and visibility to support efficient, cost-controlled, and high-performance scaling.\nReliable AI in the Enterprise",
+              "url_fonte": "https://www.nvidia.com/en-us/data-center/products/ai-enterprise/",
+              "score_denso": 0.12214434795938944,
+              "score_lexical": null,
+              "score_rerank": 0.012233039,
+              "dor_origem": "escalabilidade"
+            }
+          ],
+          "dores_enderecadas": [
+            "escalabilidade"
+          ]
+        },
+        {
+          "tecnologias": [
+            "cuDF"
+          ],
+          "justificativa_tecnica": "Using Polars' lazy API, call `collect` with `engine=\"gpu\"` to run\nthe operation on the GPU",
+          "justificativa_negocio": "cuDF torna mensurável a qualidade entregue — sem avaliação não há como provar melhoria ao cliente.",
+          "prioridade": "media",
+          "complexidade": "media",
+          "proxima_acao": "Agendar conversa técnica sobre cuDF com o time de engenharia da Agrotools, partindo das dores observadas: avaliacao.",
+          "evidencias": [
+            {
+              "documento_id": 152,
+              "tipo_documento": "noticia",
+              "url_fonte": "https://agfeed.com.br/agtech/depois-de-sondar-a-america-agrotools-ajusta-a-bussola-da-expansao-e-pensa-ate-na-africa/",
+              "trecho": "Segundo Felix, o grande gargalo do CAR é a demora no tempo de validação do documento, depois que os dados são registrados.",
+              "data_publicacao": null
+            },
+            {
+              "documento_id": 153,
+              "tipo_documento": "noticia",
+              "url_fonte": "https://startups.com.br/negocios/agtech/agrotools-prova-que-startups-e-governo-podem-trabalhar-juntos/",
+              "trecho": "Nesse projeto, a ela é responsável pela inserção de dados pelos usuários, geração de relatórios de desempenho ambiental e pelos processos associados de certificação e validação externa dos dados registrados na calculadora.",
+              "data_publicacao": null
+            }
+          ],
+          "citacoes_rag": [
+            {
+              "tecnologia": "cuDF",
+              "trecho": "Using Polars' lazy API, call `collect` with `engine=\"gpu\"` to run\nthe operation on the GPU\n\n```python\nimport polars as pl\n\nlf = pl.scan_parquet(\"data.parquet\")\nlf.drop_nulls().group_by([\"A\", \"B\"]).mean().collect(engine=\"gpu\")\n```",
+              "url_fonte": "https://github.com/rapidsai/cudf",
+              "score_denso": 0.10568016018658744,
+              "score_lexical": null,
+              "score_rerank": 0.011842832,
+              "dor_origem": "avaliacao"
+            }
+          ],
+          "dores_enderecadas": [
+            "avaliacao"
+          ]
+        }
+      ],
+      "motivo_sem_recomendacao": null,
+      "erros": [],
+      "rotulo_quadrante": "PROSPECT DE EVOLUÇÃO — a conversa é sair do wrapper",
+      "consultas_rag": [
+        {
+          "dor": "latencia",
+          "consulta": "latencia Somos um ecossistema de soluções digitais que oferecem mais controle e visibilidade de toda a cadeia do agronegócio em tempo real."
+        },
+        {
+          "dor": "escalabilidade",
+          "consulta": "escalabilidade Já temos 4,5 milhões dessas geo-ids cadastradas,” disse Sergio. Para Rocha, o crescimento acelerado do agronegócio brasileiro nos últimos anos fez com que as oportunidades de desenvolvimento de novas tecnologias avançassem de forma mais rápida se comparado aos demais mercados, justamente por conta dos desafios de estrutura, legislação e segurança de dados."
+        },
+        {
+          "dor": "governanca",
+          "consulta": "governanca Resolução CMN 5.268/2025: sua operação está pronta para sustentar uma auditoria?​​"
+        },
+        {
+          "dor": "avaliacao",
+          "consulta": "avaliacao Segundo Felix, o grande gargalo do CAR é a demora no tempo de validação do documento, depois que os dados são registrados. Nesse projeto, a ela é responsável pela inserção de dados pelos usuários, geração de relatórios de desempenho ambiental e pelos processos associados de certificação e validação externa dos dados registrados na calculadora."
+        },
+        {
+          "dor": "observabilidade",
+          "consulta": "observabilidade fornece uma plataforma digital para reinserção de produtores rurais com bloqueios socioambientais no mercado formal por meio do Programa de Reinserção e Monitoramento (PREM), do Instituto Mato-Grossense da Carne (IMAC). Oferece visibilidade e monitoramento de riscos"
+        }
+      ]
+    },
+    {
+      "startup_id": 21,
+      "nome": "BemAgro",
+      "perfil": {
+        "startup_id": 21,
+        "nome": "BemAgro",
+        "proposta_valor": {
+          "texto": "Agtech de visão computacional e IA para gestão de safras: inspeção dirigida e monitoramento em larga escala, com integração às máquinas agrícolas para coletar dado no campo.",
+          "evidencias": [
+            {
+              "documento_id": 61,
+              "tipo_documento": "noticia",
+              "url_fonte": "https://agfeed.com.br/agtech/encorpada-apos-duas-captacoes-em-2024-bemagro-cresce-141-no-primeiro-trimestre/",
+              "trecho": "Encorpada após duas captações em 2024, BemAgro cresce 141% no primeiro trimestre\nStartup de agricultura digital recebeu cerca de R$ 15 milhões em investimentos no ano passado, trazendo empresas como CNHi, Atvos e Suzano para o quadro societário. Para este ano, quer aumentar a área monitorada em 3 milhões de hectares e ganhar mais mercado fora do Brasil\nJohann Coelho, CEO da BemAgro\nO ano de 2024 f",
+              "data_publicacao": null
+            }
+          ],
+          "confianca": "baixa",
+          "validada": true,
+          "motivo_validacao": "fonte única do tipo noticia e fora da janela de 24 meses"
+        },
+        "modelo_entrega": {
+          "texto": "Posicionamento de copilot: vende a ferramenta que o profissional opera",
+          "evidencias": [
+            {
+              "documento_id": 62,
+              "tipo_documento": "noticia",
+              "url_fonte": "https://startups.com.br/negocios/agtech/bem-agro-levanta-r-102m-em-rodada-liderada-por-gigante-internacional/",
+              "trecho": "“Com o montante captado, seguiremos avançando no desenvolvimento da nossa plataforma, na expansão do time comercial, bem como intensificaremos nosso processo de internacionalização”, ressalta Johann Coelho, fundador e CEO da",
+              "data_publicacao": null
+            },
+            {
+              "documento_id": 63,
+              "tipo_documento": "site",
+              "url_fonte": "https://bemagro.com/",
+              "trecho": "Ferramenta de processamento de imagens de drone e vetores de maquinários mais ágil e completa do mercado.",
+              "data_publicacao": null
+            }
+          ],
+          "confianca": "media",
+          "validada": true,
+          "motivo_validacao": "regra 2 atendida (2 tipos), mas regra 3 rebaixa: nenhum documento dentro da janela de 24 meses"
+        },
+        "stack_declarada": [],
+        "sinais_dado_proprietario": [],
+        "sinais_otimizacao_tecnica": [
+          {
+            "texto": "Indício de profundidade técnica própria na stack de IA",
+            "evidencias": [
+              {
+                "documento_id": 61,
+                "tipo_documento": "noticia",
+                "url_fonte": "https://agfeed.com.br/agtech/encorpada-apos-duas-captacoes-em-2024-bemagro-cresce-141-no-primeiro-trimestre/",
+                "trecho": "Atualmente já estamos presentes na Colômbia, Argentina e Paraguai”, disse.",
+                "data_publicacao": null
+              }
+            ],
+            "confianca": "baixa",
+            "validada": true,
+            "motivo_validacao": "fonte única do tipo noticia e fora da janela de 24 meses"
+          }
+        ],
+        "dores_observadas": [
+          {
+            "texto": "Sinal de dor em custo encontrado nos documentos",
+            "evidencias": [
+              {
+                "documento_id": 61,
+                "tipo_documento": "noticia",
+                "url_fonte": "https://agfeed.com.br/agtech/encorpada-apos-duas-captacoes-em-2024-bemagro-cresce-141-no-primeiro-trimestre/",
+                "trecho": "Fava Neves foi professor de Johann Coelho na faculdade, quando o executivo cursava economia empresarial e controladoria, e atribuiu parte da criação da BemAgro ao agora conselheiro.",
+                "data_publicacao": null
+              },
+              {
+                "documento_id": 63,
+                "tipo_documento": "site",
+                "url_fonte": "https://bemagro.com/",
+                "trecho": "Vai gerar economia, que vai trazer um ganho muito grande para o produtor não só na questão da aplicação do produto, mas na qualidade da planta em si.",
+                "data_publicacao": null
+              }
+            ],
+            "confianca": "media",
+            "validada": true,
+            "motivo_validacao": "regra 2 atendida (2 tipos), mas regra 3 rebaixa: nenhum documento dentro da janela de 24 meses",
+            "dor": "custo"
+          },
+          {
+            "texto": "Sinal de dor em latencia encontrado nos documentos",
+            "evidencias": [
+              {
+                "documento_id": 63,
+                "tipo_documento": "site",
+                "url_fonte": "https://bemagro.com/",
+                "trecho": "Visualize imagens de alta resolução em tempo real e edite vetores de linhas em um único ambiente digital e 100% online.",
+                "data_publicacao": null
+              }
+            ],
+            "confianca": "baixa",
+            "validada": true,
+            "motivo_validacao": "fonte única do tipo site e fora da janela de 24 meses",
+            "dor": "latencia"
+          },
+          {
+            "texto": "Sinal de dor em escalabilidade encontrado nos documentos",
+            "evidencias": [
+              {
+                "documento_id": 61,
+                "tipo_documento": "noticia",
+                "url_fonte": "https://agfeed.com.br/agtech/encorpada-apos-duas-captacoes-em-2024-bemagro-cresce-141-no-primeiro-trimestre/",
+                "trecho": "Para este ano, quer aumentar a área monitorada em 3 milhões de hectares e ganhar mais mercado fora do Brasil",
+                "data_publicacao": null
+              },
+              {
+                "documento_id": 62,
+                "tipo_documento": "noticia",
+                "url_fonte": "https://startups.com.br/negocios/agtech/bem-agro-levanta-r-102m-em-rodada-liderada-por-gigante-internacional/",
+                "trecho": ", o plano da agtech é escalar a sua solução, ganhando não apenas tração no mercado nacional, mas também aproveitando a chegada dos novos investidores para buscar oportunidades fora do país.",
+                "data_publicacao": null
+              }
+            ],
+            "confianca": "baixa",
+            "validada": true,
+            "motivo_validacao": "fonte única do tipo noticia e fora da janela de 24 meses",
+            "dor": "escalabilidade"
+          },
+          {
+            "texto": "Sinal de dor em governanca encontrado nos documentos",
+            "evidencias": [
+              {
+                "documento_id": 61,
+                "tipo_documento": "noticia",
+                "url_fonte": "https://agfeed.com.br/agtech/encorpada-apos-duas-captacoes-em-2024-bemagro-cresce-141-no-primeiro-trimestre/",
+                "trecho": "Sua trajetória e presença em conselhos de grandes empresas vão trazer uma leitura estratégica valiosa para a nossa evolução e processo de governança”, acrescentou Luiz Ambar, presidente do conselho e sócio da empresa.",
+                "data_publicacao": null
+              }
+            ],
+            "confianca": "baixa",
+            "validada": true,
+            "motivo_validacao": "fonte única do tipo noticia e fora da janela de 24 meses",
+            "dor": "governanca"
+          },
+          {
+            "texto": "Sinal de dor em avaliacao encontrado nos documentos",
+            "evidencias": [
+              {
+                "documento_id": 63,
+                "tipo_documento": "site",
+                "url_fonte": "https://bemagro.com/",
+                "trecho": "Ferramenta de edição de mapas da IA BemAgro®, com precisão geoespacial para diversas estratégias no planejamento agrícola.",
+                "data_publicacao": null
+              }
+            ],
+            "confianca": "baixa",
+            "validada": true,
+            "motivo_validacao": "fonte única do tipo site e fora da janela de 24 meses",
+            "dor": "avaliacao"
+          },
+          {
+            "texto": "Sinal de dor em observabilidade encontrado nos documentos",
+            "evidencias": [
+              {
+                "documento_id": 61,
+                "tipo_documento": "noticia",
+                "url_fonte": "https://agfeed.com.br/agtech/encorpada-apos-duas-captacoes-em-2024-bemagro-cresce-141-no-primeiro-trimestre/",
+                "trecho": "A startup utiliza tecnologias de análise de imagens captadas por drones e satélites para produzir mapas e relatórios com informações para monitoramento e gestão das lavouras.",
+                "data_publicacao": null
+              },
+              {
+                "documento_id": 62,
+                "tipo_documento": "noticia",
+                "url_fonte": "https://startups.com.br/negocios/agtech/bem-agro-levanta-r-102m-em-rodada-liderada-por-gigante-internacional/",
+                "trecho": "utiliza aplicações de IA e visão computacional para apoiar na gestão das safras, oferecendo inspeções direcionadas e monitoramento em larga escala.",
+                "data_publicacao": null
+              }
+            ],
+            "confianca": "baixa",
+            "validada": true,
+            "motivo_validacao": "fonte única do tipo noticia e fora da janela de 24 meses",
+            "dor": "observabilidade"
+          },
+          {
+            "texto": "Sinal de dor em dependencia fornecedor encontrado nos documentos",
+            "evidencias": [
+              {
+                "documento_id": 61,
+                "tipo_documento": "noticia",
+                "url_fonte": "https://agfeed.com.br/agtech/encorpada-apos-duas-captacoes-em-2024-bemagro-cresce-141-no-primeiro-trimestre/",
+                "trecho": "O programa permite uma integração com máquinas colhedoras, facilitando o processo de colheita.",
+                "data_publicacao": null
+              }
+            ],
+            "confianca": "baixa",
+            "validada": true,
+            "motivo_validacao": "fonte única do tipo noticia e fora da janela de 24 meses",
+            "dor": "dependencia_fornecedor"
+          }
+        ]
+      },
+      "diagnostico": {
+        "classe": "AI-enabled",
+        "sinal_verificado": true,
+        "maturidade_stack": "baixa",
+        "quadrante": "prospect-de-evolucao",
+        "confianca": "baixa",
+        "justificativa": "posicionamento de copilot: vende a ferramenta; vocabulário técnico de IA presente nos documentos; 0 marcador(es) de profundidade de infraestrutura nos documentos",
+        "evidencias": [
+          {
+            "documento_id": 61,
+            "tipo_documento": "noticia",
+            "url_fonte": "https://agfeed.com.br/agtech/encorpada-apos-duas-captacoes-em-2024-bemagro-cresce-141-no-primeiro-trimestre/",
+            "trecho": "Atualmente já estamos presentes na Colômbia, Argentina e Paraguai”, disse.",
+            "data_publicacao": null
+          }
+        ],
+        "motivo_confianca": "mínimo sobre as 10 afirmações do perfil, incluindo 7 dor(es) observada(s) — o elo mais fraco decide"
+      },
+      "elegibilidade": {
+        "elegivel": true,
+        "motivos_exclusao": [],
+        "requisitos_nao_verificados": [
+          "incorporação formal da empresa não verificável pelos documentos públicos"
+        ],
+        "evidencias": []
+      },
+      "recomendacoes": [
+        {
+          "tecnologias": [
+            "NVIDIA NeMo"
+          ],
+          "justificativa_tecnica": "More Customer Stories\nThe Latest in NVIDIA NeMo Resources\nView All Blogs\nView All Sessions",
+          "justificativa_negocio": "NVIDIA NeMo ataca o custo unitário da inferência, que é o que separa margem de software de margem de serviço.",
+          "prioridade": "media",
+          "complexidade": "media",
+          "proxima_acao": "Agendar conversa técnica sobre NVIDIA NeMo com o time de engenharia da BemAgro, partindo das dores observadas: custo.",
+          "evidencias": [
+            {
+              "documento_id": 61,
+              "tipo_documento": "noticia",
+              "url_fonte": "https://agfeed.com.br/agtech/encorpada-apos-duas-captacoes-em-2024-bemagro-cresce-141-no-primeiro-trimestre/",
+              "trecho": "Fava Neves foi professor de Johann Coelho na faculdade, quando o executivo cursava economia empresarial e controladoria, e atribuiu parte da criação da BemAgro ao agora conselheiro.",
+              "data_publicacao": null
+            },
+            {
+              "documento_id": 63,
+              "tipo_documento": "site",
+              "url_fonte": "https://bemagro.com/",
+              "trecho": "Vai gerar economia, que vai trazer um ganho muito grande para o produtor não só na questão da aplicação do produto, mas na qualidade da planta em si.",
+              "data_publicacao": null
+            }
+          ],
+          "citacoes_rag": [
+            {
+              "tecnologia": "NVIDIA NeMo",
+              "trecho": "How Industry Leaders Are Driving Innovation With NeMo\nMore Customer Stories\nThe Latest in NVIDIA NeMo Resources\nView All Blogs\nView All Sessions\nThe Latest in NVIDIA NeMo Resources / Get Started With LLM Customization\nIn this course, you’ll go beyond prompt-engineering LLMs and learn techniques to efficiently customize pretrained LLMs for your specific use cases. Using NVIDIA NIM microservices, NeMo Curator, and NeMo Framework, you’ll learn various parameter-efficient fine-tuning methods to customize LLM behavior for your organization.\nThe Latest in NVIDIA NeMo Resources / Elevate Your LLM Skills\nTake advantage of our comprehensive LLM learning path, covering fundamental to advanced topics featuring hands-on training developed and delivered by NVIDIA experts. You can opt for the flexibility of self-paced courses or enroll in instructor-led workshops to earn a certificate of competency.\nExplore LLM Training",
+              "url_fonte": "https://www.nvidia.com/en-us/ai-data-science/products/nemo/",
+              "score_denso": 0.0522713246993437,
+              "score_lexical": null,
+              "score_rerank": 0.0044584135,
+              "dor_origem": "custo"
+            }
+          ],
+          "dores_enderecadas": [
+            "custo"
+          ]
+        },
+        {
+          "tecnologias": [
+            "NVIDIA AI Enterprise"
+          ],
+          "justificativa_tecnica": "Simulate airflow in a virtual wind tunnel with NVIDIA CUDA-X™ accelerated solvers, PhysicsNeMo™,and Omniverse.",
+          "justificativa_negocio": "NVIDIA AI Enterprise reduz a latência de resposta: melhor experiência para o usuário final e mais requisições por GPU.",
+          "prioridade": "media",
+          "complexidade": "media",
+          "proxima_acao": "Agendar conversa técnica sobre NVIDIA AI Enterprise com o time de engenharia da BemAgro, partindo das dores observadas: latencia.",
+          "evidencias": [
+            {
+              "documento_id": 63,
+              "tipo_documento": "site",
+              "url_fonte": "https://bemagro.com/",
+              "trecho": "Visualize imagens de alta resolução em tempo real e edite vetores de linhas em um único ambiente digital e 100% online.",
+              "data_publicacao": null
+            }
+          ],
+          "citacoes_rag": [
+            {
+              "tecnologia": "NVIDIA AI Enterprise",
+              "trecho": "AI Agent for Video Analytics\nBuild a video analytics agent with the NVIDIA Metropolis Blueprint for video search and summarization (VSS) and start talking to massive volumes of live or archived videos to automate alerts, extract insights, and generate reports.\nTry It Now\nMulti-Robot Fleets for Industrial Automation\nSimulate, test, and optimize physical AI and robotic fleets at scale in industrial digital twins before real-world deployment.\nTry It Now\nReal-Time Simulation\nSimulate airflow in a virtual wind tunnel with NVIDIA CUDA-X™ accelerated solvers, PhysicsNeMo™,and Omniverse.\nTry It Now\nExplore All Use Cases\nPowered by NVIDIA AI Enterprise\nTry it for free through a web browser or via NVIDIA-hosted AI APIs. Download and prototype on your own infrastructure for free before deploying into production.",
+              "url_fonte": "https://www.nvidia.com/en-us/data-center/products/ai-enterprise/",
+              "score_denso": 0.22662663175561637,
+              "score_lexical": 2.3032712936401367,
+              "score_rerank": 0.026138267,
+              "dor_origem": "latencia"
+            }
+          ],
+          "dores_enderecadas": [
+            "latencia"
+          ]
+        },
+        {
+          "tecnologias": [
+            "cuDF"
+          ],
+          "justificativa_tecnica": "Using Polars' lazy API, call `collect` with `engine=\"gpu\"` to run\nthe operation on the GPU",
+          "justificativa_negocio": "cuDF reduz a dependência de um fornecedor externo de modelo — o risco de quem só empacota API de terceiro.",
+          "prioridade": "media",
+          "complexidade": "media",
+          "proxima_acao": "Agendar conversa técnica sobre cuDF com o time de engenharia da BemAgro, partindo das dores observadas: dependencia_fornecedor.",
+          "evidencias": [
+            {
+              "documento_id": 61,
+              "tipo_documento": "noticia",
+              "url_fonte": "https://agfeed.com.br/agtech/encorpada-apos-duas-captacoes-em-2024-bemagro-cresce-141-no-primeiro-trimestre/",
+              "trecho": "O programa permite uma integração com máquinas colhedoras, facilitando o processo de colheita.",
+              "data_publicacao": null
+            }
+          ],
+          "citacoes_rag": [
+            {
+              "tecnologia": "cuDF",
+              "trecho": "Using Polars' lazy API, call `collect` with `engine=\"gpu\"` to run\nthe operation on the GPU\n\n```python\nimport polars as pl\n\nlf = pl.scan_parquet(\"data.parquet\")\nlf.drop_nulls().group_by([\"A\", \"B\"]).mean().collect(engine=\"gpu\")\n```",
+              "url_fonte": "https://github.com/rapidsai/cudf",
+              "score_denso": 0.10652461918105749,
+              "score_lexical": null,
+              "score_rerank": 0.03233523,
+              "dor_origem": "dependencia_fornecedor"
+            }
+          ],
+          "dores_enderecadas": [
+            "dependencia_fornecedor"
+          ]
+        }
+      ],
+      "motivo_sem_recomendacao": null,
+      "erros": [],
+      "rotulo_quadrante": "PROSPECT DE EVOLUÇÃO — a conversa é sair do wrapper",
+      "consultas_rag": [
+        {
+          "dor": "custo",
+          "consulta": "custo Fava Neves foi professor de Johann Coelho na faculdade, quando o executivo cursava economia empresarial e controladoria, e atribuiu parte da criação da BemAgro ao agora conselheiro. Vai gerar economia, que vai trazer um ganho muito grande para o produtor não só na questão da aplicação do produto, mas na qualidade da planta em si."
+        },
+        {
+          "dor": "latencia",
+          "consulta": "latencia Visualize imagens de alta resolução em tempo real e edite vetores de linhas em um único ambiente digital e 100% online."
+        },
+        {
+          "dor": "escalabilidade",
+          "consulta": "escalabilidade Para este ano, quer aumentar a área monitorada em 3 milhões de hectares e ganhar mais mercado fora do Brasil , o plano da agtech é escalar a sua solução, ganhando não apenas tração no mercado nacional, mas também aproveitando a chegada dos novos investidores para buscar oportunidades fora do país."
+        },
+        {
+          "dor": "governanca",
+          "consulta": "governanca Sua trajetória e presença em conselhos de grandes empresas vão trazer uma leitura estratégica valiosa para a nossa evolução e processo de governança”, acrescentou Luiz Ambar, presidente do conselho e sócio da empresa."
+        },
+        {
+          "dor": "avaliacao",
+          "consulta": "avaliacao Ferramenta de edição de mapas da IA BemAgro®, com precisão geoespacial para diversas estratégias no planejamento agrícola."
+        },
+        {
+          "dor": "observabilidade",
+          "consulta": "observabilidade A startup utiliza tecnologias de análise de imagens captadas por drones e satélites para produzir mapas e relatórios com informações para monitoramento e gestão das lavouras. utiliza aplicações de IA e visão computacional para apoiar na gestão das safras, oferecendo inspeções direcionadas e monitoramento em larga escala."
+        },
+        {
+          "dor": "dependencia_fornecedor",
+          "consulta": "dependencia fornecedor O programa permite uma integração com máquinas colhedoras, facilitando o processo de colheita."
+        }
+      ]
+    },
+    {
+      "startup_id": 59,
+      "nome": "Ecotrace",
+      "perfil": {
+        "startup_id": 59,
+        "nome": "Ecotrace",
+        "proposta_valor": {
+          "texto": "Rastreabilidade de commodities integrando blockchain, IA, visão computacional, IoT e geointeligência, com registros imutáveis e APIs para ERPs; clientes na cadeia de proteína animal.",
+          "evidencias": [
+            {
+              "documento_id": 176,
+              "tipo_documento": "noticia",
+              "url_fonte": "https://startups.com.br/negocios/rodada-de-investimento/com-a-agtech-ecotrace-gs1-ventures-faz-seu-primeiro-aporte/",
+              "trecho": "Rodada de investimento\nRodada de investimento\nCom a agtech Ecotrace, GS1 Ventures faz seu primeiro aporte\nStartups de rastreamento de produtos agro usará aporte para ampliar operação na Europa, Oriente Médio e mercado halal\nLeandro Miguel Souza\n\n\nFlavio Redi, fundador e CEO da Ecotrace, e João Carlos de Oliveira, presidente da GS1 Brasil | Foto: divulgação\n\nA Ecotrace, agtech brasileira de rastrea",
+              "data_publicacao": null
+            }
+          ],
+          "confianca": "baixa",
+          "validada": true,
+          "motivo_validacao": "fonte única do tipo noticia e fora da janela de 24 meses"
+        },
+        "modelo_entrega": {
+          "texto": "Posicionamento de autopilot: vende o resultado/trabalho executado",
+          "evidencias": [
+            {
+              "documento_id": 176,
+              "tipo_documento": "noticia",
+              "url_fonte": "https://startups.com.br/negocios/rodada-de-investimento/com-a-agtech-ecotrace-gs1-ventures-faz-seu-primeiro-aporte/",
+              "trecho": "A tecnologia da agtech integra blockchain, IA, visão computacional, IoT e geointeligência, cobrindo desde a verificação da origem, se a área fornecedora está regular ambientalmente e cumpre a legislação trabalhista, até o QR Code final na embalagem.",
+              "data_publicacao": null
+            }
+          ],
+          "confianca": "baixa",
+          "validada": true,
+          "motivo_validacao": "fonte única do tipo noticia e fora da janela de 24 meses"
+        },
+        "stack_declarada": [],
+        "sinais_dado_proprietario": [],
+        "sinais_otimizacao_tecnica": [],
+        "dores_observadas": [
+          {
+            "texto": "Sinal de dor em custo encontrado nos documentos",
+            "evidencias": [
+              {
+                "documento_id": 176,
+                "tipo_documento": "noticia",
+                "url_fonte": "https://startups.com.br/negocios/rodada-de-investimento/com-a-agtech-ecotrace-gs1-ventures-faz-seu-primeiro-aporte/",
+                "trecho": "“A companhia está com breakeven operacional, resultado de uma estratégia focada no crescimento sustentável, no aumento da recorrência de receitas e na disciplina na gestão dos custos.",
+                "data_publicacao": null
+              },
+              {
+                "documento_id": 178,
+                "tipo_documento": "site",
+                "url_fonte": "https://ecotrace.info/",
+                "trecho": "Isso tem um custo invisível, até virar crise.",
+                "data_publicacao": null
+              }
+            ],
+            "confianca": "media",
+            "validada": true,
+            "motivo_validacao": "regra 2 atendida (2 tipos), mas regra 3 rebaixa: nenhum documento dentro da janela de 24 meses",
+            "dor": "custo"
+          },
+          {
+            "texto": "Sinal de dor em latencia encontrado nos documentos",
+            "evidencias": [
+              {
+                "documento_id": 178,
+                "tipo_documento": "site",
+                "url_fonte": "https://ecotrace.info/",
+                "trecho": "Sem controle em tempo real, o prejuízo é contínuo e difícil de quantificar até se tornar irreversível.",
+                "data_publicacao": null
+              }
+            ],
+            "confianca": "baixa",
+            "validada": true,
+            "motivo_validacao": "fonte única do tipo site e fora da janela de 24 meses",
+            "dor": "latencia"
+          },
+          {
+            "texto": "Sinal de dor em escalabilidade encontrado nos documentos",
+            "evidencias": [
+              {
+                "documento_id": 176,
+                "tipo_documento": "noticia",
+                "url_fonte": "https://startups.com.br/negocios/rodada-de-investimento/com-a-agtech-ecotrace-gs1-ventures-faz-seu-primeiro-aporte/",
+                "trecho": "A agtech projeta crescimento de 20% a 30% em 2026 e faturamento de R$ 60 milhões até 2028.",
+                "data_publicacao": null
+              },
+              {
+                "documento_id": 177,
+                "tipo_documento": "noticia",
+                "url_fonte": "https://agfeed.com.br/agtech/depois-da-pecuaria-startup-ecotrace-tem-nova-captacao-para-expandir-na-agricultura/",
+                "trecho": "Segundo a EcoTrace, do início de 2019 até julho de 2023, foram rastreadas 12,4 milhões  de cabeças de gado, 88 milhões de aves e 45 milhões de fardos de algodão.",
+                "data_publicacao": null
+              }
+            ],
+            "confianca": "baixa",
+            "validada": true,
+            "motivo_validacao": "fonte única do tipo noticia e fora da janela de 24 meses",
+            "dor": "escalabilidade"
+          },
+          {
+            "texto": "Sinal de dor em avaliacao encontrado nos documentos",
+            "evidencias": [
+              {
+                "documento_id": 178,
+                "tipo_documento": "site",
+                "url_fonte": "https://ecotrace.info/",
+                "trecho": "A Ecotrace adapta tecnologia, validação e rastreabilidade para operações que precisam provar conformidade, proteger margem e acessar mercado.",
+                "data_publicacao": null
+              }
+            ],
+            "confianca": "baixa",
+            "validada": true,
+            "motivo_validacao": "fonte única do tipo site e fora da janela de 24 meses",
+            "dor": "avaliacao"
+          },
+          {
+            "texto": "Sinal de dor em observabilidade encontrado nos documentos",
+            "evidencias": [
+              {
+                "documento_id": 178,
+                "tipo_documento": "site",
+                "url_fonte": "https://ecotrace.info/",
+                "trecho": "Independente da sua cadeia, essa é sua solução para o monitoramento socioambiental de propriedades rurais e fornecedores!",
+                "data_publicacao": null
+              }
+            ],
+            "confianca": "baixa",
+            "validada": true,
+            "motivo_validacao": "fonte única do tipo site e fora da janela de 24 meses",
+            "dor": "observabilidade"
+          }
+        ]
+      },
+      "diagnostico": {
+        "classe": "AI-enabled",
+        "sinal_verificado": true,
+        "maturidade_stack": "baixa",
+        "quadrante": "prospect-de-evolucao",
+        "confianca": "baixa",
+        "justificativa": "vende resultado (autopilot), não ferramenta; 0 marcador(es) de profundidade de infraestrutura nos documentos",
+        "evidencias": [
+          {
+            "documento_id": 176,
+            "tipo_documento": "noticia",
+            "url_fonte": "https://startups.com.br/negocios/rodada-de-investimento/com-a-agtech-ecotrace-gs1-ventures-faz-seu-primeiro-aporte/",
+            "trecho": "A tecnologia da agtech integra blockchain, IA, visão computacional, IoT e geointeligência, cobrindo desde a verificação da origem, se a área fornecedora está regular ambientalmente e cumpre a legislação trabalhista, até o QR Code final na embalagem.",
+            "data_publicacao": null
+          }
+        ],
+        "motivo_confianca": "mínimo sobre as 7 afirmações do perfil, incluindo 5 dor(es) observada(s) — o elo mais fraco decide"
+      },
+      "elegibilidade": {
+        "elegivel": true,
+        "motivos_exclusao": [],
+        "requisitos_nao_verificados": [
+          "presença de ao menos um developer empregado não confirmada na base",
+          "incorporação formal da empresa não verificável pelos documentos públicos"
+        ],
+        "evidencias": []
+      },
+      "recomendacoes": [
+        {
+          "tecnologias": [
+            "NVIDIA Healthcare (ex-Clara)"
+          ],
+          "justificativa_tecnica": "Ask me things like...\nWhat can retailers learn from these insights?\nAI in Action",
+          "justificativa_negocio": "NVIDIA Healthcare (ex-Clara) ataca o custo unitário da inferência, que é o que separa margem de software de margem de serviço.",
+          "prioridade": "media",
+          "complexidade": "media",
+          "proxima_acao": "Agendar conversa técnica sobre NVIDIA Healthcare (ex-Clara) com o time de engenharia da Ecotrace, partindo das dores observadas: custo.",
+          "evidencias": [
+            {
+              "documento_id": 176,
+              "tipo_documento": "noticia",
+              "url_fonte": "https://startups.com.br/negocios/rodada-de-investimento/com-a-agtech-ecotrace-gs1-ventures-faz-seu-primeiro-aporte/",
+              "trecho": "“A companhia está com breakeven operacional, resultado de uma estratégia focada no crescimento sustentável, no aumento da recorrência de receitas e na disciplina na gestão dos custos.",
+              "data_publicacao": null
+            },
+            {
+              "documento_id": 178,
+              "tipo_documento": "site",
+              "url_fonte": "https://ecotrace.info/",
+              "trecho": "Isso tem um custo invisível, até virar crise.",
+              "data_publicacao": null
+            }
+          ],
+          "citacoes_rag": [
+            {
+              "tecnologia": "NVIDIA Healthcare (ex-Clara)",
+              "trecho": "NVIDIA Industry Insights Assistant\nThink of this as your personal guide to our \"State of AI\" reports. Whether you're curious about infrastructure or industry-specific adoption, I'm here to provide the data you need to stay ahead.\nBy using this chatbot you consent to such recording and agree to NVIDIA's Terms of Service .\nAsk me things like...\nWhat can retailers learn from these insights?\nAI in Action\nHow are IT leaders implementing AI to drive results?\nAI Impact and Investment\nHow are leaders turning AI spend into ROI?\nAI-generated content may be incomplete. Verify important info.\nBrand Concierge mounts here (hidden until initialized)\nVenture Capital (NVentures)\nNews and Events\nGTC AI Conference\nStartups and VCs\nProfessional Services for Data Science\nTerms of Service\nCopyright © 2026 NVIDIA Corporation",
+              "url_fonte": "https://www.nvidia.com/en-us/clara/",
+              "score_denso": 0.06728698156802271,
+              "score_lexical": null,
+              "score_rerank": 0.013203748,
+              "dor_origem": "custo"
+            }
+          ],
+          "dores_enderecadas": [
+            "custo"
+          ]
+        },
+        {
+          "tecnologias": [
+            "NeMo Guardrails"
+          ],
+          "justificativa_tecnica": "Set any one of the following options to disable telemetry:\n```bash\nexport NEMO_GUARDRAILS_NO_USAGE_STATS=1",
+          "justificativa_negocio": "NeMo Guardrails reduz a latência de resposta: melhor experiência para o usuário final e mais requisições por GPU.",
+          "prioridade": "media",
+          "complexidade": "media",
+          "proxima_acao": "Agendar conversa técnica sobre NeMo Guardrails com o time de engenharia da Ecotrace, partindo das dores observadas: latencia.",
+          "evidencias": [
+            {
+              "documento_id": 178,
+              "tipo_documento": "site",
+              "url_fonte": "https://ecotrace.info/",
+              "trecho": "Sem controle em tempo real, o prejuízo é contínuo e difícil de quantificar até se tornar irreversível.",
+              "data_publicacao": null
+            }
+          ],
+          "citacoes_rag": [
+            {
+              "tecnologia": "NeMo Guardrails",
+              "trecho": "Set any one of the following options to disable telemetry:\n\n```bash\nexport NEMO_GUARDRAILS_NO_USAGE_STATS=1\n# or\nexport DO_NOT_TRACK=1\n# or\nmkdir -p ~/.config/nemoguardrails && touch ~/.config/nemoguardrails/do_not_track\n```\n\nSet the opt-out before the NVIDIA NeMo Guardrails library starts. Changing environment variables or creating `do_not_track` after telemetry has started does not stop an already-running heartbeat thread.\n\nRefer to docs/telemetry.md for the full schema and field-by-field descriptions.\n\nYou may opt out of telemetry collection at any time. Opting out applies only to data collection by the NVIDIA NeMo Guardrails library itself.\n\nThird-party endpoints have separate terms and privacy practices. The NVIDIA NeMo Guardrails library can use inference endpoints such as NVIDIA Build (`build.nvidia.com`). If you use NVIDIA Build or another third-party endpoint, that endpoint's terms of service and privacy practices apply independently of the library. Any telemetry opt-out in the NVIDIA NeMo Guardrails library does not extend to the endpoint you choose. NVIDIA Build is intended for evaluation and testing only and must not be used in production environments. Do not submit confidential information or personal data when using NVIDIA Build.",
+              "url_fonte": "https://github.com/NVIDIA/NeMo-Guardrails",
+              "score_denso": 0.04120227136964827,
+              "score_lexical": null,
+              "score_rerank": 0.020318784,
+              "dor_origem": "latencia"
+            }
+          ],
+          "dores_enderecadas": [
+            "latencia"
+          ]
+        },
+        {
+          "tecnologias": [
+            "NVIDIA AI Enterprise"
+          ],
+          "justificativa_tecnica": "NVIDIA NeMo™ includes powerful, ready-to-use microservices, model training, evaluation, and guardrailing tools, and RAG building blocks for agentic AI.",
+          "justificativa_negocio": "NVIDIA AI Enterprise sustenta mais carga sem infraestrutura proporcional — evita o custo subir na curva da receita.",
+          "prioridade": "media",
+          "complexidade": "media",
+          "proxima_acao": "Agendar conversa técnica sobre NVIDIA AI Enterprise com o time de engenharia da Ecotrace, partindo das dores observadas: escalabilidade.",
+          "evidencias": [
+            {
+              "documento_id": 176,
+              "tipo_documento": "noticia",
+              "url_fonte": "https://startups.com.br/negocios/rodada-de-investimento/com-a-agtech-ecotrace-gs1-ventures-faz-seu-primeiro-aporte/",
+              "trecho": "A agtech projeta crescimento de 20% a 30% em 2026 e faturamento de R$ 60 milhões até 2028.",
+              "data_publicacao": null
+            },
+            {
+              "documento_id": 177,
+              "tipo_documento": "noticia",
+              "url_fonte": "https://agfeed.com.br/agtech/depois-da-pecuaria-startup-ecotrace-tem-nova-captacao-para-expandir-na-agricultura/",
+              "trecho": "Segundo a EcoTrace, do início de 2019 até julho de 2023, foram rastreadas 12,4 milhões  de cabeças de gado, 88 milhões de aves e 45 milhões de fardos de algodão.",
+              "data_publicacao": null
+            }
+          ],
+          "citacoes_rag": [
+            {
+              "tecnologia": "NVIDIA AI Enterprise",
+              "trecho": "Smarter Business. Accelerated With NVIDIA AI.\nTogether with our partners, we’re accelerating every industry.\nRead Success Stories\nAccelerate Agentic and Physical AI With Supported, Secure Components / Build and Manage Agentic AI\nNVIDIA NeMo™ includes powerful, ready-to-use microservices, model training, evaluation, and guardrailing tools, and RAG building blocks for agentic AI.\nExplore NVIDIA NeMo\nAccelerate Agentic and Physical AI With Supported, Secure Components / Develop and Simulate Digital Twins\nNVIDIA Omniverse™ is a collection of libraries and microservices for developing physical AI applications such as industrial digital twins and robotics simulation.\nExplore NVIDIA Omniverse\nAccelerate Agentic and Physical AI With Supported, Secure Components / Run AI Workloads at Scale\nNVIDIA Run:ai accelerates AI operations with dynamic orchestration across the AI lifecycle, maximizing GPU utilization, scaling workloads, and integrating seamlessly into hybrid AI infrastructure with zero manual effort.\nExplore NVIDIA Run:ai",
+              "url_fonte": "https://www.nvidia.com/en-us/data-center/products/ai-enterprise/",
+              "score_denso": 0.11147942911698971,
+              "score_lexical": null,
+              "score_rerank": 0.012606726,
+              "dor_origem": "escalabilidade"
+            }
+          ],
+          "dores_enderecadas": [
+            "escalabilidade"
+          ]
+        }
+      ],
+      "motivo_sem_recomendacao": null,
+      "erros": [],
+      "rotulo_quadrante": "PROSPECT DE EVOLUÇÃO — a conversa é sair do wrapper",
+      "consultas_rag": [
+        {
+          "dor": "custo",
+          "consulta": "custo “A companhia está com breakeven operacional, resultado de uma estratégia focada no crescimento sustentável, no aumento da recorrência de receitas e na disciplina na gestão dos custos. Isso tem um custo invisível, até virar crise."
+        },
+        {
+          "dor": "latencia",
+          "consulta": "latencia Sem controle em tempo real, o prejuízo é contínuo e difícil de quantificar até se tornar irreversível."
+        },
+        {
+          "dor": "escalabilidade",
+          "consulta": "escalabilidade A agtech projeta crescimento de 20% a 30% em 2026 e faturamento de R$ 60 milhões até 2028. Segundo a EcoTrace, do início de 2019 até julho de 2023, foram rastreadas 12,4 milhões  de cabeças de gado, 88 milhões de aves e 45 milhões de fardos de algodão."
+        },
+        {
+          "dor": "avaliacao",
+          "consulta": "avaliacao A Ecotrace adapta tecnologia, validação e rastreabilidade para operações que precisam provar conformidade, proteger margem e acessar mercado."
+        },
+        {
+          "dor": "observabilidade",
+          "consulta": "observabilidade Independente da sua cadeia, essa é sua solução para o monitoramento socioambiental de propriedades rurais e fornecedores!"
+        }
+      ]
+    }
+  ],
+  "briefing": "==============================================================================\n  NVIDIA STARTUP AI RADAR — BRIEFING EXECUTIVO\n==============================================================================\n  Consulta : startups de agro com visão computacional\n  Data     : 06/09/2026\n  Empresas : 3 analisada(s)\n  Critérios: setores=['agro'] · palavras-chave=['agro', 'visão', 'computacional']\n\n──────────────────────────────────────────────────────────────────────────────\n  AGROTOOLS\n──────────────────────────────────────────────────────────────────────────────\n  Classificação : AI-enabled   (confiança baixa)\n  Stack técnica : maturidade baixa\n  Quadrante     : PROSPECT DE EVOLUÇÃO — a conversa é sair do wrapper\n  Base          : posicionamento de copilot: vende a ferramenta; vocabulário técnico de IA presente nos documentos; 0 marcador(es) de profundidade de infraestrutura nos documentos\n  Confiança     : mínimo sobre as 8 afirmações do perfil, incluindo 5 dor(es) observada(s) — o elo mais fraco decide\n\n  NVIDIA Inception: NÃO ELEGÍVEL\n    x exclusão por idade: fundada em 2007, 19 anos (o programa exige menos de 10)\n    ? incorporação formal da empresa não verificável pelos documentos públicos\n\n  Recomendações (3):\n    !! FORA DO INCEPTION — abordagem comercial direta, não captação\n       para o programa. O motivo da recusa está no bloco acima.\n\n    1. NVIDIA Omniverse\n       prioridade media · complexidade media\n       dores      : latencia\n       técnica    : Connect OpenUSD scene data across design, engineering, and simulation workflows.\n       negócio    : NVIDIA Omniverse reduz a latência de resposta: melhor experiência para o usuário final e mais requisições por GPU.\n       ação       : Agendar conversa técnica sobre NVIDIA Omniverse com o time de engenharia da Agrotools, partindo das dores observadas: latencia.\n       evidências : 1 trecho(s) com fonte\n          [site] https://agrotools.com.br/\n             \"Somos um ecossistema de soluções digitais que oferecem mais controle e visibilidade de toda a cadeia do agronegócio em tempo real.\"\n          [base NVIDIA] NVIDIA Omniverse — https://www.nvidia.com/en-us/omniverse/\n\n    2. NVIDIA AI Enterprise\n       prioridade media · complexidade media\n       dores      : escalabilidade\n       técnica    : Increase GPU availability for data scientists by up to 10x via advanced orchestration. Accelerate development with ready-to-deploy NVIDIA NIM™…\n       negócio    : NVIDIA AI Enterprise sustenta mais carga sem infraestrutura proporcional — evita o custo subir na curva da receita.\n       ação       : Agendar conversa técnica sobre NVIDIA AI Enterprise com o time de engenharia da Agrotools, partindo das dores observadas: escalabilidade.\n       evidências : 2 trecho(s) com fonte\n          [noticia] https://braziljournal.com/agrotools-a-big-data-do-campo-planeja-mas-e-internacionalizacao/\n             \"Já temos 4,5 milhões dessas geo-ids cadastradas,” disse Sergio.\"\n          [noticia] https://agfeed.com.br/agtech/depois-de-sondar-a-america-agrotools-ajusta-a-bussola-da-expansao-e-pensa-ate-na-africa/\n             \"Para Rocha, o crescimento acelerado do agronegócio brasileiro nos últimos anos fez com que as oportunidades de desenvolvimento…\"\n          [base NVIDIA] NVIDIA AI Enterprise — https://www.nvidia.com/en-us/data-center/products/ai-enterprise/\n\n    3. cuDF\n       prioridade media · complexidade media\n       dores      : avaliacao\n       técnica    : Using Polars' lazy API, call `collect` with `engine=\"gpu\"` to run the operation on the GPU\n       negócio    : cuDF torna mensurável a qualidade entregue — sem avaliação não há como provar melhoria ao cliente.\n       ação       : Agendar conversa técnica sobre cuDF com o time de engenharia da Agrotools, partindo das dores observadas: avaliacao.\n       evidências : 2 trecho(s) com fonte\n          [noticia] https://agfeed.com.br/agtech/depois-de-sondar-a-america-agrotools-ajusta-a-bussola-da-expansao-e-pensa-ate-na-africa/\n             \"Segundo Felix, o grande gargalo do CAR é a demora no tempo de validação do documento, depois que os dados são registrados.\"\n          [noticia] https://startups.com.br/negocios/agtech/agrotools-prova-que-startups-e-governo-podem-trabalhar-juntos/\n             \"Nesse projeto, a ela é responsável pela inserção de dados pelos usuários, geração de relatórios de desempenho ambiental e pelos…\"\n          [base NVIDIA] cuDF — https://github.com/rapidsai/cudf\n\n──────────────────────────────────────────────────────────────────────────────\n  BEMAGRO\n──────────────────────────────────────────────────────────────────────────────\n  Classificação : AI-enabled   (confiança baixa)\n  Stack técnica : maturidade baixa\n  Quadrante     : PROSPECT DE EVOLUÇÃO — a conversa é sair do wrapper\n  Base          : posicionamento de copilot: vende a ferramenta; vocabulário técnico de IA presente nos documentos; 0 marcador(es) de profundidade de infraestrutura nos documentos\n  Confiança     : mínimo sobre as 10 afirmações do perfil, incluindo 7 dor(es) observada(s) — o elo mais fraco decide\n\n  NVIDIA Inception: ELEGÍVEL\n    ? incorporação formal da empresa não verificável pelos documentos públicos\n\n  Recomendações (3):\n\n    1. NVIDIA NeMo\n       prioridade media · complexidade media\n       dores      : custo\n       técnica    : More Customer Stories The Latest in NVIDIA NeMo Resources View All Blogs View All Sessions\n       negócio    : NVIDIA NeMo ataca o custo unitário da inferência, que é o que separa margem de software de margem de serviço.\n       ação       : Agendar conversa técnica sobre NVIDIA NeMo com o time de engenharia da BemAgro, partindo das dores observadas: custo.\n       evidências : 2 trecho(s) com fonte\n          [noticia] https://agfeed.com.br/agtech/encorpada-apos-duas-captacoes-em-2024-bemagro-cresce-141-no-primeiro-trimestre/\n             \"Fava Neves foi professor de Johann Coelho na faculdade, quando o executivo cursava economia empresarial e controladoria, e…\"\n          [site] https://bemagro.com/\n             \"Vai gerar economia, que vai trazer um ganho muito grande para o produtor não só na questão da aplicação do produto, mas na…\"\n          [base NVIDIA] NVIDIA NeMo — https://www.nvidia.com/en-us/ai-data-science/products/nemo/\n\n    2. NVIDIA AI Enterprise\n       prioridade media · complexidade media\n       dores      : latencia\n       técnica    : Simulate airflow in a virtual wind tunnel with NVIDIA CUDA-X™ accelerated solvers, PhysicsNeMo™,and Omniverse.\n       negócio    : NVIDIA AI Enterprise reduz a latência de resposta: melhor experiência para o usuário final e mais requisições por GPU.\n       ação       : Agendar conversa técnica sobre NVIDIA AI Enterprise com o time de engenharia da BemAgro, partindo das dores observadas: latencia.\n       evidências : 1 trecho(s) com fonte\n          [site] https://bemagro.com/\n             \"Visualize imagens de alta resolução em tempo real e edite vetores de linhas em um único ambiente digital e 100% online.\"\n          [base NVIDIA] NVIDIA AI Enterprise — https://www.nvidia.com/en-us/data-center/products/ai-enterprise/\n\n    3. cuDF\n       prioridade media · complexidade media\n       dores      : dependencia_fornecedor\n       técnica    : Using Polars' lazy API, call `collect` with `engine=\"gpu\"` to run the operation on the GPU\n       negócio    : cuDF reduz a dependência de um fornecedor externo de modelo — o risco de quem só empacota API de terceiro.\n       ação       : Agendar conversa técnica sobre cuDF com o time de engenharia da BemAgro, partindo das dores observadas: dependencia_fornecedor.\n       evidências : 1 trecho(s) com fonte\n          [noticia] https://agfeed.com.br/agtech/encorpada-apos-duas-captacoes-em-2024-bemagro-cresce-141-no-primeiro-trimestre/\n             \"O programa permite uma integração com máquinas colhedoras, facilitando o processo de colheita.\"\n          [base NVIDIA] cuDF — https://github.com/rapidsai/cudf\n\n──────────────────────────────────────────────────────────────────────────────\n  ECOTRACE\n──────────────────────────────────────────────────────────────────────────────\n  Classificação : AI-enabled   (confiança baixa)\n  Stack técnica : maturidade baixa\n  Quadrante     : PROSPECT DE EVOLUÇÃO — a conversa é sair do wrapper\n  Base          : vende resultado (autopilot), não ferramenta; 0 marcador(es) de profundidade de infraestrutura nos documentos\n  Confiança     : mínimo sobre as 7 afirmações do perfil, incluindo 5 dor(es) observada(s) — o elo mais fraco decide\n\n  NVIDIA Inception: ELEGÍVEL\n    ? presença de ao menos um developer empregado não confirmada na base\n    ? incorporação formal da empresa não verificável pelos documentos públicos\n\n  Recomendações (3):\n\n    1. NVIDIA Healthcare (ex-Clara)\n       prioridade media · complexidade media\n       dores      : custo\n       técnica    : Ask me things like... What can retailers learn from these insights? AI in Action\n       negócio    : NVIDIA Healthcare (ex-Clara) ataca o custo unitário da inferência, que é o que separa margem de software de margem de serviço.\n       ação       : Agendar conversa técnica sobre NVIDIA Healthcare (ex-Clara) com o time de engenharia da Ecotrace, partindo das dores observadas: custo.\n       evidências : 2 trecho(s) com fonte\n          [noticia] https://startups.com.br/negocios/rodada-de-investimento/com-a-agtech-ecotrace-gs1-ventures-faz-seu-primeiro-aporte/\n             \"“A companhia está com breakeven operacional, resultado de uma estratégia focada no crescimento sustentável, no aumento da…\"\n          [site] https://ecotrace.info/\n             \"Isso tem um custo invisível, até virar crise.\"\n          [base NVIDIA] NVIDIA Healthcare (ex-Clara) — https://www.nvidia.com/en-us/clara/\n\n    2. NeMo Guardrails\n       prioridade media · complexidade media\n       dores      : latencia\n       técnica    : Set any one of the following options to disable telemetry: ```bash export NEMO_GUARDRAILS_NO_USAGE_STATS=1\n       negócio    : NeMo Guardrails reduz a latência de resposta: melhor experiência para o usuário final e mais requisições por GPU.\n       ação       : Agendar conversa técnica sobre NeMo Guardrails com o time de engenharia da Ecotrace, partindo das dores observadas: latencia.\n       evidências : 1 trecho(s) com fonte\n          [site] https://ecotrace.info/\n             \"Sem controle em tempo real, o prejuízo é contínuo e difícil de quantificar até se tornar irreversível.\"\n          [base NVIDIA] NeMo Guardrails — https://github.com/NVIDIA/NeMo-Guardrails\n\n    3. NVIDIA AI Enterprise\n       prioridade media · complexidade media\n       dores      : escalabilidade\n       técnica    : NVIDIA NeMo™ includes powerful, ready-to-use microservices, model training, evaluation, and guardrailing tools, and RAG building blocks for agentic…\n       negócio    : NVIDIA AI Enterprise sustenta mais carga sem infraestrutura proporcional — evita o custo subir na curva da receita.\n       ação       : Agendar conversa técnica sobre NVIDIA AI Enterprise com o time de engenharia da Ecotrace, partindo das dores observadas: escalabilidade.\n       evidências : 2 trecho(s) com fonte\n          [noticia] https://startups.com.br/negocios/rodada-de-investimento/com-a-agtech-ecotrace-gs1-ventures-faz-seu-primeiro-aporte/\n             \"A agtech projeta crescimento de 20% a 30% em 2026 e faturamento de R$ 60 milhões até 2028.\"\n          [noticia] https://agfeed.com.br/agtech/depois-da-pecuaria-startup-ecotrace-tem-nova-captacao-para-expandir-na-agricultura/\n             \"Segundo a EcoTrace, do início de 2019 até julho de 2023, foram rastreadas 12,4 milhões de cabeças de gado, 88 milhões de aves e…\"\n          [base NVIDIA] NVIDIA AI Enterprise — https://www.nvidia.com/en-us/data-center/products/ai-enterprise/\n\n==============================================================================\n  Toda conclusão acima aponta para o documento que a sustenta.\n=============================================================================="
+}

@@ -302,6 +302,19 @@ ROTULO_QUADRANTE = {
 }
 
 
+def rotulo_do_quadrante(diagnostico) -> str:
+    """O rótulo que o gerente lê, com a ressalva de D-101 na frente quando ela vale.
+
+    Extraída de `_secao` em 06/09 pelo mesmo motivo de `ordenar_analises`: a interface precisa
+    do MESMO rótulo. Se a tela recalculasse a regra, `sinal_verificado=False` poderia aparecer
+    como `PROSPECT DE EVOLUÇÃO` na tela e como `A VERIFICAR` no briefing exportado do mesmo run —
+    e a tela estaria afirmando ao gerente exatamente o que D-101 existe para não afirmar.
+    """
+    if not diagnostico.sinal_verificado:
+        return ROTULO_SEM_SINAL
+    return ROTULO_QUADRANTE.get(diagnostico.quadrante, diagnostico.quadrante)
+
+
 def _resumir(texto: str, limite: int) -> str:
     r"""Corta em fronteira de PALAVRA e anuncia o corte. Ver D-100.
 
@@ -346,8 +359,7 @@ def _secao(a: AnaliseStartup) -> list[str]:
         L += [
             f"  Classificação : {d.classe}   (confiança {d.confianca})",
             f"  Stack técnica : maturidade {d.maturidade_stack}",
-            f"  Quadrante     : "
-            f"{ROTULO_SEM_SINAL if not d.sinal_verificado else ROTULO_QUADRANTE.get(d.quadrante, d.quadrante)}",
+            f"  Quadrante     : {rotulo_do_quadrante(d)}",
             f"  Base          : {d.justificativa}",
         ]
         # A regra 5 de contexto/02 §6 é "o output carrega a confiança, NÃO SÓ O RÓTULO". Imprimir
@@ -434,14 +446,30 @@ def _secao(a: AnaliseStartup) -> list[str]:
     return L
 
 
-def node(state: EstadoRadar) -> dict:
-    """Roda no grafo PAI, com `defer=True`: só executa depois de todas as branches."""
-    analises = state.get("analises") or []
+# EXTRAÍDA DO CLOSURE DE `node` EM 06/09, PARA QUE A INTERFACE REUSE A MESMA REGRA.
+# A ordem em que as empresas aparecem é uma afirmação do sistema sobre qual prospect abordar
+# primeiro. Se a tela ordenasse por conta própria, o gerente veria uma ordem na tela e outra no
+# briefing que ele acabou de exportar do mesmo run — e nada na saída denunciaria a diferença.
+# Duplicar quatro linhas custaria dois lugares para consertar; extrair não muda comportamento
+# nenhum (é o mesmo código, movido) e passa a haver UMA definição de "quem vem primeiro".
+def ordenar_analises(analises: list[AnaliseStartup]) -> list[AnaliseStartup]:
+    """Prioridade máxima da empresa primeiro; empate desfeito pelo nome.
+
+    `default=3` põe quem não tem recomendação nenhuma DEPOIS de quem tem prioridade baixa —
+    a empresa sem recomendação é a que menos ajuda o gerente a decidir o próximo telefonema.
+    """
     ordem = {"alta": 0, "media": 1, "baixa": 2}
 
     def chave(a: AnaliseStartup):
         pri = min((ordem[r.prioridade] for r in a.recomendacoes), default=3)
         return (pri, a.nome)
+
+    return sorted(analises, key=chave)
+
+
+def node(state: EstadoRadar) -> dict:
+    """Roda no grafo PAI, com `defer=True`: só executa depois de todas as branches."""
+    analises = state.get("analises") or []
 
     L = [
         "=" * 78,
@@ -471,7 +499,7 @@ def node(state: EstadoRadar) -> dict:
             L.append(f"    - {e}")
         L.append("    Sugestão: alargar setor, remover filtro de estágio, ou revisar as "
                  "palavras-chave acima.")
-    for a in sorted(analises, key=chave):
+    for a in ordenar_analises(analises):
         L += _secao(a)
     L += ["", "=" * 78,
           "  Toda conclusão acima aponta para o documento que a sustenta.",

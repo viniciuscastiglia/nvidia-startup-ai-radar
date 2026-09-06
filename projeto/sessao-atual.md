@@ -1,4 +1,23 @@
-# Pauta corrente — 05/09 madrugada: a IA fechou, a interface é o que resta
+# Pauta corrente — 06/09: a interface existe; o que resta é o README e o vídeo
+
+> **06/09 — D-107: A INTERFACE ESTÁ FEITA, e o eliminatório do vídeo tem porta.**
+> `python -m src.web` sobe a tela; ela roda o grafo ao vivo e transmite cada nó por SSE.
+> As 4 etapas fecharam — consultar → ver empresas com diagnóstico → recomendações com evidência
+> clicável → exportar o briefing byte a byte — e entrou a **vitrine do passo 7**, que mostra as
+> duas ordens da mesma recuperação. Verificado com run real (`cohere`, 2m18 para 3 empresas),
+> `pytest` **102 passed**, e a régua dos agentes **idêntica**.
+>
+> **O que a vitrine mostrou na primeira execução, e é a P-21 na tela:** para a Agrotools, dor
+> `latencia`, a busca híbrida devolve `NVIDIA AI Enterprise` em **1º, 2º e 3º** — a página
+> guarda-chuva de D-105 — e o passo 7 traz **Omniverse da 6ª para 1ª e da 23ª para 2ª**.
+>
+> **O que fica ABERTO e é do dia 06/09:** o README (o clone limpo não sabe criar o ambiente),
+> as 3 docstrings que dizem "STUB DA SESSÃO 01", o cache das 16 fontes do RAG, e o roteiro do
+> vídeo. **P-14 continua aberta — e a interface NÃO a fechou de propósito:** mostrar
+> `estrategia_analise` na tela faria a tela afirmar que aquele campo governou a análise, e
+> nenhum nó do subgrafo o lê.
+
+## O que era a pauta até 05/09 — a IA fechou, a interface era o que restava
 
 > Único arquivo de sessão do repositório. Guarda **o que está aberto**, não o que já aconteceu —
 > isso está em `decisoes.md` e no git.
@@ -151,7 +170,7 @@ Nenhum toca a cota do Cohere. **Fixar o critério antes de rodar cada um** — e
 
 | # | problema | o que é, em uma frase | o que pesquisar |
 |---|---|---|---|
-| 1 | **A interface não existe** | zero byte, e o vídeo tem de demonstrar pela interface web — sem ela o eliminatório dispara | nada: é execução |
+| ~~1~~ | ~~**A interface não existe**~~ | **FEITA em 06/09 (D-107)** — `src/web/`, FastAPI + SSE, 9 testes novos | ✅ |
 | 2 | **`confianca` é "baixa" nas 30** | é o `min()` sobre ~9 afirmações; basta uma fraca. **Já medido: o que move o campo é a recência, e `data_publicacao` falta em 86 de 93 documentos** | extração confiável de data de publicação: `article:published_time`, JSON-LD `datePublished`, microdata |
 | 3 | **O filtro do Inception lê 10,6% do texto** | varre trechos de evidência, não o documento. Varrer tudo quebra o veto de terceiro por construção: **7 → 13 recusas, ≥ 4 falso positivo** | atribuição de sujeito: distinguir *"sou uma consultoria"* de *"cito uma consultoria"* — coreference, entity attribution |
 | 4a | **As 16 fontes do RAG não têm cache** | `ingerir_nvidia.py` baixa ao vivo; a deriva já foi MEDIDA (mesma contagem, hash diferente). O gabarito aponta frase-âncora, então `avaliar_rag.py` quebra na mão do avaliador | cache de conteúdo com `--refetch`; decidir o que cachear (HTML cru × texto limpo × chunks) |

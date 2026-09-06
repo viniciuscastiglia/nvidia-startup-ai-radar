@@ -1,0 +1,314 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   NVIDIA Startup AI Radar — folha de estilo
+
+   A IDEIA QUE ORGANIZA TUDO: o assunto desta tela não é "startups", é QUANTO O
+   SISTEMA SABE. Os agentes distinguem três estados — a base prova que sim, a
+   base prova que não, e a base não prova. `Elegibilidade` separa
+   `motivos_exclusao` de `requisitos_nao_verificados`; `Diagnostico` carrega
+   `sinal_verificado`. Por isso a paleta tem TRÊS cores de veredito, e a do
+   "não sei" é de primeira classe em vez de um cinza qualquer.
+
+   Papel claro, e não o preto com verde neon da marca: aquilo é o desenho
+   automático para qualquer coisa com NVIDIA no nome, e ele afoga a distinção
+   acima num único tom de destaque.
+   ───────────────────────────────────────────────────────────────────────────── */
+
+:root {
+  --papel:      #E9ECEA;   /* fundo: papel cinza-esverdeado, frio */
+  --superficie: #FDFDFC;   /* painéis, um passo acima do papel */
+  --tinta:      #1A2B22;   /* verde-preto: o verde atravessa a escala inteira */
+  --tinta-2:    #4C5B53;   /* texto secundário */
+
+  --prova-sim:  #4F8419;   /* a base PROVA que sim  — elegível, tecnologia recomendada */
+  --prova-nao:  #A33A1F;   /* a base PROVA que não  — exclusão do Inception */
+  --sem-prova:  #7E857C;   /* a base NÃO PROVA      — requisito não verificado, sinal ausente */
+
+  --linha:      #1A2B221F;
+  --linha-forte:#1A2B2240;
+
+  --serif: "IBM Plex Serif", Georgia, "Times New Roman", serif;
+  --sans:  "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --mono:  "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+* { box-sizing: border-box; }
+
+/* `[hidden]` da folha do NAVEGADOR perde para qualquer regra de AUTOR que defina `display` —
+   estilo de autor vence estilo de agente, independente de especificidade. `.resultado` e
+   `.progresso` definem `display: grid`, então os dois apareciam mesmo com o atributo `hidden`
+   posto pelo JS: na tela inicial sobrava um retângulo branco do rail vazio no canto. */
+[hidden] { display: none !important; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  background: var(--papel);
+  color: var(--tinta);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+button, input { font: inherit; color: inherit; }
+
+a { color: var(--tinta); text-underline-offset: 2px; }
+
+:focus-visible { outline: 2px solid var(--prova-sim); outline-offset: 2px; }
+
+/* ── topo ──────────────────────────────────────────────────────────────────── */
+
+.topo {
+  display: flex; align-items: center; gap: 20px;
+  padding: 14px 24px;
+  background: var(--superficie);
+  border-bottom: 1px solid var(--linha-forte);
+  position: sticky; top: 0; z-index: 5;
+  flex-wrap: wrap;
+}
+
+.marca { display: flex; flex-direction: column; line-height: 1.2; }
+.marca-nome { font-weight: 600; letter-spacing: -0.01em; }
+.marca-sub  { font-size: 12.5px; color: var(--tinta-2); }
+
+.busca { display: flex; gap: 8px; flex: 1; min-width: 320px; align-items: stretch; }
+
+.busca input[type=text] {
+  flex: 1; min-width: 0;
+  padding: 9px 12px;
+  background: var(--papel);
+  border: 1px solid var(--linha-forte);
+  border-radius: 3px;
+}
+.busca input[type=text]::placeholder { color: var(--sem-prova); }
+
+.teto {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 12.5px; color: var(--tinta-2);
+  padding: 0 10px;
+  border: 1px solid var(--linha-forte); border-radius: 3px;
+  background: var(--papel);
+}
+.teto input { width: 44px; border: 0; background: transparent; text-align: right; }
+
+button {
+  padding: 9px 16px;
+  background: var(--tinta); color: var(--superficie);
+  border: 1px solid var(--tinta); border-radius: 3px;
+  cursor: pointer;
+}
+button:hover { background: #0F1A14; }
+button:disabled { background: var(--sem-prova); border-color: var(--sem-prova); cursor: progress; }
+
+button.secundario {
+  background: transparent; color: var(--tinta); border-color: var(--linha-forte);
+}
+button.secundario:hover { background: var(--papel); }
+
+/* ── avisos: o sistema declarando o que ele NÃO garante ────────────────────── */
+
+.avisos:empty { display: none; }
+.aviso {
+  padding: 10px 24px;
+  font-size: 13.5px;
+  border-bottom: 1px solid var(--linha);
+}
+.aviso strong { font-weight: 600; }
+.aviso-alerta  { background: #A33A1F14; color: #77290F; }
+.aviso-cautela { background: #7E857C1F; color: #3C443B; }
+
+/* ── estado vazio: um convite, não um vazio ────────────────────────────────── */
+
+.vazio { max-width: 62ch; margin: 12vh auto 0; padding: 0 24px; }
+.vazio h1 {
+  font-size: 30px; font-weight: 500; letter-spacing: -0.02em;
+  line-height: 1.25; margin: 0 0 18px;
+}
+.vazio p { color: var(--tinta-2); margin: 0 0 16px; }
+.sugestoes { display: flex; flex-wrap: wrap; gap: 8px; align-items: baseline; }
+.sugestao {
+  background: transparent; color: var(--tinta-2);
+  border: 1px dashed var(--linha-forte); padding: 4px 10px; font-size: 13px;
+}
+.sugestao:hover { background: var(--superficie); color: var(--tinta); }
+.rodape-vazio {
+  margin-top: 40px; padding-top: 14px;
+  border-top: 1px solid var(--linha);
+  font-family: var(--serif); font-style: italic; font-size: 14px;
+}
+
+/* ── progresso: a topologia do grafo se preenchendo ────────────────────────── */
+
+.progresso { max-width: 900px; margin: 6vh auto 0; padding: 0 24px; }
+.progresso h2 { font-size: 15px; font-weight: 500; color: var(--tinta-2); margin: 0 0 18px; }
+
+.trilha-pai { list-style: none; display: flex; gap: 0; margin: 0 0 28px; padding: 0; }
+.trilha-pai li {
+  flex: 1; padding: 9px 12px; font-size: 13px;
+  border: 1px solid var(--linha-forte); border-right: 0;
+  color: var(--sem-prova); background: var(--superficie);
+}
+.trilha-pai li:last-child { border-right: 1px solid var(--linha-forte); }
+.trilha-pai li.ativo { color: var(--tinta); background: #4F84190F; }
+.trilha-pai li.pronto { color: var(--tinta); }
+.trilha-pai li.pronto::before { content: "✓ "; color: var(--prova-sim); }
+
+.fanout { display: grid; gap: 10px; }
+.branch {
+  display: grid; grid-template-columns: 190px 1fr; gap: 14px; align-items: center;
+  padding: 10px 12px; background: var(--superficie); border: 1px solid var(--linha);
+}
+.branch-nome { font-weight: 500; }
+.branch-nos { display: flex; gap: 4px; flex-wrap: wrap; }
+.no-chip {
+  font-size: 11.5px; padding: 2px 7px;
+  border: 1px solid var(--linha-forte); color: var(--sem-prova);
+}
+/* A transição existe para MOSTRAR A MUDANÇA — é o nó terminando, não decoração. */
+.no-chip.pronto {
+  color: var(--superficie); background: var(--prova-sim); border-color: var(--prova-sim);
+  transition: background 160ms ease-out, color 160ms ease-out;
+}
+
+/* ── resultado: rail de empresas + dossiê ──────────────────────────────────── */
+
+.resultado { display: grid; grid-template-columns: 290px 1fr; min-height: calc(100vh - 61px); }
+
+.rail {
+  border-right: 1px solid var(--linha-forte);
+  background: var(--superficie);
+  display: flex; flex-direction: column;
+  max-height: calc(100vh - 61px); position: sticky; top: 61px;
+}
+.rail-cabeca {
+  padding: 12px 16px; border-bottom: 1px solid var(--linha);
+  display: flex; flex-direction: column; gap: 2px;
+  font-size: 12.5px; color: var(--tinta-2);
+}
+#rail-consulta { font-family: var(--serif); font-style: italic; color: var(--tinta); }
+
+.lista-empresas { list-style: none; margin: 0; padding: 0; overflow-y: auto; flex: 1; }
+.lista-empresas li { border-bottom: 1px solid var(--linha); }
+.lista-empresas button {
+  width: 100%; text-align: left; background: transparent; color: var(--tinta);
+  border: 0; border-left: 3px solid transparent; border-radius: 0;
+  padding: 11px 16px; display: grid; gap: 3px;
+}
+.lista-empresas button:hover { background: var(--papel); }
+.lista-empresas li.aberta button { background: var(--papel); border-left-color: var(--tinta); }
+.emp-nome { font-weight: 500; }
+.emp-linha { font-size: 12px; color: var(--tinta-2); }
+
+/* O selo carrega o veredito, e a cor dele é o estado epistêmico. */
+.selo { font-size: 11px; padding: 1px 6px; border: 1px solid; }
+.selo-sim   { color: var(--prova-sim); border-color: #4F841955; background: #4F84190F; }
+.selo-nao   { color: var(--prova-nao); border-color: #A33A1F55; background: #A33A1F0F; }
+.selo-duvida{ color: var(--sem-prova); border-color: var(--linha-forte); }
+
+.exportar {
+  border-top: 1px solid var(--linha); padding: 12px 16px;
+  display: flex; flex-direction: column; gap: 6px; font-size: 13px;
+}
+
+/* ── dossiê ────────────────────────────────────────────────────────────────── */
+
+.dossie { padding: 26px 34px 80px; max-width: 78ch; }
+.dossie h2 { font-size: 26px; font-weight: 500; letter-spacing: -0.02em; margin: 0 0 4px; }
+.dossie .meta { color: var(--tinta-2); font-size: 13px; margin: 0 0 22px; }
+.dossie h3 {
+  font-size: 13px; font-weight: 600; margin: 30px 0 10px;
+  padding-bottom: 5px; border-bottom: 1px solid var(--linha-forte);
+}
+
+.diagnostico { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--linha-forte); border: 1px solid var(--linha-forte); }
+.diagnostico div { background: var(--superficie); padding: 10px 12px; }
+.diag-rotulo { font-size: 12px; color: var(--tinta-2); display: block; }
+.diag-valor  { font-weight: 500; }
+
+.quadrante { margin: 12px 0 0; padding: 10px 12px; background: var(--superficie); border: 1px solid var(--linha-forte); }
+.quadrante.incerto { border-style: dashed; color: var(--sem-prova); }
+.base { margin: 10px 0 0; font-size: 13.5px; color: var(--tinta-2); }
+
+.veredito { display: flex; align-items: baseline; gap: 10px; margin: 0 0 10px; }
+.veredito .titulo { font-weight: 500; }
+
+ul.motivos { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+ul.motivos li { padding-left: 18px; position: relative; }
+ul.motivos li.excluiu::before { content: "×"; position: absolute; left: 2px; color: var(--prova-nao); }
+ul.motivos li.pendente::before { content: "?"; position: absolute; left: 2px; color: var(--sem-prova); }
+ul.motivos li.pendente { color: var(--tinta-2); font-size: 13.5px; }
+
+/* A citação literal é a FONTE falando, não o sistema. Por isso ela muda de voz. */
+.citacao {
+  font-family: var(--serif); font-size: 14.5px; line-height: 1.55;
+  margin: 8px 0 0; padding: 8px 0 8px 14px;
+  border-left: 2px solid var(--linha-forte); color: var(--tinta);
+}
+.fonte { display: block; margin-top: 6px; font-family: var(--sans); font-size: 12px; }
+.fonte a { color: var(--tinta-2); }
+
+.rec { border: 1px solid var(--linha-forte); background: var(--superficie); margin: 0 0 16px; }
+.rec-cabeca {
+  display: flex; justify-content: space-between; align-items: baseline; gap: 12px;
+  padding: 12px 14px; border-bottom: 1px solid var(--linha);
+}
+.rec-tec { font-weight: 600; color: var(--prova-sim); }
+.rec-grau { font-size: 12.5px; color: var(--tinta-2); white-space: nowrap; }
+.rec-corpo { padding: 12px 14px; display: grid; gap: 12px; }
+.campo { display: grid; grid-template-columns: 96px 1fr; gap: 12px; align-items: baseline; }
+.campo > span:first-child { font-size: 12.5px; color: var(--tinta-2); }
+.acao { border-top: 1px solid var(--linha); padding-top: 10px; }
+
+.rag { border-top: 1px solid var(--linha); padding: 10px 14px; background: #4F84190A; }
+.rag-item { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; padding: 3px 0; }
+.rag-tec a { color: var(--tinta); }
+.scores { font-family: var(--mono); font-size: 11.5px; color: var(--tinta-2); white-space: nowrap; }
+.btn-vitrine {
+  background: transparent; color: var(--tinta-2); border: 1px solid var(--linha-forte);
+  padding: 2px 8px; font-size: 11.5px;
+}
+.btn-vitrine:hover { background: var(--superficie); color: var(--tinta); }
+
+.sem-nada { color: var(--tinta-2); font-style: italic; font-family: var(--serif); }
+
+/* ── diálogos ──────────────────────────────────────────────────────────────── */
+
+dialog {
+  border: 1px solid var(--linha-forte); background: var(--superficie); color: var(--tinta);
+  max-width: min(920px, 92vw); padding: 22px 26px;
+  /* A vitrine tem duas colunas de 8 itens e passava do rodapé da janela sem rolar: o `Fechar`
+     ficava fora de alcance e o 8º item — que é onde moram as promoções grandes — invisível. */
+  max-height: 88vh; overflow-y: auto;
+}
+dialog::backdrop { background: #1A2B2266; }
+dialog h2 { font-size: 18px; font-weight: 500; margin: 0 0 14px; }
+#lista-salvos { list-style: none; margin: 0 0 16px; padding: 0; display: grid; gap: 2px; }
+#lista-salvos button { width: 100%; text-align: left; background: transparent; color: var(--tinta); border: 1px solid var(--linha); }
+#lista-salvos button:hover { background: var(--papel); }
+.salvo-meta { font-size: 12px; color: var(--tinta-2); }
+
+/* vitrine do passo 7 */
+.vitrine-colunas { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.vitrine-colunas h3 { font-size: 13px; font-weight: 600; margin: 0 0 8px; }
+ol.ranking { list-style: none; margin: 0; padding: 0; counter-reset: pos; display: grid; gap: 4px; }
+ol.ranking li {
+  display: grid; grid-template-columns: 26px 1fr auto; gap: 8px; align-items: baseline;
+  padding: 6px 8px; border: 1px solid var(--linha); font-size: 13px;
+}
+ol.ranking li .pos { font-family: var(--mono); color: var(--tinta-2); }
+.subiu { border-color: #4F841955; background: #4F84190F; }
+.desceu { color: var(--tinta-2); }
+.delta { font-family: var(--mono); font-size: 11.5px; }
+.delta.mais { color: var(--prova-sim); }
+.delta.menos { color: var(--sem-prova); }
+
+@media (max-width: 860px) {
+  .resultado { grid-template-columns: 1fr; }
+  .rail { position: static; max-height: none; border-right: 0; border-bottom: 1px solid var(--linha-forte); }
+  .dossie { padding: 20px; }
+  .diagnostico { grid-template-columns: 1fr; }
+  .vitrine-colunas { grid-template-columns: 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}

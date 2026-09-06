@@ -20,6 +20,10 @@ secrets/
 *.sqlite3
 data/raw/
 data/cache/
+# Runs da interface: são locais e efêmeros. A exceção é o run commitado de propósito — a rede
+# de segurança da gravação e a única forma de um avaliador SEM chave de API ver o sistema.
+data/runs/*
+!data/runs/exemplo-*.json
 qdrant_storage/
 chroma/
 *.log

@@ -453,6 +453,13 @@ class EstadoRadar(TypedDict, total=False):
     """
 
     consulta: str
+    # TETO DE EMPRESAS POR RUN, E NÃO POR PROCESSO (06/09, interface).
+    # `config.MAX_STARTUPS` é lido no import, então até aqui o teto era do PROCESSO: mudá-lo
+    # exigia editar o `.env` e reiniciar. Quem opera a interface decide por consulta — 3 para
+    # olhar rápido, 10 para varrer um setor — e a cena do vídeo PRECISA dele baixo, porque um
+    # run completo gasta 2-3 min só no throttle do Cohere (D-068).
+    # `None` mantém o contrato antigo: quem não pede nada continua recebendo `MAX_STARTUPS`.
+    max_startups: int | None
     plano: PlanoDeBusca | None
     startups: list[StartupRef]
     analises: Annotated[list[AnaliseStartup], operator.add]
