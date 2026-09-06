@@ -89,18 +89,26 @@ pela liga e que NÃO foi descartado por mérito: não foi testado, porque a chav
 `revisao-pontos-cegos.md` já dizia a frase inteira: *"a cadeia certa é entre PROVEDORES… o
 bloqueio é a chave, não o código."*
 
-**Verificado hoje: o custo é três variáveis de ambiente e ZERO código.**
+> ~~**Verificado hoje: o custo é três variáveis de ambiente e ZERO código.**~~
+> **ERRADO, corrigido em 06/09 por D-108.** O custo era três variáveis **mais duas linhas**, e a
+> diferença não era estética: `LLM_API_KEY` alimentava os **três** clientes, então pôr nela a
+> chave de um segundo provedor levava **embedding e rerank junto** e matava a busca densa com 401.
+> Provado por execução. A verificação de 05/09 leu `src/llm.py` e o comentário de `config.py`, e
+> não seguiu `_API_KEY` até os outros dois consumidores — **defeito consertado, e a lição é a de
+> D-083: ler o código não é executá-lo.**
 
 ```
-LLM_BASE_URL=https://api.x.ai/v1
-LLM_MODEL=grok-...
-LLM_API_KEY=xai-...
+LLM_BASE_URL=https://api.groq.com/openai/v1
+LLM_MODEL=openai/gpt-oss-120b
+LLM_API_KEY=gsk_...          # hoje só do LLM; NVIDIA_API_KEY serve embedding e rerank
 ```
 
 - `src/llm.py` é um `ChatOpenAI` sobre `base_url`/`api_key`/`model`, tudo vindo do config;
-- `src/config.py` já aceita **`LLM_API_KEY` como nome neutro**, escrito com o comentário
-  *"para que trocar de provedor não exija renomear variável"*;
+- `src/config.py` aceita **`LLM_API_KEY` como nome neutro** — e **desde D-108 ela é só do LLM**,
+  que é o que o comentário *"para que trocar de provedor não exija renomear variável"* prometia
+  sem cumprir;
 - `smoke_nvidia.py` lê tudo de `LLM.*` — **ele já valida qualquer provedor**, sem uma linha.
+  Confirmado hoje: **3/3 capacidades OK** com o chat no Groq e o embedding na NVIDIA no mesmo run.
 
 **Para os DOIS rodando juntos** o custo sobe: hoje `LLM` é singleton no config. Precisa de uma
 segunda config e de um jeito de o nó pedir qual quer. Pequeno, não zero.
@@ -116,7 +124,24 @@ O modelo atual tem **mediana de 51 s** (D-080), e esse número fechou decisões 
 
 **Se o Grok responder em segundos, as três reabrem** — não por mérito técnico novo, mas porque a
 régua de D-084 é *latência que o gerente sente*, e o número que as fechou muda de ordem de
-grandeza. **Isso não está medido. É a primeira coisa a medir, e custa 4 segundos.**
+grandeza. ~~**Isso não está medido. É a primeira coisa a medir, e custa 4 segundos.**~~
+
+> **MEDIDO em 06/09 (D-108), mesmo prompt e mesmo dia, 5 chamadas cada: mediana de 28,85 s
+> (NVIDIA) contra 1,15 s (Groq) — 25×.** Não foi o Grok: a chave da xAI autentica mas o time
+> responde `403` com `team_blocked: true`, porque o crédito grátis de $25/mês era do *public beta
+> que encerrou no fim de 2024* e a conta nunca teve saldo. Quem entregou o número foi o **Groq** —
+> LPU, tier gratuito, outro fornecedor, nome quase idêntico. `json_schema` estrito funciona
+> (5/5 parse OK), que era a condição eliminatória de D-040.
+>
+> **E o número de 51 s deste parágrafo já não valia:** a NVIDIA está **1,8× mais rápida que em
+> 02/09**. A latência deste fornecedor é variável de estado, não constante do modelo — **quem
+> for reabrir uma decisão citando latência tem de re-medir.**
+>
+> **O que isso reabre, e o que NÃO reabre:** a aritmética do juiz do Extractor muda de ordem —
+> as ~52 chamadas que custavam ~45 min passam a custar menos de 1. **Mas isso é latência, não
+> qualidade:** nada mediu se o `gpt-oss-120b` julga tão bem quanto o Nemotron, e trocar o
+> provedor de produção contraria D-087, fechado com a liga. Medir o juiz é
+> `avaliar_agentes.py --juiz`; promover provedor é outra decisão, e não foi tomada.
 
 ### 5. Por que o LLM é a ferramenta certa PARA ESTE gargalo
 

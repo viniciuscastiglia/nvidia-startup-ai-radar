@@ -109,13 +109,20 @@ class ConfigRerank:
     cohere_req_por_min: int
 
 
-# Chave única: aceita NVIDIA_API_KEY (nome específico) ou LLM_API_KEY (nome neutro),
-# para que trocar de provedor não exija renomear variável.
-_API_KEY = _env("LLM_API_KEY") or _env("NVIDIA_API_KEY")
+# Chave COMPARTILHADA da conta NVIDIA: serve embedding e rerank, que são da NVIDIA
+# independentemente de quem serve o chat. Aceita LLM_API_KEY por compatibilidade com
+# quem já tinha o .env antigo, mas o nome correto para ela é NVIDIA_API_KEY.
+_API_KEY = _env("NVIDIA_API_KEY") or _env("LLM_API_KEY")
 
 LLM = ConfigLLM(
     base_url=_env("LLM_BASE_URL", "https://integrate.api.nvidia.com/v1"),
-    api_key=_API_KEY,
+    # SÓ DO LLM, e é por isso que não é `_API_KEY` direto (06/09). O comentário antigo dizia
+    # que `LLM_API_KEY` existia "para que trocar de provedor não exija renomear variável" —
+    # mas ela alimentava os TRÊS clientes, então apontar o chat para outro provedor levava
+    # embedding e rerank junto, e a busca densa morria com 401 do lado da NVIDIA. Provado por
+    # execução: com `LLM_API_KEY=x`, `EMBEDDING.api_key` também virava `x`. O fallback para
+    # `_API_KEY` mantém o caso de um provedor único funcionando sem tocar no .env.
+    api_key=_env("LLM_API_KEY") or _API_KEY,
     # Escolhido em 01/09 por ELIMINAÇÃO MEDIDA, não por preferência (D-079): 1 vivo de 10
     # sondados, e passa na pergunta-armadilha de D-047 nos dois métodos.
     # `scripts/sondar_catalogo.py` refaz a sondagem inteira — o catálogo LISTA

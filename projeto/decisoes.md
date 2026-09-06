@@ -4145,6 +4145,127 @@ recusas** · `smoke_nvidia` **3/3** · o grafo rodado pela interface COM `RERANK
 o dossiê **lido inteiro na tela**, não por `curl`.
 
 
+## D-108 — `LLM_API_KEY` alimentava os TRÊS clientes; e a latência da NVIDIA não é uma constante
+
+**Data:** 06/09/2026 · **conserta um defeito latente em `src/config.py`** · **não troca provedor
+de produção:** o `.env` continua na NVIDIA, e a medição abaixo é medição, não promoção
+
+### O que foi consertado, e por que não era o que o repositório achava
+
+`projeto/sessao-atual.md` afirmou em 05/09: *"Verificado hoje: o custo é três variáveis de
+ambiente e **ZERO código**."* **É falso.** Aquela verificação leu `src/llm.py` — que de fato é um
+`ChatOpenAI` sobre `base_url`/`api_key`/`model` — e o comentário de `config.py`, que prometia
+*"nome neutro, para que trocar de provedor não exija renomear variável"*. O que ela não fez foi
+seguir `_API_KEY` até os outros consumidores:
+
+```
+_API_KEY = _env("LLM_API_KEY") or _env("NVIDIA_API_KEY")
+LLM.api_key = _API_KEY · EMBEDDING.api_key = _API_KEY · RERANK.api_key = _API_KEY
+```
+
+**Provado por execução, sem tocar em API:** com `LLM_API_KEY=CHAVE-DO-GROQ-FALSA`, o
+`EMBEDDING.api_key` também vira `CHAVE-DO-GROQ-FALSA`. Ou seja: pôr a chave de um segundo
+provedor na variável que o próprio código anuncia como *neutra* **levava embedding e rerank
+junto**, e a busca densa morreria com 401 da NVIDIA. O sintoma se apresentaria como *"o provedor
+novo quebrou o sistema"* — quando o provedor novo não teria nada com isso.
+
+**A correção são duas linhas:**
+
+```python
+_API_KEY = _env("NVIDIA_API_KEY") or _env("LLM_API_KEY")   # precedência invertida
+LLM = ConfigLLM(..., api_key=_env("LLM_API_KEY") or _API_KEY)   # LLM_API_KEY vira só do LLM
+```
+
+**Os três casos, medidos depois do conserto:**
+
+| cenário | `LLM.api_key` | `EMBEDDING`/`RERANK` | |
+|---|---|---|---|
+| provedor separado (`LLM_API_KEY` + `NVIDIA_API_KEY`) | Groq | **NVIDIA** | isolado ✅ |
+| provedor único (só `NVIDIA_API_KEY`) | NVIDIA | NVIDIA | compatível ✅ |
+| `.env` legado (só `LLM_API_KEY`) | a mesma | a mesma | compatível ✅ |
+
+`pytest -q`: **105 passed em 7,06 s**. O fallback existe para que o terceiro caso não quebre para
+quem tinha o `.env` antigo — sem ele, o conserto seria uma mudança incompatível por economia de
+uma linha.
+
+**Alternativa descartada — uma variável nova (`GROQ_API_KEY` lida pelo config):** amarraria o
+nome de um fornecedor dentro de `src/config.py`, que é exatamente o que a convenção *"nenhum
+agente conhece a NVIDIA"* existe para impedir. `LLM_API_KEY` já é o nome neutro certo; o defeito
+não estava no nome, estava em ela ser lida por três clientes.
+
+### Por que este defeito estava invisível
+
+**Ele não tinha como aparecer com um provedor só.** Enquanto LLM, embedding e rerank vêm da mesma
+conta, compartilhar a chave é indistinguível de não compartilhar. O defeito nasceu no dia em que
+`LLM_API_KEY` foi criada *para* um segundo provedor e só se manifestaria no primeiro uso dela —
+que é hoje. É a mesma família de D-083: invisível no código, óbvio na execução.
+
+### A medição que reabre o item 4 da sessão de 05/09
+
+xAI/Grok saiu do caminho por motivo administrativo, não técnico: a chave autentica
+(`GET /v1/api-key` → 200, ACLs completos), mas o time responde **403 `permission-denied`** com
+`team_blocked: true` em toda chamada — inclusive `GET /v1/models`, que não gera token. **Nunca
+houve consumo:** a conta é nova e o crédito gratuito de $25/mês era do *public beta da API, que
+encerrou no fim de 2024*. Não há tier gratuito na documentação oficial da xAI hoje. É uma quinta
+assinatura, distinta das quatro que D-079/D-080/D-093 catalogaram: **não é morte (410), não é
+entitlement (404), não é lentidão (200 lento), não é cota de plano (429) — é saldo.**
+
+**Groq — que não é Grok, e a confusão de nome é real:** LPU servindo modelos abertos, tier
+gratuito sem cartão, endpoint OpenAI-compatível em `https://api.groq.com/openai/v1`.
+
+**A primeira redação deste bloco dizia "~80×", comparando os 627 ms do smoke contra a mediana de
+51 s de D-080 — que é de 02/09. Errado, e é o defeito que este repositório mais condena:
+comparar contra número envelhecido.** No mesmo smoke de hoje a NVIDIA respondeu em **2,84 s**,
+fora da faixa 17-88 s que D-080 registrou. O número foi refeito com **protocolo declarado antes
+de medir**: mesmo prompt, mesmo `with_structured_output(..., method="json_schema")`, mesmo dia,
+5 chamadas cada, a única variável sendo o provedor.
+
+| 06/09, 5 chamadas cada | `nemotron-3.5-lightning-30b-a3b` | `openai/gpt-oss-120b` (Groq) |
+|---|---|---|
+| **mediana** | **28,85 s** | **1,15 s** |
+| faixa | 14,68 – 47,21 s | 1,06 – 1,41 s |
+| dispersão (max/min) | **3,2×** | **1,3×** |
+| parse do schema | 5/5 | 5/5 |
+| veredito | `[0]` nas 5 | `[0]` nas 5 |
+
+**A razão é 25×, não 80×.** E dois achados que só apareceram por medir hoje:
+
+1. **A NVIDIA está 1,8× mais rápida que em 02/09** (28,85 s contra 51 s de mediana). D-080 não
+   está errado — está velho. **A latência deste fornecedor é uma variável de estado, não uma
+   constante do modelo**, e qualquer decisão que a cite precisa re-medir em vez de citar.
+2. **A dispersão separa os dois mais do que a mediana.** O Groq varia 1,3× entre a chamada mais
+   rápida e a mais lenta; a NVIDIA, 3,2×. Para o gerente, o que se sente numa tela não é a
+   mediana — é a cauda.
+
+O `json_schema` de D-040 — que não é negociável, porque foi ele que fez o modelo abster-se em vez
+de alucinar *"30% mais rápido"* — funciona em modo **strict** no Groq, e a resposta foi correta:
+das três frases-isca, aprovou só a que afirma algo técnico sobre a própria empresa, rejeitando a
+de sujeito terceiro e o rótulo de menu. **Os dois provedores deram veredito idêntico nas 5
+chamadas** — o que é concordância em **um** caso, com n=1 de caso e 5 de repetição. **Não é
+medição de qualidade e não deve ser citada como uma.**
+
+**Detalhe que fecha um risco antes de ele existir:** o catálogo vivo do Groq tem 14 modelos e
+**nenhum Llama de chat** (só `prompt-guard`, que é classificador). Os compatíveis com
+`json_schema` são `openai/gpt-oss-120b`, `openai/gpt-oss-20b` e dois Qwen — a preocupação de
+escolher um modelo sem suporte a schema não tem como se materializar aqui.
+
+### O que este registro NÃO decide
+
+**Trocar o provedor de produção.** D-087 fechou o fallback em 02/09 *alinhado com a liga*, e
+"agora é de graça" não é razão para reabrir — é conveniência, exatamente o que D-084 manda não
+usar como régua. O que a medição faz é devolver informação a três decisões fechadas **citando um
+número de latência que hoje é outro**: a opção (b) da `justificativa_tecnica`, o juiz do Extractor
+(P-09) e o passo 8 fora do caminho do grafo. **Duas delas mudam mesmo sem trocar de provedor**,
+porque a própria NVIDIA caiu de 51 s para 28,85 s — quem quiser reabri-las tem de re-medir, não
+citar.
+
+O juiz é o caso interessante, porque ataca o gargalo que a investigação de 05/09 mediu — precisão
+de dor em 49% contra 83-96% com ele ligado (D-072) — e o custo que o fechou era **~52 chamadas**:
+a 28,85 s são ~25 min; a 1,15 s, **1 minuto**. **Isso é aritmética sobre latência, não medição de
+qualidade:** nada aqui diz que o `gpt-oss-120b` julga tão bem quanto o Nemotron, e o juiz é
+justamente onde a qualidade do julgamento É o produto. Medir isso é `avaliar_agentes.py --juiz`,
+e é outra sessão.
+
 ## Decisões pendentes
 
 | # | Decisão | Estado |
