@@ -4266,6 +4266,91 @@ qualidade:** nada aqui diz que o `gpt-oss-120b` julga tão bem quanto o Nemotron
 justamente onde a qualidade do julgamento É o produto. Medir isso é `avaliar_agentes.py --juiz`,
 e é outra sessão.
 
+## D-109 — O Groq REPROVA como juiz, e a guarda de recall que faltava desde D-055 reprova o juiz inteiro
+
+**Data:** 06/09/2026 · ~172 chamadas por braço com juiz · **fecha a lacuna que D-072 nomeou** ·
+`USAR_JUIZ_LLM` **segue `False`** — nada é promovido aqui
+
+### O critério, fixado ANTES de qualquer placar
+
+A pergunta não era *"promover o juiz?"* — era **não-inferioridade entre dois juízes**: o
+`gpt-oss-120b` (Groq) julga tão bem quanto o modelo de produção? Três braços, e o terceiro é o que
+torna o teste válido: **D-072 mediu o juiz no `nemotron-3-nano-30b-a3b`, que não é o modelo de
+produção desde D-079.** Sem o controle, qualquer diferença do Groq seria indistinguível de "o
+modelo de produção mudou".
+
+**Métricas nomeadas antes de medir**, atendendo à exigência literal de D-072 (*"a régua de
+qualquer critério futuro precisa nomear todas as métricas que podem se mover, não só a alvo"*):
+precisão de dor, recall de dor, dor proibida, discriminação, classe, maturidade, elegível,
+motivo_exclusão. **Alvo de precisão por D-055:** casador + 15 = **64%**. **Piso de discriminação:**
+6/8. **Guarda de recall: 70%** — fixada nesta sessão, antes do placar, porque D-055 nunca fixou
+uma e D-072 registrou isso como a lacuna que impedia decidir. O valor sai do produto: abaixo de
+70% o briefing omite mais de uma dor em três, e a assimetria de D-057 deixa de pagar.
+
+### O placar
+
+| 06/09, mesmo corpus e mesmo código | A casador | B Groq | C NVIDIA | critério |
+|---|---|---|---|---|
+| **precisão de dor** | 49% | 75% | **100%** | alvo 64% |
+| **recall de dor** | 100% | **35%** | **65%** | guarda 70% |
+| **dor proibida emitida** | 10 | 3 | **0** | menor é melhor |
+| discriminação | 8/8 | 8/8 | 6/8 | piso 6/8 |
+| classe | 3/7 | 2/7 | 2/8 | denominador exclui ambíguos |
+| maturidade · elegível · motivo | 6/7 · 6/6 · 6/6 | idem | idem | — |
+| relógio da rodada | ~0 s | **5 min 07** | **1 h 33** | — |
+
+### Achado 1 — o Groq não é inferior por trade-off; ele é DOMINADO
+
+Perde nas **três** métricas de dor ao mesmo tempo: precisão 75 contra 100, recall 35 contra 65,
+proibidas 3 contra 0. **Não há eixo em que ele ganhe.** Isso responde a pergunta de
+não-inferioridade sem ambiguidade: **REPROVA**.
+
+O que quase enganou: lido sozinho, o braço B parece promoção óbvia — *"precisão de 49% para
+75%!"*. **É exatamente a armadilha que D-072 previu**, e só não funcionou porque o recall foi
+nomeado antes. Um recall de 35% significa que o juiz do Groq descarta **duas em cada três dores
+verdadeiras**.
+
+**Consequência prática, e ela é limitada de propósito:** o Groq continua ótimo para **desenvolver**
+— grátis, `json_schema` estrito funcionando, 5 min contra 1 h 33 na mesma rodada. Ele não serve
+para **julgar**. É o mesmo padrão de D-097 com o `RERANK_PROVEDOR=nenhum`: *o modo barato serve
+para desenvolver, nunca para avaliar o que o gerente veria.*
+
+### Achado 2 — o juiz na NVIDIA melhorou onde D-072 media, e piorou onde D-072 não media
+
+| | D-072 (28/08, `nemotron-3-nano`) | hoje (`nemotron-3.5-lightning`) |
+|---|---|---|
+| precisão | 83-96% | **100%** |
+| dor proibida | 1-2 | **0** |
+| discriminação | 6-8 / 8 | 6/8 |
+| **recall** | **71-79%** | **65%** |
+
+Precisão e dores proibidas ficaram melhores que o registrado — e **o recall caiu abaixo de tudo
+que D-072 tinha visto**. Ninguém havia re-medido o juiz desde a troca de modelo de D-079, nem
+desde as mudanças de corpus de D-082 e D-097.
+
+### O que isso decide, e o que continua pendente
+
+**A promoção do juiz continua PENDENTE, e agora por um motivo diferente.** D-072 deixou-a pendente
+por **falta de critério** sobre recall. Hoje o critério existe, foi fixado antes de medir, e
+**reprova por 5 pontos** — 65% contra os 70% exigidos. É um resultado desconfortável, porque a
+precisão de 100% com **zero** dores proibidas é o melhor placar que este projeto já produziu nesse
+campo, e o argumento de assimetria de D-057 (erro por afirmação não é recuperável; por omissão,
+sim) empurra a favor. **Mas mudar a guarda depois de ver o placar é precisamente o que D-055
+existe para impedir**, e foi essa disciplina que fez D-055, D-058 e D-072 valerem alguma coisa.
+
+**Fica registrado para quem revisar:** a guarda de 70% foi proposta por mim nesta sessão e não foi
+contestada antes da medição. Quem quiser argumentar que 65% é aceitável tem de fazê-lo **mudando a
+guarda com razão declarada e re-medindo**, não reinterpretando este número.
+
+**O segundo obstáculo é independente do primeiro e não some com ele: 1 h 33 por rodada.** Com o
+fan-out rodando o pipeline uma vez por startup, o juiz na NVIDIA é inviável no caminho de
+produção. O Groq resolveria o relógio — e é justamente ele que reprova a qualidade. **Os dois
+obstáculos não se cancelam; eles se somam.**
+
+**Alternativa não medida, e é a candidata óbvia para quem quiser retomar:** um juiz que só descarte
+com alta confiança, deixando o casador emitir o resto — o que atacaria o recall sem abrir mão da
+precisão. Não foi medido e não deve ser citado como se tivesse sido.
+
 ## Decisões pendentes
 
 | # | Decisão | Estado |
