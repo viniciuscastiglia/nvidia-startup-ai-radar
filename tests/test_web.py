@@ -164,3 +164,51 @@ def test_vitrine_avisa_em_vez_de_desenhar_duas_colunas_iguais(cliente, monkeypat
     corpo = cliente.post("/api/vitrine", json={"consulta": "custo de inferência"}).json()
     assert "rerank" not in corpo
     assert "RERANK_PROVEDOR=nenhum" in corpo["aviso"]
+
+
+def test_segundo_run_simultaneo_recebe_aviso_em_vez_de_ficar_esperando(cliente):
+    """Dois runs ao mesmo tempo dobram a fila do throttle do Cohere (D-068) e disputam a cota
+    mensal (D-093). O segundo tem de receber uma FRASE que explica, não um timeout mudo.
+
+    O teste segura o cadeado à mão em vez de disparar dois runs de verdade: o que se quer
+    verificar é a guarda, e um segundo run real custaria Postgres, API e minutos.
+    """
+    import src.web.app as app_web
+
+    assert app_web._EM_EXECUCAO.acquire(blocking=False), "o cadeado já estava preso"
+    try:
+        r = cliente.get("/api/consulta", params={"q": "fintechs"})
+        # SSE: a resposta é 200 e o erro viaja DENTRO do stream — um 409 aqui deixaria o
+        # `EventSource` do navegador tentando reconectar, que é o oposto do que se quer.
+        assert r.status_code == 200
+        assert '"tipo": "erro"' in r.text
+        assert "já existe um run em andamento" in r.text
+        assert '"tipo": "inicio"' not in r.text, "o grafo não pode ter começado"
+    finally:
+        app_web._EM_EXECUCAO.release()
+
+
+def test_vitrine_nao_disputa_o_rerank_com_um_run_em_andamento(cliente):
+    """Aqui o 409 é o certo: `fetch` não reconecta sozinho, e a tela mostra a frase no diálogo."""
+    import src.web.app as app_web
+
+    assert app_web._EM_EXECUCAO.acquire(blocking=False)
+    try:
+        r = cliente.post("/api/vitrine", json={"consulta": "custo de inferência"})
+        assert r.status_code == 409
+        assert "run em andamento" in r.json()["detail"]
+    finally:
+        app_web._EM_EXECUCAO.release()
+
+
+def test_o_cadeado_solta_depois_de_um_run_recusado(cliente):
+    """A regressão que travaria a interface para sempre: recusar sem soltar. Um `return` dentro
+    do `try` em vez de antes do `acquire` produziria exatamente isso, e nada falharia até o
+    segundo uso."""
+    import src.web.app as app_web
+
+    app_web._EM_EXECUCAO.acquire(blocking=False)
+    cliente.get("/api/consulta", params={"q": "fintechs"})   # recusado
+    app_web._EM_EXECUCAO.release()
+    assert app_web._EM_EXECUCAO.acquire(blocking=False), "o cadeado ficou preso após a recusa"
+    app_web._EM_EXECUCAO.release()
