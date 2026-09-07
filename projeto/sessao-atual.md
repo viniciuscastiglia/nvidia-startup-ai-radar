@@ -1,4 +1,52 @@
-# Pauta corrente — 06/09: a interface existe; o que resta é o README e o vídeo
+# Pauta corrente — 06/09: a interface existe, e o passo 8 não tem porta
+
+## 🔜 A PRÓXIMA SESSÃO — três itens, e o primeiro é conectar, não construir
+
+> Escrito ao fim de 06/09. **Nada aqui foi implementado**; a sessão que abrir este arquivo decide
+> e faz. Os três saíram da pergunta *"o que no SISTEMA mais agrega?"*, e a ordem é por
+> retorno sobre custo, não por peso de critério (D-078).
+
+### 1. Dar porta ao passo 8 — **P-26**, aberta hoje
+
+**O achado:** `src/rag/geracao.py` faz geração com citação e **abstenção**, medida em **23/24 =
+96%**, e **nenhum caminho de execução chega lá**. O nó `nvidia_rag` não gera *de propósito* e a
+razão está certa (`nvidia_rag.py:46`): o Recommendation Agent precisa dos trechos com score, e
+redigir ali perderia a evidência. **O que falhou é a outra metade da frase — *"ela entra pela
+interface, não por este nó"* — que nunca foi cumprida.** Verificado: zero ocorrências de
+`responder` em `src/web/`, nenhuma das 8 rotas a expõe.
+
+**Por que é o primeiro:** é o passo 8 de 9 que o TAPI especifica nominalmente; a capacidade já
+existe e já tem régua (`avaliar_rag.py --geracao`); e o que ela expõe — um RAG que se **recusa a
+responder o que não sabe** — é a coisa mais forte que este sistema tem escondida. **O trabalho é
+conectar duas peças prontas:** uma rota e um campo de pergunta.
+
+**Antes de escolher o provedor da geração:** rodar `--geracao` nos dois. D-109 mediu o Groq como
+**juiz** e ele reprovou — **gerar-com-abstenção é outra tarefa e o resultado de lá não transfere
+para cá.** São as 24 perguntas do gabarito e custa pouco.
+
+### 2. Fazer o Query Planner planejar — **P-14**
+
+`query_planner.py:82` calcula `estrategia_analise`, `:77` calcula `exige_sinais_ia`, e **o
+subgrafo não lê nenhum dos dois** (`state.py:174` marca `# sem consumidor`). A arquitetura
+publicada promete *"NL → critérios de busca **+ estratégia de análise**"*; hoje o planner só
+filtra. **É a única pendência que muda a topologia**, não um texto. A interface não a fechou de
+propósito: mostrar o campo na tela faria a tela afirmar que ele governou a análise.
+
+### 3. `justificativa_negocio` — **P-22**
+
+`NEGOCIO` cobre **9 das 128 combinações** (16 tecnologias × 8 dores); as outras 119 caem em
+`_negocio_de_fallback`, que o próprio comentário chama de stub. Campo 3 dos 7 obrigatórios.
+**Curadoria de texto, sem tocar arquitetura** — cabe em horas. D-104 já consertou o *índice*; o
+que falta é cobertura.
+
+### O que NÃO entra, e a razão
+
+**P-21** (o motor perde da linha trivial, 38% × 44%) e **P-23** (o filtro do Inception vê 10,6%)
+são redesenho, e ambos estão medidos dos dois lados. **Um defeito medido e explicado defende
+melhor do que um conserto apressado que ninguém mediu** — o 38% vai para a defesa com a causa
+junto (precisão de dor em 49%), não escondido.
+
+---
 
 > **06/09 — D-107: A INTERFACE ESTÁ FEITA, e o eliminatório do vídeo tem porta.**
 > `python -m src.web` sobe a tela; ela roda o grafo ao vivo e transmite cada nó por SSE.
