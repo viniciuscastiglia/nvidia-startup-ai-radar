@@ -101,7 +101,13 @@ Consulta do usuário
   -> Recommendation Agent     cruza perfil x tecnologias
   -> Briefing Agent           relatório final
   -> Interface web            src/web/ — FastAPI + SSE; a tela reusa as regras do briefing
+                              + POST /api/perguntar = a porta do PASSO 8 (D-111)
 ```
+
+> **O Query Planner PLANEJA desde 06/09 (D-112).** `estrategia_analise` era uma string constante
+> e nenhum nó a lia; agora `dores_prioritarias` sai da consulta e `nvidia_rag` ordena as dores
+> por ela — e como `recommendation` corta em 3, isso decide **qual tecnologia a empresa recebe**.
+> `dores_prioritarias=[]` é a identidade, e é o que faz a régua não se mover.
 
 ## Stack
 
@@ -174,7 +180,7 @@ Nenhum número vive aqui: números envelhecem e este arquivo é carregado em tod
 |---|---|---|
 | ablação do RAG (r@k, e@k, os 5 motores) | **D-068** | `python scripts/avaliar_rag.py` |
 | régua dos agentes (trivial × casador × juiz) | **D-072** | `python scripts/avaliar_agentes.py` |
-| abstenção do passo 8 | **D-040** — re-medida em 02/09 no modelo atual | `--geracao` |
+| abstenção do passo 8 | **D-040** · re-medida em 06/09 nos **dois** provedores (D-111) | `--geracao` |
 | filtro do Inception (falso positivo E negativo) | **D-085** | `--exclusoes` |
 | `justificativa_tecnica`: seletor × os 150 primeiros | **D-086** | `--justificativas` |
 | filtro do Inception, os 30 vereditos numa tabela | **D-094** | `varrer_elegibilidade.py` |
@@ -182,6 +188,7 @@ Nenhum número vive aqui: números envelhecem e este arquivo é carregado em tod
 | confiança do diagnóstico, os 4 braços | **D-098** | `medir_confianca.py` |
 | relevância: as 7 regras do TAPI × a linha trivial | **D-105** | `--regras-tapi` |
 | `PROFUNDOS` alternativo — braço REPROVADO | **D-106** | `--profundos` |
+| o juiz do Extractor nos dois provedores — Groq REPROVA | **D-109** | `--juiz` |
 
 **A linha de base trivial é obrigatória em toda tabela de agente** (D-051) — é o `denso puro` deste
 critério, e sem ela 49% de precisão parece bom em vez de "17 pontos acima de emitir tudo".
@@ -206,7 +213,12 @@ critério, e sem ela 49% de precisão parece bom em vez de "17 pontos acima de e
   > **O gargalo da curadoria é o 3º documento, não a empresa** (D-090): `seed.py` exige 3
   > documentos e ≥ 2 TIPOS distintos, e 4 empresas boas caíram já coletadas.
 - **16 tecnologias NVIDIA**, 175 chunks estruturais + 202 de controle, gabarito de **24 perguntas**
-  (19 com resposta, 5 sem). **Os 9 passos do pipeline do TAPI estão fechados.**
+  (19 com resposta, 5 sem). **Os 9 passos do pipeline do TAPI estão fechados, e o passo 8 tem
+  porta desde 06/09** (D-111).
+  > **O CORPUS É VERSIONADO DESDE 06/09 (D-110).** `data/nvidia/cache/` traz as 16 páginas como
+  > estavam naquele dia; `ingerir_nvidia.py` **não toca a rede** sem `--refetch`. A deriva de
+  > D-089 — mesma contagem, hash diferente — deixou de ser risco silencioso e virou saída de
+  > instrumento. **Não re-baixe antes de gravar o vídeo**: `--refetch` reescreve o cache.
 
 ## Comandos
 
@@ -221,8 +233,9 @@ python scripts/seed.py --so-validar        # valida as fixtures sem tocar no ban
 python scripts/verificar_embedder.py       # Matryoshka e limite de entrada do embedder
 python scripts/verificar_reranker.py       # janela do reranker e curva de diluição
 python scripts/verificar_cohere.py --janela --throttle 15  # ordena? janela? quantas req/min?
-python scripts/ingerir_nvidia.py --so-validar  # chunking sem tocar banco nem API
-python scripts/ingerir_nvidia.py           # ingere as 16 tecnologias (upsert idempotente)
+python scripts/ingerir_nvidia.py --so-validar  # chunking sem banco, sem API e SEM REDE
+python scripts/ingerir_nvidia.py           # ingere as 16 do CACHE (upsert idempotente)
+python scripts/ingerir_nvidia.py --so-validar --refetch  # toca a rede: mede a DERIVA (D-110)
 python scripts/reembedar.py --so-validar   # conta chunks e lotes sem tocar API nem banco
 python scripts/reembedar.py                # re-embeda do BANCO quando o embedder mudar (D-046)
 
@@ -262,6 +275,8 @@ python scripts/avaliar_agentes.py --motor ponta-a-ponta    # inclui nvidia_rag: 
 # Interface web — o entregável 4 do TAPI (D-107)
 python -m src.web                          # sobe em 127.0.0.1:8000 · WEB_HOST/WEB_PORT mudam
 RERANK_PROVEDOR=cohere python -m src.web   # PARA JULGAR A TELA e para gravar: D-097
+# POST /api/perguntar é a porta do passo 8 (D-111) — o botão "Perguntar à base NVIDIA".
+# A cena da abstenção é a q20 do gabarito: "qual o preço da licença do AI Enterprise?"
 # um run de 3 empresas com o rerank ligado custou 2m18 medidos — a cena do vídeo usa o
 # seletor "empresas" baixo, e há um run commitado em data/runs/exemplo-*.json como rede
 

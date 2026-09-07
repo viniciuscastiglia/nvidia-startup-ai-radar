@@ -1,0 +1,23 @@
+# Ambiente conda do projeto — o buraco nº 1 do teste de clone limpo (D-089).
+#
+# Até 06/09 a versão do Python só existia num comentário e o repositório não sabia criar o
+# próprio ambiente: quem clonava tinha de adivinhar. `requirements.txt` continua sendo a fonte
+# das 62 dependências PINADAS (D-004) — este arquivo só cria o interpretador e delega, para que
+# não existam duas listas de versões podendo divergir.
+#
+#   conda env create -f environment.yml
+#   conda activate case-nvidia
+#
+# Quem não usa conda: `python3.12 -m venv .venv && pip install -r requirements.txt` serve.
+# A versão do Python importa (3.12): as anotações do projeto usam `X | None` sem
+# `from __future__` em alguns pontos de runtime do Pydantic.
+name: case-nvidia
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12.13
+  - pip
+  # `libpq` vem pelo pip com o psycopg[binary] pinado em requirements.txt; nada de Postgres
+  # aqui de propósito — o banco é serviço, não dependência de ambiente (ver docker-compose.yml).
+  - pip:
+      - -r requirements.txt
