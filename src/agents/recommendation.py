@@ -1,7 +1,24 @@
 """Recommendation — cruza o perfil da startup com as tecnologias NVIDIA.
 
-STUB DA SESSÃO 01 na geração do texto, mas as QUATRO REGRAS DE QUALIDADE de `contexto/03` §4
-já estão implementadas, porque são regra de negócio e não redação:
+O TEXTO É DETERMINÍSTICO POR DECISÃO MEDIDA, NÃO POR TRABALHO INACABADO
+------------------------------------------------------------------------
+Este módulo se declarou "STUB DA SESSÃO 01 na geração do texto" até 06/09, e o rótulo ficou
+falso quando os dois campos que ele gera passaram a ter régua:
+
+  · `justificativa_tecnica` — D-086. O seletor de span bate a linha trivial (15/21 contra 12/21
+    sobre 30 chunks rotulados ANTES do seletor existir), e num run real as justificativas que
+    servem foram de 1/6 para 4/6. Ele continua sendo CITAÇÃO LITERAL da documentação, com
+    `url_fonte`: não é prosa gerada, e segue conferível por quem lê.
+  · `justificativa_negocio` — D-104. O defeito não era falta de texto, era ÍNDICE: `NEGOCIO`
+    era chaveado só pela tecnologia enquanto a dor vivia em `citacao.dor_origem`. Corrigido,
+    foi de 2 de 15 recomendações coerentes com a dor declarada para 15 de 15.
+
+A opção de o LLM redigir (`plano.md` §5, alternativa (b)) continua ABERTA e registrada, e a
+régua para decidi-la é a de D-084 — latência que o gerente sente ao clicar, e fornecedor único
+no campo que ele lê primeiro. Não é "falta fazer": é uma escolha com o custo escrito.
+
+AS QUATRO REGRAS DE QUALIDADE de `contexto/03` §4 estão implementadas, porque são regra de
+negócio e não redação:
 
 1. Prioridade vem do GAP entre os dois eixos, não do rótulo    -> `_prioridade()`
 2. Complexidade tem que ser honesta                            -> `COMPLEXIDADE` por tecnologia

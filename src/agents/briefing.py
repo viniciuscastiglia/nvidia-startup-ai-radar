@@ -1,7 +1,16 @@
 """Briefing — relatório final para o gerente de Startups & VCs da NVIDIA.
 
-STUB DA SESSÃO 01 na redação (formata, não gera texto com LLM), mas o FILTRO DE ELEGIBILIDADE
-do Inception já é real — ver `elegibilidade()` abaixo. Ele é candidato a Diferencial segundo
+ELE FORMATA E NÃO GERA COM LLM, E ISSO É DECISÃO — a mesma de `recommendation.py`, pelas mesmas
+três razões medidas: latência que o gerente sente, robustez (o grafo roda com ZERO chamada de LLM
+em produção, e foi isso que o fez sobreviver ao 4º EOL do catálogo — D-087), e o fato de que
+**todo texto aqui é composição de campos que já carregam evidência**. Um LLM redigindo este
+relatório reescreveria afirmações que `list[Evidencia]` sustenta, e a rastreabilidade que o
+rodapé promete deixaria de ser verificável por código. Onde a redação estava ruim, o conserto
+foi medição e não geração: D-100 tirou três defeitos do texto que chega ao gerente, D-103
+consertou a largura das linhas, e D-104 o campo 3 dos 7.
+
+O FILTRO DE ELEGIBILIDADE do Inception é real — ver `elegibilidade()` abaixo. Ele é candidato a
+Diferencial segundo
 `contexto/05` §4.6, e a razão é específica: um sistema que RECUSA recomendar o Inception para
 uma consultoria de IA, e explica por quê, demonstra regra de negócio; um que recomenda para
 todo mundo demonstra template.
@@ -15,6 +24,7 @@ exclui — vira pendência a verificar na conversa. É a mesma regra 4 do Eviden
 from __future__ import annotations
 
 import re
+import textwrap
 from datetime import date
 
 from src.state import (
@@ -350,7 +360,7 @@ def _resumir(texto: str, limite: int) -> str:
     return f"{corte or cabe}…"
 
 
-def _secao(a: AnaliseStartup) -> list[str]:
+def _secao(a: AnaliseStartup, exige_sinais_ia: bool = False) -> list[str]:
     L = [f"\n{'─' * 78}", f"  {a.nome.upper()}", f"{'─' * 78}"]
     if a.erros:
         L.append(f"  [análise incompleta] {'; '.join(a.erros)}")
@@ -391,6 +401,18 @@ def _secao(a: AnaliseStartup) -> list[str]:
                 "      observada(s) com evidência. O rótulo acima é o que a regra",
                 "      produziu, não o que a base constatou",
             ]
+            # `exige_sinais_ia` GANHOU LEITOR AQUI — P-14, D-112. O campo era calculado e
+            # descartado. Ele responde a uma pergunta que só o gerente pode fazer: *esta
+            # empresa entra no que EU pedi?* Quando a consulta pediu IA nominalmente e o sinal
+            # não foi constatado, a lacuna deixa de ser uma nota técnica e vira o motivo de a
+            # empresa merecer um olhar antes da abordagem.
+            #
+            # E ELE NÃO FILTRA, DE PROPÓSITO: filtrar seria ausência de sinal virando sinal
+            # negativo, que é exatamente o que D-101 tirou deste sistema. O campo anota; a
+            # decisão de abordar continua sendo de quem lê.
+            if exige_sinais_ia:
+                L.append("      — e a sua consulta pediu IA explicitamente: confirmar na "
+                         "conversa")
     if a.elegibilidade:
         e = a.elegibilidade
         L.append(f"\n  NVIDIA Inception: {'ELEGÍVEL' if e.elegivel else 'NÃO ELEGÍVEL'}")
@@ -479,9 +501,20 @@ def node(state: EstadoRadar) -> dict:
         f"  Data     : {date.today().strftime('%d/%m/%Y')}",
         f"  Empresas : {len(analises)} analisada(s)",
     ]
-    if plano := state.get("plano"):
+    plano = state.get("plano")
+    if plano:
         L.append(f"  Critérios: setores={plano.setores or '—'} · "
                  f"palavras-chave={plano.palavras_chave[:6]}")
+        # A ESTRATÉGIA DE ANÁLISE ERA CALCULADA E JOGADA FORA — P-14, D-112. Ela agora é
+        # DERIVADA do que o subgrafo faz (`query_planner.descrever_estrategia`), então imprimi-la
+        # é relatar a execução, não decorar o cabeçalho. Enquanto ela era uma constante, imprimir
+        # era pior que a lacuna: afirmaria ao gerente que aquele texto governou a análise.
+        # `textwrap` e não um corte com `…`: aqui o texto INTEIRO importa — ele descreve o que
+        # o subgrafo fez, e uma estratégia truncada no meio é pior que nenhuma. O limite de 64
+        # mantém a linha dentro das 78 colunas do relatório com o rótulo na frente.
+        estrategia = textwrap.wrap(plano.estrategia_analise, 64) or ["—"]
+        L.append(f"  Análise  : {estrategia[0]}")
+        L += [f"             {linha}" for linha in estrategia[1:]]
         # D-081: o caso silencioso. `palavras-chave=[]` já estava impresso acima e não dizia
         # nada a ninguém — o relatório seguia idêntico ao de uma recuperação bem-sucedida.
         # Um resultado sem lastro tem de se anunciar na primeira tela, não no rodapé.
@@ -499,8 +532,10 @@ def node(state: EstadoRadar) -> dict:
             L.append(f"    - {e}")
         L.append("    Sugestão: alargar setor, remover filtro de estágio, ou revisar as "
                  "palavras-chave acima.")
+    # `plano` já está ligado pelo `if` acima — inclusive a `None`, quando não houve plano.
+    exige_ia = bool(plano and plano.exige_sinais_ia)
     for a in ordenar_analises(analises):
-        L += _secao(a)
+        L += _secao(a, exige_sinais_ia=exige_ia)
     L += ["", "=" * 78,
           "  Toda conclusão acima aponta para o documento que a sustenta.",
           "=" * 78]

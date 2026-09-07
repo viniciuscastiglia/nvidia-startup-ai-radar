@@ -32,12 +32,25 @@ publicada promete *"NL → critérios de busca **+ estratégia de análise**"*; 
 filtra. **É a única pendência que muda a topologia**, não um texto. A interface não a fechou de
 propósito: mostrar o campo na tela faria a tela afirmar que ele governou a análise.
 
-### 3. `justificativa_negocio` — **P-22**
+### 3. ~~`justificativa_negocio` — P-22~~ — **ESTE ITEM ESTAVA ERRADO, e caiu na verificação**
 
-`NEGOCIO` cobre **9 das 128 combinações** (16 tecnologias × 8 dores); as outras 119 caem em
-`_negocio_de_fallback`, que o próprio comentário chama de stub. Campo 3 dos 7 obrigatórios.
-**Curadoria de texto, sem tocar arquitetura** — cabe em horas. D-104 já consertou o *índice*; o
-que falta é cobertura.
+> Riscado em 06/09, **por execução, antes de consertar qualquer coisa.**
+
+A frase acima dizia que 119 das 128 combinações caíam em `_negocio_de_fallback`. **Elas não
+caem.** Varredura das 128 células, zero API:
+
+```
+par curado: 9 | frase por dor: 119 | FALLBACK: 0
+```
+
+**D-104 fechou a P-22 em 05/09** com `NEGOCIO_POR_DOR` — 8 frases curadas, uma por dor, cada uma
+nomeando a tecnologia —, e `plano.md:67` já a marcava ✅. `_negocio_de_fallback` só é alcançável
+quando `dor_origem is None`, que é o caminho da interface. O que sobrou foi texto velho aqui e
+na tabela de pendências de `decisoes.md`; os dois foram corrigidos.
+
+**A lição é a de sempre, e ela é sobre mim:** o item foi escrito de memória, no fim de uma
+sessão, sobre um conserto feito no dia anterior. Custou nada porque a verificação veio antes do
+código — e teria custado uma manhã de "curadoria de texto" que já existia.
 
 ### O que NÃO entra, e a razão
 

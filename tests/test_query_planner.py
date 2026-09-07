@@ -96,3 +96,87 @@ def test_qualquer_criterio_sozinho_ja_discrimina():
     assert PlanoDeBusca(**base, estagios=["seed"]).discrimina()
     assert PlanoDeBusca(**base, palavras_chave=["ia"]).discrimina()
     assert PlanoDeBusca(**base, porte_min_time=10).discrimina()
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# O PLANNER PLANEJANDO — P-14, D-112
+#
+# O que estes testes guardam é a PROPRIEDADE DE REVERSIBILIDADE, e ela é o argumento inteiro
+# pelo qual esta mudança pôde entrar a um dia do vídeo: `dores_prioritarias=[]` é a IDENTIDADE.
+# É o único ramo que `avaliar_agentes.rodar` exercita, e é por isso que a régua dos agentes não
+# se move. Se alguém trocar o `sorted` estável por um instável, ou tirar o `return` antecipado,
+# a régua passa a se mover em silêncio — e a régua não é rodada em CI.
+# ─────────────────────────────────────────────────────────────────────────────
+
+def test_a_consulta_nomeia_a_dor_e_o_plano_a_carrega():
+    from src.agents.query_planner import node
+
+    plano = node({"consulta": "startups de fintech com problema de custo e latência"})["plano"]
+    # a ORDEM é a da consulta, não a do dicionário: quem escreveu "custo e latência" pediu
+    # custo primeiro, e é isso que desempata lá no `nvidia_rag`
+    assert plano.dores_prioritarias == ["custo", "latencia"]
+
+
+def test_consulta_sem_dor_nenhuma_produz_lista_vazia():
+    """O caso que preserva a régua e o comportamento de todas as consultas anteriores."""
+    from src.agents.query_planner import node
+
+    assert node({"consulta": "fintechs brasileiras usando IA"})["plano"].dores_prioritarias == []
+
+
+def test_a_estrategia_deixou_de_ser_constante():
+    """O defeito que a P-14 escondia: a frase era a MESMA para toda consulta, e por isso um nó
+    que a lesse não estaria lendo informação nenhuma."""
+    from src.agents.query_planner import node
+
+    com = node({"consulta": "fintechs com problema de custo"})["plano"].estrategia_analise
+    sem = node({"consulta": "startups de agro"})["plano"].estrategia_analise
+    assert com != sem
+    assert "custo" in com and "custo" not in sem
+
+
+def test_a_estrategia_escrita_bate_com_a_estrategia_EXECUTADA():
+    """A frase vai impressa no briefing. Se ela citar uma dor que `nvidia_rag` não prioriza, o
+    relatório afirma ao gerente algo que não aconteceu — a família de D-100."""
+    from src.agents.query_planner import node
+
+    plano = node({"consulta": "startups com problema de governança e observabilidade"})["plano"]
+    for dor in plano.dores_prioritarias:
+        assert dor.replace("_", " ") in plano.estrategia_analise
+
+
+def _dor(nome: str):
+    from src.state import DorObservada, Evidencia
+
+    return DorObservada(dor=nome, texto=nome, evidencias=[Evidencia(
+        documento_id=1, tipo_documento="site", url_fonte="https://exemplo.invalid/",
+        trecho=f"trecho de {nome}")])
+
+
+def test_lista_vazia_e_a_IDENTIDADE_e_e_isso_que_protege_a_regua():
+    """A propriedade que faz `avaliar_agentes` reproduzir byte a byte. Não é conveniência: é o
+    que permitiu esta mudança entrar sem re-medir a régua inteira."""
+    from src.agents.nvidia_rag import ordenar_por_plano
+
+    dores = [_dor("latencia"), _dor("custo"), _dor("escalabilidade")]
+    assert ordenar_por_plano(dores, []) == dores
+
+
+def test_a_ordenacao_e_ESTAVEL_nas_dores_que_o_planner_nao_pediu():
+    """Um `sorted` instável reordenaria em silêncio o que o planner não pediu para reordenar —
+    e o efeito apareceria como recomendação diferente, sem nada na saída que denunciasse."""
+    from src.agents.nvidia_rag import ordenar_por_plano
+
+    dores = [_dor("latencia"), _dor("custo"), _dor("escalabilidade"), _dor("governanca")]
+    saida = [d.dor for d in ordenar_por_plano(dores, ["governanca"])]
+    assert saida == ["governanca", "latencia", "custo", "escalabilidade"]
+
+
+def test_dor_pedida_que_a_empresa_nao_tem_nao_inventa_dor():
+    """O planner PRIORIZA, ele não cria. Uma consulta por `privacidade` numa empresa sem essa
+    dor não pode fazer aparecer uma — seria afirmação sem `list[Evidencia]`."""
+    from src.agents.nvidia_rag import ordenar_por_plano
+
+    dores = [_dor("custo"), _dor("latencia")]
+    saida = ordenar_por_plano(dores, ["privacidade"])
+    assert [d.dor for d in saida] == ["custo", "latencia"]

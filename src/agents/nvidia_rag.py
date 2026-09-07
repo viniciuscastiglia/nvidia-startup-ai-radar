@@ -41,12 +41,21 @@ de ser inverificável: antes o braço lexical não votava, agora ele vota.
 contrato é o certo, mas a parte (3) é inalcançável até o Extractor da M4. Quem ler este arquivo
 precisa saber disso; era o que faltava na primeira versão.
 
+A ORDEM DAS DORES PASSOU A VIR DO PLANNER — P-14, D-112
+--------------------------------------------------------
+`recommendation` corta em `TETO_RECOMENDACOES = 3`, então quando a empresa tem mais dores que
+vagas a ORDEM em que elas chegam aqui decide qual tecnologia sai. Ela era a ordem do Extractor —
+isto é, a ordem em que os gatilhos aparecem no site da empresa. Agora `ordenar_por_plano` põe na
+frente as dores que a CONSULTA nomeou. Lista vazia é identidade; ver o docstring da função.
+
 O QUE ESTE NÓ NÃO FAZ: GERAR TEXTO
 -----------------------------------
 `pipeline.responder()` existe e faz o passo 8, mas quem consome este nó é o Recommendation Agent,
 que precisa dos TRECHOS com scores para cruzar com o perfil — não de um parágrafo já redigido.
 Redigir aqui e reinterpretar lá seria perder a evidência no meio do caminho. A geração com
-citação é para quando um humano faz a pergunta; ela entra pela interface, não por este nó.
+citação é para quando um humano faz a pergunta; ela entra pela interface, não por este nó —
+e desde 06/09 ela ENTRA MESMO, em `POST /api/perguntar` (P-26, D-111). Até então esta frase
+descrevia uma intenção que nenhum código cumpria.
 """
 
 from __future__ import annotations
@@ -87,6 +96,36 @@ TRECHOS_POR_DOR = 8
 NAO_SAO_TECNOLOGIA = {"NVIDIA Inception"}
 
 
+def ordenar_por_plano(dores: list[DorObservada], prioritarias: list[str]) -> list[DorObservada]:
+    """A ESTRATÉGIA DO PLANNER SENDO EXECUTADA — P-14, D-112.
+
+    O `Recommendation Agent` corta a lista intercalada em `TETO_RECOMENDACOES = 3`
+    (`contexto/03` §4, regra 4: "não empilhar tecnologia"). Quando a empresa tem mais dores do
+    que vagas — e tem, a mediana da base é 4 —, **quem entra é função da ORDEM em que as dores
+    chegam aqui.** Até 06/09 essa ordem era a que o Extractor produziu, que é a ordem em que os
+    gatilhos aparecem no documento: uma propriedade do texto de marketing da startup, não uma
+    decisão de ninguém.
+
+    Agora a consulta do gerente desempata. Quem pergunta por *"startups com problema de custo"*
+    recebe a tecnologia que ataca custo, e não a que ataca a dor que o site da empresa
+    mencionou primeiro.
+
+    LISTA VAZIA É IDENTIDADE, E ISSO É A GARANTIA DE REVERSIBILIDADE, não um detalhe: uma
+    consulta que não nomeia dor devolve a ordem exata de antes. É o que faz a régua dos agentes
+    não se mover — `avaliar_agentes.rodar` monta `PlanoDeBusca(consulta_original=...)` sem
+    dores, então este ramo é o único que ela exercita, e o run das 30 sai byte a byte igual.
+    O `return` antecipado é redundante com o `sorted` estável logo abaixo; ele fica porque
+    torna a propriedade LEGÍVEL para quem revisa, em vez de dedutível.
+
+    ESTÁVEL de propósito: as dores não priorizadas mantêm entre si a ordem do Extractor. Um
+    `sorted` instável reordenaria silenciosamente o que o planner não pediu para reordenar.
+    """
+    if not prioritarias:
+        return dores
+    posicao = {d: i for i, d in enumerate(prioritarias)}
+    return sorted(dores, key=lambda d: posicao.get(d.dor, len(posicao)))
+
+
 def consulta_da_dor(dor: DorObservada, stack: list[str]) -> str:
     """Rótulo da dor + a linguagem literal da startup + a stack. Ver o docstring do módulo."""
     partes = [dor.dor.replace("_", " ")]
@@ -110,8 +149,16 @@ def node(state: EstadoAnalise) -> dict:
     # o corte pega o 1º colocado das três primeiras dores — que é o que "não empilhar
     # tecnologia" quer dizer. Medido em 24/08: sem isto, três startups distintas recebiam
     # `[Inception, Morpheus, CUDA Toolkit]` idênticos.
+    # O PLANO CHEGA AQUI PELO `Send` (ver `graph.distribuir`), e é a única coisa que o subgrafo
+    # sabe sobre o que o gerente pediu. `state.get` e não `state[...]`: o subgrafo é invocável
+    # isolado no pytest com um `EstadoAnalise` montado à mão, e quebrar isso trocaria uma
+    # capacidade nova por um teste que deixa de rodar.
+    plano = state.get("plano")
+    dores = ordenar_por_plano(perfil.dores_observadas,
+                              plano.dores_prioritarias if plano else [])
+
     por_dor: list[list[CitacaoRAG]] = []
-    for dor in perfil.dores_observadas:
+    for dor in dores:
         consulta = consulta_da_dor(dor, stack)
         # Consulta vazia não vai para o embedder: ele responde HTTP 400 e derruba o nó. Uma dor
         # sem rótulo e sem evidência não deveria existir, mas o custo da guarda é uma linha.

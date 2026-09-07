@@ -130,8 +130,10 @@ class Afirmacao(BaseModel):
     confianca: Confianca | None = None
     validada: bool | None = None
     # Preenchido em produção por `avaliar()`, o mesmo caminho que produz `Diagnostico.
-    # motivo_confianca` — que D-066 mandou preencher para "o rodapé não mentir". Este ainda não é
-    # impresso pelo briefing: é o irmão por-afirmação daquele, e a lacuna é a mesma (P-14).
+    # motivo_confianca` — que D-066 mandou preencher para "o rodapé não mentir". É o irmão
+    # POR-AFIRMAÇÃO daquele, e desde D-112 a tela o mostra junto de cada evidência: o rodapé
+    # promete que toda conclusão aponta para o documento que a sustenta, e este campo é o que
+    # diz QUANTO aquele documento sustenta.
     motivo_validacao: str | None = None
 
     @property
@@ -163,15 +165,31 @@ class PlanoDeBusca(BaseModel):
     porte_min_time: int | None = None
     porte_max_time: int | None = None
     palavras_chave: list[str] = Field(default_factory=list)
-    # SEM CONSUMIDOR (P-14, levantado em 31/08). Este campo, `estrategia_analise`,
-    # `StartupRef.score_recuperacao` e `Afirmacao.motivo_validacao` são calculados corretamente e
-    # NADA os lê. Não são código morto — são capacidade anunciada e não entregue: a arquitetura
-    # publicada diz "Query Planner: critérios de busca + estratégia de análise", e a estratégia é
-    # descartada. Apagá-los esconderia a lacuna; ficam anotados, como manda D-020. Ou o subgrafo
-    # passa a lê-los, ou o diagrama para de prometê-los — a decisão é P-14.
+    # ── P-14 FECHADA EM 06/09 (D-112): OS QUATRO CAMPOS GANHARAM LEITOR ──────────────────
+    # Até aqui este campo, `estrategia_analise`, `StartupRef.score_recuperacao` e
+    # `Afirmacao.motivo_validacao` eram calculados corretamente e NADA os lia. Não era código
+    # morto — era capacidade ANUNCIADA e não entregue: a arquitetura publicada diz *"Query
+    # Planner: critérios de busca + estratégia de análise"*, e a estratégia era descartada.
+    #
+    # O ACHADO QUE MUDOU O DESENHO: `estrategia_analise` era uma STRING CONSTANTE. Fazer um nó
+    # "lê-la" satisfaria a letra da P-14 e não a substância — seria um nó lendo uma constante.
+    # Para o planner planejar, a estratégia precisa VARIAR com a consulta e alguém precisa AGIR
+    # sobre ela. Daí `dores_prioritarias`, abaixo.
     exige_sinais_ia: bool = True
     max_startups: int = 5
-    estrategia_analise: str = ""   # sem consumidor — P-14
+
+    # A ESTRATÉGIA QUE O SUBGRAFO EXECUTA, E NÃO UMA FRASE DECORATIVA (D-112).
+    # `nvidia_rag.node` ordena `perfil.dores_observadas` por esta lista antes de consultar a base
+    # NVIDIA. Como `recommendation` corta a lista intercalada em `TETO_RECOMENDACOES = 3`, a
+    # ordem decide QUAL TECNOLOGIA a empresa recebe quando ela tem mais dores do que vagas.
+    #
+    # LISTA VAZIA É IDENTIDADE, e isso é a garantia de reversibilidade: uma consulta que não
+    # nomeia dor nenhuma produz exatamente a ordem de antes, byte a byte. É o que faz a régua
+    # dos agentes não se mover — `avaliar_agentes.rodar` monta um `PlanoDeBusca` sem dores.
+    dores_prioritarias: list[Dor] = Field(default_factory=list)
+    # Derivada de `dores_prioritarias`, não fixa: ela DESCREVE o que vai acontecer com esta
+    # consulta. É o que separa "o planner planeja" de "o planner repete uma frase".
+    estrategia_analise: str = ""
 
     def discrimina(self) -> bool:
         """Existe ALGUM critério que estreite a base? (D-081)
@@ -201,7 +219,10 @@ class StartupRef(BaseModel):
     tamanho_time: int | None = None
     descricao_curta: str | None = None
     documentos: list[DocumentoRef] = Field(default_factory=list)
-    score_recuperacao: float = 0.0   # sem consumidor — P-14
+    # O score do `tsvector` que trouxe esta empresa — `db.py` o preenche desde sempre. Lido pela
+    # tela desde D-112: ele responde *"por que esta empresa está aqui?"*, que é a primeira
+    # pergunta de quem abre um resultado de busca e não reconhece um nome.
+    score_recuperacao: float = 0.0
 
 
 class PerfilStartup(BaseModel):

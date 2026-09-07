@@ -64,7 +64,7 @@ from src.rag.limpeza import RUIDO_HTML
 MANIFESTO = Path(__file__).resolve().parent.parent / "data" / "nvidia" / "fontes.yaml"
 
 # ─────────────────────────────────────────────────────────────────────────────
-# CACHE DAS FONTES — o corpus de quem clona passa a ser o corpus medido
+# CACHE DAS FONTES — o corpus de quem clona passa a ser o corpus medido (D-110)
 #
 # O DEFEITO, MEDIDO EM 03/09 (D-089) E NÃO SUPOSTO. Até 06/09 este script baixava ao vivo das
 # 16 URLs a cada execução. O clone limpo daquele dia produziu a **mesma contagem (175 chunks)

@@ -301,6 +301,19 @@ ol.ranking li .pos { font-family: var(--mono); color: var(--tinta-2); }
 .delta.mais { color: var(--prova-sim); }
 .delta.menos { color: var(--sem-prova); }
 
+/* ── dores observadas: o Evidence Validator com o raciocínio à mostra ─────── */
+
+ul.dores { list-style: none; margin: 0 0 18px; padding: 0; display: grid; gap: 4px; }
+ul.dores li {
+  display: grid; grid-template-columns: 150px 1fr; gap: 10px; align-items: baseline;
+  padding: 8px 10px; border: 1px solid var(--linha); font-size: 13px;
+}
+.dor-nome { font-family: var(--mono); font-size: 12px; }
+.dor-grau { color: var(--tinta-2); }
+.dor-validada { border-left: 3px solid var(--prova-sim); }
+.dor-fraca { border-left: 3px solid var(--sem-prova); }
+.dor-fraca .dor-nome { color: var(--tinta-2); }
+
 /* ── o passo 8: perguntar à base NVIDIA ────────────────────────────────────
    A ABSTENÇÃO USA `--sem-prova`, e isso não é escolha de paleta: é a mesma cor de
    `requisito não verificado` e de `sinal de IA não verificado`. Os três são o mesmo

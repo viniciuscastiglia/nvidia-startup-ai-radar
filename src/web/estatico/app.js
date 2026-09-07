@@ -192,8 +192,14 @@ function desenharDossie(a) {
   const P = [];
 
   P.push(`<h2>${esc(a.nome)}</h2>`);
+  // `score_recuperacao` GANHOU LEITOR — P-14, D-112. `db.py` o preenche com o score do
+  // `tsvector` desde sempre e ninguém o mostrava. Ele responde à primeira pergunta de quem abre
+  // um resultado e não reconhece o nome: POR QUE ESTA EMPRESA ESTÁ AQUI. Zero é omitido — é o
+  // valor de quem entrou por filtro estrutural e não por casamento de texto, e imprimir "0.000"
+  // afirmaria uma medição que não houve.
   P.push(`<p class="meta">${[meta.setor, meta.estagio, meta.localizacao,
-    meta.ano_fundacao ? `fundada em ${meta.ano_fundacao}` : null]
+    meta.ano_fundacao ? `fundada em ${meta.ano_fundacao}` : null,
+    meta.score_recuperacao ? `recuperação ${Number(meta.score_recuperacao).toFixed(3)}` : null]
     .filter(Boolean).map(esc).join(" · ") || "sem metadados na base"}
     ${meta.site ? ` · <a href="${esc(meta.site)}" target="_blank" rel="noopener">site</a>` : ""}</p>`);
 
@@ -228,6 +234,27 @@ function desenharDossie(a) {
     });
     e.requisitos_nao_verificados.forEach((p) => itens.push(`<li class="pendente">${esc(p)}</li>`));
     if (itens.length) P.push(`<ul class="motivos">${itens.join("")}</ul>`);
+  }
+
+  // AS DORES E O TRABALHO DO EVIDENCE VALIDATOR — `motivo_validacao`, P-14, D-112.
+  // `avaliar()` preenchia este campo por afirmação e NADA o lia: o briefing imprimia o irmão
+  // dele (`Diagnostico.motivo_confianca`) e descartava este. A tela promete no rodapé que toda
+  // conclusão aponta para o documento que a sustenta — `motivo_validacao` é o que diz QUANTO
+  // aquele documento sustenta, e é o único lugar do sistema onde o Evidence Validator aparece
+  // com o raciocínio dele à mostra em vez de só com o rótulo.
+  const dores = a.perfil?.dores_observadas || [];
+  if (dores.length) {
+    P.push(`<h3>Dores observadas (${dores.length})</h3>
+      <ul class="dores">${dores.map((d) => `
+        <li class="${d.validada ? "dor-validada" : "dor-fraca"}">
+          <span class="dor-nome">${esc(d.dor)}</span>
+          <span>
+            <span class="dor-grau">confiança ${esc(d.confianca || "—")}${
+              d.validada ? "" : " · não validada"}</span>
+            ${d.motivo_validacao ? `<br><span class="salvo-meta">${esc(d.motivo_validacao)}</span>` : ""}
+            ${(d.evidencias || []).slice(0, 1).map(citacaoHTML).join("")}
+          </span>
+        </li>`).join("")}</ul>`);
   }
 
   P.push(`<h3>Recomendações (${a.recomendacoes.length})</h3>`);

@@ -4351,6 +4351,217 @@ obstáculos não se cancelam; eles se somam.**
 com alta confiança, deixando o casador emitir o resto — o que atacaria o recall sem abrir mão da
 precisão. Não foi medido e não deve ser citado como se tivesse sido.
 
+## D-110 — As 16 fontes do RAG entram no git, e o teste achou um defeito que a saída escondia
+
+**Data:** 06/09/2026 · fecha o item "cache das fontes" de `plano.md` §3.1 · **eliminatório**
+
+**O DEFEITO, MEDIDO EM 03/09 (D-089) E NÃO SUPOSTO.** `ingerir_nvidia.py` baixava ao vivo das 16
+URLs a cada execução. O clone limpo daquele dia produziu a **mesma contagem (175 chunks) com
+hash diferente**: a página do TensorRT-LLM rolou o mural de novidades e entrou lixo novo. O
+gabarito de 24 perguntas aponta URL **e frase-âncora**, então quem avalia rodava
+`avaliar_rag.py` contra um corpus que não é o medido — e o número que ele veria não seria o
+número que este repositório afirma. Naquela vez o gabarito sobreviveu porque a deriva bateu em
+ruído; a próxima pode bater em âncora.
+
+**DECISÃO: cachear o BRUTO (`r.text`), versionado no git, e `--refetch` como única porta para a
+rede.** `r.text` é a ENTRADA dos passos 2 e 3 do pipeline, então limpeza e chunking continuam
+rodando de verdade em cima do cache.
+
+**ALTERNATIVA DESCARTADA — cachear o texto limpo ou os chunks.** Economiza espaço (4,8 MB viram
+kilobytes) e tira `src/rag/limpeza.py` e `src/rag/chunking.py` do caminho de quem clona:
+`--so-validar`, que existe justamente para exercitar o chunking sem banco e sem API, deixaria de
+exercitar coisa nenhuma. E no dia em que a limpeza mudasse, o cache mentiria em silêncio — o
+texto gravado descreveria uma limpeza que não é mais a do código.
+
+**ALTERNATIVA DESCARTADA — pinar só o hash e FALHAR quando a página mudar.** Torna a deriva
+visível, que é metade do problema, e deixa o corpus de quem avalia refém da rede. O modo de
+falha piora: sai de *"corpus diferente do medido"* para *"não roda"*.
+
+**O TESTE ACHOU UM DEFEITO QUE NENHUMA SAÍDA MOSTRAVA, e ele é o achado desta entrada.**
+`Path.write_text` grava o que recebe; `Path.read_text` abre em modo texto e traduz `\r\n` para
+`\n`. **Sete das 16 fontes vêm com CRLF** (1.468 ocorrências só na do Healthcare), então o texto
+que `--refetch` entregava ao chunker **não era** o texto que uma leitura do cache entregava. As
+contagens saíram idênticas nos dois caminhos — por sorte do chunker, não por desenho — e um
+`sha256` que não descreve o arquivo em disco é um instrumento de deriva que mede a si mesmo.
+Normalizado na borda da rede. **Nenhuma execução teria mostrado isso**; foi
+`test_o_indice_do_cache_cobre_as_16_fontes_do_manifesto` comparando hash com arquivo.
+
+**O que ficou versionado:** 4,8 MB, 16 arquivos e um `indice.json` com `sha256`, `bytes` e
+`baixado_em` por fonte. **Verificado:** 16/16 lidas do cache e **175 estruturais + 202 de
+controle** — os números de `CLAUDE.md` —, com um teste que passa um cliente HTTP que **explode
+se alguém tocar a rede**, porque a propriedade que interessa é negativa e não se vê na saída.
+
+---
+
+## D-111 — O passo 8 ganha porta, e os DOIS provedores passam o critério de abstenção
+
+**Data:** 06/09/2026 · fecha **P-26** · 48 chamadas de LLM (24 por braço) ·
+`LLM_MODEL` **não muda** — nada é promovido aqui
+
+### A lacuna, e ela não era de implementação
+
+`src/rag/geracao.py` fazia geração com citação e **abstenção**, medida em 23/24 (D-040), e
+`pipeline.responder()` era a porta dela. **Nenhum caminho de execução chegava lá** — zero
+ocorrências de `responder` em `src/web/`. O passo 8 de 9 que o TAPI especifica nominalmente não
+era acessível a usuário nenhum, e a capacidade mais forte do RAG estava construída, medida e
+invisível.
+
+O nó `nvidia_rag` não gera **de propósito**, e a razão está certa: o Recommendation Agent precisa
+dos trechos COM SCORE para cruzar com o perfil. O que falhou foi a outra metade da frase —
+*"ela entra pela interface, não por este nó"* — que nunca foi cumprida.
+
+### O critério, fixado ANTES de qualquer placar
+
+**Métricas nomeadas antes de rodar** (a exigência literal de D-072, e a lição de D-109):
+acurácia total sobre as 24 · acertos nas **19 com resposta** · acertos nas **5 sem resposta** ·
+relógio. **Braço de controle obrigatório:** o modelo de produção, hoje — sem ele, qualquer
+diferença do Groq seria indistinguível de *"o modelo de produção mudou"*.
+
+**Barra para o Groq ser elegível à porta: não-inferioridade nos DOIS lados** — ≥ os acertos do
+controle em ambas as colunas **e zero** resposta inventada nas 5 sem resposta. Perder em
+qualquer coluna REPROVA, ainda que a acurácia total empate.
+
+### O placar
+
+| 06/09, mesmo corpus, mesmo código, `RERANK_PROVEDOR=cohere` | C `nemotron-3.5-lightning` | B `gpt-oss-120b` (Groq) |
+|---|---|---|
+| respondeu as que TÊM resposta | 18/19 | **19/19** |
+| absteve nas que NÃO têm | **5/5** | **5/5** |
+| **acurácia de abstenção** | **23/24 = 96%** | **24/24 = 100%** |
+| relógio da rodada | ~45 min | **~3 min** |
+
+**O braço C reproduz D-040 exatamente**, três dias e um corpus depois — e o único erro dele é
+**abstenção indevida** (q09), não alucinação: a direção segura.
+
+**O Groq PASSA a barra**, e passa nos dois lados. É o oposto exato de D-109, onde ele foi
+**dominado** como juiz — e é a prova de que *"gerar-com-abstenção é outra tarefa e o resultado
+de lá não transfere para cá"* era a leitura certa, e não uma ressalva de conveniência.
+
+**A RESSALVA QUE PRECISA IR JUNTO, e ela é maior que o placar: a diferença é UMA pergunta em
+24.** Não-inferioridade está demonstrada; **superioridade não está.** Com esse denominador, quem
+citar "100% contra 96%" sem dizer que são 24 perguntas e um caso de diferença está usando o
+número errado. E o relógio do braço C está **contaminado** — ele dividiu o modelo com a
+interface durante parte da rodada; o que se pode afirmar limpo é a mediana de D-108 (28,85 s
+contra 1,15 s).
+
+**O achado que vale mais que a comparação:** dois provedores independentes chegam a 23-24 de 24.
+**A abstenção não é propriedade frágil de um modelo que pode morrer amanhã** — é propriedade do
+desenho do passo 8, e isso é exatamente o que o provedor isolado em `config.py` existe para
+permitir descobrir.
+
+**Medir não é promover (D-078).** `LLM_MODEL` continua no modelo da NVIDIA: trocar o provedor de
+produção contraria D-087, fechado com a liga, e a coerência do case pede a stack NVIDIA. O que
+mudou é que agora existe um número para defender a escolha em vez de uma suposição.
+
+### A rota, e por que ela é uma superfície separada
+
+`POST /api/perguntar`, e **não** um modo de `/api/vitrine`. A vitrine é uma janela para uma
+recuperação **que o grafo já fez**; esta responde a uma pergunta que o **humano** faz e que o
+grafo nunca fará. Fundi-las poria uma chamada de LLM dentro do endpoint que hoje é puro passo
+6+7 — e **o grafo continua com zero chamada de LLM em produção**, que é a propriedade que o fez
+sobreviver ao 4º EOL (D-087). Manter a porta fora do caminho do grafo é o que a preserva: se o
+modelo morrer na hora de gravar, o run continua rodando e só esta rota cai.
+
+**Na tela a abstenção é a MANCHETE**, e usa `--sem-prova` — a mesma cor de *"requisito não
+verificado"* e *"sinal de IA não verificado"*. Não é escolha de paleta: os três são o mesmo
+estado — a base não prova — em três componentes diferentes. As passagens saem marcadas
+`citada`/`lida`, porque citar menos do que leu é comportamento correto e `indices_citados` é o
+que torna a citação verificável por código.
+
+**Verificado por execução, com as duas perguntas do gabarito:** a q04 responde e cita 2 das 5
+que leu; a **q20 ABSTÉM** — *"os trechos descrevem recursos e trial, sem dados monetários"* —
+com as 5 passagens todas do `AI Enterprise`, impecáveis no assunto. É por isso que nenhum limiar
+de score as separa.
+
+**E `rag/geracao.py` ganhou os testes que nunca teve.** A suíte estava verde com 102 testes e o
+módulo da abstenção não tinha nenhum — porque **um módulo inalcançável não quebra teste**. A
+cobertura era aparente, e a P-26 era a causa.
+
+---
+
+## D-112 — O Query Planner passa a planejar, e a "estratégia de análise" deixa de ser constante
+
+**Data:** 06/09/2026 · fecha **P-14** · zero chamada de API · a régua **não se move**, e isso é
+verificado, não suposto
+
+### O achado que mudou o desenho, e ele estava escondido em uma linha
+
+A P-14 dizia *"quatro campos são calculados e nada os lê"* e convidava à leitura literal: fazer
+o subgrafo lê-los. **Mas `estrategia_analise` era uma STRING CONSTANTE** — o mesmo texto para
+toda consulta, escrito inline em `query_planner.node`. Um nó lendo aquilo satisfaria a letra da
+P-14 e não mudaria nada: seria um nó lendo uma frase fixa, e a arquitetura publicada continuaria
+prometendo *"critérios de busca **+ estratégia de análise**"* sem entregar a segunda metade.
+
+**Para o planner planejar, a estratégia precisa VARIAR com a consulta e alguém precisa AGIR
+sobre ela.** As duas coisas, ou nenhuma.
+
+### O que entrou
+
+1. **`PlanoDeBusca.dores_prioritarias`**, derivado da consulta por `DORES_NA_CONSULTA` — as 8
+   dores de `state.Dor`, na ordem em que aparecem **na consulta** e não na ordem do dicionário.
+2. **`estrategia_analise` passa a ser derivada** (`descrever_estrategia`): ela é o texto da mesma
+   decisão que `dores_prioritarias` carrega em dado. Se as duas divergirem, o briefing mente — e
+   é por isso que ela é derivada no planner, não escrita à mão no briefing.
+3. **`nvidia_rag.node` ordena as dores por ela** antes de consultar a base NVIDIA. Como
+   `recommendation` corta a lista intercalada em `TETO_RECOMENDACOES = 3`, **a ordem decide qual
+   tecnologia a empresa recebe** quando ela tem mais dores do que vagas.
+4. Os outros três campos ganharam leitor de **exibição**: `exige_sinais_ia` acrescenta *"e a sua
+   consulta pediu IA explicitamente"* à linha `?` do briefing; `score_recuperacao` e
+   `motivo_validacao` aparecem no dossiê da tela. **Nenhum dos três muda decisão** — os três só
+   param de jogar fora informação já calculada.
+
+### Por que a tabela de gatilhos é SEPARADA de `extractor.GATILHOS_DOR`
+
+As duas casam o mesmo vocabulário fechado e leem textos de naturezas opostas. `GATILHOS_DOR` lê
+o **marketing da startup**, onde a dor aparece de esguelha — por isso ele tem recall 100% e
+**precisão 49%** (D-052). Esta lê a **consulta do gerente**, onde nomear a dor É a intenção.
+Compartilhar traria para cá `"powered by"`, `"gpt-4"` e `"integração com"` — *"startups que
+fazem integração com WhatsApp"* viraria `dependencia_fornecedor` — e acoplaria o ajuste: mexer
+na lista para melhorar a consulta moveria os 49% que a régua mede, em silêncio.
+
+### O custo na régua: PROVADO no papel e verificado por execução
+
+`avaliar_agentes.rodar` monta `PlanoDeBusca(consulta_original="régua dos agentes")`, logo
+`dores_prioritarias = []`, logo `ordenar_por_plano` é a identidade e o run das 30 sai byte a
+byte igual. Medido depois de implementar: `classe 3/7 · maturidade_stack 6/7 · confianca 0/6 ·
+elegivel 6/6 · motivo_exclusao 6/6 · 49%/100% · discriminação 8/8 · proibida 10` — **idênticos**,
+e as **mesmas 7 recusas** em `varrer_elegibilidade`.
+
+### E a mudança NÃO é inerte — o que é uma pergunta diferente, e ela foi medida
+
+Régua que não se move pode significar "mudança segura" ou "mudança que não faz nada" (foi o
+diagnóstico de D-077 sobre a gradação de `validada`). Varredura das 30 fixtures × as 8 dores,
+zero API, **131 pares em que a empresa TEM a dor pedida**:
+
+| | |
+|---|---|
+| o **conjunto** das 3 dores muda → **sai outra tecnologia** | **44 = 34%** |
+| só a **ordem** das 3 muda → mesmas tecnologias, outra prioridade | 57 = 44% |
+| nada muda (a dor pedida já era a primeira) | 30 = 22% |
+
+**19 das 30 empresas têm mais de 3 dores**, que é a condição para o corte importar. Até 06/09 o
+desempate era a ordem em que os gatilhos aparecem no **site da empresa** — uma propriedade do
+texto de marketing, não uma decisão de ninguém.
+
+**O primeiro run enganou, e é registro de método:** rodei o grafo com *"fintech com problema de
+custo"*, a Conta Simples recebeu `custo` em 1º e pareceu prova. **Não era** — `custo` já era o
+primeiro na ordem do Extractor. A varredura acima existe porque a única execução que eu tinha
+não distinguia o efeito da coincidência.
+
+### Alternativas descartadas
+
+**Parar de prometer** — apagar os quatro campos e corrigir `CLAUDE.md`, o README e os `.mmd`.
+Custa 30 minutos e zero risco de mover régua, e era a opção defensável a um dia do vídeo. Perde
+a capacidade que o TAPI nomeia na arquitetura, e o argumento contra ela ficou fraco quando a
+medição mostrou 34% de troca de tecnologia: o campo não era decorativo, era **desperdiçado**.
+
+**`exige_sinais_ia` FILTRAR empresas** — cortar do funil quem não confirma sinal de IA quando a
+consulta pediu IA. Reintroduz exatamente o que D-101 tirou deste sistema: ausência de sinal
+virando sinal negativo. O campo anota; a decisão de abordar continua sendo de quem lê.
+
+**Reusar `extractor.GATILHOS_DOR`** — ver acima. Uma tabela só, dois textos opostos, e o ajuste
+de um movendo a régua do outro.
+
 ## Decisões pendentes
 
 | # | Decisão | Estado |
@@ -4371,13 +4582,13 @@ precisão. Não foi medido e não deve ser citado como se tivesse sido.
 | ~~P-18~~ | ~~`src/llm.py` sem `timeout`~~ | **D-076** — `LLM_TIMEOUT` por tentativa, `max_retries=2` do SDK mantido. **O valor subiu para 120 em D-080**, porque com 30 s cinco de oito chamadas estouravam a primeira tentativa: teto combinado ~360 s (D-089) |
 | **P-12** | **`classe`: vocabulário ou curadoria?** | D-060 mostrou que o gargalo não é a regra de decisão. Exige base ampliada |
 | ~~P-13~~ | ~~Exclusão por menção vs. identidade~~ | **D-085** — veto de terceiro com escopo de frase. Falso positivo 2/7 → **7/7**, falso negativo 7/7 sem regressão |
-| **P-14** | **Quatro campos são calculados e nada os lê** | `estrategia_analise` e `exige_sinais_ia` (Query Planner), `score_recuperacao` (Retriever), `motivo_validacao` (Evidence Validator). Não é código morto — é capacidade anunciada e não entregue: a arquitetura publicada promete *"critérios de busca + estratégia de análise"*. Ou o subgrafo passa a lê-los, ou o diagrama para de prometê-los |
+| ~~**P-14**~~ | ~~Quatro campos são calculados e nada os lê~~ | **FECHADA em 06/09 (D-112), e o achado estava numa linha:** `estrategia_analise` era uma **string CONSTANTE**, então fazer um nó lê-la satisfaria a letra da P-14 sem mudar nada. O planner passa a derivar `dores_prioritarias` da consulta e `nvidia_rag` ordena as dores por ela — e como `recommendation` corta em 3, isso decide **qual tecnologia a empresa recebe**. Régua **idêntica** (`dores_prioritarias=[]` é a identidade, e é o único ramo que a régua exercita) e **não é inerte**: em 131 pares empresa × dor, **34% trocam a tecnologia** e 44% trocam a prioridade |
 | ~~P-15~~ | ~~Re-medir a abstenção do passo 8~~ | **D-040, re-medida em 02/09** — **23/24 = 96%** no modelo atual e no corpus pós-D-082, contra 20-22/24 do modelo morto. O único erro é abstenção indevida, não alucinação |
 | ~~P-20~~ | ~~O operador de borda da idade~~ | **D-085** — a borda (`idade == IDADE_MAXIMA`) vira **pendente** com a faixa impressa, não exclusão. Guardar o mês foi descartado: não consta em 6 das 8 fixtures |
 | **P-21** | **Relevância da tecnologia recomendada** | aberta por D-086. Morpheus (spear phishing, digital fingerprinting) recomendado para a dor de privacidade de uma healthtech: a recuperação casa `privacy`/`security` sem conhecer o domínio. **Nenhum seletor de trecho conserta isto** — é o motor de recomendação. **O gabarito, porém, existe e não é meu:** as 7 regras de exemplo do TAPI (`contexto/01-tapi.md:143`) são pares setor/dor → tecnologia esperada, e a regra `Saúde →` cobre 4 das 8 startups da base e reprova este caso. Falta o harness — e a cobertura, que só cresce com a base (D-088) |
-| **P-22** | **`justificativa_negocio` é stub em 11 de 16 tecnologias** | aberta pela auditoria de 03/09 (D-088). `recommendation.py:63` cura texto para **5 das 16**; as outras 11 caem num fallback formulaico que o próprio comentário chama de stub e adia "para a M4" — fase que não existe mais em arquivo vivo nenhum. É o **campo 3 dos 7 obrigatórios** e o vizinho do campo que D-086 consertou |
+| ~~**P-22**~~ | ~~`justificativa_negocio` é stub em 11 de 16 tecnologias~~ | **FECHADA em 05/09 por D-104**, e esta linha ficou desatualizada por um dia. **Varredura das 128 células (16 tecnologias × 8 dores) em 06/09, zero API: `par curado 9 · frase por dor 119 · FALLBACK 0`.** `_negocio_de_fallback` só é alcançável com `dor_origem is None`, que é o caminho da interface. A `sessao-atual.md` de 06/09 repetia a redação antiga — *"as outras 119 caem em `_negocio_de_fallback`"* — e ela era falsa quando foi escrita. **É a regra de verificar o defeito antes de consertar cobrando de novo:** a correção era de documento, não de código |
 | **P-25** | **As 93 fixtures têm 203 frases decapitadas, e elas não voltam sem re-coleta** | aberta por D-097. `coletar.py` apagava o nome próprio que vinha em tag inline — `afirma o CEO da <strong>Agrotools</strong>.` virava `"afirma o CEO da"` + `"."`. **A raiz está consertada** (`unwrap` + `smooth`, medido: 0 lacunas em 5 URLs reais), então toda fixture nova nasce limpa, e a pontuação órfã já saiu das 30. **O que fica é a frase sem sujeito**, em 62 dos 93 documentos. Recuperá-la exige re-coletar e re-recortar à mão, incluindo as 8 de gabarito, com re-medição da régua inteira depois. **Efeito medido hoje: 1,7% dos trechos de evidência** (5 de 298) — o troco não fecha a 6 dias da entrega. Depois da entrega |
 | ~~**P-24**~~ | ~~`non-AI` é o default de detecção falha~~ | **FECHADA em 04/09 (D-101).** `Diagnostico.sinal_verificado` é o par que `Elegibilidade` já tinha, aplicado ao rótulo: `non-AI` continua sendo emitido — o TAPI nomeia três classes — e só o **constatado** é cortado do funil. **Custo medido antes de implementar: `classe 3/7 → 3/7`**, contra `3/7 → 2/7` do desenho com quarta classe. O ACEITAR anterior dizia *"consertar exige gabarito"*: aquilo protege os DETECTORES, e este conserto não toca em nenhum nem introduz grau de liberdade. **Fica aberta a parte 2 do critério** — o ruído das 9 que passaram a entrar no funil, a medir contra as 7 regras do TAPI em 05/09 |
 | **P-23** | **`elegibilidade()` só enxerga o que o Extractor citou** | aberta por D-091. Ela varre `perfil.afirmacoes[*].evidencias[*].trecho`, não o documento. Medido no caso real: a Liqi diz *"oferecer criptomoedas, stablecoins e tokens"* no site, `criptomoeda` **já estava na lista**, e ela passou — porque a frase não caiu em nenhum trecho de evidência. **O filtro do Inception, que é o Diferencial declarado do projeto, tem cobertura igual à do casador de dores, e isso não estava escrito em lugar nenhum.** A correção óbvia (varrer `conteudo_texto`) **quebra `_fala_de_terceiro` POR CONSTRUÇÃO**, e esse é o argumento forte, medido em 04/09: o veto exige que **toda** ocorrência do termo caia em frase com marcador, então cada caractere a mais é outra chance de o `all()` falhar. Na Iniciador, o trecho de evidência tem 1 ocorrência de `stablecoin`, coberta por `mercado de stablecoin`; o documento inteiro tem 2, e a segunda não tem marcador nenhum — o veto colapsa. **Medido (`medir_cobertura.py`, D-102): as recusas vão de 7 para 13 em 30**, e ao menos 4 das 6 novas são falso positivo claro (TideWise por *"Dados da consultoria Fortune Business Insights"*; BemAgro por *"a revenda goiana MM Agro"*). **E o lado silencioso também apareceu:** a varredura ampla recusa a **Produzindo Certo**, que *"oferece serviços de consultoria, gestão e verificação"* — a própria empresa. Hoje ela passa por SORTE, não por desenho. Não cabe a 3 dias do vídeo; o que cabe é estar escrito, e agora está com os dois lados |
-| **P-26** | **O passo 8 do TAPI está implementado, medido e INALCANÇÁVEL** | aberta em 06/09. `src/rag/geracao.py` faz a geração com citação e **abstenção** — 23/24 = 96% (D-040, re-medida em 02/09) — e `pipeline.responder()` é a porta dela. **Nenhum caminho de execução chega lá.** O nó `nvidia_rag` não gera de propósito, e a razão está certa e escrita (`nvidia_rag.py:46`): o Recommendation Agent precisa dos TRECHOS com score para cruzar com o perfil, e *"redigir aqui e reinterpretar lá seria perder a evidência no meio do caminho"*. **O erro não é esse — é a outra metade da frase, que diz *"ela entra pela interface, não por este nó"* e nunca foi cumprida.** Verificado em 06/09: zero ocorrências de `responder` em `src/web/`, e nenhuma das 8 rotas a expõe. Consequência: **o passo 8 de 9 do pipeline que o TAPI especifica nominalmente não é acessível a nenhum usuário**, e a capacidade mais forte do RAG — recusar-se a responder o que não sabe — está construída, medida e invisível. **Custo de fechar: conectar, não construir** — uma rota e um campo de pergunta; as duas peças já existem e já têm teste de régua (`avaliar_rag.py --geracao`) |
+| ~~**P-26**~~ | ~~O passo 8 do TAPI está implementado, medido e INALCANÇÁVEL~~ | **FECHADA em 06/09 (D-111): `POST /api/perguntar` + o diálogo da tela.** Verificado por execução com as duas perguntas do gabarito — a q04 responde citando 2 das 5 que leu, a q20 **abstém**. E a medição que veio junto: os **dois** provedores passam o critério de abstenção (NVIDIA 23/24, Groq 24/24), então a capacidade não é frágil a um modelo. O texto original: aberta em 06/09. `src/rag/geracao.py` faz a geração com citação e **abstenção** — 23/24 = 96% (D-040, re-medida em 02/09) — e `pipeline.responder()` é a porta dela. **Nenhum caminho de execução chega lá.** O nó `nvidia_rag` não gera de propósito, e a razão está certa e escrita (`nvidia_rag.py:46`): o Recommendation Agent precisa dos TRECHOS com score para cruzar com o perfil, e *"redigir aqui e reinterpretar lá seria perder a evidência no meio do caminho"*. **O erro não é esse — é a outra metade da frase, que diz *"ela entra pela interface, não por este nó"* e nunca foi cumprida.** Verificado em 06/09: zero ocorrências de `responder` em `src/web/`, e nenhuma das 8 rotas a expõe. Consequência: **o passo 8 de 9 do pipeline que o TAPI especifica nominalmente não é acessível a nenhum usuário**, e a capacidade mais forte do RAG — recusar-se a responder o que não sabe — está construída, medida e invisível. **Custo de fechar: conectar, não construir** — uma rota e um campo de pergunta; as duas peças já existem e já têm teste de régua (`avaliar_rag.py --geracao`) |
 | **P-19** | **O sweep do RAG (dimensão, banda de chunk, `k1`/`b`)** | **reaberta por D-078.** Estava cortado porque "o critério 2 já está no teto" — razão inválida. A razão candidata para manter o corte é outra e precisa ser dita: com 24 perguntas de gabarito, grade fina ajusta ao gabarito em vez de generalizar. O que joga contra o corte é `e@1 = 79%` (D-068): a primeira citação erra 1 vez em 5. Re-decidir junto com a base ampliada |
