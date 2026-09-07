@@ -301,6 +301,52 @@ ol.ranking li .pos { font-family: var(--mono); color: var(--tinta-2); }
 .delta.mais { color: var(--prova-sim); }
 .delta.menos { color: var(--sem-prova); }
 
+/* ── o passo 8: perguntar à base NVIDIA ────────────────────────────────────
+   A ABSTENÇÃO USA `--sem-prova`, e isso não é escolha de paleta: é a mesma cor de
+   `requisito não verificado` e de `sinal de IA não verificado`. Os três são o mesmo
+   estado — a base não prova — em três componentes diferentes, e a tela diz isso com
+   a cor antes de dizer com a palavra. */
+
+.form-pergunta { display: flex; gap: 8px; margin: 0 0 10px; }
+.form-pergunta input {
+  flex: 1; padding: 9px 12px; font: inherit; font-size: 14px;
+  border: 1px solid var(--linha-forte); border-radius: 3px;
+  background: var(--superficie); color: var(--tinta);
+}
+#dialogo-pergunta .sugestoes { display: grid; gap: 4px; margin: 0 0 16px; }
+#dialogo-pergunta .sugestao-rag {
+  background: transparent; color: var(--tinta-2); border: 1px dashed var(--linha-forte);
+  text-align: left; font-size: 12.5px; padding: 6px 9px;
+}
+#dialogo-pergunta .sugestao-rag:hover { background: var(--papel); color: var(--tinta); }
+
+.rag-pensando { font-family: var(--serif); color: var(--tinta-2); font-size: 14px; }
+
+.rag-resposta {
+  border-left: 3px solid var(--prova-sim); background: #4F84190F;
+  padding: 12px 16px; margin: 0 0 16px;
+}
+.rag-resposta p { margin: 0; font-size: 15px; line-height: 1.5; }
+
+.rag-abstencao {
+  border-left: 3px solid var(--sem-prova); background: #7E857C1F;
+  padding: 12px 16px; margin: 0 0 16px;
+}
+.rag-abstencao h3 { margin: 0 0 6px; font-size: 16px; font-weight: 600; color: #3C443B; }
+.rag-abstencao p { margin: 0 0 8px; font-size: 14px; line-height: 1.5; }
+.rag-abstencao p:last-child { margin: 0; }
+
+.rag-passagens-titulo { font-size: 13px; font-weight: 600; margin: 0 0 8px; }
+ul.rag-passagens { list-style: none; margin: 0 0 14px; padding: 0; display: grid; gap: 4px; }
+ul.rag-passagens li {
+  display: grid; grid-template-columns: 54px 1fr; gap: 10px; align-items: baseline;
+  padding: 7px 9px; border: 1px solid var(--linha); font-size: 13px;
+}
+.passagem-marca { font-family: var(--mono); font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.04em; }
+.passagem-citada { border-color: #4F841955; background: #4F84190F; }
+.passagem-citada .passagem-marca { color: var(--prova-sim); }
+.passagem-lida .passagem-marca { color: var(--sem-prova); }
+
 @media (max-width: 860px) {
   .resultado { grid-template-columns: 1fr; }
   .rail { position: static; max-height: none; border-right: 0; border-bottom: 1px solid var(--linha-forte); }

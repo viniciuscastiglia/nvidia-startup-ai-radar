@@ -26,6 +26,7 @@ from fastapi.testclient import TestClient
 
 from src.state import (
     AnaliseStartup,
+    CitacaoRAG,
     Diagnostico,
     DocumentoRef,
     DorObservada,
@@ -34,6 +35,7 @@ from src.state import (
     PerfilStartup,
     PlanoDeBusca,
     Recomendacao,
+    RespostaRAG,
     StartupRef,
 )
 from src.web import persistencia
@@ -212,3 +214,107 @@ def test_o_cadeado_solta_depois_de_um_run_recusado(cliente):
     app_web._EM_EXECUCAO.release()
     assert app_web._EM_EXECUCAO.acquire(blocking=False), "o cadeado ficou preso após a recusa"
     app_web._EM_EXECUCAO.release()
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# A PORTA DO PASSO 8 — P-26
+#
+# O que estes testes guardam é o CONTRATO da abstenção, não a qualidade dela: quem mede a
+# qualidade é `avaliar_rag.py --geracao`, sobre as 24 perguntas do gabarito, e isso custa API.
+# O que dá para quebrar aqui sem nada falhar é a tela transformar um "não sei" em resposta —
+# e é exatamente esse o defeito que apagaria a capacidade mais forte do sistema.
+#
+# `responder` é monkeypatchado, como `recuperar_com_rastro` já é no teste da vitrine: o
+# objetivo é a serialização e a guarda, e um `responder` real custaria embedding, rerank e
+# uma chamada de LLM por teste.
+# ─────────────────────────────────────────────────────────────────────────────
+
+def _citacao(tecnologia: str, trecho: str) -> CitacaoRAG:
+    return CitacaoRAG(tecnologia=tecnologia, trecho=trecho,
+                      url_fonte=f"https://exemplo.invalid/{tecnologia}")
+
+
+def test_pergunta_vazia_nao_gasta_chamada_de_llm(cliente):
+    assert cliente.post("/api/perguntar", json={"consulta": "   "}).status_code == 400
+
+
+def test_pergunta_nao_disputa_a_cota_com_um_run_em_andamento(cliente):
+    """Mesma guarda da vitrine, e aqui é mais cara: além do rerank, esta rota gasta um LLM."""
+    import src.web.app as app_web
+
+    assert app_web._EM_EXECUCAO.acquire(blocking=False)
+    try:
+        r = cliente.post("/api/perguntar", json={"consulta": "o que é o NIM?"})
+        assert r.status_code == 409
+        assert "run em andamento" in r.json()["detail"]
+    finally:
+        app_web._EM_EXECUCAO.release()
+
+
+def test_o_cadeado_solta_quando_a_geracao_explode(cliente, monkeypatch):
+    """A regressão que travaria a interface para sempre. `responder` fala com dois provedores
+    externos — se ele levantar e o cadeado não soltar, nenhum run nem pergunta roda de novo até
+    reiniciar o servidor, e ninguém descobre até o segundo uso."""
+    import src.web.app as app_web
+
+    def explode(*a, **k):
+        raise RuntimeError("o provedor caiu")
+
+    monkeypatch.setattr(app_web, "responder", explode)
+    with pytest.raises(RuntimeError):
+        cliente.post("/api/perguntar", json={"consulta": "o que é o NIM?"})
+    assert app_web._EM_EXECUCAO.acquire(blocking=False), "o cadeado ficou preso após a falha"
+    app_web._EM_EXECUCAO.release()
+
+
+def test_a_abstencao_chega_a_tela_como_abstencao(cliente, monkeypatch):
+    """O defeito que apagaria a capacidade: um `abstencao=True` que a tela lê como resposta.
+
+    `texto` vem VAZIO e `motivo_abstencao` preenchido — se o payload perdesse o motivo, a tela
+    mostraria um "não sei" sem dizer o que faltou, que é metade da demonstração.
+    """
+    import src.web.app as app_web
+
+    monkeypatch.setattr(app_web, "responder", lambda *a, **k: RespostaRAG(
+        texto="",
+        citacoes=[_citacao("NVIDIA AI Enterprise", "licenciamento por GPU, por assinatura")],
+        abstencao=True,
+        motivo_abstencao="os trechos descrevem o modelo de licenciamento, não o preço",
+    ))
+    corpo = cliente.post("/api/perguntar", json={"consulta": "qual o preço?"}).json()
+    assert corpo["abstencao"] is True
+    assert corpo["texto"] == ""
+    assert "não o preço" in corpo["motivo_abstencao"]
+    # e as passagens que ele LEU E RECUSOU continuam no payload: são a demonstração
+    assert [c["tecnologia"] for c in corpo["citacoes"]] == ["NVIDIA AI Enterprise"]
+    assert corpo["citacoes"][0]["citada"] is False
+
+
+def test_so_as_passagens_apontadas_saem_marcadas_como_citadas(cliente, monkeypatch):
+    """`indices_citados` é o que torna a citação VERIFICÁVEL por código (D-040) — citar menos do
+    que leu é comportamento correto. Marcar tudo como citada apagaria a distinção em silêncio,
+    e a tela afirmaria que três passagens sustentam o que uma sustenta."""
+    import src.web.app as app_web
+
+    monkeypatch.setattr(app_web, "responder", lambda *a, **k: RespostaRAG(
+        texto="O Triton Inference Server faz dynamic batching.",
+        citacoes=[_citacao("NVIDIA NIM", "a"), _citacao("Triton Inference Server", "b"),
+                  _citacao("TensorRT-LLM", "c")],
+        indices_citados=[1],
+    ))
+    corpo = cliente.post("/api/perguntar", json={"consulta": "quem faz dynamic batching?"}).json()
+    assert [c["citada"] for c in corpo["citacoes"]] == [False, True, False]
+    assert corpo["abstencao"] is False
+    assert corpo["motivo_abstencao"] is None
+
+
+def test_o_payload_diz_QUEM_respondeu(cliente, monkeypatch):
+    """Mesma disciplina que pôs `rerank_provedor` no run (D-097): um provedor trocado pelo
+    `.env` é invisível para quem lê a tela, e o 23/24 de abstenção é do modelo de produção."""
+    import src.web.app as app_web
+
+    monkeypatch.setattr(app_web, "responder",
+                        lambda *a, **k: RespostaRAG(texto="x", citacoes=[]))
+    corpo = cliente.post("/api/perguntar", json={"consulta": "o que é o NIM?"}).json()
+    assert corpo["modelo"] == app_web.LLM.modelo
+    assert corpo["rerank_provedor"] in {"cohere", "nvidia", "nenhum"}

@@ -34,9 +34,9 @@ from pydantic import BaseModel
 from fastapi.responses import FileResponse, PlainTextResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 
-from src.config import MAX_STARTUPS, RERANK, tem_credencial
+from src.config import LLM, MAX_STARTUPS, RERANK, tem_credencial
 from src.graph import GRAFO
-from src.rag.pipeline import recuperar_com_rastro
+from src.rag.pipeline import recuperar_com_rastro, responder
 from src.web import persistencia
 from src.web.payload import montar_run
 
@@ -280,4 +280,92 @@ def vitrine(pergunta: PerguntaVitrine) -> dict:
             f"o topo de cada ordem. O reranker leu o par (consulta, passagem) junto — o "
             f"embedder vetoriza os dois separadamente e nunca vê a pergunta."
         ),
+    }
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# O PASSO 8 GANHA PORTA — P-26
+#
+# `src/rag/geracao.py` faz geração com citação e ABSTENÇÃO, medida em 23/24 = 96% (D-040), e
+# `pipeline.responder()` é a porta dela. Até 06/09 **nenhum caminho de execução chegava lá**:
+# zero ocorrências de `responder` em `src/web/`, e nenhuma das 8 rotas a expunha. O passo 8 de 9
+# que o TAPI especifica nominalmente não era acessível a usuário nenhum.
+#
+# O nó `nvidia_rag` não gera DE PROPÓSITO, e a razão está certa (`nvidia_rag.py:46`): o
+# Recommendation Agent precisa dos trechos COM SCORE para cruzar com o perfil, e redigir ali
+# perderia a evidência no meio do caminho. O que falhou foi a outra metade da frase — *"ela
+# entra pela interface, não por este nó"* —, que nunca foi cumprida. Esta rota a cumpre.
+#
+# POR QUE UMA ROTA NOVA E NÃO UM MODO DE `/api/vitrine`
+# ------------------------------------------------------
+# A vitrine mostra as DUAS ORDENS de uma recuperação que o grafo JÁ FEZ — ela é uma janela para
+# o run. Esta responde a uma pergunta que o HUMANO faz e que o grafo nunca fará. Fundi-las poria
+# uma chamada de LLM dentro do endpoint que hoje é puro passo 6+7.
+#
+# E ISSO IMPORTA MAIS DO QUE PARECE: **o grafo continua com zero chamada de LLM em produção** —
+# três flags `False` por medição —, e foi essa propriedade que o fez sobreviver ao 4º EOL do
+# catálogo (D-087). A porta do passo 8 é uma superfície SEPARADA, fora do caminho do grafo, e é
+# exatamente isso que preserva a propriedade. Se o modelo morrer na hora de gravar, o run
+# continua rodando e só esta rota cai.
+# ─────────────────────────────────────────────────────────────────────────────
+
+class PerguntaRAG(BaseModel):
+    consulta: str
+
+
+@app.post("/api/perguntar")
+def perguntar(pergunta: PerguntaRAG) -> dict:
+    """Passos 6 + 7 + 8: o RAG responde com citação, ou RECUSA responder o que não sabe.
+
+    A ABSTENÇÃO É O PRODUTO, NÃO A EXCEÇÃO. Um gerador de RAG comum é instruído a responder
+    bem; este é instruído antes de tudo a reconhecer quando não deve. As passagens que chegam
+    ao passo 8 já passaram por busca híbrida e cross-encoder — elas são, por construção,
+    altamente relevantes —, e o erro que ele existe para evitar é responder com trecho
+    perfeitamente relevante que não contém o fato, citando fonte real e inventando só o número.
+    Duas medições fecharam a porta de qualquer atalho: nem a cosseno densa (margem −0,2810,
+    D-033) nem o logit do cross-encoder (−17,6328, D-035) separam "não sei".
+    """
+    consulta = pergunta.consulta.strip()
+    if not consulta:
+        raise HTTPException(status_code=400, detail="consulta vazia")
+    # Mesma disciplina de `/api/vitrine`, e aqui ela é mais dura: além da cota de rerank, esta
+    # rota gasta uma chamada de LLM. 409 e não erro dentro de um stream porque quem chama é
+    # `fetch`, que não reconecta sozinho — a tela mostra a frase no diálogo.
+    if not _EM_EXECUCAO.acquire(blocking=False):
+        raise HTTPException(
+            status_code=409,
+            detail="há um run em andamento; a pergunta dividiria a cota de rerank com ele.")
+    try:
+        resposta = responder(consulta)
+    finally:
+        _EM_EXECUCAO.release()
+
+    # QUEM RESPONDEU VAI NO PAYLOAD, pela mesma disciplina que pôs `rerank_provedor` no run
+    # (D-097): a tela precisa poder dizer de quem é a resposta. Um provedor trocado pelo `.env`
+    # é invisível para quem lê a tela, e a abstenção medida em 96% é do modelo de produção.
+    citadas = set(resposta.indices_citados)
+    return {
+        "consulta": consulta,
+        "abstencao": resposta.abstencao,
+        "texto": resposta.texto,
+        "motivo_abstencao": resposta.motivo_abstencao,
+        "modelo": LLM.modelo,
+        "rerank_provedor": RERANK.provedor,
+        "citacoes": [
+            {
+                "i": i,
+                # `citada` VEM DE `indices_citados`, e a distinção não é enfeite: citar menos do
+                # que leu é comportamento correto e esperado (`RespostaRAG`). A tela mostra o que
+                # sustentou a resposta E o que foi lido e descartado — e num caso de abstenção,
+                # tudo o que ele leu e recusou, que é a demonstração inteira.
+                "citada": i in citadas,
+                "tecnologia": c.tecnologia,
+                "trecho": " ".join(c.trecho.split())[:600],
+                "url_fonte": c.url_fonte,
+                "score_denso": c.score_denso,
+                "score_lexical": c.score_lexical,
+                "score_rerank": c.score_rerank,
+            }
+            for i, c in enumerate(resposta.citacoes)
+        ],
     }

@@ -26,6 +26,7 @@
     </label>
     <button type="submit" id="btn-analisar">Analisar</button>
   </form>
+  <button type="button" class="secundario" id="btn-perguntar">Perguntar à base NVIDIA</button>
   <button type="button" class="secundario" id="btn-salvos">Runs salvos</button>
 </header>
 
@@ -76,6 +77,34 @@
   <h2>Runs salvos</h2>
   <ul id="lista-salvos"></ul>
   <form method="dialog"><button>Fechar</button></form>
+</dialog>
+
+<!-- O PASSO 8 DO TAPI, E ELE ESTAVA CONSTRUÍDO E INVISÍVEL (P-26).
+     Fora do fluxo do run de propósito: quem pergunta aqui é um humano, e o grafo nunca faz
+     esta pergunta. Ver o bloco de decisão em `src/web/app.py`. -->
+<dialog id="dialogo-pergunta">
+  <h2>Perguntar à base de conhecimento NVIDIA</h2>
+  <p class="salvo-meta">
+    Passo 8 do pipeline. A resposta cita a passagem que a sustenta — e o sistema
+    <strong>recusa responder</strong> quando os trechos recuperados falam do assunto mas não
+    contêm o fato pedido. Acurácia de abstenção sobre as 24 perguntas do gabarito:
+    <strong>23/24</strong>.
+  </p>
+  <form class="form-pergunta" id="form-pergunta" autocomplete="off">
+    <input id="pergunta" type="text" required
+           placeholder="Que servidor de inferência faz dynamic batching?"
+           aria-label="Pergunta sobre tecnologias NVIDIA">
+    <button type="submit" id="btn-enviar-pergunta">Perguntar</button>
+  </form>
+  <p class="sugestoes">
+    <!-- Uma que TEM resposta (q04) e uma que NÃO tem (q20, "topicamente perfeita": a passagem
+         é impecável no assunto e o preço não está em lugar nenhum do corpus). O par é a
+         demonstração inteira, e as duas saem do gabarito — não foram inventadas para a tela. -->
+    <button type="button" class="sugestao-rag">Que servidor de inferência da NVIDIA faz dynamic batching e executa vários modelos ao mesmo tempo?</button>
+    <button type="button" class="sugestao-rag">Qual o preço da licença do NVIDIA AI Enterprise por GPU por ano em reais?</button>
+  </p>
+  <div id="resposta-rag"></div>
+  <form method="dialog"><button class="secundario">Fechar</button></form>
 </dialog>
 
 <dialog id="dialogo-vitrine">

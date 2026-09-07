@@ -346,6 +346,95 @@ async function abrirVitrine(consulta, dor, empresa) {
     <p class="salvo-meta">${esc(dados.nota || "")}</p>`;
 }
 
+/* ── o passo 8: perguntar à base NVIDIA ───────────────────────────────────── */
+/*
+ * A ABSTENÇÃO É A MANCHETE, NÃO A NOTA DE RODAPÉ. Quando o sistema recusa responder, é isso
+ * que ocupa o topo do diálogo — com o motivo e com as passagens que ele LEU E DESCARTOU. Um
+ * "não sei" escondido embaixo de um parágrafo de desculpas seria o mesmo que não tê-lo: a
+ * capacidade só existe para quem a vê acontecer.
+ *
+ * A cor do estado é `--sem-prova`, a mesma de `requisito não verificado` e `sinal de IA não
+ * verificado`. Não é escolha estética — a paleta desta tela tem três cores de veredito porque
+ * o sistema distingue "prova que sim", "prova que não" e "não prova", e a abstenção do RAG é
+ * o terceiro caso, no terceiro componente.
+ */
+
+const $dlgPergunta = () => $("dialogo-pergunta");
+
+$("btn-perguntar").addEventListener("click", () => {
+  $("resposta-rag").innerHTML = "";
+  $dlgPergunta().showModal();
+  $("pergunta").focus();
+});
+
+$("form-pergunta").addEventListener("submit", (ev) => {
+  ev.preventDefault();
+  perguntar($("pergunta").value.trim());
+});
+
+document.querySelectorAll(".sugestao-rag").forEach((b) =>
+  b.addEventListener("click", () => {
+    $("pergunta").value = b.textContent.trim();
+    perguntar(b.textContent.trim());
+  }));
+
+async function perguntar(consulta) {
+  if (!consulta) return;
+  const botao = $("btn-enviar-pergunta");
+  // Um segundo envio enquanto o primeiro corre gastaria outra chamada de LLM e outra rodada
+  // de rerank — e o servidor devolveria 409, porque o cadeado é o mesmo do run.
+  botao.disabled = true;
+  $("resposta-rag").innerHTML =
+    `<p class="rag-pensando">Buscando na base, reordenando com o cross-encoder e lendo as
+     passagens… A leitura é uma chamada de LLM e leva alguns segundos.</p>`;
+  let d;
+  try {
+    const r = await fetch("/api/perguntar", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ consulta }),
+    });
+    d = await r.json();
+    if (!r.ok) throw new Error(d.detail || r.statusText);
+  } catch (err) {
+    $("resposta-rag").innerHTML =
+      `<div class="aviso aviso-alerta"><strong>A pergunta não foi respondida.</strong>
+       ${esc(err.message)}</div>`;
+    return;
+  } finally {
+    botao.disabled = false;
+  }
+
+  const passagens = d.citacoes.map((c) => `
+    <li class="${c.citada ? "passagem-citada" : "passagem-lida"}">
+      <span class="passagem-marca">${c.citada ? "citada" : "lida"}</span>
+      <span>
+        <a href="${esc(c.url_fonte)}" target="_blank" rel="noopener">${esc(c.tecnologia)}</a>
+        <br><span class="salvo-meta">${esc(c.trecho)}</span>
+      </span>
+    </li>`).join("");
+
+  const cabeca = d.abstencao
+    ? `<div class="rag-abstencao">
+         <h3>O Radar não respondeu.</h3>
+         <p>${esc(d.motivo_abstencao || "os trechos recuperados não contêm o fato pedido.")}</p>
+         <p class="salvo-meta">Os trechos abaixo foram recuperados e LIDOS. Todos falam do
+           assunto — é justamente por isso que nenhum limiar de score os separa: nem a cosseno
+           densa (margem −0,2810) nem o logit do cross-encoder (−17,6328). Quem distingue
+           “fala do assunto” de “contém o fato” é o componente que lê.</p>
+       </div>`
+    : `<div class="rag-resposta"><p>${esc(d.texto)}</p></div>`;
+
+  $("resposta-rag").innerHTML = `
+    ${cabeca}
+    <h3 class="rag-passagens-titulo">As ${d.citacoes.length} passagens que ele leu</h3>
+    <ul class="rag-passagens">${passagens}</ul>
+    <p class="salvo-meta">modelo: <code>${esc(d.modelo)}</code> ·
+      rerank: <code>${esc(d.rerank_provedor)}</code>${
+      d.rerank_provedor === "nenhum"
+        ? " — o passo 7 está fora do caminho, então a ordem acima é a da busca híbrida"
+        : ""}</p>`;
+}
+
 /* ── runs salvos ──────────────────────────────────────────────────────────── */
 
 $("btn-salvos").addEventListener("click", async () => {
