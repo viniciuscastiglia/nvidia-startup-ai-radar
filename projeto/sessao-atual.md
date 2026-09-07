@@ -1,56 +1,66 @@
-# Pauta corrente — 06/09: a interface existe, e o passo 8 não tem porta
+# Pauta corrente — 07/09: gravar. O produto fechou em 06/09.
 
-## 🔜 A PRÓXIMA SESSÃO — três itens, e o primeiro é conectar, não construir
+## ✅ O QUE 06/09 (noite) FECHOU — e um dos três itens da pauta anterior CAIU na verificação
 
-> Escrito ao fim de 06/09. **Nada aqui foi implementado**; a sessão que abrir este arquivo decide
-> e faz. Os três saíram da pergunta *"o que no SISTEMA mais agrega?"*, e a ordem é por
-> retorno sobre custo, não por peso de critério (D-078).
+> A sessão abriu verificando os três itens da pauta escrita mais cedo. **Dois conferiam, um não.**
+> `pytest` **102 → 128** · régua dos agentes **idêntica** · as mesmas **7 recusas**.
 
-### 1. Dar porta ao passo 8 — **P-26**, aberta hoje
+| item | o que aconteceu | decisão |
+|---|---|---|
+| **Cache das 16 fontes** | O corpus entrou no git: `ingerir_nvidia.py` **não toca a rede** sem `--refetch`, e o clone limpo reproduz **175 + 202** offline. `avaliar_rag.py --validar` = **24/24** contra o corpus ingerido do cache. **O teste achou um defeito que nenhuma saída mostrava:** `write_text` grava CRLF e `read_text` traduz para LF, então em **7 das 16** fontes o texto que `--refetch` chunkava não era o que a leitura do cache chunkava | **D-110** |
+| **P-26 — o passo 8 ganhou porta** | `POST /api/perguntar` + o botão *"Perguntar à base NVIDIA"*. Verificado por execução com as duas perguntas do gabarito: a **q04** responde citando 2 das 5 que leu; a **q20 ABSTÉM**, com as 5 passagens todas do `AI Enterprise`. E `rag/geracao.py` ganhou os testes que nunca teve — a suíte estava verde com 102 e o módulo da abstenção não tinha nenhum, **porque módulo inalcançável não quebra teste** | **D-111** |
+| **P-14 — o planner planeja** | O achado estava numa linha: `estrategia_analise` era **string constante**, então "fazer o subgrafo lê-la" não mudaria nada. Agora `dores_prioritarias` sai da consulta e `nvidia_rag` ordena as dores por ela. **Régua idêntica** (lista vazia é a identidade) **e não inerte**: em 131 pares empresa × dor, **34% trocam a tecnologia** | **D-112** |
+| ~~**P-22**~~ | **O ITEM ESTAVA ERRADO.** Ver a seção riscada abaixo: `par curado 9 · frase por dor 119 · FALLBACK 0`. Fechada desde D-104; era correção de documento | — |
+| **README + `environment.yml`** | Os 4 buracos do clone limpo (D-089) fechados, a tabela de stack sem os quatro *"a definir"*, e o ponteiro para `projeto/decisoes.md` com o que ele é | — |
+| **Docstrings** | `query_planner`, `recommendation` e `briefing` param de se declarar *"STUB DA SESSÃO 01"* — e o texto novo diz **por que** a escolha é medida, não inacabada | — |
 
-**O achado:** `src/rag/geracao.py` faz geração com citação e **abstenção**, medida em **23/24 =
-96%**, e **nenhum caminho de execução chega lá**. O nó `nvidia_rag` não gera *de propósito* e a
-razão está certa (`nvidia_rag.py:46`): o Recommendation Agent precisa dos trechos com score, e
-redigir ali perderia a evidência. **O que falhou é a outra metade da frase — *"ela entra pela
-interface, não por este nó"* — que nunca foi cumprida.** Verificado: zero ocorrências de
-`responder` em `src/web/`, nenhuma das 8 rotas a expõe.
+### A medição que veio junto, e ela vale além do passo 8 — D-111
 
-**Por que é o primeiro:** é o passo 8 de 9 que o TAPI especifica nominalmente; a capacidade já
-existe e já tem régua (`avaliar_rag.py --geracao`); e o que ela expõe — um RAG que se **recusa a
-responder o que não sabe** — é a coisa mais forte que este sistema tem escondida. **O trabalho é
-conectar duas peças prontas:** uma rota e um campo de pergunta.
+Critério fixado **antes** do placar (não-inferioridade nos dois lados, com braço de controle
+obrigatório, que é a lição literal de D-109):
 
-**Antes de escolher o provedor da geração:** rodar `--geracao` nos dois. D-109 mediu o Groq como
-**juiz** e ele reprovou — **gerar-com-abstenção é outra tarefa e o resultado de lá não transfere
-para cá.** São as 24 perguntas do gabarito e custa pouco.
+| 24 perguntas do gabarito | C `nemotron-3.5-lightning` | B `gpt-oss-120b` (Groq) |
+|---|---|---|
+| respondeu as que TÊM resposta | 18/19 | **19/19** |
+| absteve nas que NÃO têm | 5/5 | 5/5 |
+| **acurácia de abstenção** | **23/24 = 96%** | **24/24 = 100%** |
 
-### 2. Fazer o Query Planner planejar — **P-14**
+**O Groq PASSA — o oposto exato de D-109, onde ele foi dominado como juiz.** Confirma que
+*"gerar-com-abstenção é outra tarefa"* era leitura certa, não ressalva de conveniência.
 
-`query_planner.py:82` calcula `estrategia_analise`, `:77` calcula `exige_sinais_ia`, e **o
-subgrafo não lê nenhum dos dois** (`state.py:174` marca `# sem consumidor`). A arquitetura
-publicada promete *"NL → critérios de busca **+ estratégia de análise**"*; hoje o planner só
-filtra. **É a única pendência que muda a topologia**, não um texto. A interface não a fechou de
-propósito: mostrar o campo na tela faria a tela afirmar que ele governou a análise.
+**A ressalva vai junto e é maior que o placar: a diferença é UMA pergunta em 24.**
+Não-inferioridade está demonstrada; superioridade **não**. E o achado que vale mais que a
+comparação: **dois provedores independentes chegam a 23-24 de 24 — a abstenção não é propriedade
+frágil de um modelo que pode morrer amanhã.**
 
-### 3. ~~`justificativa_negocio` — P-22~~ — **ESTE ITEM ESTAVA ERRADO, e caiu na verificação**
+**`LLM_MODEL` não mudou.** Medir não é promover (D-078), e trocar o provedor de produção contraria
+D-087.
 
-> Riscado em 06/09, **por execução, antes de consertar qualquer coisa.**
+---
 
-A frase acima dizia que 119 das 128 combinações caíam em `_negocio_de_fallback`. **Elas não
-caem.** Varredura das 128 células, zero API:
+## 🔜 O QUE SOBRA PARA 07/09 — e é só o vídeo
 
-```
-par curado: 9 | frase por dor: 119 | FALLBACK: 0
-```
+1. **`python scripts/smoke_nvidia.py` ANTES de gravar.** 4 segundos, e é a única defesa contra os
+   dois pontos únicos de falha (embedder e Cohere). `LENTO` **não é EOL** (D-080).
+2. **O roteiro do vídeo não foi escrito** — ficou fora do escopo desta sessão, e é o único item de
+   produto em aberto. ≤ 7 min.
+3. **A cena que este sistema tem e quase nenhum tem:** a **q20** na porta do passo 8 —
+   *"qual o preço da licença do NVIDIA AI Enterprise?"* — e o Radar **recusando responder**, com as
+   5 passagens que ele leu, todas impecáveis no assunto, na tela. Ela custa uma chamada de LLM.
+4. **`RERANK_PROVEDOR=cohere` para gravar** (D-097) e `empresas` **baixo** — um run de 2 empresas
+   custou ~2 min medidos hoje.
+5. **NÃO rode `--refetch` antes de gravar.** Ele reescreve o cache e o corpus deixa de ser o medido.
+6. **O canal de submissão continua aberto** — é o único item que ninguém conserta em 09/09.
 
-**D-104 fechou a P-22 em 05/09** com `NEGOCIO_POR_DOR` — 8 frases curadas, uma por dor, cada uma
-nomeando a tecnologia —, e `plano.md:67` já a marcava ✅. `_negocio_de_fallback` só é alcançável
-quando `dor_origem is None`, que é o caminho da interface. O que sobrou foi texto velho aqui e
-na tabela de pendências de `decisoes.md`; os dois foram corrigidos.
+### O que continua ACEITO e escrito, com os dois lados medidos
 
-**A lição é a de sempre, e ela é sobre mim:** o item foi escrito de memória, no fim de uma
-sessão, sobre um conserto feito no dia anterior. Custou nada porque a verificação veio antes do
-código — e teria custado uma manhã de "curadoria de texto" que já existia.
+**P-21** (o motor faz 38% contra 44% da linha trivial, causa: precisão de dor em 49%) e **P-23**
+(o filtro do Inception vê 10,6% do texto) são redesenho. **Um defeito medido e explicado defende
+melhor do que um conserto apressado que ninguém mediu.**
+
+---
+
+## O que era a pauta de 06/09 (manhã) — dois itens conferiram, um caiu
 
 ### O que NÃO entra, e a razão
 
