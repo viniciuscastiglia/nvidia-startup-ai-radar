@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang='en' class='h-100' data-color-scheme='light'>
+  <head>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="csrf-param" content="authenticity_token" />
+<meta name="csrf-token" content="6KOZLDJiWRpe0Gplm8bH9dcm7TzWzWKEanCF2xeCufjR0Ppg7jHkvhGwK6l2QCOwFeKjuL6QJo2a_d-6cl7YJA" />
+    <meta name="csp-nonce" />
+    <title>CUDA-X Data Science Libraries | NVIDIA Developer</title>
+<meta name="description" content="A collection of open-source libraries that accelerate popular data science libraries and platforms on NVIDIA GPUs through CUDA primitives and algorithms.">
+<meta name="keywords" content="cuda x, accelerated data science, data science libraries, data science, platforms, open-source libraries, data processing ecosystem, nvidia">
+<link rel="canonical" href="https://developer.nvidia.com/topics/ai/data-science/cuda-x-for-data-science">
+<link rel="alternate" href="https://developer.nvidia.com/topics/ai/data-science/cuda-x-for-data-science" hreflang="x-default">
+<link rel="alternate" href="https://developer.nvidia.com/topics/ai/data-science/cuda-x-for-data-science" hreflang="en-us">
+<link rel="alternate" href="https://developer.nvidia.com/es-la/topics/ai/data-science/cuda-x-for-data-science" hreflang="es-la">
+<link rel="alternate" href="https://developer.nvidia.com/ja-jp/topics/ai/data-science/cuda-x-for-data-science" hreflang="ja-jp">
+<link rel="alternate" href="https://developer.nvidia.com/pt-br/topics/ai/data-science/cuda-x-for-data-science" hreflang="pt-br">
+<link rel="alternate" href="https://developer.nvidia.cn/topics/ai/data-science/cuda-x-for-data-science" hreflang="zh-cn">
+<meta property="og:site_name" content="NVIDIA Developer">
+<meta property="og:title" content="NVIDIA CUDA-X Data Science">
+<meta property="og:description" content="Accelerate data analytics, machine learning, and more for best output.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://developer.download.nvidia.com/images/og/cuda-social-og-1200x628.png">
+<meta property="og:url" content="https://developer.nvidia.com/topics/ai/data-science/cuda-x-for-data-science">
+<meta name="twitter:title" content="NVIDIA CUDA-X Data Science Libraries">
+<meta name="twitter:description" content="Accelerate data analytics, machine learning, graphs, and data intensive applications to get the best performance possible on single GPUs.">
+<meta name="twitter:image" content="https://developer.download.nvidia.com/images/og/cuda-social-og-1200x628.png">
+<meta name="twitter:site" content="@NVIDIA">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@NVIDIADeveloper">
+<meta property="industry" content="Financial Services,HPC / Scientific Computing,Healthcare &amp; Life Sciences,Retail / Consumer Packaged Goods">
+<meta property="interest" content="Developer Tools &amp; Techniques">
+      <link rel="alternate" type="text/markdown" title="Page Markdown" href="https://developer.nvidia.com/topics/ai/data-science/cuda-x-for-data-science.md">
+
+    <link rel="stylesheet" href="https://developer.nvidia.com/assets/application-9e4a823de8771e59cf1ae04de333e5e14d86a990b878d196a65779d7140a6415.css" media="all" />
+
+    <script>
+  const NvAssets = {
+    CSS: {
+      highlightJs: "https://developer.nvidia.com/assets/highlight-7c6157fe69da4cc401cddeb387737d6991b2012dc14e90f3d52764a3a58fd3da.css",
+    }
+  }
+</script>
+
+
+    
+  <link rel="stylesheet" href="https://developer.nvidia.com/assets/one-trust-bea625cf16a072ce5fdb0707a19f2645daf63c05eb1a016db72773eba008fc07.css" />
+  <script src="https://cdn.cookielaw.org/scripttemplates/otSDKStub.js" charset="UTF-8" data-document-language="true" data-domain-script="3e2b62ff-7ae7-4ac5-87c8-d5949ecafff5"></script>
+
+<script src="https://images.nvidia.com/aem-dam/Solutions/ot-js/ot-custom.js"></script>
+
+<script>
+  function OptanonWrapper() {
+    let event = new Event('bannerLoaded');
+    window.dispatchEvent(event);
+
+      if (window.OnetrustActiveGroups && window.OnetrustActiveGroups.includes("C0002")) {
+        window.DD_RUM && window.DD_RUM.init({
+          clientToken: 'pub0430c74fae5d2b467bcb8d48b13e5b32',
+          applicationId: '9fc963c7-14e6-403d-bdec-ee671550bb7f',
+          site: 'datadoghq.com',
+          service: 'devzone',
+          env: 'prod',
+          version: 'v2.60.0',
+          sessionSampleRate: 10,
+          sessionReplaySampleRate: 5,
+          trackUserInteractions: true,
+          trackResources: true,
+          trackLongTasks: true,
+          defaultPrivacyLevel: 'mask-user-input',
+        });
+      }
+  }
+</script>
+
+
+    <script>
+  (function() {
+    var didInit = false;
+    function initMunchkin() {
+      if(didInit === false) {
+        didInit = true;
+        Munchkin.init('156-OFN-742');
+      }
+    }
+    function loadMunchkin() {
+      // Munchkin falls under the OneTrust "Advertising" category (C0004); only
+      // load it once the user has consented to that category.
+      if (!window.OnetrustActiveGroups || !window.OnetrustActiveGroups.includes("C0004")) {
+        return;
+      }
+      // bannerLoaded re-fires on every consent change; once we have consent we
+      // only need to inject the script tag once.
+      window.removeEventListener('bannerLoaded', loadMunchkin);
+      var s = document.createElement('script');
+      s.type = 'text/javascript';
+      s.async = true;
+      s.src = '//munchkin.marketo.net/munchkin.js';
+      s.onreadystatechange = function() {
+        if (this.readyState == 'complete' || this.readyState == 'loaded') {
+          initMunchkin();
+        }
+      };
+      s.onload = initMunchkin;
+      document.getElementsByTagName('head')[0].appendChild(s);
+    }
+    // OnetrustActiveGroups is populated asynchronously after the OneTrust SDK
+    // loads, which dispatches "bannerLoaded" (see layouts/_one_trust). Wait for
+    // that signal so consenting users still get Munchkin, then re-check on each
+    // consent change (the didInit guard keeps init idempotent).
+    window.addEventListener('bannerLoaded', loadMunchkin);
+})();
+</script>
+
+    <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "NVIDIA Developer",
+    "url": "https://developer.nvidia.com",
+    "logo": "https://www.nvidia.com/en-us/about-nvidia/legal-info/logo-brand-usage/_jcr_content/root/responsivegrid/nv_container_392921705/nv_container_412055486/nv_image.coreimg.100.630.png/1703060329095/nvidia-logo-horz.png",
+    "sameAs": [
+      "https://github.com/nvidia",
+      "https://www.linkedin.com/company/nvidia/",
+      "https://x.com/nvidiadeveloper"
+    ]
+  }
+</script>
+
+    
+    <meta name='typesense-host' content='typesense.svc.nvidia.com'>
+<meta name='typesense-key' content='uFs9XGl9BWS7af7eAIbKNQ49sJnjEfQk'>
+<script src="https://developer.download.nvidia.com/scripts/typesense.js"></script>
+
+
+    <script src="https://assets.adobedtm.com/5d4962a43b79/c1061d2c5e7b/launch-191c2462b890.min.js" data-ot-ignore="true"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js" integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script src="https://developer.nvidia.com/assets/bootstrap/5.1.3/bootstrap.bundle.min-51ad1d8cab4ebd9873a0429f5e67ca717a71fd96daf8025bc04a88848e5b375c.js"></script>
+
+
+    <link rel="icon" type="image/x-icon" href="https://developer.nvidia.com/assets/favicon-81bff16cada05fcff11e5711f7e6212bdc2e0a32ee57cd640a8cf66c87a6cbe6.ico" />
+  </head>
+
+  <body class='d-flex flex-column h-100'>
+    
+    
+
+      <div id='header'></div>
+
+
+
+
+    
+
+
+
+
+
+
+
+    <div id='page-mobile-nav-container'></div>
+    <div class='page'>
+      <div class="product-page">
+<div class="container breadcrumb-container"><div class="col"><ol class="breadcrumb">
+<li class="breadcrumb-item"><a href="https://developer.nvidia.com/topics/" id="ivemf6-2">Topics</a></li>
+<div id="ixwtf2-2" class="breadcrumb-item"><a href="https://developer.nvidia.com/topics/ai" id="izij21-2">AI</a></div>
+<li id="ib2j25-3" class="breadcrumb-item"><a href="/topics/ai/data-science" id="i5vko4-2">Data Science</a></li>
+<div id="irsh5h-2" class="breadcrumb-item active">CUDA-X Data Science Libraries</div>
+</ol></div></div>
+<div class="container page">
+<div role="alert" class="alert nv-alert nv-alert--with-icon">
+<div class="nv-alert__icon"></div>
+<div class="nv-alert__content"><p id="ist6mr">Beginning August 11, 2026, the RAPIDS brand will transition to NVIDIA CUDA-X. All library functionality remains the same. Learn more about <a href="/topics/ai/data-science/cuda-x-data-science-libraries" id="i6yk92">CUDA-X for Data Science</a>.</p></div>
+<button type="button" data-bs-dismiss="alert" aria-label="Close" class="btn-close"></button>
+</div>
+<div class="separator separator--60"></div>
+<div class="row">
+<div class="col-xl-2 col-lg-3 col-md-12 col-sm-12 col-sidebar"><aside class="page__sidebar with-sticky-nav"><div class="page-navigation-container"><div data-react-class="PageNavigation" data-react-props='{"draggable":"true","editable":"true","id":"i81xo"}' data-react-cache-id="PageNavigation-i81xo"></div></div></aside></div>
+<div class="col-xl-1 col-lg-1 col-separator with-border"></div>
+<div class="col-xl-9 col-lg-9 col-md-12 col-sm-12 col-main-content"><main class="page__content"><section class="page__section page__first-section"><h1 title="Overview" class="h--large section__heading toc-item">CUDA-X for Data Science</h1>
+<p class="p--large text-color-gray">CUDA-X™ is a <a href="https://www.nvidia.com/en-us/technologies/cuda-x/" id="iqogy3" target="_blank">collection of highly optimized, domain-specific libraries built on CUDA</a>™ that includes a suite of open source libraries for accelerated data science. With 100+ integrations with open source libraries and tools in the data science ecosystem and zero-code-change APIs that accelerate popular PyData tools like pandas and scikit-learn, data scientists can easily accelerate their workflows with their existing tools. </p>
+<p id="ilfaa"><a href="https://docs.rapids.ai/install?_gl=1*kwbd1w*_ga*MTE4NDAwMTQ1NS4xNzA5NzcwODcw*_ga_RKXFW6CM42*czE3NTIxODk0OTQkbzk1JGcwJHQxNzUyMTg5NDk0JGo2MCRsMCRoMA" target="_blank" class="btn btn-cta me-2 mt-2">Download Now</a><a href="https://docs.rapids.ai/" target="_blank" class="btn btn-cta btn-cta--light mt-2 me-2">Documentation</a></p></section><img src="https://developer.download.nvidia.com/images/cuda-x/cuda-x-for-data-science.svg" id="iqxg7r" alt=" NVIDIA CUDA-X Data Science open-source libraries" class="img-fluid"><hr class="separator separator--md">
+<section class="page__section page__second-section pb-0 pt-0"><h2 title="CUDA-X Libraries for Data Science" class="h--medium section__heading toc-item">CUDA-X Libraries for Data Science </h2>
+<p class="p--large">CUDA-X libraries accelerate data and graph analytics, machine learning, and data visualizations. Data scientists can optimize for performance on single GPUs or scale up to distributed systems. </p>
+<div class="separator separator--45"></div>
+<div class="row cards-grid--60 cards__list">
+<div id="i9k1ds-2-3-2-2" class="col-sm-12 col-lg-4 col-md-6 col-12 col-xl-4"><div class="card-wrapper"><div class="card"><div class="card__content">
+<h3 class="txt-clr--blck h--smallest">cuDF: 20x Faster Polars</h3>
+<p id="ifelm">cuDF is a toolkit that contains GPU-accelerated libraries to optimize fundamental DataFrame operations. It includes drop-in accelerators for popular DataFrame libraries and SQL engines, like Polars, pandas, and Apache Spark with no code changes required. </p>
+<div class="separator separator--15"></div>
+<a href="/cudf" target="" id="izy1r5-2-3-2-3-2-6" class="link-cta text-transform-unset fw-bold">Learn More About cuDF</a><div class="separator separator--15"></div>
+<a href="https://docs.rapids.ai/api/cudf/stable/" target="_blank" id="izy1r5-2-3-2-3-2-5" class="link-cta text-transform-unset fw-bold">View Docs</a><div class="separator separator--15"></div>
+<p class="mb-0"><b id="is1ub">TAGS: pandas, polars, apache spark, dataframe, Python, C++</b></p>
+</div></div></div></div>
+<div id="i9k1ds-2-3-2-2-4" class="col-sm-12 col-lg-4 col-md-6 col-12 col-xl-4"><div class="card-wrapper"><div class="card"><div class="card__content">
+<h3 class="txt-clr--blck h--smallest">cuML: 50x Faster Scikit-learn</h3>
+<p id="in9g1">cuML is a GPU-accelerated machine learning library that optimizes 
+machine learning algorithms for execution on GPUs. It includes 
+accelerators that run machine learning algorithms in scikit-learn, UMAP,
+ and HDBSCAN with no code changes required. </p>
+<div class="card__cta"><a href="/cuml" target="" id="izy1r5-2-3-2-3-2-7" class="link-cta text-transform-unset fw-bold">Learn More About cuML</a></div>
+<div class="separator separator--15"></div>
+<a href="https://docs.rapids.ai/api/cuml/stable/" target="_blank" id="izy1r5-2-3-2-3-2-5-4" class="link-cta text-transform-unset fw-bold">View Docs</a><div class="separator separator--15"></div>
+<p class="mb-0"><b id="ik9l7g">TAGS: scikit-learn, machine learning, Python, C++</b></p>
+</div></div></div></div>
+<div id="i9k1ds-2-3-2-2-2" class="col-sm-12 col-lg-4 col-md-6 col-12 col-xl-4"><div class="card-wrapper"><div class="card"><div class="card__content">
+<h3 class="txt-clr--blck h--smallest">cuGraph: 48x Faster NetworkX</h3>
+<p id="i57yyo">cuGraph is a GPU-accelerated graph analytics library that optimizes graph algorithms for execution on GPUs to process millions of nodes without specialized software. It includes a zero-code-change accelerator for NetworkX. </p>
+<div class="separator separator--15"></div>
+<a href="https://docs.rapids.ai/api/cugraph/stable/" target="_blank" id="izy1r5-2-3-2-3-2-5-4-2" class="link-cta text-transform-unset fw-bold">View Docs</a><div class="separator separator--15"></div>
+<p class="mb-0"><b id="i280i7">TAGS: NetworkX, graph, Python, C++</b></p>
+</div></div></div></div>
+<div id="i9k1ds-2-3-2-2-2-2-2" class="col-sm-12 col-lg-4 col-md-6 col-12 col-xl-4"><div class="card-wrapper"><div class="card"><div class="card__content">
+<h3 class="txt-clr--blck h--smallest">cuxfilter</h3>
+<p id="igqjml">Create interactive data visuals with multidimensional filtering of over 100-million-row tabular datasets.</p>
+<div class="card__cta"><a href="https://docs.rapids.ai/api/cuxfilter/stable/" target="_blank" id="izy1r5-2-3-2-3-2-2-2-2" class="link-cta text-transform-unset fw-bold">Get Started With cuxfilter</a></div>
+<div class="separator separator--15"></div>
+<p class="mb-0"><b id="i0bxvj">Tags: dashboards, visualization, Python<br></b></p>
+</div></div></div></div>
+<div id="i9k1ds-2-3-2-2-2-2-3" class="col-sm-12 col-lg-4 col-md-6 col-12 col-xl-4"><div class="card-wrapper"><div class="card"><div class="card__content">
+<h3 class="txt-clr--blck h--smallest">Dask</h3>
+<p id="ilsn5x">Scale out GPU-accelerated data science pipelines for machine learning, XGBoost, and graph analytics to multiple nodes on Dask.</p>
+<div class="card__cta"><a href="https://github.com/rapidsai/cudf/tree/main/python/dask_cudf" target="_blank" id="izy1r5-2-3-2-3-2-2-2-3" class="link-cta text-transform-unset fw-bold">Get Started on GitHub</a></div>
+<div class="separator separator--15"></div>
+<p class="mb-0"><b id="irvwet">Tags: distributed computing, Python</b></p>
+</div></div></div></div>
+<div id="i9k1ds-2-3-2-2-2-2" class="col-sm-12 col-lg-4 col-md-6 col-12 col-xl-4"><div class="card-wrapper"><div class="card"><div class="card__content">
+<h3 class="txt-clr--blck h--smallest">Apache Spark</h3>
+<p id="iuoweg">Accelerate Apache Spark data processing workflows on NVIDIA GPUs with the RAPIDS™ Accelerator for Apache Spark.</p>
+<div class="card__cta"><a href="https://nvidia.github.io/spark-rapids/" target="_blank" id="izy1r5-2-3-2-3-2-2-2" class="link-cta text-transform-unset fw-bold">Get Started With Spark </a></div>
+<div class="separator separator--15"></div>
+<p class="mb-0"><b id="ixg8sf">TAGS: distributed computing, data processing, Python</b></p>
+</div></div></div></div>
+</div>
+<div class="separator separator--30"></div>
+<div class="separator separator--30"></div>
+<div class="row"><div id="i9k1ds-2-3-2-2-2-2-2-2-2-2" class="col-sm-12 col-md-6 col-12 col-lg-12 col-xl-12">
+<h3 class="txt-clr--blck h--smallest">Other CUDA-X Libraries for Data Science </h3>
+<p id="ib31ry-2">See a complete list of libraries and tools.<br></p>
+<div class="card__cta"><a href="https://github.com/rapidsai" target="_blank" id="izy1r5-2-3-2-3-2-2-2-2-2-2" class="link-cta text-transform-unset fw-bold">Check Out GitHub</a></div>
+</div></div></section> <p class="mb-0"></p>
+<hr class="separator separator--md">
+<section class="page__section page__second-section pb-0 pt-0"><h2 title="Install and Deploy in Your Environment" class="h--medium section__heading toc-item">Install and Deploy in Your Environment</h2>
+<div class="nv-tabs">
+<div role="tablist" class="tab-container me-auto">
+<div role="tab" aria-controls="ifxlap" id="ig3iie" class="nav-item"><span id="i924yb">Quick Install</span></div>
+<div role="tab" aria-controls="i8ehh6" id="i6tfb7" class="nav-item"><span id="iefsjd">Deployment Guides</span></div>
+</div>
+<div>
+<div role="tabpanel" id="ifxlap" class="tab-content"><div class="row cards-grid--60">
+<div id="i9k1ds-2-3-2-4-2" class="col-sm-12 col-lg-6 col-md-12">
+<div class="card-wrapper"></div>
+<h3 id="iqatyl-2-2" class="h--smaller">Quick Install With conda</h3>
+<p id="i39cqo-2-2-2">1. If not installed, download and run the install script. This will install the latest miniforge:</p>
+<div data-react-init-class="CodeContainer" data-react-props='{"pLanguage":"bash","show_collapse_expand_toggle":false,"expanded":false,"rows":"","wrapLongLines":true,"class":"nv-code-container"}' data-react-cache-id="CodeContainer-i03505"><div><pre>wget "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh"
+bash Miniforge3-$(uname)-$(uname -m).sh
+</pre></div></div>
+<div class="separator separator--15"></div>
+<p id="i39cqo-2-3">2. Then install with:</p>
+<div data-react-init-class="CodeContainer" data-react-props='{"pLanguage":"bash","wrapLongLines":true,"class":"nv-code-container"}' data-react-cache-id="CodeContainer-i48scg"><div><pre>conda create -n rapids-26.08 -c rapidsai -c conda-forge rapids=26.08 python=3.14 'cuda-version&gt;=13.0,&lt;=13.3'</pre></div></div>
+</div>
+<div id="i9k1ds-2-3-2-3-2-2" class="col-sm-12 col-lg-6 col-md-12">
+<div class="card-wrapper"></div>
+<h3 id="iqatyl-3" class="h--smaller">Quick Install With pip</h3>
+<div data-react-init-class="CodeContainer" data-react-props='{"pLanguage":"bash","wrapLongLines":true,"class":"nv-code-container"}' data-react-cache-id="CodeContainer-i75v22"><div><pre>pip install \
+  --extra-index-url=https://pypi.nvidia.com \
+  "cudf-cu13==26.8.*" \
+  "dask-cudf-cu13==26.8.*" \
+  "cuml-cu13==26.8.*" \
+  "cugraph-cu13==26.8.*"
+</pre></div></div>
+</div>
+</div></div>
+<div role="tabpanel" id="i8ehh6" class="tab-content"><div class="row">
+<div class="col-sm-12 col-lg-4 col-md-4">
+<h3 id="i3wayl-8-2" class="h--smallest">Deploy Locally</h3>
+<p id="i55sd5-8-2">Use this guide to install and build with conda, pip, Docker, or WSL2 on your local machine.<br></p>
+<div class="card__cta"><a href="https://docs.rapids.ai/deployment/stable/local/" target="_blank" id="izy1r5-2-3-2-3-2-2-2-2-5-2-4" class="link-cta text-transform-unset fw-bold">Read the Local Deployment Guide</a></div>
+</div>
+<div class="col-sm-12 col-lg-4 col-md-4">
+<h3 id="i3wayl-3-3-2" class="h--smallest">Deploy on Platforms<br>
+</h3>
+<p id="i55sd5-3-3-2">Deploy on your platform of choice, including Kubernetes, Databricks, and Google Colab. </p>
+<div class="card__cta"><a href="https://docs.rapids.ai/deployment/stable/platforms/" target="_blank" id="izy1r5-2-3-2-3-2-2-2-2-5-2-2-2" class="link-cta text-transform-unset fw-bold">Read the Platforms Guide</a></div>
+</div>
+<div class="col-sm-12 col-lg-4 col-md-4">
+<h3 id="i3wayl-2-3-2" class="h--smallest">Deploy in the Cloud</h3>
+<p id="i55sd5-2-3-2">Run in AWS, Azure, GCP, and more. </p>
+<div class="card__cta"><a href="https://docs.rapids.ai/deployment/stable/cloud/" target="_blank" id="izy1r5-2-3-2-3-2-2-2-2-5-2-3-2" class="link-cta text-transform-unset fw-bold">Read the Cloud Deployment Guide</a></div>
+</div>
+</div></div>
+</div>
+</div></section><hr class="separator separator--md">
+<section class="page__section page__second-section pb-0 pt-0"><h2 title="Data Science Learning Library" class="h--medium section__heading toc-item">Data Science Learning Library</h2>
+<div id="ibqx1j">
+<div data-react-class="FacetedSearchOpenSearch" data-react-props='{"id":"ife6mk","settings":{"title":"Data Science","displayOptions":{"layout":"compact","showFacetsCount":false,"stickyNavigation":false,"hideCategoryLabel":false,"itemsPerPage":6},"compactMode":{"dropdownLabel":"Filter by:","cta":{"text":"","url":""}},"openSearchProviders":[{"provider":"opensearch","id":"opensearch_1","indexes":"data_science","filters":"","aggregation":"document_url","sorting":[{"label":"Default","field":"featured","direction":"desc","id":"ca9f485c-79ef-4922-8a96-f609ee4a2bc3"}],"facets":[{"id":"8bca4e14-8128-4bf7-bbfc-2139c3d26ffa","field":"x_content_types","label":"Content type","hidden":false,"widget":""}],"viewMode":"card","viewModeConfigs":{"card":{"mapping":{"featured":"featured.raw","badges":"x_content_types.raw","imageURL":"","pretitle":"technologies.raw","title":"document_title.raw","subtitle":"","body":"short_summary.raw","links":"document_url.raw"},"imagePadding":false,"clickableCard":true,"truncatePretitle":false},"accordion":{"mapping":{"imageURL":"","title":"","badge":"","body":"","markdown":"","extraFieldLabels":"","extraFields":"","links":""}},"profile-teaser":{"mapping":{"imageURL":"","title":"","jobRole":"","location":"","specialization":"","institutionName":"","profilePageURL":"","links":"","extraFieldLabels":"","extraFields":""}}}}]}}' data-react-cache-id="FacetedSearchOpenSearch-ife6mk"></div>
+<div class="raw-data-download raw-data-download--search" data-download-for="data_science"><a href="https://developer.nvidia.com/search-data/data_science.json">Download the raw results data (JSON)</a></div>
+</div></section><hr class="separator separator--md">
+<section class="page__section page__second-section pb-0 pt-0"><h2 title="Ecosystem" class="h--medium section__heading toc-item text-center">The Accelerated Data Science Ecosystem</h2>
+<p id="ibiuxf" class="text-center p--large">Data practitioners in open source libraries, commercial software, and industries are driving innovation with CUDA-X. </p>
+<p id="ihcigx-2" class="text-center"></p>
+<div class="nv-tabs">
+<div role="tablist" class="tab-container">
+<div role="tab" aria-controls="iy6jpi" id="iaqmi6" class="nav-item"><span id="ijtyk7">Open-Source Libraries</span></div>
+<div role="tab" aria-controls="ied625" id="iin1ri" class="nav-item"><span id="im0b67">Platforms</span></div>
+<div role="tab" aria-controls="inu1qv" id="ieyvh8" class="nav-item"><span id="iipvot">Industry Adoption</span></div>
+</div>
+<div>
+<div role="tabpanel" id="iy6jpi" class="tab-content">
+<p id="ie7coj" class="text-center">We're committed to simplifying, unifying, and accelerating data science for the open-source community. </p>
+<div class="row justify-content-center">
+<div id="ir4rir" class="col-6 col-sm-6 col-lg-3 col-md-4"><a id="ihegde" href="https://docs.cupy.dev/en/stable/install.html" target="_blank"><img src="https://developer.download.nvidia.com/images/logos/cupy-logo.svg" id="iucqst-2" alt="Data Science Open-Source Library - CuPy" class="img-fluid mx-auto"></a></div>
+<div id="ir4rir-12" class="col-6 col-sm-6 col-lg-3 col-md-4"><a id="ityfel" href="https://docs.dask.org/en/stable/gpu.html" target="_blank"><img src="https://developer.download.nvidia.com/images/logos/dask-logo.svg" id="iucqst-2-13" alt=" Data Science Open-Source Library - Dask" class="img-fluid mx-auto"></a></div>
+<div id="ir4rir-11" class="col-6 col-sm-6 col-lg-3 col-md-4"><a id="ihe9qg" href="https://xgboost.readthedocs.io/en/stable/gpu/" target="_blank"><img src="https://developer.download.nvidia.com/images/logos/dmlc-xgboost-logo.svg" id="iucqst-2-12" alt="Data Science Open-Source Library - Dmlc XGBoost" class="img-fluid mx-auto"></a></div>
+<div id="ir4rir-9" class="col-6 col-sm-6 col-lg-3 col-md-4"><a id="ihxr3j" href="https://networkx.org/documentation/stable/backends.html" target="_blank"><img src="https://developer.download.nvidia.com/images/logos/networkx-logo.svg" id="iucqst-2-10" alt="Data Science Open-Source Library - NetworkX" class="img-fluid mx-auto"></a></div>
+<div id="ir4rir-7" class="col-6 col-sm-6 col-lg-3 col-md-4"><a id="i2lmxl" href="https://docs.pola.rs/user-guide/gpu-support/" target="_blank"><img src="https://developer.download.nvidia.com/images/logos/polars-logo.svg" id="iucqst-2-8" alt=" Data Science Open-Source Library - Polars" class="img-fluid mx-auto"></a></div>
+<div id="ir4rir-6" class="col-6 col-sm-6 col-lg-3 col-md-4"><a id="imyi25" href="https://docs.rapids.ai/api/cugraph/stable/graph_support/pyg_support/" target="_blank"><img src="https://developer.download.nvidia.com/images/logos/pyg-logo.svg" id="iucqst-2-7" alt="Data Science Open-Source Library - PyG" class="img-fluid mx-auto"></a></div>
+<div id="ir4rir-4" class="col-6 col-sm-6 col-lg-3 col-md-4"><a id="i2bggd" href="https://docs.rapids.ai/api/cuml/stable/" target="_blank"><img src="https://developer.download.nvidia.com/images/logos/scikit-learn-logo.svg" id="iucqst-2-5" alt="Data Science Open-Source Library - Scikit Learn" class="img-fluid mx-auto"></a></div>
+<div id="ir4rir-3" class="col-6 col-sm-6 col-lg-3 col-md-4"><a id="izusgt" href="https://github.com/scverse/rapids-singlecell" target="_blank"><img src="https://developer.download.nvidia.com/images/logos/scverse-logo.svg" id="iucqst-2-4" alt=" Data Science Open-Source Library - scverse" class="img-fluid mx-auto"></a></div>
+</div>
+</div>
+<div role="tabpanel" id="ied625" class="tab-content">
+<p id="i5z2cn" class="text-center">Use CUDA-X libraries in the most popular data science and machine learning platforms.</p>
+<div class="row">
+<div id="i2peis-4" class="col-6 col-sm-6 col-lg-3 col-md-4"><a id="iq6926" href="https://docs.rapids.ai/deployment/stable/cloud/#amazon-web-services" target="_blank"><img src="https://developer.download.nvidia.com/images/logos/amazon-sagemaker-logo.svg" id="iucqst-4" alt="Data Science Platform - Amazon SageMaker" class="img-fluid mx-auto"></a></div>
+<div id="i2peis-2-3" class="col-6 col-sm-6 col-lg-3 col-md-4"><a id="ik5gll" href="https://anaconda.org/rapidsai/rapids" target="_blank"><img src="https://developer.download.nvidia.com/images/logos/anaconda-logo.svg" id="iucqst-2-2-3" alt="Data Science Platform - Anaconda" class="img-fluid mx-auto"></a></div>
+<div id="ir4rir-13" class="col-6 col-sm-6 col-lg-3 col-md-4"><a id="i04wju" href="https://docs.rapids.ai/deployment/stable/cloud/#microsoft-azure" target="_blank"><img src="https://developer.download.nvidia.com/images/logos/azure-machine-learning-logo.svg" id="iucqst-2-14" alt="Data Science Platform - Azure Machine Learning" class="img-fluid mx-auto"></a></div>
+<div id="ir4rir-9-2" class="col-6 col-sm-6 col-lg-3 col-md-4"><a id="iz446k" href="https://docs.coiled.io/user_guide/clusters/gpu-rapids.html" target="_blank"><img src="https://developer.download.nvidia.com/images/logos/logo-coiled.svg" id="iucqst-2-10-2" alt="Data Science Platform - Coiled" class="img-fluid mx-auto"></a></div>
+<div id="ir4rir-11-2" class="col-6 col-sm-6 col-lg-3 col-md-4"><a id="i649zs" href="https://docs.rapids.ai/deployment/stable/platforms/databricks/" target="_blank"><img src="https://developer.download.nvidia.com/images/logos/databricks-logo.svg" id="iucqst-2-12-2" alt="Data Science Platform - Databricks" class="img-fluid mx-auto"></a></div>
+<div id="ir4rir-7-2" class="col-6 col-sm-6 col-lg-3 col-md-4"><a id="iivu8f" href="https://docs.rapids.ai/deployment/stable/platforms/colab/" target="_blank"><img src="https://developer.download.nvidia.com/images/logos/google-colab-logo.svg" id="iucqst-2-8-2" alt="Data Science Platform - Google Colab" class="img-fluid mx-auto"></a></div>
+<div id="ir4rir-8-2" class="col-6 col-sm-6 col-lg-3 col-md-4"><a id="iu2fwh" href="https://www.kaggle.com/datasets/cdeotte/rapids" target="_blank"><img src="https://developer.download.nvidia.com/images/logos/logo-kaggle.svg" id="iucqst-2-9-2" alt="Data Science Platform - Kaggle" class="img-fluid mx-auto"></a></div>
+<div id="ir4rir-5-2" class="col-6 col-sm-6 col-lg-3 col-md-4"><a id="ipgcq9" href="https://www.snowflake.com/en/blog/container-runtime-GPU-training-inference/" target="_blank"><img src="https://developer.download.nvidia.com/images/logos/snowflake-logo.svg" id="iucqst-2-6-2" alt="Data Science Platform - Snowflake" class="img-fluid mx-auto"></a></div>
+</div>
+</div>
+<div role="tabpanel" id="inu1qv" class="tab-content">
+<p id="irf8cl" class="text-center">Industry leaders are driving innovation with CUDA-X.</p>
+<div class="row cards__list justify-content-center">
+<div class="col-sm-12 col-md-6 col-lg-4 col-xl-4"><div class="card-wrapper"><div class="card">
+<img src="https://developer.download.nvidia.com/images/logos/bunq-logo.svg" id="iucqst-2-6-3-2-9" alt=" Data Science Industry Adoption - bunq" class="img-fluid mx-auto"><div class="card__content">
+<p id="i257og-9">bunq improved fraud detection accuracy by accelerating model training 100x and data processing 5x using NVIDIA cuDF and cuML libraries.</p>
+<div class="card__cta"><a href="https://blogs.nvidia.com/blog/europe-financial-services-ai/" target="_blank" class="link-cta text-transform-unset fw-bold">Read Blog</a></div>
+</div>
+</div></div></div>
+<div class="col-sm-12 col-md-6 col-lg-4 col-xl-4"><div class="card-wrapper"><div class="card">
+<img src="https://developer.download.nvidia.com/images/logos/capital-one-logo.svg" id="iucqst-2-6-3-2-8" alt=" Data Science Industry Adoption - CapitalOne" class="img-fluid mx-auto"><div class="card__content">
+<p id="i257og-8">Capital One accelerated its financial and credit analysis pipelines with NVIDIA cuDF and cuML, improving model training by 100x.</p>
+<div class="card__cta"><a href="https://www.nvidia.com/en-us/on-demand/session/gtcsj20-s22136/" target="_blank" class="link-cta text-transform-unset fw-bold">Watch On-Demand Session<i class="chevron-right"></i></a></div>
+</div>
+</div></div></div>
+<div class="col-sm-12 col-md-6 col-lg-4 col-xl-4"><div class="card-wrapper"><div class="card">
+<img src="https://developer.download.nvidia.com/images/logos/checkout-logo.svg" id="iucqst-2-6-3-2-7" alt="Data Science Industry Adoption - Checkout.com" class="img-fluid mx-auto"><div class="card__content">
+<p id="i257og-7">Checkout.com accelerated their data analysis workflows from minutes to seconds with NVIDIA cuDF.<br></p>
+<div class="card__cta"><a href="https://blogs.nvidia.com/blog/europe-financial-services-ai/" target="_blank" class="link-cta text-transform-unset fw-bold">Read Blog</a></div>
+</div>
+</div></div></div>
+<div class="col-sm-12 col-md-6 col-lg-4 col-xl-4"><div class="card-wrapper"><div class="card">
+<img src="https://developer.download.nvidia.com/images/logos/linkedin-logo.svg" id="iucqst-2-6-3-2-5" alt="Data Science Industry Adoption - Linkedin" class="img-fluid mx-auto"><div class="card__content">
+<p id="i257og-5">LinkedIn developed DARWIN to enable faster data analysis on NVIDIA cuDF.<br></p>
+<div class="card__cta"><a href="https://www.nvidia.com/en-us/on-demand/session/gtcspring23-s51399/" target="_blank" class="link-cta text-transform-unset fw-bold">Watch On-Demand Session<i class="chevron-right"></i></a></div>
+</div>
+</div></div></div>
+<div class="col-sm-12 col-md-6 col-lg-4 col-xl-4"><div class="card-wrapper"><div class="card">
+<img src="https://developer.download.nvidia.com/images/logos/tgen-logo.svg" id="iucqst-2-6-3-2-3-4" alt="Data Science Industry Adoption - Tgen" class="img-fluid mx-auto"><div class="card__content">
+<p id="i257og-3-4">TGen cut analysis time on 4-million-cell datasets from 10 hours to three minutes with RAPIDS-singlecell, built on NVIDIA cuML.</p>
+<div class="card__cta"><a href="https://www.nvidia.com/en-us/customer-stories/reduce-single-cell-spatial-analysis-from-hours-to-minutes/" target="_blank" class="link-cta text-transform-unset fw-bold">Read Customer Story<i class="chevron-right"></i></a></div>
+</div>
+</div></div></div>
+</div>
+</div>
+</div>
+</div></section><hr class="separator separator--md">
+<section class="page__section page__last-section pb-0 pt-0"><h2 title="Community" class="h--medium section__heading tablet-45 toc-item">Join the Community</h2>
+<div id="iedinv-2-2-3"><div class="row cards__list">
+<div id="ir7h78-2-2-4-2" class="col-sm-12 col-12 col-md-6 col-lg-6 col-xl-6"><div class="card-wrapper"><div class="card extra-resource">
+<img src="https://developer.download.nvidia.com/icons/m48-people-group.svg" id="i9pjs2-2-2-4-2" alt="" class="img-fluid mw-6-rem mx-auto"><h3 id="izp2a2" class="txt-clr--blck mb-0 text-center h--smallest">Join the Accelerated Data Science Community on Slack</h3>
+<a href="http://rapids-goai.slack.com/" target="_blank" id="i16c9u-2-2-4-2"></a>
+</div></div></div>
+<div id="ir7h78-2-2-3-3" class="col-sm-12 col-12 col-md-6 col-lg-6 col-xl-6"><div class="card-wrapper"><div class="card extra-resource">
+<img src="https://developer.download.nvidia.com/icons/m48-email-settings.svg" id="i9pjs2-2-2-3-3" alt="" class="img-fluid mw-6-rem mx-auto"><h3 id="ict3zp" class="txt-clr--blck mb-0 text-center h--smallest">Sign Up for the Data Science Newsletter</h3>
+<a href="/email-signup" target="" id="i16c9u-2-2-3-3"></a>
+</div></div></div>
+</div></div></section><hr class="separator separator--md">
+<section class="page__section page__last-section pt-0"><h2 class="h--medium section__heading tablet-45">Ethical AI </h2>
+<div id="iedinv-2-2-3-3"><p id="i4kuz5">NVIDIA believes Trustworthy AI is a shared responsibility and we have established policies and practices to enable development for a wide array of AI applications. When downloaded or used in accordance with our terms of service, developers should work with their supporting team to ensure their application meets requirements for the relevant industry and use case and addresses unforeseen product misuse. <br><br>Please report security vulnerabilities or NVIDIA AI Concerns <a href="https://www.nvidia.com/en-us/support/submit-security-vulnerability/" id="if56yl" target="_blank">here</a>.</p></div></section><section class="page__section page__section--light-gray page__last-section page__cta-section"><h3 class="section__heading text-center h--small">Download CUDA-X Libraries for Data Science today.</h3>
+<p class="text-center mb-0"><a href="https://docs.rapids.ai/install/?_gl=1*kwbd1w*_ga*MTE4NDAwMTQ1NS4xNzA5NzcwODcw*_ga_RKXFW6CM42*czE3NTIxODk0OTQkbzk1JGcwJHQxNzUyMTg5NDk0JGo2MCRsMCRoMA" target="_blank" class="btn btn-cta">Download</a></p></section></main></div>
+</div>
+</div>
+<div class="separator separator--90 phone-0"></div>
+</div>
+    </div>
+
+
+
+
+
+
+          <script type="text/javascript">
+  (() => {
+    const handleQuotesBlock = (quotesBlock, idx) => {
+      const blockquotes = quotesBlock.querySelectorAll('blockquote');
+      if (blockquotes.length < 1) {
+        return;
+      }
+
+      const navContainer = document.createElement('ul');
+      navContainer.classList.add('quotes-list-navigation');
+      for (let i = 0; i < blockquotes.length; i++) {
+        let navItem = document.createElement('li');
+        let btn = document.createElement('button');
+        btn.type = 'button';
+        btn.dataset['group'] = idx.toString();
+        btn.dataset['length'] = blockquotes.length.toString();
+        btn.value = i.toString();
+
+        btn.addEventListener('click', (e) => {
+          const group = e.target.dataset['group'];
+          const groupActiveButtons = document.querySelectorAll(`button[data-group="${group}"].active`);
+          groupActiveButtons.forEach((activeButton) => {
+            activeButton.classList.remove('active');
+          });
+          e.target.classList.add('active');
+          const viewPortWidth = quotesBlock.getBoundingClientRect().width;
+          const clickedSlide = parseInt(e.target.value);
+          quotesBlock.querySelector('.quotes-list').style.transform = `translate(-${viewPortWidth * clickedSlide}px)`;
+        });
+        navItem.appendChild(btn);
+        navContainer.appendChild(navItem);
+
+        if (i === 0) {
+          btn.click();
+        }
+      }
+      quotesBlock.appendChild(navContainer);
+    };
+
+    const refreshQuotesBlock = () => {
+      document.querySelectorAll('.quotes-list-navigation button.active').forEach((b) => {
+        const currentItem = parseInt(b.value);
+        const maxItem = parseInt(b.dataset['length']);
+        const group = parseInt(b.dataset['group']);
+        const next = currentItem + 1;
+        if (next < maxItem) {
+          document.querySelectorAll(`button[data-group="${group}"]`)[next].click();
+        } else {
+          document.querySelectorAll(`button[data-group="${group}"]`)[0].click();
+        }
+      });
+    };
+
+    const refreshInterval = 4000;
+    const quotesBlocks = document.querySelectorAll('.quotes-list-viewport');
+
+    if (quotesBlocks.length) {
+      quotesBlocks.forEach(handleQuotesBlock);
+      setInterval(refreshQuotesBlock, refreshInterval);
+    }
+  })();
+</script>
+
+      <script type="text/javascript" charset="utf-8">
+  (() => {
+    const doInit = (accordionRoot, idx) => {
+      const baseID = `page-accordion-${idx}`;
+      accordionRoot.id = baseID;
+      const headings = accordionRoot.querySelectorAll('.accordion-header');
+      if (!headings.length) {
+        return;
+      }
+
+      const collapseElements = accordionRoot.querySelectorAll('.accordion-collapse');
+
+      headings.forEach((headingElement, idx) => {
+        const headingID = `${baseID}-heading-${idx}`;
+        const targetID = `${baseID}-target-${idx}`;
+        headingElement.id = headingID;
+        const headingButton = headingElement.querySelector('.accordion-button');
+        if (!headingButton) {
+          return;
+        }
+        headingButton.type = 'button';
+        headingButton.dataset['bsToggle'] = 'collapse';
+        headingButton.dataset['bsTarget'] = `#${targetID}`;
+        headingButton.setAttribute('aria-expanded', true);
+        headingButton.setAttribute('aria-controls', targetID);
+        headingButton.setAttribute('role', 'button');
+
+        if (!collapseElements[idx].classList.contains('show')) {
+          headingButton.classList.add('collapsed');
+        }
+
+        collapseElements[idx].id = targetID;
+        collapseElements[idx].setAttribute('aria-labelledby', headingID);
+      });
+
+      new bootstrap.Collapse(accordionRoot);
+    };
+
+    const initAccordions = () => {
+      const accordions = document.querySelectorAll('section.page__section div.accordion');
+      if (!accordions.length) {
+        return;
+      }
+
+      let accordionIndex = 0;
+      accordions.forEach((accordion) => {
+        doInit(accordion, accordionIndex);
+        accordionIndex += 1;
+      });
+    };
+    
+    document.addEventListener('DOMContentLoaded', initAccordions)
+  })();
+</script>
+
+      <script src="https://developer.nvidia.com/assets/grapesjs-tabs-f0b094476ecf56695b765f533e437303138b1e0824d993c50ff672e16dcccd8f.js"></script>
+      <script src="https://developer.nvidia.com/assets/grapesjs-code-container-d9f9220defaa8a53ba3e8b7a6b1d155f6a1e5e5b37b9fa2282a7ace75bc60ae2.js"></script>
+      <script src="https://developer.nvidia.com/assets/legacy-chart/d3.v4.min-41cfecdf7c41476e805de7afacf4aacdd1a4be6947fbecf95217e947ebc2faf5.js"></script>
+      <script src="https://developer.nvidia.com/assets/legacy-chart/visualize-d-6a082dca95b2facd89f05ef138213cffea2419e9195042f6ceed4aa706943cb1.js"></script>
+      <script src="https://developer.nvidia.com/assets/momentjs/moment-b955adb4137f92dd932ff2c3179ce60cb5e1daed5fcc4423f95cf17df02b4d68.js"></script>
+      <script src="https://developer.nvidia.com/assets/momentjs/moment-timezone-with-data-10-year-range-dd05517070a46fa0052f9e706803d57a4fc38c1a223137ab480369e6308ba8d4.js"></script>
+      <script src="https://developer.nvidia.com/assets/calendar-256ba38a1da92b24c057388ff6623eddd4cf1498f51d1a389cc4dfac501ab87c.js"></script>
+      <script src="https://developer.nvidia.com/assets/hoverable-tooltip-06658c1c074450575999f586a2be4df71fb000fa8fbc3eec0955c1484012c593.js"></script>
+
+    <script src="https://developer.nvidia.com/assets/nv-developer-menu-8ae864e49d5d53c328146a66e7ad6d73242af7511f642a7d1aa1ffedd496f826.js"></script>
+  <div id='footer' class='mt-auto'></div>
+  <script src="https://www.nvidia.com/content/dam/en-zz/Solutions/librarian/bundle-search-prod-pub-v3.1.js"></script>
+  <div id="librarian-overlay"></div>
+  <script defer>
+    setTimeout(() => {
+      LIBRARIAN.Home.mount({
+        elementId: 'librarian-overlay',
+        searchPage: false,
+        placeholder: '',
+        site: 'https://developer.nvidia.com',
+        retainFilters: true,
+        overlay: true,
+        pillsOpen: true,
+        suggestedSearchPills: []
+      })
+    }, 1000)
+  </script>
+<script>
+  let menuLocale = 'en';
+
+  if (menuLocale == 'en') {
+    menuLocale = 'en-US';
+  }
+
+  function mountHeader(data = false) {
+    const headerTarget = document.getElementById('header');
+    if (!headerTarget) {
+      return;
+    }
+    let options = {
+      baseURL: window.location.origin,
+      signedIn: false,
+      locale: menuLocale
+    };
+
+    if (data) {
+      options.secondaryMenu = data;
+    }
+
+
+    options.showMembershipCardLink = true;
+
+    new NVDeveloperHeader({
+      target: headerTarget,
+      props: options
+    });
+  }
+
+  function mountFooter(data = false) {
+    const footerTarget = document.getElementById('footer');
+    if (!footerTarget) {
+      return;
+    }
+    let options = {
+      menu: data,
+      locale: menuLocale
+    };
+
+    new NVDeveloperFooter({
+      target: document.getElementById('footer'),
+      props: options
+    });
+  }
+
+  let url = 'd29g4g2dyqv443.cloudfront.net';
+  let headerMenuURL = "https://d29g4g2dyqv443.cloudfront.net/menu/en-US/header-secondary.json";
+
+  if (headerMenuURL) {
+    fetch(headerMenuURL)
+      .then(response => response.json())
+      .then(data => {
+        mountHeader(data);
+      })
+      .catch((error) => {
+        mountHeader();
+        window.nv.tracing.addError('menu', error);
+      });
+  } else {
+    mountHeader();
+  }
+
+  fetch(`https://${url}/menu/${menuLocale}/footer.json`)
+    .then(response => response.json())
+    .then(data => {
+      mountFooter(data);
+    })
+    .catch((error) => {
+      mountFooter();
+      window.nv.tracing.addError('menu', error);
+    });
+</script>
+
+      <script src="https://www.datadoghq-browser-agent.com/us1/v5/datadog-rum.js"></script>
+
+    
+    
+      <script>
+  let silentAuthHost = 'www.nvidia.com';
+  let crossOriginPageUrl = `https://${silentAuthHost}/auth/hints/`;
+
+  function readHint() {
+    return new Promise((resolve) => {
+      const { origin: targetOrigin } = new URL(crossOriginPageUrl);
+
+      const iframe = document.createElement('iframe');
+      iframe.hidden = true;
+      iframe.src = crossOriginPageUrl;
+
+      function responseHandler(event) {
+        if (event.origin === targetOrigin) {
+          iframe.parentNode.removeChild(iframe);
+          return resolve(event.data);
+        }
+      }
+
+      window.addEventListener('message', responseHandler, { once: true });
+
+      iframe.onload = () => {
+        iframe.contentWindow.postMessage({ type: 'read' }, targetOrigin);
+      }
+
+      document.body.appendChild(iframe);
+    });
+  }
+
+  function writeHint(login_hint, idp_id, timestamp, sub) {
+    const { origin: targetOrigin } = new URL(crossOriginPageUrl);
+
+    const iframe = document.createElement('iframe');
+    iframe.hidden = true;
+    iframe.src = crossOriginPageUrl;
+
+    iframe.onload = () => {
+      const message = { type: 'write', login_hint, idp_id, timestamp, sub };
+      iframe.contentWindow.postMessage(message, targetOrigin);
+    }
+
+    document.body.appendChild(iframe);
+  }
+
+  function deleteHint() {
+    const { origin: targetOrigin } = new URL(crossOriginPageUrl);
+
+    const iframe = document.createElement('iframe');
+    iframe.hidden = true;
+    iframe.src = crossOriginPageUrl;
+
+    iframe.onload = () => {
+      iframe.contentWindow.postMessage({ type: 'delete' }, targetOrigin);
+    }
+
+    document.body.appendChild(iframe);
+  }
+
+
+</script>
+
+    <script>_satellite.pageBottom();</script>
+    <script src="https://api-prod.nvidia.com/search/nvidia-search-library.js"></script>
+
+    <script src="https://developer.nvidia.com/assets/nv-gallery-widget-d1571cad15d961fd3ba013f57119be04a2adf32aa31b16be44a0f10f4671c37b.js"></script>
+    <script src="https://developer.nvidia.com/packs/js/runtime-f904b50470fcb0ec9bf4.js" defer="defer"></script>
+<script src="https://developer.nvidia.com/packs/js/4692-e2ed051c68e93113bb58.js" defer="defer"></script>
+<script src="https://developer.nvidia.com/packs/js/2681-6ac336ff34441936c0fb.js" defer="defer"></script>
+<script src="https://developer.nvidia.com/packs/js/2778-e8f3c5f27fbb1956fdb2.js" defer="defer"></script>
+<script src="https://developer.nvidia.com/packs/js/9878-baa65d618824b708a55b.js" defer="defer"></script>
+<script src="https://developer.nvidia.com/packs/js/8465-f321c9c28242e4383fa8.js" defer="defer"></script>
+<script src="https://developer.nvidia.com/packs/js/4622-1cd0dbd2a0f0b5243900.js" defer="defer"></script>
+<script src="https://developer.nvidia.com/packs/js/3566-c56dfeed5cc4ed4a9b8f.js" defer="defer"></script>
+<script src="https://developer.nvidia.com/packs/js/486-1ddc749b634c231b0122.js" defer="defer"></script>
+<script src="https://developer.nvidia.com/packs/js/8311-71b2da0387dad11f356f.js" defer="defer"></script>
+<script src="https://developer.nvidia.com/packs/js/1252-6d8bb3f37b33aca41843.js" defer="defer"></script>
+<script src="https://developer.nvidia.com/packs/js/8823-bac8f579788282b3f2cd.js" defer="defer"></script>
+<script src="https://developer.nvidia.com/packs/js/2104-29621183e9a96bb055ad.js" defer="defer"></script>
+<script src="https://developer.nvidia.com/packs/js/6900-b1b00a8ef19d3868862c.js" defer="defer"></script>
+<script src="https://developer.nvidia.com/packs/js/application-afbb46c9b6cc3093d8f1.js" defer="defer"></script>
+<script src="https://developer.nvidia.com/packs/js/ls_track-d4505a41101e752062c8.js" defer="defer"></script>
+  </body>
+</html>

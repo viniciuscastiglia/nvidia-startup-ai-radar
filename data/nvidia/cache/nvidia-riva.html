@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang='en' class='h-100' data-color-scheme='light'>
+  <head>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="csrf-param" content="authenticity_token" />
+<meta name="csrf-token" content="SQYPRd63py_N5xp6aU6WcxOU7gN7aogkGK_vQr0D65lwdWwJAuQai4KHW7aEyHI20VCghxM3zC3oIrUj2N-KRQ" />
+    <meta name="csp-nonce" />
+    <title>Riva Speech AI SDK - Get Started | NVIDIA Developer</title>
+<meta name="description" content="Find documentation and other resources to build and deploy full optimized, real-time AI pipelines anywhere.">
+<meta name="keywords" content="riva, speech ai, automatic speech recognition, text to speech, speech to text, nvidia">
+<link rel="canonical" href="https://developer.nvidia.com/topics/ai/generative-ai/riva">
+<link rel="alternate" href="https://developer.nvidia.com/topics/ai/generative-ai/riva" hreflang="x-default">
+<link rel="alternate" href="https://developer.nvidia.com/topics/ai/generative-ai/riva" hreflang="en-us">
+<link rel="alternate" href="https://developer.nvidia.com/es-la/topics/ai/generative-ai/riva" hreflang="es-la">
+<link rel="alternate" href="https://developer.nvidia.com/pt-br/topics/ai/generative-ai/riva" hreflang="pt-br">
+<link rel="alternate" href="https://developer.nvidia.cn/topics/ai/generative-ai/riva" hreflang="zh-cn">
+<meta property="og:site_name" content="NVIDIA Developer">
+<meta property="og:title" content="Riva Speech AI SDK - Get Started">
+<meta property="og:description" content="Find resources to build and deploy real-time AI pipelines anywhere.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://developer.download.nvidia.com/images/products/og-riva-1200x630.jpg">
+<meta property="og:url" content="https://developer.nvidia.com/topics/ai/generative-ai/riva">
+<meta name="twitter:title" content="NVIDIA Riva Speech AI SDK - Get Started">
+<meta name="twitter:description" content="Find documentation, tutorials, and other resources you need to build and deploy customizable, real-time AI pipelines in the clouds, on premises, and at the edge.">
+<meta name="twitter:image" content="https://developer.download.nvidia.com/images/products/og-riva-1200x630.jpg">
+<meta name="twitter:site" content="@NVIDIA">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@NVIDIAAIDeveloper">
+<meta property="interest" content="MLOps">
+      <link rel="alternate" type="text/markdown" title="Page Markdown" href="https://developer.nvidia.com/topics/ai/generative-ai/riva.md">
+
+    <link rel="stylesheet" href="https://developer.nvidia.com/assets/application-9e4a823de8771e59cf1ae04de333e5e14d86a990b878d196a65779d7140a6415.css" media="all" />
+
+    <script>
+  const NvAssets = {
+    CSS: {
+      highlightJs: "https://developer.nvidia.com/assets/highlight-7c6157fe69da4cc401cddeb387737d6991b2012dc14e90f3d52764a3a58fd3da.css",
+    }
+  }
+</script>
+
+
+    
+  <link rel="stylesheet" href="https://developer.nvidia.com/assets/one-trust-bea625cf16a072ce5fdb0707a19f2645daf63c05eb1a016db72773eba008fc07.css" />
+  <script src="https://cdn.cookielaw.org/scripttemplates/otSDKStub.js" charset="UTF-8" data-document-language="true" data-domain-script="3e2b62ff-7ae7-4ac5-87c8-d5949ecafff5"></script>
+
+<script src="https://images.nvidia.com/aem-dam/Solutions/ot-js/ot-custom.js"></script>
+
+<script>
+  function OptanonWrapper() {
+    let event = new Event('bannerLoaded');
+    window.dispatchEvent(event);
+
+      if (window.OnetrustActiveGroups && window.OnetrustActiveGroups.includes("C0002")) {
+        window.DD_RUM && window.DD_RUM.init({
+          clientToken: 'pub0430c74fae5d2b467bcb8d48b13e5b32',
+          applicationId: '9fc963c7-14e6-403d-bdec-ee671550bb7f',
+          site: 'datadoghq.com',
+          service: 'devzone',
+          env: 'prod',
+          version: 'v2.60.0',
+          sessionSampleRate: 10,
+          sessionReplaySampleRate: 5,
+          trackUserInteractions: true,
+          trackResources: true,
+          trackLongTasks: true,
+          defaultPrivacyLevel: 'mask-user-input',
+        });
+      }
+  }
+</script>
+
+
+    <script>
+  (function() {
+    var didInit = false;
+    function initMunchkin() {
+      if(didInit === false) {
+        didInit = true;
+        Munchkin.init('156-OFN-742');
+      }
+    }
+    function loadMunchkin() {
+      // Munchkin falls under the OneTrust "Advertising" category (C0004); only
+      // load it once the user has consented to that category.
+      if (!window.OnetrustActiveGroups || !window.OnetrustActiveGroups.includes("C0004")) {
+        return;
+      }
+      // bannerLoaded re-fires on every consent change; once we have consent we
+      // only need to inject the script tag once.
+      window.removeEventListener('bannerLoaded', loadMunchkin);
+      var s = document.createElement('script');
+      s.type = 'text/javascript';
+      s.async = true;
+      s.src = '//munchkin.marketo.net/munchkin.js';
+      s.onreadystatechange = function() {
+        if (this.readyState == 'complete' || this.readyState == 'loaded') {
+          initMunchkin();
+        }
+      };
+      s.onload = initMunchkin;
+      document.getElementsByTagName('head')[0].appendChild(s);
+    }
+    // OnetrustActiveGroups is populated asynchronously after the OneTrust SDK
+    // loads, which dispatches "bannerLoaded" (see layouts/_one_trust). Wait for
+    // that signal so consenting users still get Munchkin, then re-check on each
+    // consent change (the didInit guard keeps init idempotent).
+    window.addEventListener('bannerLoaded', loadMunchkin);
+})();
+</script>
+
+    <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "NVIDIA Developer",
+    "url": "https://developer.nvidia.com",
+    "logo": "https://www.nvidia.com/en-us/about-nvidia/legal-info/logo-brand-usage/_jcr_content/root/responsivegrid/nv_container_392921705/nv_container_412055486/nv_image.coreimg.100.630.png/1703060329095/nvidia-logo-horz.png",
+    "sameAs": [
+      "https://github.com/nvidia",
+      "https://www.linkedin.com/company/nvidia/",
+      "https://x.com/nvidiadeveloper"
+    ]
+  }
+</script>
+
+    
+    <meta name='typesense-host' content='typesense.svc.nvidia.com'>
+<meta name='typesense-key' content='uFs9XGl9BWS7af7eAIbKNQ49sJnjEfQk'>
+<script src="https://developer.download.nvidia.com/scripts/typesense.js"></script>
+
+
+    <script src="https://assets.adobedtm.com/5d4962a43b79/c1061d2c5e7b/launch-191c2462b890.min.js" data-ot-ignore="true"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js" integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script src="https://developer.nvidia.com/assets/bootstrap/5.1.3/bootstrap.bundle.min-51ad1d8cab4ebd9873a0429f5e67ca717a71fd96daf8025bc04a88848e5b375c.js"></script>
+
+
+    <link rel="icon" type="image/x-icon" href="https://developer.nvidia.com/assets/favicon-81bff16cada05fcff11e5711f7e6212bdc2e0a32ee57cd640a8cf66c87a6cbe6.ico" />
+  </head>
+
+  <body class='d-flex flex-column h-100'>
+    
+    
+
+      <div id='header'></div>
+
+
+
+
+    
+
+
+
+
+
+
+
+    <div id='page-mobile-nav-container'></div>
+    <div class='page'>
+      <div class="getting-started-page">
+<div class="container breadcrumb-container"><ol class="breadcrumb">
+<li class="breadcrumb-item"><a href="https://developer.nvidia.com/topics/" id="ivemf6">Topics</a></li>
+<div id="ixwtf2" class="breadcrumb-item"><a href="https://developer.nvidia.com/topics/ai" id="izij21">AI</a></div>
+<div id="ibrfew" class="breadcrumb-item">
+<a href="https://developer.nvidia.com/topics/ai/generative-ai/" id="i5eccz">Generative AI</a><br>
+</div>
+<div id="irsh5h" class="breadcrumb-item active">NVIDIA Riva<br>
+</div>
+</ol></div>
+<div class="container page"><div class="row">
+<div class="col-xl-2 col-lg-3 col-md-12 col-sm-12 d-md-none d-lg-block col-sidebar"><aside class="page__sidebar with-sticky-nav"><div class="page-navigation-container"><div data-react-class="PageNavigation" data-react-props='{"draggable":"true","editable":"true","use_numbering":"true"}' data-react-cache-id="PageNavigation-i7qmd"></div></div></aside></div>
+<div class="col-xl-1 col-lg-1 col-separator with-border"></div>
+<div class="col-xl-9 col-lg-9 col-md-12 col-sm-12 col-main-content"><main class="page__content"><section class="page__section page__first-section"><h1 title="" class="h--large section__heading">NVIDIA Nemotron Speech for Developers</h1>
+<p class="p--large text-color-gray mb-0"><a href="/topics/ai/nemotron" id="ic32aa">NVIDIA Nemotron</a>™ Speech is a family of GPU-accelerated open models for automatic speech recognition (ASR), text-to-speech (TTS), neural machine translation (NMT), and speech-to-speech across ~40 languages. Deployed through the NVIDIA Riva library for optimized inference, the speech models are fully customizable and run across all clouds, in data centers, at the edge, and in embedded devices. As speech becomes the primary interface for AI agents, these models enable organizations to build voice-first AI agents that understand and respond naturally across dozens of languages. </p>
+<div class="separator separator--30"></div>
+<p id="ihmj8l"><a href="https://build.nvidia.com/explore/speech" target="_blank" title="Download Now" class="btn btn-cta me-2 mt-2">Try APIs</a><a href="https://docs.nvidia.com/deeplearning/riva/user-guide/docs/index.html" target="_blank" title="Forums link" class="btn btn-cta--light btn-cta me-2 mt-2">Documentation</a><a href="https://forums.developer.nvidia.com/c/ai-data-science/deep-learning/riva/475" target="_blank" title="Go to Documentation" class="btn btn-cta--light btn-cta me-2 mt-2">Forum</a></p></section><hr class="separator">
+<section class="page__section page__second-section"><h2 title="How It Works" class="h--medium section__heading toc-item">How Nemotron Speech Works</h2>
+<p id="i42brh">Speech and translation AI microservices convert spoken words into text (speech recognition), written language into spoken words (speech synthesis), and spoken or written words from one language to another (translation). Pretrained AI models are trained on vast datasets and can be fine-tuned on custom datasets to accelerate the development of domain-specific models. Fully containerized, these microservices are optimized for real-time performance and offline high throughput on premises or in the cloud and can quickly scale to hundreds and thousands of parallel streams.</p>
+<div class="separator separator--30"></div>
+<img src="https://developer.download.nvidia.com/images/products/riva-how-it-works-2560x940.svg" id="ixvc6d" alt=" A workflow diagram showing speech and translation AI microservices"></section><div class="separator separator--60"></div>
+<section class="page__section page__second-section pb-0 pt-0"><div class="row cards__list">
+<div class="col-md-12 col-sm-12 col-lg-4 col-xl-3"><div class="card-wrapper"><div class="card"><div class="card__content">
+<h3 class="h--smallest txt-clr--blck mb-3">Quick-Start Guide<br>
+</h3>
+<p id="i0skxc">Get step-by-step instructions for deploying pretrained models and how to interact with them.<br></p>
+<a href="https://docs.nvidia.com/deeplearning/riva/user-guide/docs/quick-start-guide.html?_gl=1*mut5vc*_gcl_au*NDk1OTAwNzg1LjE3MTYyMjY5Njc." target="_blank" class="link-cta text-transform-unset fw-bold">Get Started<br><i class="chevron-right"></i></a>
+</div></div></div></div>
+<div class="col-lg-4 col-md-12 col-sm-12 col-xl-3"><div class="card-wrapper"><div class="card"><div class="card__content">
+<h3 class="h--smallest txt-clr--blck mb-3">Learn to Add Voice to Your Apps <br>
+</h3>
+<p id="inevnz">Learn how to add real-time speech recognition, translation, and natural-sounding text-to-speech to your applications using NVIDIA NIM™ for production-ready voice experiences.<br></p>
+<a href="https://developer.nvidia.com/blog/quickly-voice-your-apps-with-nvidia-nim-microservices-for-speech-and-translation/" target="" class="link-cta text-transform-unset fw-bold">Read Blog<i class="chevron-right"></i></a>
+</div></div></div></div>
+<div class="col-lg-4 col-md-12 col-sm-12 col-xl-3"><div class="card-wrapper"><div class="card"><div class="card__content">
+<h3 class="h--smallest txt-clr--blck mb-3">Tutorial<br>
+</h3>
+<p id="iz3vy4">Read how to build a voice-powered AI agent that combines the NVIDIA Nemotron streaming ASR model with multimodal retrieval-augmented generation (RAG), safety guardrails, and long-context reasoning.<br></p>
+<a href="https://developer.nvidia.com/blog/how-to-build-a-voice-agent-with-rag-and-safety-guardrails/" target="" class="link-cta text-transform-unset fw-bold">Read Blog<br></a>
+</div></div></div></div>
+<div class="col-lg-4 col-md-12 col-sm-12 col-xl-3"><div class="card-wrapper"><div class="card"><div class="card__content">
+<h3 class="h--smallest txt-clr--blck mb-3">Video Demo<br>
+</h3>
+<p id="ix1qc5">Learn how to build a voice-enabled AI agent that integrates an NVIDIA Nemotron ultra-low-latency streaming model for real-time automatic speech recognition.<br></p>
+<a href="https://www.youtube.com/watch?v=bCDcziL9OCo" target="_blank" class="link-cta text-transform-unset fw-bold">Watch Video<i class="chevron-right"></i></a>
+</div></div></div></div>
+</div></section><div class="separator separator--30"></div>
+<hr class="separator separator--md">
+<section id="icuk3" class="page__section"><h2 title="Getting Started" class="h--medium section__heading toc-item">Ways to Get Started With Nemotron Speech</h2>
+<p id="ihipx5" class="p--large">Use the right tools and technologies to build and deploy fully 
+customizable, multilingual speech and translation AI applications.</p>
+<section class="page__section page__second-section pb-0 pt-0"><div class="row cards-grid--60">
+<div class="separator separator--30"></div>
+<div class="col-12 col-md pb-4 pb-md-0">
+<img src="https://developer.download.nvidia.com/icons/m48-nim-256px-blk%201@2x.png" alt="A decorative image of building AI application with NVIDIA NIM APIs " class="mb-3 mw-6-rem"><h3 id="id1kcn" class="h--smaller">Try</h3>
+<p id="i9gihq-2">Experience Nemotron Speech through a UI-based portal for exploring and prototyping with NVIDIA-managed endpoints, available for free through <a href="http://build.nvidia.com" id="ilaidg" target="_blank">build.nvidia.com</a>.</p>
+<a href="https://build.nvidia.com/explore/speech" target="_blank" class="link-cta text-transform-unset">Try Now</a>
+</div>
+<div class="col-12 col-md pb-4 pb-md-0">
+<img src="https://developer.download.nvidia.com/icons/m48-digital-deep-learning-institute-talks-training.svg" alt="A decorative image of deploying with NVIDIA AI Enterprise" class="mb-3 mw-6-rem"><h3 id="iahjtr" class="h--smaller">Deploy</h3>
+<p id="i9gihq">Get a free license to try <a href="https://www.nvidia.com/en-us/data-center/products/ai-enterprise/" id="i83pt4" target="_blank">NVIDIA AI Enterprise</a> for 90 days using your existing infrastructure.<br></p>
+<a href="https://enterpriseproductregistration.nvidia.com/?LicType=EVAL&amp;ProductFamily=NVAIEnterprise" class="link-cta text-transform-unset">Request a 90-Day License</a>
+</div>
+</div></section></section><hr class="separator separator--md">
+<section id="isw22" class="page__section"><section class="page__section page__second-section pb-0 pt-0"><h2 title="Starter Kits" class="h--medium section__heading toc-item">Development Starter Kits</h2>
+<p id="iqokzb" class="p--large">Start developing your speech and translation AI application with Nemotron Speech by accessing tutorials, notebooks, <a href="https://forums.developer.nvidia.com/c/ai-data-science/deep-learning/riva/475" target="_blank">forums</a>, <a href="https://docs.nvidia.com/deeplearning/riva/user-guide/docs/release-notes.html" target="_blank">release notes</a>, and comprehensive <a href="https://docs.nvidia.com/deeplearning/riva/user-guide/docs/index.html" target="_blank">documentation</a>.<br></p>
+<div class="separator separator--60 tablet-45"></div>
+<div class="row cards-grid--60">
+<div class="col-lg-4 col-md-12 col-sm-12 grid-col">
+<h3 class="h--smaller mb-0">Automatic Speech Recognition<br>
+</h3>
+<div class="separator separator--30"></div>
+<p class="mb-0">Achieve high transcription accuracy for Arabic, English, French, German, Hindi, Italian, Japanese, Korean, Mandarin, Portuguese, Russian, and Spanish with state-of-the-art models pretrained on thousands of hours of audio on NVIDIA supercomputers.<br></p>
+<div class="separator separator--30"></div>
+<ul class="nv-list">
+<li data-icon="file"><div><p class="mb-0"><a href="https://docs.nvidia.com/deeplearning/riva/user-guide/docs/asr/asr-overview.html" target="_blank">Read Speech-Recognition Documentation</a></p></div></li>
+<li data-icon="file" id="id8qzc"><div><p class="mb-0"><a href="https://docs.nvidia.com/deeplearning/riva/user-guide/docs/quick-start-guide.html" target="_blank">Read Quick-Start Guide</a></p></div></li>
+<li data-icon="file"><div id="i76bgr"><p class="mb-0"><a href="https://docs.nvidia.com/deeplearning/riva/user-guide/docs/tutorials-asr-contents.html" target="_blank">Explore Speech-Recognition Tutorials</a></p></div></li>
+</ul>
+<div class="separator separator--30"></div>
+</div>
+<div class="col-lg-4 col-md-12 col-sm-12 grid-col">
+<h3 class="h--smaller mb-0">Text-to-Speech<br>
+</h3>
+<div class="separator separator--30"></div>
+<p class="mb-0">Customize across English, German, Italian, Mandarin, and Spanish TTS pipelines for the voice and intonation you want.<br></p>
+<div class="separator separator--30"></div>
+<ul class="nv-list">
+<li data-icon="file"><div><p class="mb-0"><a href="https://docs.nvidia.com/deeplearning/riva/user-guide/docs/tts/tts-overview.html" target="_blank">Read TTS Documentation </a></p></div></li>
+<li data-icon="file"><div><p class="mb-0"><a href="https://docs.nvidia.com/deeplearning/riva/user-guide/docs/quick-start-guide.html" target="_blank">Read Quick-Start Guide</a></p></div></li>
+<li data-icon="file"><div><p class="mb-0"><a href="https://docs.nvidia.com/deeplearning/riva/user-guide/docs/tutorials-tts-contents.html" target="_blank">Explore TTS Tutorials </a></p></div></li>
+</ul>
+<div class="separator separator--30"></div>
+</div>
+<div class="col-lg-4 col-md-12 col-sm-12 grid-col">
+<h3 class="h--smaller mb-0">Neural Machine Translation</h3>
+<div class="separator separator--30"></div>
+<p class="mb-0">Integrate highly accurate text-to-text, speech-to-text, or speech-to-speech translation for up to 32 languages into your conversational application pipelines. <br></p>
+<div class="separator separator--30"></div>
+<ul class="nv-list">
+<li data-icon="file"><div><p class="mb-0"><a href="https://docs.nvidia.com/deeplearning/riva/user-guide/docs/translation/translation-overview.html" target="_blank">Read NMT Documentation</a></p></div></li>
+<li data-icon="file"><div><p class="mb-0"><a href="https://docs.nvidia.com/deeplearning/riva/user-guide/docs/quick-start-guide.html" target="_blank">Read Quick-Start Guide</a></p></div></li>
+<li data-icon="file"><div><p class="mb-0"><a href="https://docs.nvidia.com/deeplearning/riva/user-guide/docs/tutorials-nmt-contents.html" target="_blank">Explore NMT Tutorials</a></p></div></li>
+</ul>
+<div class="separator separator--30"></div>
+</div>
+</div></section></section><hr class="separator separator--md">
+<section class="page__section"><section class="page__section pt-0 pb-0"><h2 title="Learning Library" class="h--medium section__heading toc-item">Nemotron Speech and NVIDIA Riva Learning Library</h2>
+<div data-react-class="FacetedSearch" data-react-props='{"layout":"compact","id":"iud1tk","collection_id":"8","query_by":"title,excerpt","sort_by":"featured_in.riva:desc,title:asc","filter_by":"(products:=[`Riva`] &amp;&amp; source:=[`techblog`, `ngc`, `nvod`]) || (source:=[`spreadsheet`] &amp;&amp; topics:=[`riva`])","disabled_filters":"products","view_mode":"card","card_options":"\"hasImagePadding:0;isClickableCard:1;truncatePretitle:1\"","items_per_page":"6","compact_mode_cta_text":"View All Riva Resources","compact_mode_cta_url":"https://developer.nvidia.com/learning-library?refinementList%5Bproducts%5D%5B0%5D=Riva&amp;page=1","sort_by_label":"","compact_mode_dropdown_label":"Explore Resources"}' data-react-cache-id="FacetedSearch-iud1tk"></div></section></section><hr class="separator separator--md">
+<section class="page__section pt-0 pb-0"><h2 class="h--medium section__heading toc-item">More Resources</h2>
+<div id="iej19c"><div class="row cards__list">
+<div class="col-lg-4 col-sm-12 col-md-4"><div class="card-wrapper">
+<a href=""></a><div class="card extra-resource">
+<div id="ikmkx7"><div class="row justify-content-center"><div class="col-lg-5 col-xl-12 col-4"><img alt="A decorative image representing Developer Community" src="https://developer.download.nvidia.com/icons/m48-people-group.svg" class="img-fluid mw-6-rem"></div></div></div>
+<div><div class="row justify-content-center"><div class="col-xl-12 col-lg-12 col-md-4 col-sm-6 col-xs-8 col-8"><h3 class="h--smallest">Explore the Community<br>
+</h3></div></div></div>
+<a href="https://forums.developer.nvidia.com/c/ai-data-science/deep-learning/riva/475" target="_blank" id="i00w1h"></a>
+</div>
+</div></div>
+<div class="col-lg-4 col-sm-12 col-md-4"><div class="card-wrapper">
+<a href=""></a><div class="card extra-resource">
+<div><div class="row justify-content-center"><div class="col-4 col-lg-5 col-xl-12"><img alt="img-alt-text" src="https://developer.download.nvidia.com/icons/m48-certification-ribbon-2.svg" class="img-fluid mw-6-rem"></div></div></div>
+<h3 class="h--smallest">Get Training and Certification<br>
+</h3>
+<a href="https://resources.nvidia.com/en-us-speech-ai-content/gtc24-dlit61469?lx=h9TPm5" target="_blank" id="i65lwz"></a>
+</div>
+</div></div>
+<div class="col-lg-4 col-sm-12 col-md-4"><div class="card-wrapper">
+<a href=""></a><div class="card extra-resource">
+<div><div class="row justify-content-center"><div class="col-4 col-lg-5 col-xl-12"><img alt="A decorative image representing Inception for Startups" src="https://developer.download.nvidia.com/icons/m48-ai-startup.svg" class="img-fluid mw-6-rem"></div></div></div>
+<h3 class="h--smallest">Meet the Program for Startups<br>
+</h3>
+<a href="https://www.nvidia.com/en-us/startups/" target="_blank" id="iekn8f"></a>
+</div>
+</div></div>
+</div></div></section><hr class="separator separator--md">
+<section class="page__section page__last-section pb-0"><h2 class="h--medium section__heading">Ethical AI <br>
+</h2>
+<ul class="nv-list"></ul>
+<p class="mb-0">NVIDIA’s platforms and application frameworks enable developers to build a wide array of AI applications. Always consider potential algorithmic bias when choosing or creating the models being deployed. Work with the model’s developer to ensure that it meets the requirements for the relevant industry and use case; that the necessary instructions and documentation are provided to understand error rates, confidence intervals, and results; and that the model is being used under the conditions and in the manner intended.<br></p></section><div class="separator separator--90"></div>
+<section class="page__section page__lead-section page__last-section page__section--light-gray"><div class="separator separator--45"></div>
+<p class="p--large lead text-center mb-0 px-2">Stay up to date on the latest speech and translation AI news from NVIDIA.</p>
+<div class="separator separator--30"></div>
+<p class="text-center mb-0"><a href="https://www.nvidia.com/en-us/deep-learning-ai/solutions/conversational-ai/speech-ai-news/" target="_blank" class="btn btn-cta">Sign Up</a></p>
+<div class="separator separator--45"></div></section></main></div>
+</div></div>
+<div class="separator separator--60"></div>
+</div>
+    </div>
+
+
+
+
+
+
+          <script type="text/javascript">
+  (() => {
+    const handleQuotesBlock = (quotesBlock, idx) => {
+      const blockquotes = quotesBlock.querySelectorAll('blockquote');
+      if (blockquotes.length < 1) {
+        return;
+      }
+
+      const navContainer = document.createElement('ul');
+      navContainer.classList.add('quotes-list-navigation');
+      for (let i = 0; i < blockquotes.length; i++) {
+        let navItem = document.createElement('li');
+        let btn = document.createElement('button');
+        btn.type = 'button';
+        btn.dataset['group'] = idx.toString();
+        btn.dataset['length'] = blockquotes.length.toString();
+        btn.value = i.toString();
+
+        btn.addEventListener('click', (e) => {
+          const group = e.target.dataset['group'];
+          const groupActiveButtons = document.querySelectorAll(`button[data-group="${group}"].active`);
+          groupActiveButtons.forEach((activeButton) => {
+            activeButton.classList.remove('active');
+          });
+          e.target.classList.add('active');
+          const viewPortWidth = quotesBlock.getBoundingClientRect().width;
+          const clickedSlide = parseInt(e.target.value);
+          quotesBlock.querySelector('.quotes-list').style.transform = `translate(-${viewPortWidth * clickedSlide}px)`;
+        });
+        navItem.appendChild(btn);
+        navContainer.appendChild(navItem);
+
+        if (i === 0) {
+          btn.click();
+        }
+      }
+      quotesBlock.appendChild(navContainer);
+    };
+
+    const refreshQuotesBlock = () => {
+      document.querySelectorAll('.quotes-list-navigation button.active').forEach((b) => {
+        const currentItem = parseInt(b.value);
+        const maxItem = parseInt(b.dataset['length']);
+        const group = parseInt(b.dataset['group']);
+        const next = currentItem + 1;
+        if (next < maxItem) {
+          document.querySelectorAll(`button[data-group="${group}"]`)[next].click();
+        } else {
+          document.querySelectorAll(`button[data-group="${group}"]`)[0].click();
+        }
+      });
+    };
+
+    const refreshInterval = 4000;
+    const quotesBlocks = document.querySelectorAll('.quotes-list-viewport');
+
+    if (quotesBlocks.length) {
+      quotesBlocks.forEach(handleQuotesBlock);
+      setInterval(refreshQuotesBlock, refreshInterval);
+    }
+  })();
+</script>
+
+      <script type="text/javascript" charset="utf-8">
+  (() => {
+    const doInit = (accordionRoot, idx) => {
+      const baseID = `page-accordion-${idx}`;
+      accordionRoot.id = baseID;
+      const headings = accordionRoot.querySelectorAll('.accordion-header');
+      if (!headings.length) {
+        return;
+      }
+
+      const collapseElements = accordionRoot.querySelectorAll('.accordion-collapse');
+
+      headings.forEach((headingElement, idx) => {
+        const headingID = `${baseID}-heading-${idx}`;
+        const targetID = `${baseID}-target-${idx}`;
+        headingElement.id = headingID;
+        const headingButton = headingElement.querySelector('.accordion-button');
+        if (!headingButton) {
+          return;
+        }
+        headingButton.type = 'button';
+        headingButton.dataset['bsToggle'] = 'collapse';
+        headingButton.dataset['bsTarget'] = `#${targetID}`;
+        headingButton.setAttribute('aria-expanded', true);
+        headingButton.setAttribute('aria-controls', targetID);
+        headingButton.setAttribute('role', 'button');
+
+        if (!collapseElements[idx].classList.contains('show')) {
+          headingButton.classList.add('collapsed');
+        }
+
+        collapseElements[idx].id = targetID;
+        collapseElements[idx].setAttribute('aria-labelledby', headingID);
+      });
+
+      new bootstrap.Collapse(accordionRoot);
+    };
+
+    const initAccordions = () => {
+      const accordions = document.querySelectorAll('section.page__section div.accordion');
+      if (!accordions.length) {
+        return;
+      }
+
+      let accordionIndex = 0;
+      accordions.forEach((accordion) => {
+        doInit(accordion, accordionIndex);
+        accordionIndex += 1;
+      });
+    };
+    
+    document.addEventListener('DOMContentLoaded', initAccordions)
+  })();
+</script>
+
+      <script src="https://developer.nvidia.com/assets/grapesjs-tabs-f0b094476ecf56695b765f533e437303138b1e0824d993c50ff672e16dcccd8f.js"></script>
+      <script src="https://developer.nvidia.com/assets/grapesjs-code-container-d9f9220defaa8a53ba3e8b7a6b1d155f6a1e5e5b37b9fa2282a7ace75bc60ae2.js"></script>
+      <script src="https://developer.nvidia.com/assets/legacy-chart/d3.v4.min-41cfecdf7c41476e805de7afacf4aacdd1a4be6947fbecf95217e947ebc2faf5.js"></script>
+      <script src="https://developer.nvidia.com/assets/legacy-chart/visualize-d-6a082dca95b2facd89f05ef138213cffea2419e9195042f6ceed4aa706943cb1.js"></script>
+      <script src="https://developer.nvidia.com/assets/momentjs/moment-b955adb4137f92dd932ff2c3179ce60cb5e1daed5fcc4423f95cf17df02b4d68.js"></script>
+      <script src="https://developer.nvidia.com/assets/momentjs/moment-timezone-with-data-10-year-range-dd05517070a46fa0052f9e706803d57a4fc38c1a223137ab480369e6308ba8d4.js"></script>
+      <script src="https://developer.nvidia.com/assets/calendar-256ba38a1da92b24c057388ff6623eddd4cf1498f51d1a389cc4dfac501ab87c.js"></script>
+      <script src="https://developer.nvidia.com/assets/hoverable-tooltip-06658c1c074450575999f586a2be4df71fb000fa8fbc3eec0955c1484012c593.js"></script>
+
+    <script src="https://developer.nvidia.com/assets/nv-developer-menu-8ae864e49d5d53c328146a66e7ad6d73242af7511f642a7d1aa1ffedd496f826.js"></script>
+  <div id='footer' class='mt-auto'></div>
+  <script src="https://www.nvidia.com/content/dam/en-zz/Solutions/librarian/bundle-search-prod-pub-v3.1.js"></script>
+  <div id="librarian-overlay"></div>
+  <script defer>
+    setTimeout(() => {
+      LIBRARIAN.Home.mount({
+        elementId: 'librarian-overlay',
+        searchPage: false,
+        placeholder: '',
+        site: 'https://developer.nvidia.com',
+        retainFilters: true,
+        overlay: true,
+        pillsOpen: true,
+        suggestedSearchPills: []
+      })
+    }, 1000)
+  </script>
+<script>
+  let menuLocale = 'en';
+
+  if (menuLocale == 'en') {
+    menuLocale = 'en-US';
+  }
+
+  function mountHeader(data = false) {
+    const headerTarget = document.getElementById('header');
+    if (!headerTarget) {
+      return;
+    }
+    let options = {
+      baseURL: window.location.origin,
+      signedIn: false,
+      locale: menuLocale
+    };
+
+    if (data) {
+      options.secondaryMenu = data;
+    }
+
+
+    options.showMembershipCardLink = true;
+
+    new NVDeveloperHeader({
+      target: headerTarget,
+      props: options
+    });
+  }
+
+  function mountFooter(data = false) {
+    const footerTarget = document.getElementById('footer');
+    if (!footerTarget) {
+      return;
+    }
+    let options = {
+      menu: data,
+      locale: menuLocale
+    };
+
+    new NVDeveloperFooter({
+      target: document.getElementById('footer'),
+      props: options
+    });
+  }
+
+  let url = 'd29g4g2dyqv443.cloudfront.net';
+  let headerMenuURL = "https://d29g4g2dyqv443.cloudfront.net/menu/en-US/header-secondary.json";
+
+  if (headerMenuURL) {
+    fetch(headerMenuURL)
+      .then(response => response.json())
+      .then(data => {
+        mountHeader(data);
+      })
+      .catch((error) => {
+        mountHeader();
+        window.nv.tracing.addError('menu', error);
+      });
+  } else {
+    mountHeader();
+  }
+
+  fetch(`https://${url}/menu/${menuLocale}/footer.json`)
+    .then(response => response.json())
+    .then(data => {
+      mountFooter(data);
+    })
+    .catch((error) => {
+      mountFooter();
+      window.nv.tracing.addError('menu', error);
+    });
+</script>
+
+      <script src="https://www.datadoghq-browser-agent.com/us1/v5/datadog-rum.js"></script>
+
+    
+    
+      <script>
+  let silentAuthHost = 'www.nvidia.com';
+  let crossOriginPageUrl = `https://${silentAuthHost}/auth/hints/`;
+
+  function readHint() {
+    return new Promise((resolve) => {
+      const { origin: targetOrigin } = new URL(crossOriginPageUrl);
+
+      const iframe = document.createElement('iframe');
+      iframe.hidden = true;
+      iframe.src = crossOriginPageUrl;
+
+      function responseHandler(event) {
+        if (event.origin === targetOrigin) {
+          iframe.parentNode.removeChild(iframe);
+          return resolve(event.data);
+        }
+      }
+
+      window.addEventListener('message', responseHandler, { once: true });
+
+      iframe.onload = () => {
+        iframe.contentWindow.postMessage({ type: 'read' }, targetOrigin);
+      }
+
+      document.body.appendChild(iframe);
+    });
+  }
+
+  function writeHint(login_hint, idp_id, timestamp, sub) {
+    const { origin: targetOrigin } = new URL(crossOriginPageUrl);
+
+    const iframe = document.createElement('iframe');
+    iframe.hidden = true;
+    iframe.src = crossOriginPageUrl;
+
+    iframe.onload = () => {
+      const message = { type: 'write', login_hint, idp_id, timestamp, sub };
+      iframe.contentWindow.postMessage(message, targetOrigin);
+    }
+
+    document.body.appendChild(iframe);
+  }
+
+  function deleteHint() {
+    const { origin: targetOrigin } = new URL(crossOriginPageUrl);
+
+    const iframe = document.createElement('iframe');
+    iframe.hidden = true;
+    iframe.src = crossOriginPageUrl;
+
+    iframe.onload = () => {
+      iframe.contentWindow.postMessage({ type: 'delete' }, targetOrigin);
+    }
+
+    document.body.appendChild(iframe);
+  }
+
+
+</script>
+
+    <script>_satellite.pageBottom();</script>
+    <script src="https://api-prod.nvidia.com/search/nvidia-search-library.js"></script>
+
+    <script src="https://developer.nvidia.com/assets/nv-gallery-widget-d1571cad15d961fd3ba013f57119be04a2adf32aa31b16be44a0f10f4671c37b.js"></script>
+    <script src="https://developer.nvidia.com/packs/js/runtime-f904b50470fcb0ec9bf4.js" defer="defer"></script>
+<script src="https://developer.nvidia.com/packs/js/4692-e2ed051c68e93113bb58.js" defer="defer"></script>
+<script src="https://developer.nvidia.com/packs/js/2681-6ac336ff34441936c0fb.js" defer="defer"></script>
+<script src="https://developer.nvidia.com/packs/js/2778-e8f3c5f27fbb1956fdb2.js" defer="defer"></script>
+<script src="https://developer.nvidia.com/packs/js/9878-baa65d618824b708a55b.js" defer="defer"></script>
+<script src="https://developer.nvidia.com/packs/js/8465-f321c9c28242e4383fa8.js" defer="defer"></script>
+<script src="https://developer.nvidia.com/packs/js/4622-1cd0dbd2a0f0b5243900.js" defer="defer"></script>
+<script src="https://developer.nvidia.com/packs/js/3566-c56dfeed5cc4ed4a9b8f.js" defer="defer"></script>
+<script src="https://developer.nvidia.com/packs/js/486-1ddc749b634c231b0122.js" defer="defer"></script>
+<script src="https://developer.nvidia.com/packs/js/8311-71b2da0387dad11f356f.js" defer="defer"></script>
+<script src="https://developer.nvidia.com/packs/js/1252-6d8bb3f37b33aca41843.js" defer="defer"></script>
+<script src="https://developer.nvidia.com/packs/js/8823-bac8f579788282b3f2cd.js" defer="defer"></script>
+<script src="https://developer.nvidia.com/packs/js/2104-29621183e9a96bb055ad.js" defer="defer"></script>
+<script src="https://developer.nvidia.com/packs/js/6900-b1b00a8ef19d3868862c.js" defer="defer"></script>
+<script src="https://developer.nvidia.com/packs/js/application-afbb46c9b6cc3093d8f1.js" defer="defer"></script>
+<script src="https://developer.nvidia.com/packs/js/ls_track-d4505a41101e752062c8.js" defer="defer"></script>
+  </body>
+</html>

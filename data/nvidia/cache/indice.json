@@ -1,0 +1,130 @@
+{
+  "CUDA Toolkit": {
+    "url_fetch": "https://developer.nvidia.com/cuda-toolkit",
+    "arquivo": "cuda-toolkit.html",
+    "formato": "html",
+    "bytes": 44714,
+    "sha256": "1cb25cf1ee938e06c304b95a2a055354c87537982be18ca0b1422a2557585441",
+    "baixado_em": "2026-09-06"
+  },
+  "NVIDIA AI Enterprise": {
+    "url_fetch": "https://www.nvidia.com/en-us/data-center/products/ai-enterprise/",
+    "arquivo": "nvidia-ai-enterprise.html",
+    "formato": "html",
+    "bytes": 676604,
+    "sha256": "7499f378b16724d45e4dd7c83fd6379a3a0729baf8cc540dfbc1ebf6ca60f263",
+    "baixado_em": "2026-09-06"
+  },
+  "NVIDIA Healthcare (ex-Clara)": {
+    "url_fetch": "https://www.nvidia.com/en-us/clara/",
+    "arquivo": "nvidia-healthcare-ex-clara.html",
+    "formato": "html",
+    "bytes": 713158,
+    "sha256": "3e5fec861f03fdd64b4deb08c50593b03e0fca80cdb5a7e92b15a6a4b803878e",
+    "baixado_em": "2026-09-06"
+  },
+  "NVIDIA Inception": {
+    "url_fetch": "https://www.nvidia.com/en-us/startups/",
+    "arquivo": "nvidia-inception.html",
+    "formato": "html",
+    "bytes": 739137,
+    "sha256": "0e92f89855ccfc3edb7b83de5d4d5ec3bd922e69cbe08f1b78d6fcdd4568ba24",
+    "baixado_em": "2026-09-06"
+  },
+  "NVIDIA Isaac": {
+    "url_fetch": "https://developer.nvidia.com/isaac",
+    "arquivo": "nvidia-isaac.html",
+    "formato": "html",
+    "bytes": 1103148,
+    "sha256": "8a0dc9c1df17cb052ab6f4182119eee49df56d8767496dc9963c7c7a1ce76839",
+    "baixado_em": "2026-09-06"
+  },
+  "NVIDIA Morpheus": {
+    "url_fetch": "https://developer.nvidia.com/morpheus-cybersecurity",
+    "arquivo": "nvidia-morpheus.html",
+    "formato": "html",
+    "bytes": 41286,
+    "sha256": "58bd7232e087804247f53c40011233a96de03cdb9d261500fe8d3692e6111f51",
+    "baixado_em": "2026-09-06"
+  },
+  "NVIDIA NIM": {
+    "url_fetch": "https://www.nvidia.com/en-us/ai-data-science/products/nim-microservices/",
+    "arquivo": "nvidia-nim.html",
+    "formato": "html",
+    "bytes": 422492,
+    "sha256": "98cd430a09995fb08b12f66d96ead1918613b44b1ea997ab74d47d168525df03",
+    "baixado_em": "2026-09-06"
+  },
+  "NVIDIA NeMo": {
+    "url_fetch": "https://www.nvidia.com/en-us/ai-data-science/products/nemo/",
+    "arquivo": "nvidia-nemo.html",
+    "formato": "html",
+    "bytes": 681311,
+    "sha256": "f5861a66e489858bdb75b3d9c932647baa8b3fdff052a9e3714314f607c78f41",
+    "baixado_em": "2026-09-06"
+  },
+  "NVIDIA Omniverse": {
+    "url_fetch": "https://www.nvidia.com/en-us/omniverse/",
+    "arquivo": "nvidia-omniverse.html",
+    "formato": "html",
+    "bytes": 386135,
+    "sha256": "a122c06ac7d361b43b3c3c240fd477a4d814ec9c0d9c75c1bc676dd3fd812f02",
+    "baixado_em": "2026-09-06"
+  },
+  "NVIDIA Riva": {
+    "url_fetch": "https://developer.nvidia.com/riva",
+    "arquivo": "nvidia-riva.html",
+    "formato": "html",
+    "bytes": 35270,
+    "sha256": "203d0046ff0a16e6106476288fc6e246f714f72f001b4a5a35dd81ab0d65daba",
+    "baixado_em": "2026-09-06"
+  },
+  "NeMo Guardrails": {
+    "url_fetch": "https://raw.githubusercontent.com/NVIDIA/NeMo-Guardrails/develop/README.md",
+    "arquivo": "nemo-guardrails.md",
+    "formato": "markdown",
+    "bytes": 22375,
+    "sha256": "3024d4b057de3751e2ef5cb0d2154674880d76169c17d8d357f7bf750a419333",
+    "baixado_em": "2026-09-06"
+  },
+  "RAPIDS / CUDA-X Data Science": {
+    "url_fetch": "https://developer.nvidia.com/topics/ai/data-science/cuda-x-data-science-libraries",
+    "arquivo": "rapids-cuda-x-data-science.html",
+    "formato": "html",
+    "bytes": 46584,
+    "sha256": "aa2571e3b1dba97d35ba109c086ce80af3d2e1edc28447c1e8f12b34e60cd38e",
+    "baixado_em": "2026-09-06"
+  },
+  "TensorRT-LLM": {
+    "url_fetch": "https://raw.githubusercontent.com/NVIDIA/TensorRT-LLM/main/README.md",
+    "arquivo": "tensorrt-llm.md",
+    "formato": "markdown",
+    "bytes": 29085,
+    "sha256": "9d88b5c10d635f6db3af01a82d1702db2ce4d49228272c70191fe731bb5f90e6",
+    "baixado_em": "2026-09-06"
+  },
+  "Triton Inference Server": {
+    "url_fetch": "https://developer.nvidia.com/triton-inference-server",
+    "arquivo": "triton-inference-server.html",
+    "formato": "html",
+    "bytes": 36833,
+    "sha256": "61ded90affdc38edce28d80beaac4320bd4c49118ce0c0cb548473b8e09ecce8",
+    "baixado_em": "2026-09-06"
+  },
+  "cuDF": {
+    "url_fetch": "https://raw.githubusercontent.com/rapidsai/cudf/main/README.md",
+    "arquivo": "cudf.md",
+    "formato": "markdown",
+    "bytes": 5043,
+    "sha256": "6c742866d65ed1cc502050bc9eb9ad1e85bb187d5f20cd0be182d309069d9564",
+    "baixado_em": "2026-09-06"
+  },
+  "cuML": {
+    "url_fetch": "https://raw.githubusercontent.com/rapidsai/cuml/main/README.md",
+    "arquivo": "cuml.md",
+    "formato": "markdown",
+    "bytes": 5427,
+    "sha256": "64687b3ccbca6a914342c8c7b50996208d8d418d878d36d27d1d9cee3289561c",
+    "baixado_em": "2026-09-06"
+  }
+}

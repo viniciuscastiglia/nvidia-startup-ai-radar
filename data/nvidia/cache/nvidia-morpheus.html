@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang='en' class='h-100' data-color-scheme='light'>
+  <head>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="csrf-param" content="authenticity_token" />
+<meta name="csrf-token" content="12ihsyhMqd_ejyw9mvGnBttpq3Qs0cngQA7Bq83804vuG8L_9B8Ue5HvbfF3d0NDGa3l8ESMjemwg5vKqCCyVw" />
+    <meta name="csp-nonce" />
+    <title>Morpheus Cybersecurity Solutions | NVIDIA Developer</title>
+<meta name="description" content="NVIDIA Morpheus is an open application framework that supports real-time data monitoring with AI and threat detection in data centers and cloud.">
+<meta name="keywords" content="morpheus, generative ai, genai, cybersecurity, spear phishing, digital fingerprinting, threat detection, nvidia">
+<link rel="canonical" href="https://developer.nvidia.com/morpheus-cybersecurity">
+<link rel="alternate" href="https://developer.nvidia.com/morpheus-cybersecurity" hreflang="x-default">
+<link rel="alternate" href="https://developer.nvidia.com/morpheus-cybersecurity" hreflang="en-us">
+<link rel="alternate" href="https://developer.nvidia.cn/morpheus-cybersecurity" hreflang="zh-cn">
+<meta property="og:site_name" content="NVIDIA Developer">
+<meta property="og:title" content="Morpheus Cybersecurity Solutions">
+<meta property="og:description" content="Monitor real-time data and detect threats instantly with AI.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://developer.download.nvidia.com/images/morpheus/morpheus-for-developer-og-100%.jpg">
+<meta property="og:url" content="https://developer.nvidia.com/morpheus-cybersecurity">
+<meta name="twitter:title" content="NVIDIA Morpheus Cybersecurity Solutions">
+<meta name="twitter:description" content="Filter, process, and monitor real-time data with AI to identify, capture, and act on cybersecurity threats that are difficult to detect in the data centers, cloud, and edge.">
+<meta name="twitter:image" content="https://developer.download.nvidia.com/images/morpheus/morpheus-for-developer-og-100%.jpg">
+<meta name="twitter:site" content="@NVIDIA">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@NVIDIAAIDev">
+<meta property="interest" content="Data Center / Cloud">
+      <link rel="alternate" type="text/markdown" title="Page Markdown" href="https://developer.nvidia.com/morpheus-cybersecurity.md">
+
+    <link rel="stylesheet" href="https://developer.nvidia.com/assets/application-9e4a823de8771e59cf1ae04de333e5e14d86a990b878d196a65779d7140a6415.css" media="all" />
+
+    <script>
+  const NvAssets = {
+    CSS: {
+      highlightJs: "https://developer.nvidia.com/assets/highlight-7c6157fe69da4cc401cddeb387737d6991b2012dc14e90f3d52764a3a58fd3da.css",
+    }
+  }
+</script>
+
+
+    
+  <link rel="stylesheet" href="https://developer.nvidia.com/assets/one-trust-bea625cf16a072ce5fdb0707a19f2645daf63c05eb1a016db72773eba008fc07.css" />
+  <script src="https://cdn.cookielaw.org/scripttemplates/otSDKStub.js" charset="UTF-8" data-document-language="true" data-domain-script="3e2b62ff-7ae7-4ac5-87c8-d5949ecafff5"></script>
+
+<script src="https://images.nvidia.com/aem-dam/Solutions/ot-js/ot-custom.js"></script>
+
+<script>
+  function OptanonWrapper() {
+    let event = new Event('bannerLoaded');
+    window.dispatchEvent(event);
+
+      if (window.OnetrustActiveGroups && window.OnetrustActiveGroups.includes("C0002")) {
+        window.DD_RUM && window.DD_RUM.init({
+          clientToken: 'pub0430c74fae5d2b467bcb8d48b13e5b32',
+          applicationId: '9fc963c7-14e6-403d-bdec-ee671550bb7f',
+          site: 'datadoghq.com',
+          service: 'devzone',
+          env: 'prod',
+          version: 'v2.60.0',
+          sessionSampleRate: 10,
+          sessionReplaySampleRate: 5,
+          trackUserInteractions: true,
+          trackResources: true,
+          trackLongTasks: true,
+          defaultPrivacyLevel: 'mask-user-input',
+        });
+      }
+  }
+</script>
+
+
+    <script>
+  (function() {
+    var didInit = false;
+    function initMunchkin() {
+      if(didInit === false) {
+        didInit = true;
+        Munchkin.init('156-OFN-742');
+      }
+    }
+    function loadMunchkin() {
+      // Munchkin falls under the OneTrust "Advertising" category (C0004); only
+      // load it once the user has consented to that category.
+      if (!window.OnetrustActiveGroups || !window.OnetrustActiveGroups.includes("C0004")) {
+        return;
+      }
+      // bannerLoaded re-fires on every consent change; once we have consent we
+      // only need to inject the script tag once.
+      window.removeEventListener('bannerLoaded', loadMunchkin);
+      var s = document.createElement('script');
+      s.type = 'text/javascript';
+      s.async = true;
+      s.src = '//munchkin.marketo.net/munchkin.js';
+      s.onreadystatechange = function() {
+        if (this.readyState == 'complete' || this.readyState == 'loaded') {
+          initMunchkin();
+        }
+      };
+      s.onload = initMunchkin;
+      document.getElementsByTagName('head')[0].appendChild(s);
+    }
+    // OnetrustActiveGroups is populated asynchronously after the OneTrust SDK
+    // loads, which dispatches "bannerLoaded" (see layouts/_one_trust). Wait for
+    // that signal so consenting users still get Munchkin, then re-check on each
+    // consent change (the didInit guard keeps init idempotent).
+    window.addEventListener('bannerLoaded', loadMunchkin);
+})();
+</script>
+
+    <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "NVIDIA Developer",
+    "url": "https://developer.nvidia.com",
+    "logo": "https://www.nvidia.com/en-us/about-nvidia/legal-info/logo-brand-usage/_jcr_content/root/responsivegrid/nv_container_392921705/nv_container_412055486/nv_image.coreimg.100.630.png/1703060329095/nvidia-logo-horz.png",
+    "sameAs": [
+      "https://github.com/nvidia",
+      "https://www.linkedin.com/company/nvidia/",
+      "https://x.com/nvidiadeveloper"
+    ]
+  }
+</script>
+
+    
+    <meta name='typesense-host' content='typesense.svc.nvidia.com'>
+<meta name='typesense-key' content='uFs9XGl9BWS7af7eAIbKNQ49sJnjEfQk'>
+<script src="https://developer.download.nvidia.com/scripts/typesense.js"></script>
+
+
+    <script src="https://assets.adobedtm.com/5d4962a43b79/c1061d2c5e7b/launch-191c2462b890.min.js" data-ot-ignore="true"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js" integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script src="https://developer.nvidia.com/assets/bootstrap/5.1.3/bootstrap.bundle.min-51ad1d8cab4ebd9873a0429f5e67ca717a71fd96daf8025bc04a88848e5b375c.js"></script>
+
+
+    <link rel="icon" type="image/x-icon" href="https://developer.nvidia.com/assets/favicon-81bff16cada05fcff11e5711f7e6212bdc2e0a32ee57cd640a8cf66c87a6cbe6.ico" />
+  </head>
+
+  <body class='d-flex flex-column h-100'>
+    
+    
+
+      <div id='header'></div>
+
+
+
+
+    
+
+
+
+
+
+
+
+    <div id='page-mobile-nav-container'></div>
+    <div class='page'>
+      <div class="product-page">
+<div class="container breadcrumb-container"></div>
+<div class="container page"><div class="row">
+<div class="col-xl-9 col-lg-9 col-md-12 col-sm-12 col-main-content"><main class="page__content"><section class="page__section page__first-section"><div class="separator separator--no-scale separator--60 d-md-block d-lg-none"></div>
+<h1 title="Introduction" class="h--large section__heading toc-item mb-0">NVIDIA Morpheus</h1>
+<div class="separator separator--45"></div>
+<p class="p--large text-color-gray mb-0"><a href="https://www.nvidia.com/en-us/ai-data-science/products/morpheus/" id="ik2c5h" target="_blank" title="NVIDIA Morpheus">NVIDIA Morpheus</a> is a GPU-accelerated, end-to-end AI framework that enables developers to create optimized applications for filtering, processing, and classifying large volumes of streaming cybersecurity data. Morpheus incorporates AI to reduce the time and cost associated with identifying, capturing, and acting on threats, bringing a new level of security to the data center, cloud, and edge. Morpheus also extends human analysts’ capabilities with generative AI by automating real-time analysis and responses, producing synthetic data to train AI models that identify risks accurately, and run what-if scenarios</p>
+<div class="separator separator--45"></div></section><p id="isgvi"><a href="https://github.com/nv-morpheus/Morpheus" target="_blank" title="Github Repo" class="btn btn-cta me-2 mt-2">Access GitHub Repo</a><a href="https://catalog.ngc.nvidia.com/collections?filters=platform%7CMorpheus%7Cpltfm_morpheus&amp;orderBy=weightPopularDESC&amp;query=&amp;page=&amp;pageSize=" target="_blank" title="Download Workflows" class="btn btn-cta--light btn-cta me-2 mt-2">Download Workflows</a><a href="https://docs.nvidia.com/morpheus/index.html" target="_blank" title="Documentation" class="btn btn-cta--light btn-cta me-2 mt-2">Documentation</a><a href="https://forums.developer.nvidia.com/c/ai-data-science/cybersecurity/455" target="_blank" title="Forum" class="btn btn-cta--light btn-cta me-2 mt-2">Forum</a></p>
+<div class="separator separator--60"></div>
+<p class="mb-0"></p>
+<section class="page__section page__second-section pb-0 pt-0"><h2 class="h--medium section__heading toc-item">Ways to Get Started With NVIDIA Morpheus</h2>
+<p class="p--large text-color-gray mb-0"><a href="https://www.nvidia.com/en-us/ai-data-science/products/morpheus/get-started/" id="ifqdwi" target="_blank" title="Tools to build and deploy">Use</a> the right tools to build and deploy AI-based cybersecurity solutions.</p>
+<div class="separator separator--60 tablet-45"></div>
+<div class="row cards-grid--60">
+<div class="col-lg-4 col-md-12 col-sm-12 grid-col">
+<img alt="Decorative image representing development access code " src="https://developer.download.nvidia.com/images/morpheus/m48-accelerate-computing-with-cuda-c-c-256px-blk.png" class="img-fluid mw-6-rem"><h3 class="h--smaller mb-0">Access Code for Development</h3>
+<div class="separator separator--30"></div>
+<p class="mb-0">Morpheus is available as open-source software on GitHub for developers interested in using the latest pre-release features and who want to build from source.</p>
+<div class="separator separator--30"></div>
+<a href="https://github.com/nv-morpheus/Morpheus" target="_blank" title="Access code on GitHub" class="link-cta text-transform-unset fw-bold">Access Code on GitHub<i class="chevron-right"></i></a>
+</div>
+<div class="col-lg-4 col-md-12 col-sm-12 grid-col">
+<img alt="Decorative image representing development workflows for download" src="https://developer.download.nvidia.com/images/morpheus/m48-download-256px-blk.png" class="img-fluid mw-6-rem"><h3 class="h--smaller mb-0">Download Workflows for Development</h3>
+<div class="separator separator--30"></div>
+<p class="mb-0">The <a href="https://www.nvidia.com/en-us/ai-data-science/ai-workflows/digital-fingerprinting/" id="iznnr6" target="_blank" title="Digital Fingerprinting">digital fingerprinting</a> threat detection and <a href="https://www.nvidia.com/en-us/ai-data-science/ai-workflows/spear-phishing/" id="iwr5j5" target="_blank" title="spear phising">spear phishing</a> detection AI workflows include AI frameworks and resources, such as Helm charts, Jupyter Notebooks, and documentation to give developers a jump-start when building AI solutions.</p>
+<div class="separator separator--30"></div>
+<a href="https://catalog.ngc.nvidia.com/collections?filters=platform|pltfm_morpheus|Morpheus&amp;orderBy=weightPopularDESC&amp;query=" target="_blank" title="Download Workflows NGC" class="link-cta text-transform-unset fw-bold">Download Workflows from NGC</a><div class="separator separator--30"></div>
+<a href="https://www.nvidia.com/en-us/launchpad/cybersecurity/" target="_blank" title="Try the Workflows" class="link-cta text-transform-unset fw-bold">Try the Workflows on LaunchPad<i class="chevron-right"></i></a>
+</div>
+<div class="col-lg-4 col-md-12 col-sm-12 grid-col">
+<img alt="Decorative image representing NVIDIA AI  Enterprise for production on cloud" src="https://developer.download.nvidia.com/images/morpheus/m48-configuration-sdk-256px-blk.png" class="img-fluid mw-6-rem"><h3 class="h--smaller mb-0">Purchase NVIDIA AI Enterprise for Production</h3>
+<div class="separator separator--30"></div>
+<p class="mb-0">Get unlimited usage on all clouds, access to NVIDIA AI experts, and long-term support for production deployments with a purchase of NVIDIA AI Enterprise.</p>
+<div class="separator separator--30"></div>
+<a href="https://www.nvidia.com/en-us/data-center/products/ai-enterprise/contact-sales/" target="_blank" title="Contact Us" class="link-cta text-transform-unset fw-bold">Contact Us About Purchasing Morpheus<i class="chevron-right"></i></a><div class="separator separator--30"></div>
+<a href="https://enterpriseproductregistration.nvidia.com/?LicType=EVAL&amp;ProductFamily=NVAIEnterprise" target="_blank" title="90-Day NVIDIA AI License" class="link-cta text-transform-unset fw-bold">Apply for a 90-Day NVIDIA AI Enterprise Evaluation License<i class="chevron-right"></i></a>
+</div>
+</div></section><hr class="separator separator--md">
+<section class="page__section pt-0 pb-0"><h2 title="Introductory Resources" class="h--medium section__heading toc-item tablet-45">Introductory Resources</h2>
+<div class="row cards__list">
+<div class="col-xl-4 col-lg-4 col-sm-12 col-md-6"><div class="card-wrapper"><div class="card"><div class="card--content">
+<div class="card--text">
+<h3 class="h--smaller txt-clr--blck mb-0">Getting Started Guide</h3>
+<div class="separator separator--30"></div>
+<p class="mb-0">Learn three ways to get started with Morpheus, including how to use a pre-built docker container, how to build the Morpheus docker container, and how to build Morpheus from source.</p>
+<div class="separator separator--30"></div>
+</div>
+<div class="card--cta"><a href="https://docs.nvidia.com/morpheus/getting_started.html" target="_blank" title="Get Started" class="link-cta text-transform-unset fw-bold">Get Started</a></div>
+</div></div></div></div>
+<div class="col-xl-4 col-lg-4 col-sm-12 col-md-6"><div class="card-wrapper"><div class="card"><div class="card--content">
+<div class="card--text">
+<h3 class="h--smaller txt-clr--blck mb-0">Technical Briefs</h3>
+<div class="separator separator--30"></div>
+<p class="mb-0">Explore the training and inference pipelines, components, prerequisites, and more for working with the cybersecurity AI workflows.</p>
+<div class="separator separator--30"></div>
+</div>
+<div class="card--cta"><a href="https://docs.nvidia.com/ai-enterprise/workflows-cybersecurity-ai/0.1.0/index.html" target="_blank" title="Get Started" class="link-cta text-transform-unset fw-bold">Read Now</a></div>
+</div></div></div></div>
+<div class="col-xl-4 col-lg-4 col-sm-12 col-md-6"><div class="card-wrapper"><div class="card"><div class="card--content">
+<div class="card--text">
+<h3 class="h--smaller txt-clr--blck mb-0">Examples</h3>
+<div class="separator separator--30"></div>
+<p class="mb-0">Take a deeper dive into some of the concepts in Morpheus, including anomalous behavior profiling with the <a href="https://developer.nvidia.com/blog/sparse-forests-with-fil/" id="i2qlqh" title="RAPIDS FIL">RAPIDS Forest Inference Library (FIL)</a>, abnormal behavioral profiling detection, graph neural networks (GNN) fraud detection, and more.</p>
+<div class="separator separator--30"></div>
+</div>
+<div class="card--cta"><a href="https://docs.nvidia.com/morpheus/examples.html" target="_blank" title="Get Started" class="link-cta text-transform-unset fw-bold">Get Started </a></div>
+</div></div></div></div>
+<div class="col-xl-4 col-lg-4 col-sm-12 col-md-6"><div class="card-wrapper"><div class="card"><div class="card--content">
+<div class="card--text">
+<h3 class="h--smaller txt-clr--blck mb-0">Introductory Blog</h3>
+<div class="separator separator--30"></div>
+<p class="mb-0">Explore three use cases that demonstrate how generative AI and large language models (LLMs) improve cybersecurity, as well as three examples for applying AI foundation models for cybersecurity.<br></p>
+<div class="separator separator--30"></div>
+</div>
+<div class="card--cta"><a href="https://developer.nvidia.com/blog/?p=73728" title="Read Blog" class="link-cta text-transform-unset fw-bold">Read Blog</a></div>
+</div></div></div></div>
+<div class="col-xl-4 col-lg-4 col-sm-12 col-md-6"><div class="card-wrapper"><div class="card"><div class="card--content">
+<div class="card--text">
+<h3 class="h--smaller txt-clr--blck mb-0">Technical Session</h3>
+<div class="separator separator--30"></div>
+<p class="mb-0">Watch NVIDIA Director of Cybersecurity Engineering, Bartley Richardson, as he discusses the power of generative AI in helping businesses detect threats faster, fill data gaps, and enrich models with synthetic training data.<br></p>
+<div class="separator separator--30"></div>
+</div>
+<div class="card--cta"><a href="https://resources.nvidia.com/en-us-morpheus-developer/ai-powered-cybersecurity?lx=Wr-Hxo" target="_blank" title="Watch Now" class="link-cta text-transform-unset fw-bold">Watch Now<i class="chevron-right"></i></a></div>
+</div></div></div></div>
+<div class="col-xl-4 col-lg-4 col-sm-12 col-md-6"><div class="card-wrapper"><div class="card"><div class="card--content">
+<div class="card--text">
+<h3 class="h--smaller txt-clr--blck mb-0">GTC Session</h3>
+<div class="separator separator--30"></div>
+<p class="mb-0">Explore the latest developments in Morpheus and see how you can take advantage of the tools, frameworks, pre-trained models, and infrastructure optimization software for building solutions that tackle cybersecurity challenges.</p>
+<div class="separator separator--30"></div>
+</div>
+<div class="card--cta"><a href="https://resources.nvidia.com/l/en-us-gtcf22-morpheus?contentType=session" target="_blank" title="Watch Now" class="link-cta text-transform-unset fw-bold">Watch Now <br></a></div>
+</div></div></div></div>
+</div></section><section class="page__section pt-0 pb-0"><hr class="separator separator--md">
+<section class="page__section pt-0 pb-0"><h2 class="h--medium section__heading toc-item">Content Kits</h2>
+<p id="iqparh">Access technical content on cybersecurity topics such as spear phishing detection and digital fingerprinting. </p>
+<div class="row">
+<div class="col-sm-12 col-lg-6 col-md-6">
+<h3 id="ikdyxh" class="h--smaller">Spear Phishing Detection<br>
+</h3>
+<p id="itoq15">Spear phishing is one of the largest and most costly cyber threats to organizations. Customized for individuals and usually very convincing, spear phishing emails are difficult to defend against due to a lack of training data. This kit will take you through spear phishing detection built around Morpheus and demonstrate how to use the content. </p>
+<ul class="resources-list resources-list--vert-stacked">
+<li id="iyua0h"><a href="https://docs.nvidia.com/ai-enterprise/workflows-cybersecurity-ai/0.1.0/spear-phishing/technical-brief.html" id="iofjrw" target="_blank" title="Technical Brief">Technical Brief</a></li>
+<li id="ij253h"><a href="https://github.com/nv-morpheus/Morpheus/tree/branch-24.03/docs/source/modules/examples/spear_phishing" id="i7aseg" title="Example">Example</a></li>
+<li id="int8wu"><a href="https://docs.nvidia.com/morpheus/modules/index.html#spear-phishing-modules" id="ixmyzi" target="_blank" title="Modules">Modules</a></li>
+<li id="igsikg"><a href="https://github.com/nv-morpheus/Morpheus/tree/branch-24.03/examples/developer_guide/2_1_real_world_phishing" id="ijqkua" target="_blank" title="Developer Guide">Developer Guide</a></li>
+<li id="i7yjp8"><a href="https://resources.nvidia.com/en-us-morpheus-developer/detection-demo?lx=Wr-Hxo" target="_blank" id="ivf9x6" title="Demo">Demo</a></li>
+<div class="separator separator--30"></div>
+</ul>
+</div>
+<div class="col-sm-12 col-lg-6 col-md-6">
+<h3 id="isd5q5" class="h--smaller">Digital Fingerprinting</h3>
+<p id="iyry44">As the number of connected users and devices expands, enterprises are generating more data than they can collect and analyze, creating a cybersecurity challenge. Use this kit to build a fingerprint of every user on the network to better detect anomalies.</p>
+<ul class="resources-list resources-list--vert-stacked">
+<li><a href="https://resources.nvidia.com/en-us-digital-fingerprinting-workflow/cybersecurity-technical-brief" id="iei44z" target="_blank" title="Technical Brief">Technical Brief</a></li>
+<li><a href="https://github.com/nv-morpheus/Morpheus/tree/branch-24.03/examples/digital_fingerprinting" id="ih668j" target="_blank" title="Example">Example</a></li>
+<li><a href="https://docs.nvidia.com/morpheus/modules/index.html#digital-fingerprinting-modules" id="i0ihf9" target="_blank" title="Modules">Modules</a></li>
+<li id="in96sh"><a href="https://docs.nvidia.com/morpheus/developer_guide/guides/6_digital_fingerprinting_reference.html" id="i147s8" target="_blank" title="Reference Guide">Reference Guide</a></li>
+<li id="ip5soh"><a href="https://docs.nvidia.com/morpheus/developer_guide/guides/5_digital_fingerprinting.html" id="ihmstj" target="_blank" title="Developer Guide">Developer Guide</a></li>
+<li id="i2ovgq"><a href="https://www.nvidia.com/en-us/on-demand/session/gtcspring23-s51406/" id="il11tq" target="_blank" title="GTC Session">GTC Session</a></li>
+<li id="il5ye2"><a href="https://resources.nvidia.com/en-us-morpheus-developer/cyberscurity-pinpoints-threats-faster-demo?lx=Wr-Hxo" target="_blank" id="injnpw" title="Demo">Demo</a></li>
+</ul>
+</div>
+</div></section><h2 title="Labs, Trainings, and Workshops" class="h--medium section__heading toc-item tablet-45">
+<hr class="separator separator--md">Hands-On Labs, Self-Paced Training, and Instructor-Led Workshops</h2>
+<p id="i0u41d">Are you looking to test, prototype, and deploy your own applications and models? NVIDIA LaunchPad provides free access to NVIDIA hardware and software, so you can experience the power of cybersecurity through guided, hands-on labs. Plus, if you’re looking to grow your skills or accelerate your team’s development, NVIDIA Training offers instructor-led workshops and self-paced courses to get you started. </p>
+<div class="row cards__list">
+<div class="col-xl-4 col-lg-4 col-sm-12 col-md-6"><div class="card-wrapper"><div class="card">
+<img alt="Learn how to build AI-based cybersecurity solutions" src="https://developer.download.nvidia.com/images/morpheus/build-ai-based-cybersecurity-solutions-launch-pad-lab.jpg" class="img-fluid"><div class="card--content">
+<div class="card--text">
+<h3 class="h--smaller txt-clr--blck mb-0">Build AI-Based Cybersecurity Solutions LaunchPad Lab</h3>
+<div class="separator separator--30"></div>
+<p class="mb-0">In this free hands-on lab, you’ll find use case examples for digital fingerprinting, analyzing the behavior of every user and machine across the network, detecting and classifying phishing emails, profiling anomalous behavior, and more.</p>
+<div class="separator separator--30"></div>
+</div>
+<div class="card--cta"><a href="https://www.nvidia.com/en-us/launchpad/ai/build-ai-based-cybersecurity-solutions/" target="_blank" title="Apply Now" class="link-cta text-transform-unset fw-bold">Apply Now</a></div>
+</div>
+</div></div></div>
+<div class="col-xl-4 col-lg-4 col-sm-12 col-md-6"><div class="card-wrapper"><div class="card">
+<img alt="Learn how to detect spear phishing using Generative AI" src="https://developer.download.nvidia.com/images/morpheus/spear-phishing-detection.jpg" class="img-fluid"><div class="card--content">
+<div class="card--text">
+<h3 class="h--smaller txt-clr--blck mb-0">Spear Phishing Detection Using Generative AI LaunchPad Lab</h3>
+<div class="separator separator--30"></div>
+<p class="mb-0">Have an upcoming cybersecurity AI project? Apply to get hands-on experience using the NVIDIA AI workflow so you can build a faster, more accurate spear phishing detection solution.</p>
+<div class="separator separator--30"></div>
+</div>
+<div class="card--cta"><a href="https://www.nvidia.com/en-us/launchpad/ai/spear-phishing-detection/" target="_blank" title="Apply Now" class="link-cta text-transform-unset fw-bold">Apply Now</a></div>
+</div>
+</div></div></div>
+<div class="col-xl-4 col-lg-4 col-sm-12 col-md-6"><div class="card-wrapper"><div class="card">
+<img alt="Learn how to detect cyber threats using digital fingerprinting" src="https://developer.download.nvidia.com/images/morpheus/morpheus-dfp-gif.gif" class="img-fluid"><div class="card--content">
+<div class="card--text">
+<h3 class="h--smaller txt-clr--blck mb-0">Digital Fingerprinting to Detect Cyber Threats LaunchPad Lab</h3>
+<div class="separator separator--30"></div>
+<p class="mb-0">Identify and react to cybersecurity threats faster with AI-based threat detection and alert prioritization. Access a step-by-step guided lab for insider threat detection with ready-to-use software, sample data, and applications.</p>
+<div class="separator separator--30"></div>
+</div>
+<div class="card--cta"><a href="https://www.nvidia.com/en-us/launchpad/ai/digital-fingerprinting-to-detect-cyber-threats/" target="_blank" title="Apply Now" class="link-cta text-transform-unset fw-bold">Apply Now</a></div>
+</div>
+</div></div></div>
+<div class="col-xl-4 col-lg-4 col-sm-12 col-md-6"><div class="card-wrapper"><div class="card">
+<img alt="Learn how to develop and deploy NVIDIA digital fingerprinting with Morpheus" src="https://developer.download.nvidia.com/images/morpheus/digital-fingerprinting-with-morpheus-dli-course-2.jpg" class="img-fluid"><div class="card--content">
+<div class="card--text">
+<h3 class="h--smaller txt-clr--blck mb-0">Digital Fingerprinting with Morpheus DLI Course</h3>
+<div class="separator separator--30"></div>
+<p class="mb-0">In this course, you’ll get hands-on experience developing and deploying the NVIDIA digital fingerprinting AI workflow that enables 100 percent data visibility and drastically reduces the time to detect threats. You’ll also hear from cybersecurity experts from a variety of institutions about how to use NVIDIA AI frameworks and tools to architect cybersecurity solutions.</p>
+<div class="separator separator--30"></div>
+</div>
+<div class="card--cta"><a href="https://courses.nvidia.com/courses/course-v1:DLI+T-DS-02+V2/" target="_blank" title="Enroll Now" class="link-cta text-transform-unset fw-bold">Enroll Now</a></div>
+</div>
+</div></div></div>
+<div class="col-xl-4 col-lg-4 col-sm-12 col-md-6"><div class="card-wrapper"><div class="card">
+<img alt="Learn how to build AI-based cybersecurity pipelines" src="https://developer.download.nvidia.com/images/morpheus/building-ai-based-cybersecurity-pipelines.jpg" class="img-fluid"><div class="card--content">
+<div class="card--text">
+<h3 class="h--smaller txt-clr--blck mb-0">Building AI-Based Cybersecurity Pipelines Instructor Led Workshop</h3>
+<div class="separator separator--30"></div>
+<p class="mb-0">Build Morpheus pipelines to process and perform AI-based inference on massive amounts of data for cybersecurity use cases—in real time. Utilize several AI models with a variety of data input types for tasks like sensitive information detection, anomalous behavior profiling, and digital fingerprinting.</p>
+<div class="separator separator--30"></div>
+</div>
+<div class="card--cta"><a href="https://www.nvidia.com/en-us/training/instructor-led-workshops/building-ai-based-cybersecurity-pipelines/" target="_blank" title="Enroll Now" class="link-cta text-transform-unset fw-bold">Enroll Now</a></div>
+</div>
+</div></div></div>
+<div class="col-xl-4 col-lg-4 col-sm-12 col-md-6"><div class="card-wrapper"><div class="card">
+<img alt="Learn how to customize cybersecurity AI workflows" src="https://developer.download.nvidia.com/images/morpheus/customize-cybersecurity-workflows-launch-pad-lab.jpg" class="img-fluid"><div class="card--content">
+<div class="card--text">
+<h3 class="h--smaller txt-clr--blck mb-0">Customize Cybersecurity Workflows LaunchPad Lab</h3>
+<div class="separator separator--30"></div>
+<p class="mb-0">In this hands-on lab, design and optimize end-to-end cybersecurity AI workflows for production deployments of custom use cases using the NVIDIA Morpheus SDK. Simplify deployment of cybersecurity AI models using NVIDIA Triton™ Inference Server and its optimization utilities for accelerated inference.</p>
+<div class="separator separator--30"></div>
+</div>
+<div class="card--cta"><a href="https://www.nvidia.com/en-us/launchpad/ai/customized-cybersecurity-ai-applications/" target="_blank" title="Enroll Now" class="link-cta text-transform-unset fw-bold">Apply Now </a></div>
+</div>
+</div></div></div>
+</div></section><div class="separator separator--60"></div>
+<section class="page__section page__section--light-gray page__last-section page__cta-section"><p class="p--large lead text-center text-color-gray mb-0">Explore the online community for NVIDIA Morpheus, browse how-to questions and best practices, engage with other developers, and report bugs.</p>
+<div class="separator separator--60"></div>
+<p class="text-center mb-0"><a href="https://forums.developer.nvidia.com/c/ai-data-science/cybersecurity/455" target="_blank" title="Join Now" class="btn btn-cta">Join Now</a></p></section></main></div>
+<div class="col-xl-1 col-separator"></div>
+<div class="col-xl-2 col-lg-3 col-md-12 col-sm-12 col-sidebar"><aside class="page__sidebar with-sticky-nav"><div class="page-navigation-container"><div data-react-class="PageNavigation" data-react-props='{"draggable":"true","editable":"true","id":"iegw0f"}' data-react-cache-id="PageNavigation-iegw0f"></div></div></aside></div>
+</div></div>
+<div class="separator separator--90 phone-0"></div>
+</div>
+    </div>
+
+
+
+
+
+
+          <script type="text/javascript">
+  (() => {
+    const handleQuotesBlock = (quotesBlock, idx) => {
+      const blockquotes = quotesBlock.querySelectorAll('blockquote');
+      if (blockquotes.length < 1) {
+        return;
+      }
+
+      const navContainer = document.createElement('ul');
+      navContainer.classList.add('quotes-list-navigation');
+      for (let i = 0; i < blockquotes.length; i++) {
+        let navItem = document.createElement('li');
+        let btn = document.createElement('button');
+        btn.type = 'button';
+        btn.dataset['group'] = idx.toString();
+        btn.dataset['length'] = blockquotes.length.toString();
+        btn.value = i.toString();
+
+        btn.addEventListener('click', (e) => {
+          const group = e.target.dataset['group'];
+          const groupActiveButtons = document.querySelectorAll(`button[data-group="${group}"].active`);
+          groupActiveButtons.forEach((activeButton) => {
+            activeButton.classList.remove('active');
+          });
+          e.target.classList.add('active');
+          const viewPortWidth = quotesBlock.getBoundingClientRect().width;
+          const clickedSlide = parseInt(e.target.value);
+          quotesBlock.querySelector('.quotes-list').style.transform = `translate(-${viewPortWidth * clickedSlide}px)`;
+        });
+        navItem.appendChild(btn);
+        navContainer.appendChild(navItem);
+
+        if (i === 0) {
+          btn.click();
+        }
+      }
+      quotesBlock.appendChild(navContainer);
+    };
+
+    const refreshQuotesBlock = () => {
+      document.querySelectorAll('.quotes-list-navigation button.active').forEach((b) => {
+        const currentItem = parseInt(b.value);
+        const maxItem = parseInt(b.dataset['length']);
+        const group = parseInt(b.dataset['group']);
+        const next = currentItem + 1;
+        if (next < maxItem) {
+          document.querySelectorAll(`button[data-group="${group}"]`)[next].click();
+        } else {
+          document.querySelectorAll(`button[data-group="${group}"]`)[0].click();
+        }
+      });
+    };
+
+    const refreshInterval = 4000;
+    const quotesBlocks = document.querySelectorAll('.quotes-list-viewport');
+
+    if (quotesBlocks.length) {
+      quotesBlocks.forEach(handleQuotesBlock);
+      setInterval(refreshQuotesBlock, refreshInterval);
+    }
+  })();
+</script>
+
+      <script type="text/javascript" charset="utf-8">
+  (() => {
+    const doInit = (accordionRoot, idx) => {
+      const baseID = `page-accordion-${idx}`;
+      accordionRoot.id = baseID;
+      const headings = accordionRoot.querySelectorAll('.accordion-header');
+      if (!headings.length) {
+        return;
+      }
+
+      const collapseElements = accordionRoot.querySelectorAll('.accordion-collapse');
+
+      headings.forEach((headingElement, idx) => {
+        const headingID = `${baseID}-heading-${idx}`;
+        const targetID = `${baseID}-target-${idx}`;
+        headingElement.id = headingID;
+        const headingButton = headingElement.querySelector('.accordion-button');
+        if (!headingButton) {
+          return;
+        }
+        headingButton.type = 'button';
+        headingButton.dataset['bsToggle'] = 'collapse';
+        headingButton.dataset['bsTarget'] = `#${targetID}`;
+        headingButton.setAttribute('aria-expanded', true);
+        headingButton.setAttribute('aria-controls', targetID);
+        headingButton.setAttribute('role', 'button');
+
+        if (!collapseElements[idx].classList.contains('show')) {
+          headingButton.classList.add('collapsed');
+        }
+
+        collapseElements[idx].id = targetID;
+        collapseElements[idx].setAttribute('aria-labelledby', headingID);
+      });
+
+      new bootstrap.Collapse(accordionRoot);
+    };
+
+    const initAccordions = () => {
+      const accordions = document.querySelectorAll('section.page__section div.accordion');
+      if (!accordions.length) {
+        return;
+      }
+
+      let accordionIndex = 0;
+      accordions.forEach((accordion) => {
+        doInit(accordion, accordionIndex);
+        accordionIndex += 1;
+      });
+    };
+    
+    document.addEventListener('DOMContentLoaded', initAccordions)
+  })();
+</script>
+
+      <script src="https://developer.nvidia.com/assets/grapesjs-tabs-f0b094476ecf56695b765f533e437303138b1e0824d993c50ff672e16dcccd8f.js"></script>
+      <script src="https://developer.nvidia.com/assets/grapesjs-code-container-d9f9220defaa8a53ba3e8b7a6b1d155f6a1e5e5b37b9fa2282a7ace75bc60ae2.js"></script>
+      <script src="https://developer.nvidia.com/assets/legacy-chart/d3.v4.min-41cfecdf7c41476e805de7afacf4aacdd1a4be6947fbecf95217e947ebc2faf5.js"></script>
+      <script src="https://developer.nvidia.com/assets/legacy-chart/visualize-d-6a082dca95b2facd89f05ef138213cffea2419e9195042f6ceed4aa706943cb1.js"></script>
+      <script src="https://developer.nvidia.com/assets/momentjs/moment-b955adb4137f92dd932ff2c3179ce60cb5e1daed5fcc4423f95cf17df02b4d68.js"></script>
+      <script src="https://developer.nvidia.com/assets/momentjs/moment-timezone-with-data-10-year-range-dd05517070a46fa0052f9e706803d57a4fc38c1a223137ab480369e6308ba8d4.js"></script>
+      <script src="https://developer.nvidia.com/assets/calendar-256ba38a1da92b24c057388ff6623eddd4cf1498f51d1a389cc4dfac501ab87c.js"></script>
+      <script src="https://developer.nvidia.com/assets/hoverable-tooltip-06658c1c074450575999f586a2be4df71fb000fa8fbc3eec0955c1484012c593.js"></script>
+
+    <script src="https://developer.nvidia.com/assets/nv-developer-menu-8ae864e49d5d53c328146a66e7ad6d73242af7511f642a7d1aa1ffedd496f826.js"></script>
+  <div id='footer' class='mt-auto'></div>
+  <script src="https://www.nvidia.com/content/dam/en-zz/Solutions/librarian/bundle-search-prod-pub-v3.1.js"></script>
+  <div id="librarian-overlay"></div>
+  <script defer>
+    setTimeout(() => {
+      LIBRARIAN.Home.mount({
+        elementId: 'librarian-overlay',
+        searchPage: false,
+        placeholder: '',
+        site: 'https://developer.nvidia.com',
+        retainFilters: true,
+        overlay: true,
+        pillsOpen: true,
+        suggestedSearchPills: []
+      })
+    }, 1000)
+  </script>
+<script>
+  let menuLocale = 'en';
+
+  if (menuLocale == 'en') {
+    menuLocale = 'en-US';
+  }
+
+  function mountHeader(data = false) {
+    const headerTarget = document.getElementById('header');
+    if (!headerTarget) {
+      return;
+    }
+    let options = {
+      baseURL: window.location.origin,
+      signedIn: false,
+      locale: menuLocale
+    };
+
+    if (data) {
+      options.secondaryMenu = data;
+    }
+
+
+    options.showMembershipCardLink = true;
+
+    new NVDeveloperHeader({
+      target: headerTarget,
+      props: options
+    });
+  }
+
+  function mountFooter(data = false) {
+    const footerTarget = document.getElementById('footer');
+    if (!footerTarget) {
+      return;
+    }
+    let options = {
+      menu: data,
+      locale: menuLocale
+    };
+
+    new NVDeveloperFooter({
+      target: document.getElementById('footer'),
+      props: options
+    });
+  }
+
+  let url = 'd29g4g2dyqv443.cloudfront.net';
+  let headerMenuURL = "https://d29g4g2dyqv443.cloudfront.net/menu/en-US/header-secondary.json";
+
+  if (headerMenuURL) {
+    fetch(headerMenuURL)
+      .then(response => response.json())
+      .then(data => {
+        mountHeader(data);
+      })
+      .catch((error) => {
+        mountHeader();
+        window.nv.tracing.addError('menu', error);
+      });
+  } else {
+    mountHeader();
+  }
+
+  fetch(`https://${url}/menu/${menuLocale}/footer.json`)
+    .then(response => response.json())
+    .then(data => {
+      mountFooter(data);
+    })
+    .catch((error) => {
+      mountFooter();
+      window.nv.tracing.addError('menu', error);
+    });
+</script>
+
+      <script src="https://www.datadoghq-browser-agent.com/us1/v5/datadog-rum.js"></script>
+
+    
+    
+      <script>
+  let silentAuthHost = 'www.nvidia.com';
+  let crossOriginPageUrl = `https://${silentAuthHost}/auth/hints/`;
+
+  function readHint() {
+    return new Promise((resolve) => {
+      const { origin: targetOrigin } = new URL(crossOriginPageUrl);
+
+      const iframe = document.createElement('iframe');
+      iframe.hidden = true;
+      iframe.src = crossOriginPageUrl;
+
+      function responseHandler(event) {
+        if (event.origin === targetOrigin) {
+          iframe.parentNode.removeChild(iframe);
+          return resolve(event.data);
+        }
+      }
+
+      window.addEventListener('message', responseHandler, { once: true });
+
+      iframe.onload = () => {
+        iframe.contentWindow.postMessage({ type: 'read' }, targetOrigin);
+      }
+
+      document.body.appendChild(iframe);
+    });
+  }
+
+  function writeHint(login_hint, idp_id, timestamp, sub) {
+    const { origin: targetOrigin } = new URL(crossOriginPageUrl);
+
+    const iframe = document.createElement('iframe');
+    iframe.hidden = true;
+    iframe.src = crossOriginPageUrl;
+
+    iframe.onload = () => {
+      const message = { type: 'write', login_hint, idp_id, timestamp, sub };
+      iframe.contentWindow.postMessage(message, targetOrigin);
+    }
+
+    document.body.appendChild(iframe);
+  }
+
+  function deleteHint() {
+    const { origin: targetOrigin } = new URL(crossOriginPageUrl);
+
+    const iframe = document.createElement('iframe');
+    iframe.hidden = true;
+    iframe.src = crossOriginPageUrl;
+
+    iframe.onload = () => {
+      iframe.contentWindow.postMessage({ type: 'delete' }, targetOrigin);
+    }
+
+    document.body.appendChild(iframe);
+  }
+
+
+</script>
+
+    <script>_satellite.pageBottom();</script>
+    <script src="https://api-prod.nvidia.com/search/nvidia-search-library.js"></script>
+
+    <script src="https://developer.nvidia.com/assets/nv-gallery-widget-d1571cad15d961fd3ba013f57119be04a2adf32aa31b16be44a0f10f4671c37b.js"></script>
+    <script src="https://developer.nvidia.com/packs/js/runtime-f904b50470fcb0ec9bf4.js" defer="defer"></script>
+<script src="https://developer.nvidia.com/packs/js/4692-e2ed051c68e93113bb58.js" defer="defer"></script>
+<script src="https://developer.nvidia.com/packs/js/2681-6ac336ff34441936c0fb.js" defer="defer"></script>
+<script src="https://developer.nvidia.com/packs/js/2778-e8f3c5f27fbb1956fdb2.js" defer="defer"></script>
+<script src="https://developer.nvidia.com/packs/js/9878-baa65d618824b708a55b.js" defer="defer"></script>
+<script src="https://developer.nvidia.com/packs/js/8465-f321c9c28242e4383fa8.js" defer="defer"></script>
+<script src="https://developer.nvidia.com/packs/js/4622-1cd0dbd2a0f0b5243900.js" defer="defer"></script>
+<script src="https://developer.nvidia.com/packs/js/3566-c56dfeed5cc4ed4a9b8f.js" defer="defer"></script>
+<script src="https://developer.nvidia.com/packs/js/486-1ddc749b634c231b0122.js" defer="defer"></script>
+<script src="https://developer.nvidia.com/packs/js/8311-71b2da0387dad11f356f.js" defer="defer"></script>
+<script src="https://developer.nvidia.com/packs/js/1252-6d8bb3f37b33aca41843.js" defer="defer"></script>
+<script src="https://developer.nvidia.com/packs/js/8823-bac8f579788282b3f2cd.js" defer="defer"></script>
+<script src="https://developer.nvidia.com/packs/js/2104-29621183e9a96bb055ad.js" defer="defer"></script>
+<script src="https://developer.nvidia.com/packs/js/6900-b1b00a8ef19d3868862c.js" defer="defer"></script>
+<script src="https://developer.nvidia.com/packs/js/application-afbb46c9b6cc3093d8f1.js" defer="defer"></script>
+<script src="https://developer.nvidia.com/packs/js/ls_track-d4505a41101e752062c8.js" defer="defer"></script>
+  </body>
+</html>

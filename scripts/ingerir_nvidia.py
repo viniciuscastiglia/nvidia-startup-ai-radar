@@ -26,19 +26,28 @@ TRÊS DECISÕES QUE ESTE SCRIPT MATERIALIZA
 AS DUAS ESTRATÉGIAS SÃO INGERIDAS JUNTAS (D-027). São ~380 chunks no total; a comparação de
 recall@k da sessão 04 depende das duas estarem na tabela ao mesmo tempo.
 
+AS FONTES SÃO LIDAS DO CACHE VERSIONADO, NÃO DA REDE (06/09) — ver o bloco de decisão em
+`CACHE`, abaixo. Sem `--refetch`, este script não toca a internet.
+
 USO
 ---
-    python scripts/ingerir_nvidia.py --so-validar   # sem banco e sem API: só a distribuição
-    python scripts/ingerir_nvidia.py                # ingere; rodar de novo é upsert
+    python scripts/ingerir_nvidia.py --so-validar   # OFFLINE: chunking sem banco e sem API
+    python scripts/ingerir_nvidia.py                # ingere do cache; rodar de novo é upsert
     python scripts/ingerir_nvidia.py --tecnologia cuDF
+    python scripts/ingerir_nvidia.py --so-validar --refetch   # a rede é tocada: mede a DERIVA
 """
 
 from __future__ import annotations
 
 import argparse
+import hashlib
+import json
+import re
 import statistics
 import sys
 import time
+import unicodedata
+from datetime import date
 from pathlib import Path
 
 import httpx
@@ -53,6 +62,41 @@ from src.rag.chunking import Chunk, MetaDocumento, chunk_estrutural, chunk_fixo
 from src.rag.limpeza import RUIDO_HTML
 
 MANIFESTO = Path(__file__).resolve().parent.parent / "data" / "nvidia" / "fontes.yaml"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# CACHE DAS FONTES — o corpus de quem clona passa a ser o corpus medido
+#
+# O DEFEITO, MEDIDO EM 03/09 (D-089) E NÃO SUPOSTO. Até 06/09 este script baixava ao vivo das
+# 16 URLs a cada execução. O clone limpo daquele dia produziu a **mesma contagem (175 chunks)
+# com hash diferente**: a página do TensorRT-LLM rolou o mural de novidades e entrou lixo novo
+# (`✨ ➡️ link`). O gabarito de 24 perguntas aponta URL **e frase-âncora**, então quem avalia
+# roda `avaliar_rag.py` contra um corpus que não é o medido — e o número que ele vê não é o
+# número que este repositório afirma. O gabarito sobreviveu daquela vez porque a deriva bateu
+# em ruído; a próxima pode bater em âncora. *"Projeto que não executa"* é eliminatório.
+#
+# O QUE SE CACHEIA É O BRUTO, E ISSO É A DECISÃO
+# -----------------------------------------------
+# `r.text` é a ENTRADA dos passos 2 e 3 do pipeline. Cachear o texto limpo — ou, pior, os
+# chunks — economizaria espaço e tiraria `src/rag/limpeza.py` e `src/rag/chunking.py` do
+# caminho de quem clona: `--so-validar`, que existe justamente para exercitar o chunking sem
+# banco e sem API, deixaria de exercitar coisa nenhuma. E no dia em que a limpeza mudasse o
+# cache mentiria em silêncio, porque o texto gravado descreveria uma limpeza que não é mais a
+# do código. Guardando o bruto, o pipeline inteiro continua rodando em cima do cache.
+#
+# ALTERNATIVA DESCARTADA: pinar só o hash e FALHAR quando a página mudar, sem guardar conteúdo.
+# Torna a deriva visível — que é metade do problema — e deixa o corpus de quem avalia refém da
+# rede. O modo de falha piora: sai de "corpus diferente do medido" para "não roda".
+#
+# O CACHE ENTRA NO GIT, e é o ponto inteiro: sem ele versionado, o clone limpo não tem corpus.
+# `--refetch` é como a deriva volta a ser visível — re-baixa, compara hash a hash e **imprime o
+# que mudou**, em vez de sobrescrever calado.
+#
+# O ÍNDICE SE CHAMA `indice.json` E NÃO `manifesto.json` de propósito: `fontes.yaml` já é O
+# manifesto deste script, e dois arquivos com o mesmo nome de papel é a divergência esperando
+# a data.
+# ─────────────────────────────────────────────────────────────────────────────
+CACHE = MANIFESTO.parent / "cache"
+INDICE_CACHE = CACHE / "indice.json"
 
 PISO_CHARS = 3000
 PISO_HEADINGS = 3
@@ -80,10 +124,62 @@ class FonteInsuficiente(RuntimeError):
 # Passos 1 e 2 — buscar e validar
 # ─────────────────────────────────────────────────────────────────────────────
 
-def buscar(fonte: dict, cliente: httpx.Client) -> str:
+def _slug(texto: str) -> str:
+    """Nome de arquivo a partir do nome da tecnologia. Precisa ser ESTÁVEL: é chave de cache,
+    e um slug que muda transforma re-execução em re-download silencioso."""
+    limpo = unicodedata.normalize("NFKD", texto).encode("ascii", "ignore").decode()
+    return re.sub(r"[^a-z0-9]+", "-", limpo.lower()).strip("-")
+
+
+def caminho_de_cache(fonte: dict) -> Path:
+    """A extensão acompanha o `formato` do manifesto — o arquivo tem de ser legível por quem
+    abrir a pasta para conferir o que foi congelado."""
+    return CACHE / f"{_slug(fonte['tecnologia'])}.{'md' if fonte['formato'] == 'markdown' else 'html'}"
+
+
+def sha256(texto: str) -> str:
+    return hashlib.sha256(texto.encode("utf-8")).hexdigest()
+
+
+def normalizar_quebras(texto: str) -> str:
+    """CRLF -> LF na borda da rede. **Não é cosmético — é a corretude do cache.**
+
+    `Path.write_text` grava o que recebe; `Path.read_text` abre em modo texto e traduz `\r\n`
+    e `\r` para `\n`. Sem normalizar, o texto que `--refetch` entrega ao chunker NÃO É o texto
+    que uma leitura do cache entrega, e o cache deixa de ser reprodução do que foi medido — que
+    é a única coisa que ele existe para ser.
+
+    Medido em 06/09, e por isso a função existe: **7 das 16 fontes vêm com CRLF** (1.468
+    ocorrências na do Healthcare). As contagens de chunk saíram iguais nos dois caminhos, mas
+    isso é sorte do chunker, não desenho — e um `sha256` que não descreve o arquivo em disco é
+    um instrumento de deriva que mede a si mesmo.
+
+    Efeito de borda que é benefício: o hash passa a ser insensível à escolha de fim de linha do
+    servidor. Um CRLF que vira LF do outro lado não é deriva de conteúdo, e não deve aparecer
+    como se fosse.
+    """
+    return texto.replace("\r\n", "\n").replace("\r", "\n")
+
+
+def ler_indice() -> dict:
+    return json.loads(INDICE_CACHE.read_text(encoding="utf-8")) if INDICE_CACHE.exists() else {}
+
+
+def buscar(fonte: dict, cliente: httpx.Client, *, refetch: bool = False) -> tuple[str, str]:
+    """O bruto da fonte e DE ONDE ele veio — `cache` ou `rede`. Ver o bloco de decisão acima.
+
+    A rede só é tocada quando o cache não tem a fonte ou quando `--refetch` pede. É isso que
+    faz `--so-validar` rodar OFFLINE num clone limpo, que é o requisito inteiro.
+    """
+    arquivo = caminho_de_cache(fonte)
+    if arquivo.exists() and not refetch:
+        return arquivo.read_text(encoding="utf-8"), "cache"
     r = cliente.get(fonte["url_fetch"])
     r.raise_for_status()
-    return r.text
+    bruto = normalizar_quebras(r.text)
+    CACHE.mkdir(parents=True, exist_ok=True)
+    arquivo.write_text(bruto, encoding="utf-8")
+    return bruto, "rede"
 
 
 def medir(bruto: str, formato: str) -> tuple[int, int]:
@@ -232,6 +328,11 @@ def main() -> int:
     ap.add_argument("--so-validar", action="store_true",
                     help="busca e chunka, mas não chama a API de embedding nem toca no banco")
     ap.add_argument("--tecnologia", help="ingere só esta (nome exato do manifesto)")
+    # A ÚNICA PORTA PARA A REDE. Sem ela o script é offline por construção, que é o requisito
+    # do clone limpo. Combinada com `--so-validar` ela vira o instrumento de DERIVA: baixa,
+    # compara e imprime, sem gastar embedding nem tocar no banco.
+    ap.add_argument("--refetch", action="store_true",
+                    help="re-baixa as fontes, reescreve o cache e IMPRIME o que mudou")
     args = ap.parse_args()
 
     fontes = yaml.safe_load(MANIFESTO.read_text())
@@ -245,22 +346,53 @@ def main() -> int:
         print("Sem credencial: defina NVIDIA_API_KEY ou LLM_API_KEY no .env", file=sys.stderr)
         return 1
 
-    print(f"{len(fontes)} fontes · {'VALIDAÇÃO (sem banco, sem API)' if args.so_validar else DATABASE_URL}\n")
-    print(f"{'tecnologia':30} {'chars':>7} {'head':>5} {'estrut':>7} {'fixo':>5} {'mediana':>8}")
+    print(f"{len(fontes)} fontes · {'VALIDAÇÃO (sem banco, sem API)' if args.so_validar else DATABASE_URL}"
+          f" · {'REFETCH (toca a rede)' if args.refetch else 'do cache'}\n")
+    print(f"{'tecnologia':30} {'fonte':>6} {'chars':>7} {'head':>5} {'estrut':>7} {'fixo':>5} {'mediana':>8}")
 
     todos: list[Chunk] = []
     reprovadas: list[str] = []
+    indice = ler_indice()
+    novo_indice: dict[str, dict] = {}
+    derivaram: list[tuple[str, str, str]] = []
+    # SEM LINHA DE BASE NÃO EXISTE "NADA MUDOU". A primeira coleta de uma fonte não tem hash
+    # anterior para comparar, e imprimir "os hashes batem" ali seria afirmar uma verificação
+    # que não aconteceu — o mesmo defeito que `varrer_classes.py` cometeu ao imprimir
+    # "D-101 verificado" sem verificar nada (D-103).
+    inauguradas: list[str] = []
+    baixou = False
 
     with httpx.Client(follow_redirects=True, timeout=60.0, headers=CABECALHOS_WEB) as web:
         for fonte in fontes:
-            bruto = buscar(fonte, web)
+            bruto, origem = buscar(fonte, web, refetch=args.refetch)
+            baixou = baixou or origem == "rede"
+            # A CONTABILIDADE ACONTECE ANTES DO PISO DE QUALIDADE, e de propósito: uma fonte
+            # que passou a reprovar no piso é exatamente o caso em que se quer saber que o
+            # conteúdo mudou. Registrar só o que passa esconderia a causa.
+            atual = sha256(bruto)
+            anterior = (indice.get(fonte["tecnologia"]) or {}).get("sha256")
+            if origem == "rede":
+                if anterior is None:
+                    inauguradas.append(fonte["tecnologia"])
+                elif anterior != atual:
+                    derivaram.append((fonte["tecnologia"], anterior, atual))
+            novo_indice[fonte["tecnologia"]] = {
+                "url_fetch": fonte["url_fetch"],
+                "arquivo": caminho_de_cache(fonte).name,
+                "formato": fonte["formato"],
+                "bytes": len(bruto.encode("utf-8")),
+                "sha256": atual,
+                "baixado_em": (str(date.today()) if origem == "rede"
+                               else (indice.get(fonte["tecnologia"]) or {}).get("baixado_em", "")),
+            }
             chars, headings = medir(bruto, fonte["formato"])
             if chars < PISO_CHARS or headings < PISO_HEADINGS:
                 reprovadas.append(
                     f"{fonte['tecnologia']}: {chars} chars, {headings} headings "
                     f"em {fonte['url_fetch']} (piso: {PISO_CHARS} e {PISO_HEADINGS})"
                 )
-                print(f"{fonte['tecnologia']:30} {chars:>7} {headings:>5}   <-- REPROVADA NO PISO")
+                print(f"{fonte['tecnologia']:30} {origem:>6} {chars:>7} {headings:>5}"
+                      f"   <-- REPROVADA NO PISO")
                 continue
 
             meta = MetaDocumento(
@@ -273,8 +405,8 @@ def main() -> int:
             fixo = chunk_fixo(bruto, meta)
             todos += estrutural + fixo
             mediana = int(statistics.median([c.n_tokens for c in estrutural])) if estrutural else 0
-            print(f"{fonte['tecnologia']:30} {chars:>7} {headings:>5} {len(estrutural):>7} "
-                  f"{len(fixo):>5} {mediana:>8}")
+            print(f"{fonte['tecnologia']:30} {origem:>6} {chars:>7} {headings:>5} "
+                  f"{len(estrutural):>7} {len(fixo):>5} {mediana:>8}")
 
             if not args.so_validar:
                 for estrategia in ("estrutural-v1", "fixo-800"):
@@ -284,6 +416,32 @@ def main() -> int:
                         lote = grupo[i:i + TAMANHO_LOTE]
                         vetores += embedar([c.texto_indexado for c in lote], web)
                     gravar(grupo, vetores)
+
+    # O ÍNDICE É ESCRITO ANTES DA CHECAGEM DO PISO, e de propósito: os arquivos já estão em
+    # disco, e um índice que só registra o que passou no piso descreve um cache que não existe.
+    # Só grava quando alguma fonte veio da REDE — rodar do cache não pode reescrever `baixado_em`
+    # e transformar leitura em falso registro de coleta.
+    if baixou:
+        CACHE.mkdir(parents=True, exist_ok=True)
+        INDICE_CACHE.write_text(
+            json.dumps(dict(sorted(novo_indice.items())), ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8")
+        print(f"\ncache: {len(novo_indice)} fonte(s) em {CACHE.relative_to(CACHE.parents[2])}/")
+
+    # A DERIVA DE D-089 DEIXA DE SER HIPÓTESE E VIRA SAÍDA DE INSTRUMENTO. Em 03/09 ela foi
+    # descoberta comparando duas execuções à mão; a partir daqui o script a imprime.
+    if derivaram:
+        print(f"\nA PÁGINA MUDOU EM {len(derivaram)} FONTE(S) desde o último cache:")
+        for tecnologia, antes, agora in derivaram:
+            print(f"  {tecnologia:30} {antes[:12]} -> {agora[:12]}")
+        print("  O cache foi reescrito. Se o gabarito apontar frase-âncora numa destas,")
+        print("  rode `python scripts/avaliar_rag.py --validar` ANTES de re-ingerir.")
+    elif args.refetch and len(inauguradas) < len(novo_indice):
+        comparadas = len(novo_indice) - len(inauguradas)
+        print(f"\nnenhuma das {comparadas} fonte(s) com hash anterior mudou")
+    if inauguradas:
+        print(f"\n{len(inauguradas)} fonte(s) entraram no cache pela PRIMEIRA vez — não há hash "
+              f"anterior, logo não há deriva a comparar ainda")
 
     if reprovadas:
         print("\nFONTES REPROVADAS NO PISO DE QUALIDADE — a ingestão não continua:")
