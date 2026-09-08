@@ -91,7 +91,11 @@ por chamada), `defer=True` (o briefing só roda quando todas as branches termina
 (falha transitória de provedor não derruba a análise) e `error_handler` por nó (a etapa que falha
 registra o erro e **preserva** o que as anteriores produziram). Uma chain usaria zero disso.
 
-O **pipeline de RAG tem os 9 passos** que o TAPI especifica, um módulo por passo em `src/rag/`.
+O **pipeline de RAG tem os 9 passos** que o TAPI especifica. Cinco deles são um módulo cada em
+`src/rag/`: limpeza (2), chunking (3), busca híbrida (6, em `busca` + `lexical` + `fusao`),
+rerank (7) e geracao (8). Os outros quatro moram fora, e é onde eles pertencem: ingestão (1) em
+`scripts/ingerir_nvidia.py`, embeddings (4) em `busca.py` e no ingestor, armazenamento (5) no
+Postgres com pgvector, e avaliação (9) em `scripts/avaliar_rag.py`.
 O passo 8 — geração com citação e abstenção — é acessível pela interface, em `POST /api/perguntar`.
 
 ### O grafo compilado
@@ -155,7 +159,7 @@ Cada nó acima tem um `__error_handler__` que o diagrama omite por legibilidade 
 | # | Entregável | Onde | Como verificar |
 |---|---|---|---|
 | 1 | **Sistema multi-agente com LangGraph** | [`src/graph.py`](src/graph.py) (topologia) · [`src/agents/`](src/agents/) (um agente por módulo) · [`src/state.py`](src/state.py) (os dois estados) | `python -m src.graph "fintechs brasileiras usando IA"` |
-| 2 | **RAG NVIDIA com reranking** | [`src/rag/`](src/rag/) — **um módulo por passo** do pipeline de 9 do TAPI | `python scripts/avaliar_rag.py` · `--geracao` para a abstenção |
+| 2 | **RAG NVIDIA com reranking** | [`src/rag/`](src/rag/) — os passos 2, 3, 6, 7 e 8 do pipeline de 9 do TAPI, um módulo cada | `python scripts/avaliar_rag.py` · `--geracao` para a abstenção |
 | 3 | **Motor de recomendação** | [`src/agents/recommendation.py`](src/agents/recommendation.py) — os **7 campos obrigatórios** são atributos de `Recomendacao` em [`src/state.py`](src/state.py) | `python scripts/avaliar_agentes.py --regras-tapi` |
 | 4 | **Interface web** | [`src/web/`](src/web/) — FastAPI + SSE, front à mão | `python -m src.web` |
 | 5 | **Diferencial** | a **recusa fundamentada** — [seção acima](#o-diferencial-este-sistema-sabe-dizer-não) · [`src/agents/briefing.py`](src/agents/briefing.py) (`elegibilidade`) · [`src/rag/geracao.py`](src/rag/geracao.py) (abstenção) | `python scripts/varrer_elegibilidade.py --motivos` |
@@ -183,7 +187,7 @@ classe*: `tecnologias` · `justificativa_tecnica` · `justificativa_negocio` · 
 > **O provedor de LLM, embedding e rerank fica atrás de `src/config.py`** — nenhum agente conhece
 > a NVIDIA. Isso não é abstração gratuita: o catálogo de preview do `build.nvidia.com` aposentou
 > modelos usados por este projeto **quatro vezes em quatro meses**, sempre com HTTP 410 e sem
-> aviso prévio. `python scripts/smoke_nvidia.py` valida as três capacidades em 4 segundos, e é a
+> aviso prévio. `python scripts/smoke_nvidia.py` valida as três capacidades com uma chamada real de cada, e é a
 > primeira coisa a rodar quando algo parecer quebrado.
 
 ## Como rodar
@@ -210,7 +214,7 @@ docker compose up -d
 #        e no .env:  DATABASE_URL=postgresql://postgres:postgres@localhost:5433/case_nvidia
 
 # 4. popular
-python scripts/seed.py                  # 30 startups, 93 documentos
+python scripts/seed.py                  # 32 startups, 99 documentos
 python scripts/ingerir_nvidia.py        # 16 tecnologias -> 377 chunks, do cache versionado
 
 # 5. rodar
@@ -231,7 +235,7 @@ medido. `--refetch` re-baixa e imprime o que mudou.
 ### Verificar que está tudo de pé
 
 ```bash
-python scripts/smoke_nvidia.py            # as 3 capacidades da stack, em 4 s
+python scripts/smoke_nvidia.py            # as 3 capacidades da stack, com chamada real
 RERANK_PROVEDOR=nenhum pytest -q          # 134 testes
 python scripts/avaliar_rag.py             # a régua do RAG: ablação dos 5 motores
 python scripts/avaliar_agentes.py         # a régua dos agentes, com a linha de base trivial
@@ -270,12 +274,12 @@ Três disciplinas que valem mais que os números:
 │   ├── state.py                 os dois estados e os tipos de domínio (Afirmacao, Evidencia…)
 │   ├── config.py                provedor de LLM/embedding/rerank — o isolamento que importa
 │   ├── agents/                  um agente por módulo, cada um exportando `node(state) -> dict`
-│   ├── rag/                     um módulo POR PASSO do pipeline: limpeza, chunking, busca,
+│   ├── rag/                     os passos 2,3,6,7,8 do pipeline: limpeza, chunking, busca,
 │   │                            lexical, fusao, rerank, geracao (+ pipeline.py, a composição)
 │   └── web/                     FastAPI + SSE, e o front em `estatico/`
 ├── scripts/                     ingestão, seed, e as RÉGUAS (avaliar_*, varrer_*, medir_*)
 ├── data/
-│   ├── seed/                    30 startups, uma por arquivo YAML
+│   ├── seed/                    32 startups, uma por arquivo YAML
 │   ├── nvidia/                  manifesto das 16 fontes + o cache versionado delas
 │   └── avaliacao/               os gabaritos: RAG, exclusões, justificativas, regras do TAPI
 ├── tests/                       134 testes
@@ -286,7 +290,7 @@ Três disciplinas que valem mais que os números:
 ## Decisões de arquitetura
 
 **[`projeto/decisoes.md`](projeto/decisoes.md) é a parte deste repositório que vale mais a
-leitura.** São 118 decisões técnicas, cada uma com **a alternativa que foi descartada e o motivo**
+leitura.** São 120 decisões técnicas, cada uma com **a alternativa que foi descartada e o motivo**
 — porque decisão sem alternativa registrada não é revisável, e em seis meses ninguém lembra por
 quê. Ele registra também o que **deu errado**: hipóteses reprovadas pela própria régua, defeitos
 que só apareceram rodando o sistema, e ao menos uma auditoria cujos achados caíram na verificação.
