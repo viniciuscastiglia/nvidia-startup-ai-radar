@@ -1,0 +1,357 @@
+# Enter
+# Coletado em 2026-09-08. Todo `conteudo_texto` é o texto REAL da página em `url_fonte`,
+# extraído por `scripts/coletar.py` — não é paráfrase. Retipar à mão convidaria paráfrase,
+# que quebra a rastreabilidade sem que nada acuse.
+#
+# CAMADA "DADO" (D-062): esta fixture NÃO tem bloco `gabarito:` nem `perfil_alvo`, e a
+# ausência É a decisão. As 8 fixtures originais são a régua dos critérios 1 e 3; anotar
+# esta aqui seria medir o classificador contra um rótulo escrito na mesma sessão que leu
+# os mesmos documentos — calibrar contra o próprio gabarito.
+#
+# POR QUE ELA ENTROU (D-118): a base tinha `AI-native` 1 em 30, e o TAPI pede diversidade
+# de perfis "para que a classificação seja de fato exercitada". A escolha foi pela RUBRICA
+# de `contexto/02`, não pelo que o classificador reconhece — se ele errar esta empresa, o
+# achado é sobre o detector, não motivo para trocar a empresa.
+#
+# CAMPOS ESTRUTURADOS: só ficam preenchidos os que aparecem LITERALMENTE nos documentos.
+# `null` faz o Briefing reportar "requisito não verificado", que é correto; um valor
+# plausível e errado não reporta nada e ainda corrompe o filtro de elegibilidade.
+#
+# `ano_fundacao: 2023` e `estagio: série B` SÃO LITERAIS: a matéria do InfoMoney diz
+# "Fundada em setembro 2023" e "rodada série B". `data_publicacao` da matéria fica
+# nula — o texto coletado diz "Atualizado 4 meses atrás", que é relativo, não data.
+nome: Enter
+site: https://www.getenter.ai/
+setor: jurídico — agentes de IA para contencioso de massa
+estagio: série B
+localizacao: null
+ano_fundacao: 2023
+tamanho_time: null
+descricao_curta: Agentes de IA que executam o ciclo do contencioso de massa — da análise inicial à geração
+  de petições e ao cálculo de acordo — para os departamentos jurídicos de grandes empresas.
+fonte_descoberta: curadoria de 08/09 — primeiro unicórnio de IA da América Latina (InfoMoney)
+coletado_em: '2026-09-08'
+documentos:
+- tipo: site
+  titulo: ENTER | Agentes de IA para contencioso de massa
+  url_fonte: https://www.getenter.ai/
+  data_publicacao: null
+  conteudo_texto: 'Litigância abusiva: os padrões de fraudes e irregularidades identificados pelos agentes
+    de IA da Enter
+
+    Mais eficiência operacional, menos provisões. Cada etapa da esteira jurídica apoiada por IA
+
+    Ganhe eficiência na operação com IA, enquanto seu time jurídico se concentra na tomada de decisões
+    estratégicas
+
+    Por que abrimos a venda secundária de ações para todo o time em nossa Série B
+
+    Inteligência Artificial é a grande revolução tecnológica da nossa geração. Nossa missão é fazer do
+    Brasil um protagonista
+
+    You’re being directed to the version of Enter intended for international markets. Product and availability
+    may vary by jurisdiction.
+
+    continue to international website
+
+    Go to Brazil website
+
+    Os departamentos jurídicos das maiores empresas do Brasil operam com a tecnologia da Enter
+
+    fale com a enter
+
+    “Eu diria que a Enter veio para fazer com que o trabalho das pessoas seja mais eficiente, mais eficaz,
+    mais prazeroso e mais estratégico.”
+
+    Carolina Duarte, Diretora Executiva, Banco Mercantil
+
+    "O benefício que a gente colhe com isso é infinito. A gente ganha melhoria de processo interno, a
+    gente ganha escalabilidade, a gente trabalha padrão, trabalha qualidade."
+
+    Flavia Latella, Inter
+
+    "O que vai acontecer na prática é que o contencioso vai deixar de demandar o ser humano para trabalhar
+    naquela padronização. E vai colocar o ser humano para pensar teses."
+
+    Diego Barreto, CEO, iFood
+
+    "Eu diria que a Enter veio para fazer com que o trabalho das pessoas seja mais eficiente, mais eficaz,
+    mais prazeroso e mais estratégico."
+
+    Carolina Duarte, Diretora Executiva, Banco Mercantil
+
+    Os departamentos jurídicos das maiores empresas do Brasil operam com a tecnologia da Enter
+
+    Inteligência artificial é a maior revolução tecnológica da nossa geração, e nossa missão é fazer do
+    Brasil umprotagonistanessa história.
+
+    Fale com a Enter
+
+    "Eu diria que a Enter veio para fazer com que o trabalho das pessoas seja mais eficiente, mais eficaz,
+    mais prazeroso e mais estratégico."
+
+    Carolina Duarte, Diretora Executiva, Banco Mercantil
+
+    "O que vai acontecer na prática é que o contencioso vai deixar de demandar o ser humano para trabalhar
+    naquela padronização. E vai colocar o ser humano para pensar teses."
+
+    Diego Barreto, CEO, iFood
+
+    "O benefício que a gente colhe com isso é infinito. A gente ganha melhoria de processo interno, a
+    gente ganha escalabilidade, a gente trabalha padrão, trabalha qualidade."
+
+    Flavia Latella, Inter
+
+    Como o Nubank aumentou em 6 p.p. a taxa de êxito no contencioso de consumidor com a Enter
+
+    Aumento na taxa de êxito
+
+    + 6 p.p
+
+    Aceleração na implementação vs. previsto
+
+    2,5x mais rápido
+
+    Confira todos os resultados
+
+    CALL TO ACTION
+
+    Como a Enter empodera seu jurídico
+
+    Coleta de dados
+
+    Coleta de dados
+
+    A Enter se conecta via API aos tribunais, ERPs jurídicos e sistemas internos da empresa. Cada processo
+    é classificado por produto, alegação e valor
+
+    Leitura dos autos e subsídios
+
+    Leitura dos autos e subsídios
+
+    Agentes de IA leem cada documento do processo — contratos, áudios, vídeos, extratos — e extraem as
+    informações relevantes para a defesa
+
+    Enriquecimento de evidências
+
+    Enriquecimento de evidências
+
+    Fontes externas e bases públicas são incorporadas ao caso para trazer novas evidências à defesa
+
+    Checagem de fraudes e irregularidades
+
+    Checagem de fraudes e irregularidades
+
+    Com mais de 30 verificações, a tecnologia da Enter identifica padrões de litigância abusiva — como
+    litispendência, adulteração de documentos e atuação coordenada entre litigantes
+
+    Apoio à elaboração de textos
+
+    Apoio à elaboração de textos
+
+    A Enter apoia a elaboração de textos com a primeira sugestão, alimentada pelos dados do caso — autos,
+    subsídios e evidências externas coletadas —, para que o departamento jurídico e os advogados do escritório
+    do cliente tomem a decisão sobre a melhor estratégia
+
+    Coleta de dados
+
+    A Enter se conecta via API aos tribunais, ERPs jurídicos e sistemas internos da empresa. Cada processo
+    é classificado por produto, alegação e valor
+
+    Eles contam melhor do que a gente
+
+    Ver nossos cases
+
+    "Os resultados mostraram aumento de 6 p.p. na taxa de êxito comparando casos do mesmo mês de entrada.
+    A confiabilidade nos fez acelerar a implementação em 2,5x."
+
+    Head of Legal Brazil, Nubank
+
+    "A Enter nos deu visib'
+- tipo: vaga
+  titulo: ENTER | Carreiras
+  url_fonte: https://www.getenter.ai/carreiras
+  data_publicacao: null
+  conteudo_texto: 'Enter levanta mais de US$ 100 milhões e se torna o primeiro unicórnio de IA da América
+    Latina.
+
+    Mais eficiência operacional, menos provisões. Cada etapa da esteira jurídica apoiada por IA
+
+    Do cálculo à audiência, ganhe eficiência na operação com IA, enquanto seu time jurídico se concentra
+    na tomada de decisões estratégicas
+
+    Por que abrimos a venda secundária de ações para todo o time em nossa Série B
+
+    Inteligência Artificial é a grande revolução tecnológica da nossa geração. Nossa missão é fazer do
+    Brasil um protagonista
+
+    You’re being directed to the version of Enter intended for international markets. Product and availability
+    may vary by jurisdiction.
+
+    continue to international website
+
+    Go to Brazil website
+
+    VEM PRA ENTER
+
+    Os melhores talentos encontram na Enter seu próximo desafio
+
+    Inteligência artificial é a maior revolução tecnológica da nossa geração, e nossa missão é fazer do
+    Brasil um protagonista nessa história.
+
+    Todas as vagas
+
+    Mas, o que é a Enter?
+
+    Desenvolveu um sistema de detecção de irregularidades operacionais
+
+    João Pedro Ribeiro • AI Deployment Associate
+
+    Escola Politécnica da USP
+
+    Estruturou, do zero, a base de dados e a taxonomia usadas no treinamento dos modelos de classificação
+
+    Ana Luísa Souza • Product Manager
+
+    Rio de Janeiro
+
+    Liderou o estudo de expansão para definição da próxima avenida de crescimento da Enter
+
+    Júlia Lübe  • Chief of Staff
+
+    Talento global, agora no Brasil
+
+    Um dos maiores e mais influentes fundos de venture capital do mundo, fundado em 1972 no Vale do Silício.
+    Famoso por investir cedo na Apple, Google, YouTube e WhatsApp. Em mais de 50 anos, fez apenas dois
+    investimentos no Brasil: Nubank e Enter.
+
+    Um dos maiores e mais influentes fundos de venture capital do mundo, fundado em 1972 no Vale do Silício.
+    Famoso por investir cedo na Apple, Google, YouTube e WhatsApp. Em mais de 50 anos, fez apenas dois
+    investimentos no Brasil: Nubank e Enter.
+
+    Fundo de venture capital do cofundador do PayPal. Primeiro investidor institucional do Facebook, SpaceX
+    e Palantir, e um dos primeiros em Stripe e OpenAI. Sua única aposta em legal AI no mundo foi na Enter.
+
+    Fundo de venture capital do cofundador do PayPal. Primeiro investidor institucional do Facebook, SpaceX
+    e Palantir, e um dos primeiros em Stripe e OpenAI. Sua única aposta em legal AI no mundo foi na Enter.
+
+    Fundo de venture capital focado em startups de tecnologia em estágio inicial na América Latina. Fundado
+    por Julio Vasconcellos, primeiro funcionário do Facebook no Brasil e fundador do Peixe Urbano.
+
+    Fundo de venture capital focado em startups de tecnologia em estágio inicial na América Latina. Fundado
+    por Julio Vasconcellos, primeiro funcionário do Facebook no Brasil e fundador do Peixe Urbano.
+
+    Fundo de venture capital brasileiro focado em early-stage. Fundado por Bruno Yoshimura, fundador e
+    ex-CTO do Delivery Direto, empresa adquirida pela Locaweb. Portfólio inclui também Gympass e Rappi.
+
+    Fundo de venture capital brasileiro focado em early-stage. Fundado por Bruno Yoshimura, fundador e
+    ex-CTO do Delivery Direto, empresa adquirida pela Locaweb. Portfólio inclui também Gympass e Rappi.
+
+    O time que constrói a fundação da Enter: de modelos à infraestrutura, o time é composto por engenheiros
+    vindo de empresas como Wildlife, Tesla e Facebook resolvendo um dos problemas mais complexos do país.
+
+    Uma função que trouxemos do Vale do Silício para o Brasil. Você entra nas maiores empresas do país
+    para identificar onde a IA gera valor, construir a solução e garantir que o resultado aconteça.
+
+    A missão de um Legal Strategist na Enter é construir a estratégia jurídica que orienta os agentes
+    de IA da Enter dentro de empresas com centenas de milhões de reais em passivo contingente.
+
+    Como pensamos, decidimos e construímos na Enter
+
+    Como é trabalhar na Enter?
+
+    Aqui, operamos com senso de urgência máximo. Estamos no mesmo barco, com impaciência para resolver
+    os problemas e inconformismo constante. Nada é definitivo, porque sempre há mais por construir e o
+    que estamos construindo é grande.
+
+    O que a Enter espera de você?
+
+    Buscamos pessoas que elevam o padrão e não contornam a realidade. Deliver Wow define a ambição da
+    entrega, enquanto Immediate Candor sustenta um ambiente onde a verdade é dita'
+- tipo: noticia
+  titulo: 'Startups: Quem é a Enter, unicórnio brasileiro de IA do setor jurídico'
+  url_fonte: https://www.infomoney.com.br/mercados/startups-quem-e-a-enter-unicornio-brasileiro-de-ia-do-setor-juridico/
+  data_publicacao: null
+  conteudo_texto: 'Startups: Quem é a Enter, unicórnio brasileiro de IA do setor jurídico
+
+    Legaltech brasileira triplica valuation em um ano, chega a US$ 1,2B e acelera expansão com novos investidores
+
+    Gabriela Del Carmen
+
+    Atualizado 4 meses atrás
+
+    A Enter, startup que usa inteligência artificial para estruturar estratégias jurídicas em larga escala,
+    entrou na terça-feira (5) para um grupo ainda restrito no mercado global de tecnologia. A companhia
+    levantou R$ 500 milhões em uma rodada série B e atingiu valuation de US$ 1,2 bilhão – mais que o triplo
+    da avaliação registrada há um ano. Com isso, torna-se o primeiro unicórnio de IA da América Latina
+    e o primeiro do Brasil desde 2024.
+
+    A rodada foi liderada pela Founders Fund, que já havia liderado a série A, de US$ 35 milhões. O novo
+    aporte também marca a entrada da Kaszek e da Ribbit Capital. Investidores já presentes, como Sequoia
+    Capital, OneVC e Atlantico, acompanharam.
+
+    Segundo o CEO e cofundador Mateus Costa-Ribeiro, a composição do captable foi pensada como uma aliança
+    estratégica com players relevantes de IA. Esses fundos têm no portfólio empresas como SpaceX, OpenAI,
+    Anthropic, Facebook, Apple e Google.
+
+    Comece agora!
+
+    Mesmo gerando caixa, a empresa decidiu aproveitar o momento de desempenho para levantar a rodada.
+    A estrutura, com baixa diluição, também pesou na decisão.
+
+    Unicórnio em menos de três anos
+
+    Fundada em setembro 2023, a Enter nasceu quando Mateus, então com 23 anos, deixou a carreira como
+    advogado nos Estados Unidos e um MBA em Stanford para empreender ao lado de Michael Mac-Vicar, ex-CTO
+    da Wildlife, e Henrique Vaz, formado por Harvard.
+
+    O foco da startup é automatizar o contencioso empresarial, usando IA para analisar processos, organizar
+    provas e sugerir caminhos jurídicos, que depois passam por revisão humana. A tecnologia opera sobre
+    grandes volumes de dados e combina modelos de linguagem – como OpenAI, Anthropic e Google – com bases
+    proprietárias.
+
+    Continua depois da publicidade
+
+    Leia também: Forbes lista 25 startups americanas com potencial para se tornarem novos unicórnios
+
+    A empresa rapidamente atingiu geração de caixa, ainda no primeiro ano. Em 2025, alcançou receita recorrente
+    anualizada (ARR) de R$ 50 milhões – número que, segundo a companhia, cresceu 13 vezes neste ano.
+
+    Na operação, a Enter afirma já processar mais de 300 mil casos por ano e cerca de 20 bilhões de tokens
+    por dia. O modelo de receita combina pagamento antecipado pelo uso da tecnologia com uma parcela variável
+    atrelada ao desempenho: cerca de 30% depende do sucesso nas ações. Em muitos casos, os processos são
+    resolvidos em poucos meses.
+
+    A Enter se junta a um pequeno grupo de legaltechs bilionárias, como a norte-americana Harvey, avaliada
+    em US$ 11 bilhões, e a sueca Legora, com valuation de US$ 5,6 bilhões.
+
+    Continua depois da publicidade
+
+    Parte dos recursos será usada para acelerar novas frentes, especialmente a área trabalhista, onde
+    a empresa já começou a operar com cinco clientes.
+
+    Hoje, a Enter atende cerca de 40 grandes empresas, incluindo Latam Airlines, Azul, Santander, Bradesco,
+    Nubank, C6 Bank, Vivo, SulAmérica e Airbnb. A meta é dobrar essa base até o fim do ano.
+
+    O capital será direcionado principalmente para contratação e infraestrutura. A startup planeja adicionar
+    80 engenheiros, chegando a cerca de 200 funcionários – mais de 85% em áreas técnicas – além de investir
+    em pesquisa e desenvolvimento.
+
+    Continua depois da publicidade
+
+    Parte desse avanço passa por um acordo com o Conselho Nacional de Justiça (CNJ) para construir uma
+    base histórica de processos judiciais no país.
+
+    No longo prazo, a estratégia inclui expansão para o mercado norte-americano e a construção de uma
+    empresa global de IA aplicada ao sistema jurídico. Nesse horizonte, um IPO é considerado um caminho
+    possível.
+
+    A legaltech considera o status de unicórnio é um marco relevante, embora não defina o objetivo da
+    empresa. A prioridade segue sendo crescimento e execução em escala.
+
+    Continua depois da publicidade
+
+    Conteúdo produzido por Startups.com.br
+
+    Fundado em 2020, o Startups.com.br está no centro da tecnologia e da inovação, conectando startups,
+    investidores e grandes corporações. Tudo o que movimenta o ecossistema no Brasil e no mundo é ac'

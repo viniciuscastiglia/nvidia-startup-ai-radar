@@ -1,0 +1,343 @@
+# NeoSpace
+# Coletado em 2026-09-08. Todo `conteudo_texto` é o texto REAL da página em `url_fonte`,
+# extraído por `scripts/coletar.py` — não é paráfrase. Retipar à mão convidaria paráfrase,
+# que quebra a rastreabilidade sem que nada acuse.
+#
+# CAMADA "DADO" (D-062): esta fixture NÃO tem bloco `gabarito:` nem `perfil_alvo`, e a
+# ausência É a decisão. As 8 fixtures originais são a régua dos critérios 1 e 3; anotar
+# esta aqui seria medir o classificador contra um rótulo escrito na mesma sessão que leu
+# os mesmos documentos — calibrar contra o próprio gabarito.
+#
+# POR QUE ELA ENTROU (D-118): a base tinha `AI-native` 1 em 30, e o TAPI pede diversidade
+# de perfis "para que a classificação seja de fato exercitada". A escolha foi pela RUBRICA
+# de `contexto/02`, não pelo que o classificador reconhece — se ele errar esta empresa, o
+# achado é sobre o detector, não motivo para trocar a empresa.
+#
+# CAMPOS ESTRUTURADOS: só ficam preenchidos os que aparecem LITERALMENTE nos documentos.
+# `null` faz o Briefing reportar "requisito não verificado", que é correto; um valor
+# plausível e errado não reporta nada e ainda corrompe o filtro de elegibilidade.
+#
+# `ano_fundacao: 2023` É LITERAL: a matéria da Exame diz "A empresa nasceu em 2023".
+# Os demais campos ficam nulos porque nenhum dos três documentos os declara.
+#
+# CORTE: linhas de pontuação PURA foram removidas do bloco de assinatura da matéria
+# (um ':' e um '.' soltos, restos do carimbo de data). Elas reprovam em
+# `seed.py --so-validar` por virarem citação de evidência — é o defeito de D-097.
+nome: NeoSpace
+site: https://www.neospace.ai/
+setor: infraestrutura de IA — modelos fundacionais para dados corporativos
+estagio: null
+localizacao: null
+ano_fundacao: 2023
+tamanho_time: null
+descricao_curta: Desenvolve Large Data Models (LDM), modelos fundacionais próprios treinados para interpretar
+  grandes volumes de dados corporativos estruturados e não estruturados, servidos por plataforma de dados
+  própria (NeoData).
+fonte_descoberta: curadoria de 08/09 — citada pela NVIDIA no palco do GTC 2026 (Exame)
+coletado_em: '2026-09-08'
+documentos:
+- tipo: site
+  titulo: NeoSpace AI | Large Data Models e plataforma de inteligência em tempo real
+  url_fonte: https://www.neospace.ai/
+  data_publicacao: null
+  conteudo_texto: 'dia.
+
+    A parte difícil? Transformar o fluxo bruto de eventos em decisões em tempo real. É isso que Large
+    Data Models fazem.
+
+    Solicitar demoVer o benchmark completo
+
+    Conheça o NeoData
+
+    A plataforma de dados criada pela NeoSpace para alimentar Large Data Models em escala
+
+    IA em escala massiva
+
+    IA construída sob medida para lidar com datasets massivos, estruturados ou não estruturados.
+
+    Um modelo unificado
+
+    Correlaciona todos os sinais de todos os fluxos de dados dentro de um único modelo unificado.
+
+    Otimizado para entregar previsões com latência ultrabaixa e alto throughput em escala.
+
+    Design dinâmico garante modelos sempre gerais, atualizados e altamente relevantes.
+
+    Gera continuamente ações individualizadas para cada interação com o cliente.
+
+    Sem pipelines frágeis
+
+    Sem pipelines frágeis — conecte seus dados e comece a rodar.
+
+    NeoData · Data Integration
+
+    snowflake · prodwarehouse
+
+    events ingestedno transformation
+
+    NeoData · Data Quality
+
+    customer-events · v14Locked
+
+    Rows4.65M+33.3% vs v13
+
+    Null Rate0.4%2 of 20 columns
+
+    Columns2012 num · 6 cat · 2 date
+
+    NeoData · Training runs
+
+    foundation · v14Trained once
+
+    NeoData · Inference Server
+
+    fraud · v4escalate
+
+    churn · v2no action
+
+    fraud · v4escalate
+
+    to your systems
+
+    Targets 40Critical 1Attention 9Normal 30
+
+    card · international
+
+    wallet · high_value
+
+    pos · retail
+
+    01dados como estão
+
+    Conecte os dados como eles já são.
+
+    Warehouses, lakes, streams de eventos, texto. Sem feature engineering, sem agregação, sem pipeline
+    para manter. O modelo lê a sequência, não um resumo dela.
+
+    Todo evento que seus sistemas já gravam é sinal aproveitável.
+
+    02governança por padrão
+
+    Saiba exatamente o que entrou.
+
+    Cada dataset é perfilado, versionado e monitorado antes de qualquer passo de treino — nulos, schema,
+    distribuição. Auditável ponta a ponta, que é o que uma operação regulada precisa.
+
+    Datasets reproduzíveis, rastreáveis até a versão que treinou o modelo.
+
+    03um modelo, não centenas
+
+    Treine uma vez. Cubra todas as perguntas.
+
+    O aprendizado auto-supervisionado constrói um entendimento persistente do comportamento de cada entidade.
+    Depois, uma especialização por pergunta — churn, fraude, demanda, falha — sobre a mesma fundação.
+
+    Frotas de modelos de propósito único e seus pipelines deixam de existir.
+
+    Decida onde o trabalho acontece. Acompanhe se sustenta.
+
+    Probabilidades calibradas e ações recomendadas entram nos sistemas que já rodam a sua operação, com
+    drift monitorado por target — você vê a qualidade mexer antes do negócio sentir.
+
+    O mesmo modelo que serve as decisões é o que está sendo medido.
+
+    Os seus dados de um lado,
+
+    a vida inteira do modelo do outro.
+
+    Os seus dados
+
+    Warehouses, lakes, streams e texto
+
+    Os eventos que os seus sistemas já escrevem
+
+    Sem agregação, sem feature engineering
+
+    Perfilados, versionados, auditáveis
+
+    eventos do clientedecisões saindo
+
+    Pré-treino sobre a sequência crua
+
+    Pós-treino, um head por pergunta
+
+    Inferência calibrada nos eventos que chegam
+
+    Drift monitorado por target
+
+    NeoData foi construído para escala enterprise
+
+    Bilhões de linhas
+
+    Processe bilhões de linhas e gerencie petabytes de dados corporativos sem esforço.
+
+    Todos os tipos de dados
+
+    Estruturados ou não estruturados, todos os tipos de dados modelados juntos em um só sistema.
+
+    Modelos auto-otimizáveis evoluem continuamente com cada novo fluxo de dados.
+
+    SOC 2 e GDPR
+
+    Conformidade SOC 2 e GDPR, além de governança com controle de acesso avançado.
+
+    Compatível com BI e ML
+
+    Totalmente compatível com sua infraestrutura de BI, ML e dados.
+
+    Prova, não promessa: resultados que você pode reproduzir
+
+    Todo resultado que publicamos, com os notebooks para reproduzir.
+
+    Todos os benchmarks
+
+    Cortex no benchmark de fraude de cartão IBM TabFormer
+
+    Detecção de fraude no estado da arte com uma fração dos parâmetros — 0,99 de AUPRC contra 0,83 do
+    Revolut PRAGMA-M e 0,18 do NVIDIA TFM.
+
+    Implante LDMs onde dados são sua vantagem competitiva
+
+    Perdas com fraude−92%
+
+    Decisões na velocidade da transação, sobre o histórico bruto de eventos em vez de agregações defasadas.
+
+    Detecção de fraude
+
+    Score de crédito
+
+    Churn e retenção
+
+    Cada interação vira sinal — preços e recomendações que reagem em tempo real.
+
+    Previsão de demanda
+
+    Inteligência de cesta
+
+    Dados de rede e de clientes unificados num único modelo que age antes d'
+- tipo: vaga
+  titulo: Carreiras | NeoSpace AI
+  url_fonte: https://www.neospace.ai/careers
+  data_publicacao: null
+  conteudo_texto: 'Construa o futuro da IA conosco
+
+    Trabalhamos na interseção de dados, IA e sistemas do mundo real — resolvendo problemas complexos para
+    empresas que operam em escala massiva.
+
+    Ver 4 vagas abertasEnviar meu perfil
+
+    A NeoSpace é uma empresa de IA focada em criar modelos fundacionais baseados em Large Data Models.
+    Nosso trabalho combina desenvolvimento de modelos com uma plataforma própria de treinamento e gestão,
+    permitindo iterar mais rápido, manter controle sobre dados e experimentos e escalar modelos com confiança.
+
+    Construímos inteligência artificial que gera impacto real, com padrões éticos, segurança forte e uso
+    prático em ambientes complexos do mundo real, hoje.
+
+    Trabalhamos para posicionar o Brasil como referência global em inteligência artificial, desenvolvendo
+    modelos, tecnologia e talentos de classe mundial com alcance global em escala.
+
+    Buscamos excelência técnica com responsabilidade e ownership de ponta a ponta, agindo proativamente
+    para entregar resultados confiáveis dos dados aos casos de uso reais.
+
+    Por que trabalhar na NeoSpace
+
+    Onde modelos são construídos de verdade
+
+    Na NeoSpace, você não vai fazer fine-tuning de modelos de prateleira nem trabalhar em camadas superficiais
+    de IA.
+
+    Trabalhe diretamente no treinamento de modelos fundacionais com Large Data Models — da preparação
+    de dados às execuções de treino e avaliação.
+
+    Molde o aprendizado dos modelos desenhando datasets, estratégias de treino e workflows alinhados a
+    casos de uso reais.
+
+    Desenvolva a plataforma interna que suporta treinamento, versionamento, orquestração e gestão de ciclo
+    de vida de modelos em escala.
+
+    Encare desafios de complexidade de dados, performance de modelos, escalabilidade e controle.
+
+    Estamos montando um time para expandir as fronteiras dos modelos fundacionais de IA. Se você quer
+    trabalhar com treinamento de modelos, pipelines de dados ou as plataformas que os suportam — com alto
+    padrão técnico — queremos falar com você.
+
+    Analista de Governança de Segurança da Informação
+
+    Pesquisador em IA
+
+    Cientista de Dados
+
+    Especialista em Cloud
+
+    Entre para o Talent Pool da NeoSpace
+
+    Estamos sempre em busca de pessoas talentosas que queiram moldar o futuro dos dados, da IA e da tomada
+    de decisão inteligente. Envie o seu perfil para o nosso Talent Pool e seja considerado para oportunidades
+    futuras na NeoSpace.
+
+    Enviar meu perfil'
+- tipo: noticia
+  titulo: Citada pela Nvidia, brasileira Neospace quer transformar dados de empresas em cérebro corporativo
+  url_fonte: https://exame.com/inteligencia-artificial/citada-pela-nvidia-brasileira-neospace-quer-transformar-dados-de-empresas-em-cerebro-corporativo/
+  data_publicacao: '2026-03-23'
+  conteudo_texto: 'Citada pela Nvidia, brasileira Neospace quer transformar dados de empresas em cérebro
+    corporativo
+
+    A startup nasceu de ex-sócios da Zup, levantou infraestrutura rara de IA na América Latina e aposta
+    num caminho menos lotado que o dos chatbots: criar modelos fundacionais para dados de grandes empresas
+
+    Bruno Pierobon, Felipe Almeida e Gustavo Debs, fundadores da NeoSpace  (Reprodução)
+
+    Editor de Inteligência Artificial e Tecnologia
+
+    23 de março de 2026 às
+
+    Priorizar nos meus resultados Google
+
+    *SAN JOSE - Entre as centenas de logos que passaram pelo palco e pelos telões do GTC 2026, o principal
+    evento anual da Nvidia, uma chamou atenção por vir de um mercado que costuma aparecer mais como consumidor
+    do que como protagonista de tecnologia de base. A brasileira Neospace foi uma das empresas mencionadas
+    pela gigante americana numa conferência dominada por hyperscalers, fabricantes de chips e startups
+    de inteligência artificial do eixo Estados Unidos-Europa. Para uma companhia ainda jovem, a exposição
+    funciona como selo técnico e também como resumo de ambição: a empresa quer sair do Brasil não como
+    usuária da onda de IA, mas como construtora de uma peça central dela.
+
+    A tese é menos vistosa do que a dos chatbots, mas potencialmente mais valiosa. Enquanto boa parte
+    do mercado correu para adaptar grandes modelos de linguagem a tarefas corporativas, a Neospace decidiu
+    atacar um problema diferente: a dificuldade das empresas de extrair valor dos próprios dados. Não
+    se trata, na visão dos fundadores, de usar IA para responder perguntas com mais fluidez. Trata-se
+    de criar o que eles chamam de "cérebro corporativo" — uma camada de inteligência capaz de cruzar dados
+    estruturados e não estruturados, encontrar padrões e devolver decisões de negócio com mais precisão.
+
+    A empresa nasceu em 2023, quando Felipe Almeida, Bruno Pierobon e Gustavo Debs começaram a desenhar
+    o que fariam depois do ciclo da Zup, a empresa de transformação digital criada em Minas Gerais, no
+    ano de 2011, e vendida ao Itaú, em 2020, por R$ 500 milhões. A Zup cresceu ajudando grandes companhias
+    — bancos, teles, seguradoras — a refazer jornadas digitais, produtos e cultura tecnológica. Chegou
+    a cerca de 3.500 funcionários antes da venda. O acordo com o Itaú previa um período de permanência
+    dos fundadores, que durou até 2024. A saída abriu espaço para uma nova aposta, agora bem mais técnica
+    e mais arriscada.
+
+    "A gente queria criar tecnologia do zero. Não queria ser só um ''wrapper'', uma camada em cima do
+    que já existia", disse Felipe Almeida em entrevista à EXAME. "E queria fazer uma empresa que já nascesse
+    com potencial global".
+
+    Essa decisão coloca a Neospace num grupo pequeno de startups que tentam construir infraestrutura própria
+    de inteligência artificial em vez de apenas empacotar APIs de terceiros. O atalho mais comum do mercado
+    tem sido pegar modelos já prontos — da OpenAI, Anthropic, Meta ou outros — e adaptá-los a tarefas
+    específicas.
+
+    O foco não está em linguagem, mas em dados. Em vez de replicar um GPT, a empresa diz estar desenvolvendo
+    o que batizou de Data Foundational Model, uma IA que se origina para processar o tipo de informação
+    que forma a espinha dorsal das grandes empresas: transações, tabelas, eventos, históricos de navegação,
+    cadastros, documentos e relações entre essas bases.
+
+    Para Almeida, o problema de muitas iniciativas de IA nas empresas é que elas tratam grandes modelos
+    de linguagem como um canivete suíço. Funcionam bem para atendimento, busca, interface e comunicação
+    final com o usuário. Mas não são a melhor ferramenta para pensar o negócio. "As LLMs são muito boas
+    para a última milha, para conversar com o cliente. Mas não vão ser o cérebro da companhia", diz.
+
+    A aposta da Neospace é que esse cérebro pode nascer de um modelo treinado para ler o dado cru da empresa,
+    e não apenas médias, recortes ou amostras tratadas previamente, como costuma acontecer em sistemas
+    tradicionais de machine learning. Numa operação bancária, por exemplo, isso significa olhar a vida
+    inteira de um cliente em sequência: compra, horário, local, valor, parcela, navegação no app, empréstimo,
+    seguro, pagamento, atraso. Ao cruzar esse fluxo com o de milhões de outros clientes, o model'

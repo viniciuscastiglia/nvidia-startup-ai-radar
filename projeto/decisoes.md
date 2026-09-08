@@ -4904,6 +4904,81 @@ Seria exatamente o falso negativo contra o qual D-090 escreveu o aviso: trocar f
 porque o instrumento a leu errado. A página está viva — o verificador é que estava.
 
 
+## D-118 — Duas empresas entram na base para exercitar a classificação, e uma delas NÃO virou AI-native
+
+**Data:** 08/09/2026 · base **30 → 32 startups**, **93 → 99 documentos** · `AI-native` **1 → 2** ·
+`pytest` **134 passed** · régua dos agentes **idêntica dígito a dígito** · exclusões **10/10 e
+11/11**
+
+### O DEFEITO, medido em 08/09
+
+`varrer_classes.py` sobre as 30: **`AI-native` 1 · `AI-enabled` 20 · `non-AI` 9**. O TAPI pede
+diversidade de perfis *"para que a classificação seja de fato exercitada"*, e uma única `AI-native`
+em 30 é fino demais para um sistema cuja razão de existir é achar startups AI-native. A pergunta
+na arguição escreve-se sozinha.
+
+### O CRITÉRIO DE ESCOLHA, FIXADO ANTES DE OLHAR QUALQUER RESULTADO
+
+**A empresa entra pela RUBRICA de `contexto/02`, nunca pelo que o classificador reconhece.** Se o
+detector errar uma empresa que é AI-native pela rubrica, **o achado é sobre o detector** — não é
+motivo para trocar a empresa nem os documentos dela. O contrário calibra a base ao detector e a
+deixa mais fraca, não mais forte: é D-062 com outra roupa.
+
+Corolário aplicado nesta sessão: **a Traive foi DESCARTADA**. É agfintech de score de crédito
+agrícola — AI-enabled pela rubrica — e incluí-la só para fechar um número redondo enfraqueceria
+exatamente o que a base precisa exercitar.
+
+### O MÉTODO: o texto é copiado por código, não por mim
+
+As decisões de curadoria — qual empresa, qual página, qual tipo, qual corte — são humanas, como
+manda o docstring de `coletar.py`. **A cópia do texto é mecânica de propósito:** um script busca as
+URLs escolhidas e grava `conteudo_texto` verbatim do que `coletar.py` extrai. Retipar à mão
+convidaria paráfrase, e **paráfrase quebra a rastreabilidade sem que nada acuse** — quem abre a
+`url_fonte` tem de achar lá o trecho que o sistema citou.
+
+**As duas entram como DADO, sem `gabarito:` e sem `perfil_alvo`** (D-062), e a prova de que isso
+importa está no placar: a régua dos agentes ficou **idêntica em todos os campos** depois de a base
+crescer 7%.
+
+### O RESULTADO, e a metade que não deu certo é a mais informativa
+
+| | classe | detectores | dores | stack | quadrante |
+|---|---|---|---|---|---|
+| **NeoSpace** | **AI-native** | **ADT** | 4 | media | **sweet-spot** |
+| **Enter** | AI-enabled | A-- | 2 | baixa | prospect-de-evolucao |
+
+**NeoSpace acerta em cheio.** Modelos fundacionais próprios (Large Data Models), plataforma de
+treinamento própria, e a fundadora dizendo à Exame, literal: *"A gente queria criar tecnologia do
+zero. Não queria ser só um 'wrapper', uma camada em cima do que já existia."* — que é a tese deste
+projeto pela boca de quem foi curado. Os três detectores disparam e ela cai no `sweet-spot`, o
+melhor prospect que existe.
+
+**A Enter saiu `AI-enabled`, com apenas o autopilot — e FICA ASSIM.** Ela é AI-native por
+reputação: agentes que executam o ciclo do contencioso da análise à petição, 300 mil processos por
+ano, primeiro unicórnio de IA da América Latina. Mas **seus três documentos públicos não provam
+dado proprietário nem profundidade técnica** — o site vende eficiência operacional, a matéria fala
+da rodada, e a página de carreiras repete o site.
+
+**Trocar os documentos dela até o rótulo mudar era a tentação, e é exatamente o que o critério
+acima proíbe.** O que se tem em vez disso é uma fixture que vale mais: uma empresa real que **vende
+resultado e não publica a técnica**, que é o caso que o Evidence Validator existe para distinguir —
+*"a base não prova"* não é *"a base prova que não"*.
+
+### `ano_fundacao` LITERAL nas duas, e é raro
+
+`2023` para as duas, com a frase na mão: *"A empresa nasceu em 2023"* (Exame, NeoSpace) e *"Fundada
+em setembro 2023"* (InfoMoney, Enter). Por isso a NeoSpace sai com **1 requisito não verificado** —
+o menor da base, onde a mediana é 2.
+
+### O QUE ISTO DEIXA DESATUALIZADO, e não foi corrigido
+
+**`data/avaliacao/run-recomendacoes.json` tem 30 empresas e a base tem 32.** `--regras-tapi`
+continua reportando **38% contra 44%** sobre o run antigo, e o número segue verdadeiro sobre as 30
+que ele mediu — mas deixou de cobrir a base inteira. Re-rodar custa ~17 min e cota do Cohere, que é
+recurso escasso (D-093). **Fica declarado em vez de silenciado**, que é a mesma conduta de D-115
+com os 38%.
+
+
 ## Decisões pendentes
 
 | # | Decisão | Estado |
