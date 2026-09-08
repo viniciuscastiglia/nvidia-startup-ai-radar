@@ -5053,6 +5053,137 @@ pendência registrada com o que ela exige (P-12).
 **A frase da arguição sai daqui inteira:** *"minha base tem 5 AI-native, meu classificador acha 2,
 perde de uma constante nesse campo, e o teto do conserto está medido — recupera uma."*
 
+## D-120 — A contradição da `justificativa_tecnica` se resolve: a régua acerta o span numa amostra que não contém o defeito
+
+**Data:** 08/09/2026 · **nenhuma linha de código muda** · experimento sobre os 7 runs commitados
+em `data/runs/`, zero API · disparado pela auditoria independente de 08/09
+
+### O QUE ESTAVA ESCRITO, E ERA UMA CONFISSÃO SEM DIAGNÓSTICO
+
+`sessao-atual.md` listava, entre os defeitos medidos sem conserto disponível:
+
+> `justificativa_tecnica` com mobília de página — **a régua diz 71% e a produção discorda** —
+> contradição não resolvida
+
+Duas medições sobre o mesmo campo, discordando, e ninguém sabia qual mentia. A auditoria
+independente reabriu o caso com o exemplo mais feio da base: recomendar **Morpheus a uma fintech
+por custo**, e a justificativa técnica impressa num briefing em português ser
+*"Access technical content on cybersecurity topics such as spear phishing detection and digital
+fingerprinting."*
+
+### O EXPERIMENTO, E O INSTRUMENTO DELE ESTAVA QUEBRADO
+
+Reconstruí as 54 `justificativa_tecnica` dos 7 runs commitados, casei cada uma com o `trecho` da
+`citacoes_rag` de onde saiu, e perguntei: *o seletor pegou o melhor span do chunk, ou errou?*
+
+```
+justificativa boa                          : 12
+ruim PORQUE O CHUNK É MOBÍLIA (passagem)   :  7
+ruim PORQUE O SELETOR ERROU (span)         :  0
+```
+
+**O `0` é circular e não vale nada.** O script comparava a escolha da produção com
+`max(spans, key=pontuar)` — que é literalmente o que `melhor_trecho()` calcula. Os dois nunca
+poderiam divergir. **A saída estava garantida por construção**, e é o mesmo erro de instrumento
+que D-060 pegou por outro caminho: uma medição cujo resultado não depende do mundo.
+
+O que carregou o achado foi abrir os dois casos de score alto à mão. **Rodar não bastou; foi
+preciso olhar.**
+
+### O MECANISMO, NOMEADO PELOS DOIS CASOS
+
+**Caso A — Holoscan (chunk de 866 chars, 12 spans).** O chunk tem prosa técnica de primeira:
+
+> *"Holoscan is a real-time runtime for building GPU-accelerated systems that ingest
+> high-bandwidth, multimodal, multi-rate sensor data, perform AI reasoning, and drive
+> deterministic real-world actions."*
+
+`pontuar()` a colocou **fora do top 5** e elegeu, com **1.90**:
+`"10 minutes to inference with domain accelerator examples / Download Examples Documentation /
+CUDA | Docker"`. Chunk bom, span de navegação. **Isto refuta a leitura de que o defeito é só de
+passagem.**
+
+**Caso B — o rodapé do site (chunk de 665 chars, 120 spans).** Score **6.38**, o mais alto de toda
+a análise:
+
+```
+Agentic AI Foundation Models - Nemotron
+AI Inference - Dynamo
+AI Inference Microservices - NIM
+```
+
+É o menu do rodapé da NVIDIA. Ganha porque `nemotron`, `dynamo`, `nim`, `cuda-x`, `cosmos` e
+`riva` estão todos em `TECNICOS`: **densidade máxima, penalidade zero, conteúdo zero.**
+
+> **O ponto cego tem nome: uma lista de nomes próprios de produto é tecnicamente densa e não
+> afirma nada.** O módulo já tinha antecipado uma versão pequena disso — `MINIMO = 80` existe para
+> `"CUDA | Docker"` não vencer — mas um menu mais longo passa do piso com folga.
+
+### POR QUE A RÉGUA NÃO VÊ, E POR QUE ELA NÃO ESTÁ ERRADA
+
+`data/avaliacao/justificativas.yaml` são 30 chunks de amostra semeada, rotulados **antes deste
+módulo existir** (D-086). O rodapé e o menu de navegação **não estão lá**. A régua mede
+corretamente a pergunta *"dado um chunk, o span escolhido é o melhor?"* e a resposta dela — 71%
+contra 57% da linha trivial — **continua verdadeira**.
+
+**Nenhuma das duas mentia: elas medem populações diferentes.** A população da régua é uma amostra
+semeada; a da produção é *o que o reranker recuperou*, e o reranker recupera rodapés.
+
+### O DEFEITO É PIOR QUE O DESCRITO, PORQUE A FUNÇÃO GOVERNA DOIS ANDARES
+
+`pontuar()` tem **dois pontos de chamada**:
+
+| chamada | o que decide |
+|---|---|
+| `nvidia_rag.py:194` | qual chunk de uma mesma URL vira **a citação** |
+| `recommendation.py:358` → `melhor_trecho` | qual span dentro dela vira **o campo** |
+
+O rodapé do caso B não venceu só o span — **venceu antes a passagem**. O mesmo viés escolhe a
+página errada e depois o pedaço errado dela. A auditoria independente viu só o segundo andar, e o
+projeto também.
+
+### DECISÃO: nada muda no código, e a razão NÃO é falta de tempo
+
+Três conjuntos de razão, na ordem em que pesam:
+
+**1. O conserto não destrava a nota que ele parece destravar.** O critério 3 está em 2/4 por
+**uma** razão escrita — o motor perde da linha trivial em relevância, **38% contra 44%** (D-105).
+`justificativa_tecnica` é subdefeito, não o bloqueio. Consertá-lo sai de 2/4 exatamente igual.
+
+**2. Mudar `pontuar()` muda QUAL TECNOLOGIA é citada, não só o texto do campo.** Por causa de
+`nvidia_rag.py:194`, é mudança de comportamento do recomendador — e a régua que a enxerga é
+`--regras-tapi`, a do próprio 38%×44%, que custa ~17 min e cota do Cohere. **Direção desconhecida:
+pode piorar o número que já é o bloqueio.** Custo certo por ganho desconhecido.
+
+**3. A régua não conseguiria confirmar o ganho, só a não-regressão**, porque o defeito não está na
+amostra. Ampliar `justificativas.yaml` agora, depois de ver o que falhou, é calibrar contra o
+gabarito — o que D-062 existe para impedir, e o que reprovou a poda de `GATILHOS_DOR` em 08/09.
+
+### AS ALTERNATIVAS DESCARTADAS, COM O QUE CADA UMA CUSTA
+
+| desenho | por que não |
+|---|---|
+| **Penalidade de FORMA em `pontuar()`** — linhas curtas, sem verbo finito, sem pontuação terminal. Segue a decisão de `ENTRADA_DE_FEED` (D-097): reconhecer pela forma, porque penalizar o vocabulário exigiria penalizar `nemotron` e `inference`, que são o conteúdo que se quer | É o desenho **certo**, e é o que se faz primeiro se houver tempo depois da entrega. Hoje esbarra na razão 2: move a citação e obriga a re-rodar `--regras-tapi` |
+| **Mesma penalidade, só em `melhor_trecho`** (não em `nvidia_rag`) | Versão segura: a citação não se move, `--justificativas` serve de portão de não-regressão (o 15/21 tem de se manter). **Mas o caso B continua ruim** — a passagem ainda é um rodapé, só com outro pedaço vazio dentro. Conserta a metade visível do defeito e deixa a causa |
+| **Limpar rodapé/menu em `src/rag/limpeza.py` e re-ingerir** | Correto na raiz e **fora de cogitação**: muda os 175 chunks e invalida o gabarito de 24 perguntas. É D-096 literalmente, e custa a régua inteira do critério 2 — o único 4/4 de peso 20 |
+| **Separar em duas pontuações**, uma para passagem e outra para span | Conceitualmente certo — as duas perguntas são diferentes. Redesenho, sem régua construída, e não cabe na véspera |
+
+### O QUE FICA, e é a defesa
+
+A entrada anterior dizia *"contradição não resolvida"*. **Ela está resolvida**, com mecanismo
+nomeado, evidência medida, os dois andares mapeados, o instrumento do próprio experimento
+criticado, e as quatro alternativas com custo. O que não foi feito foi o conserto — e a razão
+principal dele não é o relógio, é que **o campo consertado não move o critério que o bloqueia, e
+o conserto move um número que não daria tempo de explicar.**
+
+**A frase da arguição sai daqui inteira:** *"a régua e a produção discordavam; medi, e as duas
+estavam certas sobre populações diferentes — o defeito é um ponto cego da minha função de
+pontuação, um menu de nomes de produto marca densidade máxima e não afirma nada, e ele contamina
+tanto a escolha da passagem quanto a do span, porque a mesma função decide as duas."*
+
+**Nova pendência: P-27** — o ponto cego de `pontuar()`, com o desenho da penalidade de forma e o
+custo de medi-la.
+
 
 ## Decisões pendentes
 
@@ -5083,4 +5214,5 @@ perde de uma constante nesse campo, e o teto do conserto está medido — recupe
 | ~~**P-24**~~ | ~~`non-AI` é o default de detecção falha~~ | **FECHADA em 04/09 (D-101).** `Diagnostico.sinal_verificado` é o par que `Elegibilidade` já tinha, aplicado ao rótulo: `non-AI` continua sendo emitido — o TAPI nomeia três classes — e só o **constatado** é cortado do funil. **Custo medido antes de implementar: `classe 3/7 → 3/7`**, contra `3/7 → 2/7` do desenho com quarta classe. O ACEITAR anterior dizia *"consertar exige gabarito"*: aquilo protege os DETECTORES, e este conserto não toca em nenhum nem introduz grau de liberdade. **Fica aberta a parte 2 do critério** — o ruído das 9 que passaram a entrar no funil, a medir contra as 7 regras do TAPI em 05/09 |
 | **P-23** | **`elegibilidade()` só enxerga o que o Extractor citou** | aberta por D-091. Ela varre `perfil.afirmacoes[*].evidencias[*].trecho`, não o documento. Medido no caso real: a Liqi diz *"oferecer criptomoedas, stablecoins e tokens"* no site, `criptomoeda` **já estava na lista**, e ela passou — porque a frase não caiu em nenhum trecho de evidência. **O filtro do Inception, que é o Diferencial declarado do projeto, tem cobertura igual à do casador de dores, e isso não estava escrito em lugar nenhum.** A correção óbvia (varrer `conteudo_texto`) **quebra `_fala_de_terceiro` POR CONSTRUÇÃO**, e esse é o argumento forte, medido em 04/09: o veto exige que **toda** ocorrência do termo caia em frase com marcador, então cada caractere a mais é outra chance de o `all()` falhar. Na Iniciador, o trecho de evidência tem 1 ocorrência de `stablecoin`, coberta por `mercado de stablecoin`; o documento inteiro tem 2, e a segunda não tem marcador nenhum — o veto colapsa. **Medido (`medir_cobertura.py`, D-102): as recusas vão de 7 para 13 em 30**, e ao menos 4 das 6 novas são falso positivo claro (TideWise por *"Dados da consultoria Fortune Business Insights"*; BemAgro por *"a revenda goiana MM Agro"*). **E o lado silencioso também apareceu:** a varredura ampla recusa a **Produzindo Certo**, que *"oferece serviços de consultoria, gestão e verificação"* — a própria empresa. Hoje ela passa por SORTE, não por desenho. Não cabe a 3 dias do vídeo; o que cabe é estar escrito, e agora está com os dois lados |
 | ~~**P-26**~~ | ~~O passo 8 do TAPI está implementado, medido e INALCANÇÁVEL~~ | **FECHADA em 06/09 (D-111): `POST /api/perguntar` + o diálogo da tela.** Verificado por execução com as duas perguntas do gabarito — a q04 responde citando 2 das 5 que leu, a q20 **abstém**. E a medição que veio junto: os **dois** provedores passam o critério de abstenção (NVIDIA 23/24, Groq 24/24), então a capacidade não é frágil a um modelo. O texto original: aberta em 06/09. `src/rag/geracao.py` faz a geração com citação e **abstenção** — 23/24 = 96% (D-040, re-medida em 02/09) — e `pipeline.responder()` é a porta dela. **Nenhum caminho de execução chega lá.** O nó `nvidia_rag` não gera de propósito, e a razão está certa e escrita (`nvidia_rag.py:46`): o Recommendation Agent precisa dos TRECHOS com score para cruzar com o perfil, e *"redigir aqui e reinterpretar lá seria perder a evidência no meio do caminho"*. **O erro não é esse — é a outra metade da frase, que diz *"ela entra pela interface, não por este nó"* e nunca foi cumprida.** Verificado em 06/09: zero ocorrências de `responder` em `src/web/`, e nenhuma das 8 rotas a expõe. Consequência: **o passo 8 de 9 do pipeline que o TAPI especifica nominalmente não é acessível a nenhum usuário**, e a capacidade mais forte do RAG — recusar-se a responder o que não sabe — está construída, medida e invisível. **Custo de fechar: conectar, não construir** — uma rota e um campo de pergunta; as duas peças já existem e já têm teste de régua (`avaliar_rag.py --geracao`) |
+| **P-27** | **O ponto cego de `pontuar()`: menu de nomes de produto tem densidade técnica máxima e conteúdo zero** | aberta por **D-120**. O rodapé do site da NVIDIA marca **6.38**, o score mais alto medido — `nemotron`, `dynamo`, `nim`, `cuda-x`, `cosmos` e `riva` estão todos em `TECNICOS`. E como a função é chamada em `nvidia_rag.py:194` (qual chunk vira citação) **e** em `recommendation.py:358` (qual span vira campo), o viés contamina os dois andares: o rodapé venceu a passagem antes de vencer o span. **Desenho proposto:** penalidade por FORMA — linhas curtas, sem verbo finito, sem pontuação terminal — seguindo a decisão de `ENTRADA_DE_FEED` (D-097), porque penalizar o vocabulário exigiria penalizar `nemotron` e `inference`, que são o conteúdo desejado. **O que trava hoje:** mover `pontuar()` muda qual tecnologia é citada, e a régua que enxerga isso é `--regras-tapi` (o 38%×44%), a ~17 min + cota do Cohere, com direção desconhecida. **E a régua não confirmaria o ganho**, só a não-regressão: `justificativas.yaml` é amostra semeada e não contém rodapé — ampliá-la agora seria calibrar contra o gabarito (D-062). Depois da entrega |
 | **P-19** | **O sweep do RAG (dimensão, banda de chunk, `k1`/`b`)** | **reaberta por D-078.** Estava cortado porque "o critério 2 já está no teto" — razão inválida. A razão candidata para manter o corte é outra e precisa ser dita: com 24 perguntas de gabarito, grade fina ajusta ao gabarito em vez de generalizar. O que joga contra o corte é `e@1 = 79%` (D-068): a primeira citação erra 1 vez em 5. Re-decidir junto com a base ampliada |

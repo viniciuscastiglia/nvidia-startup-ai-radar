@@ -80,7 +80,7 @@ D-117. As quatro réguas reproduzem: `24/24` no gabarito · `denso 95% r@1 · 79
 |---|---|
 | `classe 3/7`, perdendo da trivial 4/7 | **D-119** — teto do conserto é **+1** (D-060: 7 de 8 fixtures com zero marcador) |
 | `prioridade` **nunca** `alta` (0 em 89) | `min()` → `confianca` 0/6 → `data_publicacao` ausente em 86 de 93 (P-11, P-25) |
-| `justificativa_tecnica` com mobília de página | **a régua diz 71% e a produção discorda** — contradição não resolvida |
+| `justificativa_tecnica` com mobília de página | **RESOLVIDA em 08/09 (D-120).** As duas réguas mediam populações diferentes: a de 71% é span numa amostra semeada e está certa; a produção falha porque `pontuar()` premia menu de nome de produto (rodapé = **6.38**, o maior score medido) — e a função decide passagem **e** span. Não consertado: move a citação, e o campo não é o que trava o critério 3 (P-27) |
 | relevância 38% × 44% | dor a 49% alimenta a consulta (D-105) |
 | filtro do Inception vê 10,6% | varrer tudo quebra o veto de terceiro — medido em D-102 |
 
