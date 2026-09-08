@@ -1,12 +1,12 @@
 # Smoke test — build.nvidia.com
 
-Gerado por `scripts/smoke_nvidia.py` em 06/09/2026 23:30.
+Gerado por `scripts/smoke_nvidia.py` em 08/09/2026 09:21.
 
 | Capacidade | Resultado | Latência | Modelo |
 |---|---|---|---|
-| chat completion | passou | 2669 ms | `nvidia/nemotron-3.5-lightning-30b-a3b` |
-| embedding | passou | 680 ms | `nvidia/llama-nemotron-embed-vl-1b-v2` |
-| reranking | passou | 431 ms | `rerank-v3.5` |
+| chat completion | lento | — | `nvidia/nemotron-3.5-lightning-30b-a3b` |
+| embedding | passou | 597 ms | `nvidia/llama-nemotron-embed-vl-1b-v2` |
+| reranking | passou | 259 ms | `rerank-v3.5` |
 
 ## Detalhes
 
@@ -14,13 +14,9 @@ Gerado por `scripts/smoke_nvidia.py` em 06/09/2026 23:30.
 
 ```
 modelo: nvidia/nemotron-3.5-lightning-30b-a3b
-tokens: 37 prompt + 120 completion
-resposta: Here's a thinking process:
-
-1.  **Analyze User Input:**
-   - **Constraint 1:** Respond in one sentence only ("uma frase curta")
-   - **Constraint 2:** Language:
-NOTA: o `content` cru comeca com o raciocinio do modelo. Isto e esperado (D-079) e NAO afeta a producao — `json_schema` devolve so o schema.
+a chamada direta falhou: ReadTimeout (teto 120 s)
+diagnostico: VIVO-LENTO — HTTP 200 — primeiro token em 191 s. O modelo esta VIVO; o que estourou foi o relogio, nao o catalogo.
+-> NAO MIGRE. Subir LLM_TIMEOUT, ou aceitar a latencia e planejar o video com ela.
 ```
 
 ### embedding

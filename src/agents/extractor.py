@@ -7,6 +7,11 @@ vocabulário de `contexto/02` §5 contra as frases dos documentos, e o que casav
 Elas continuam aqui, e continuam fazendo exatamente o mesmo trabalho — mas o que elas produzem
 agora é uma LISTA DE CANDIDATOS, e quem decide é o LLM.
 
+**LEIA A NOTA DE `USAR_JUIZ_LLM` ANTES DE CONCLUIR QUALQUER COISA DESTE PARÁGRAFO.** O desenho é
+gerador + juiz; o DEFAULT de produção roda só o gerador. O juiz passou todos os critérios num
+modelo que o catálogo aposentou, e hoje é barrado por recall e por 1 h 33 de relógio — não por
+incapacidade. A flag é onde o desenho e o que roda hoje se separam, e ela está documentada lá.
+
 A razão dessa divisão está medida, não argumentada (D-052 e D-053):
 
   · o casador tem TETO DE RECALL DE 100% no gabarito das 8 fixtures — toda dor esperada tem ao
@@ -54,17 +59,46 @@ from src.state import (
     PerfilStartup,
 )
 
-# O DEFAULT É `False`, E ISSO É O RESULTADO DE UMA MEDIÇÃO, NÃO UM ESQUECIMENTO (D-056).
-# O critério de empate de D-055 foi escrito ANTES de medir: o juiz precisava bater a precisão de
-# dor do casador (49%) por margem >= 0,15 — ou seja, 64%. A faixa em TRÊS execuções é 50–62%, e
-# NEM O MELHOR CASO alcança. Pela regra, o juiz não entra em produção. Ele fica ligável, medido e
-# defensável; o que ele não tem é o direito de rodar por default sem ter pago o que custa.
-# `--juiz` no harness liga.
+# O DEFAULT É `False`, E ISSO É O RESULTADO DE UMA MEDIÇÃO, NÃO UM ESQUECIMENTO.
 #
-# A FAIXA VEM DE n=3 PORQUE A PRIMEIRA REDAÇÃO DESTE COMENTÁRIO PUBLICOU 58% COM n=1 — o número
-# de uma execução só, num projeto cuja própria regra diz que número de geração se reporta em três
-# execuções ou não se reporta (D-039, D-040). A instabilidade entre execuções é, ela mesma,
-# argumento contra pôr o juiz numa demo ao vivo.
+# CUIDADO COM A LEITURA FÁCIL: ESTE `False` NÃO SIGNIFICA "O LLM NÃO DEU CONTA" (D-113).
+# Significa o oposto — o juiz JÁ PASSOU TODOS OS CRITÉRIOS que este projeto escreveu, e num
+# modelo que o catálogo de preview aposentou quatro dias depois. O que segura o default hoje é
+# RELÓGIO, não qualidade. Foram TRÊS medições, e o veredito muda com o modelo:
+#
+#   25/08, `llama-3.1-8b` (D-056)       precisão 50–62%  · alvo 64%  -> REPROVA
+#                                        ^ o modelo morreu dois dias depois
+#   28/08, `nemotron-3-nano-30b` (D-072) precisão 83–96%  · alvo 64%  -> PASSA por 19 pontos
+#                                        recall 71–79%    · guarda 70% (escrita 9 dias DEPOIS,
+#                                                           e ele passaria nela também)
+#                                        dor proibida 1–2 contra 10 do casador; elegível e
+#                                        motivo_exclusão 6/7 contra 5/7 — MELHOR que produção
+#   06/09, `nemotron-3.5-lightning` (D-109, o modelo de HOJE)
+#                                        precisão 100% · dor proibida 0 — o melhor placar que
+#                                        este projeto já produziu neste campo
+#                                        recall 65%       · guarda 70%  -> REPROVA por 5 pontos
+#
+# OS DOIS OBSTÁCULOS DE HOJE, e o segundo é o que decide:
+#   1. Recall de 65%: o briefing omitiria mais de uma dor real em três. A guarda de 70% foi
+#      fixada ANTES do placar de D-109 — reprovar por ela é disciplina, e D-109 registra que o
+#      resultado é desconfortável, porque a assimetria de D-057 (erro por afirmação não é
+#      recuperável, por omissão é) empurra a favor de ligar.
+#   2. 1 h 33 POR RODADA (D-109, ~172 chamadas nas 8 fixtures = ~21 por empresa). Com o fan-out
+#      rodando o pipeline uma vez por startup, o juiz é inviável no caminho de produção — e isso
+#      NÃO depende de nenhuma métrica de qualidade. Pela régua de D-084 (latência que o gerente
+#      sente), desqualifica sozinho. Os dois obstáculos não se cancelam: se somam.
+#
+# POR QUE ISSO É UMA FLAG E NÃO UMA REESCRITA: a arquitetura suporta os dois modos de propósito,
+# porque a dependência é volátil — o catálogo aposentou modelo deste projeto quatro vezes em
+# quatro meses (D-013, D-046, D-064, D-079). É a mesma razão de `src/config.py` isolar o
+# provedor. O default é o que roda no modelo que existe hoje; `--juiz` no harness liga o outro.
+#
+# A ALTERNATIVA ÓBVIA PARA QUEM RETOMAR, e ela NÃO foi medida (D-109): um juiz que só DESCARTE
+# com alta confiança, deixando o casador emitir o resto — ataca a precisão sem pagar o recall.
+#
+# TODA FAIXA AQUI VEM DE n=3 PORQUE A PRIMEIRA REDAÇÃO DESTE COMENTÁRIO PUBLICOU 58% COM n=1 — o
+# número de uma execução só, num projeto cuja própria regra diz que número de geração se reporta
+# em três execuções ou não se reporta (D-039, D-040).
 USAR_JUIZ_LLM = False
 
 # Vocabulário de contexto/02 §5. NÃO é mais o decisor: é o gerador de candidatos.

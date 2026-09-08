@@ -4562,6 +4562,77 @@ virando sinal negativo. O campo anota; a decisão de abordar continua sendo de q
 **Reusar `extractor.GATILHOS_DOR`** — ver acima. Uma tabela só, dois textos opostos, e o ajuste
 de um movendo a régua do outro.
 
+## D-113 — O comentário que desligava o juiz citava um modelo morto, e contava a história ao contrário
+
+**Data:** 08/09/2026 · **zero mudança de comportamento** — `USAR_JUIZ_LLM` segue `False`,
+`pytest` **128 passed**, régua dos agentes idêntica · achado de auditoria de entrega
+
+### O DEFEITO, e ele é de redação com consequência de leitura
+
+O comentário acima de `USAR_JUIZ_LLM` em `src/agents/extractor.py` justificava o `False` assim:
+
+> *"A faixa em TRÊS execuções é 50–62%, e NEM O MELHOR CASO alcança."*
+
+**Esse é o placar de D-056, medido em 25/08 sobre o `llama-3.1-8b` — um modelo que morreu dois
+dias depois.** O comentário estava no presente, sem data e sem modelo, num arquivo cuja flag é a
+primeira coisa que um leitor externo encontra. **A informação que ele transmitia era falsa e era
+a pior das leituras possíveis: "o LLM não deu conta".**
+
+O que os números dizem é o oposto. **Em D-072 (28/08, `nemotron-3-nano-30b`) o juiz passou TODOS
+os critérios que este projeto já escreveu** — inclusive a guarda de recall de 70%, que só foi
+fixada em D-109, **nove dias depois**:
+
+| | casador (produção) | juiz D-072, n=3 | critério | veredito |
+|---|---|---|---|---|
+| precisão de dor | 49% | **83–96%** | alvo 64% (D-055) | passa por 19 pontos no pior caso |
+| recall de dor | 100% | **71–79%** | guarda 70% (D-109) | **passa, retroativamente** |
+| discriminação | 8/8 | 6–8/8 | piso 6/8 | passa |
+| elegível · motivo_exclusão | 5/7 · 5/7 | **6/7 · 6/7 nas três** | — | **melhor que produção** |
+| dor proibida emitida | 10 | **1–2** | menor é melhor | 5× a 10× melhor |
+
+D-072 já tinha escrito a frase que o comentário contradizia: *"as conclusões deste projeto sobre
+'o LLM não dá conta' eram sobre um modelo de 8B, não sobre a abordagem."* **O comentário do
+código nunca foi atualizado, e por 11 dias afirmou o contrário do log de decisões.**
+
+### DECISÃO: o comentário passa a carregar as TRÊS medições, com modelo e data em cada linha
+
+E passa a separar os dois obstáculos de hoje, porque eles têm forças diferentes e o forte não é
+o que estava escrito:
+
+1. **Recall de 65% contra guarda de 70% (D-109).** Reprova por 5 pontos. É o obstáculo
+   **discutível**, e D-109 registra o desconforto: a assimetria de D-057 — erro por afirmação não
+   é recuperável, por omissão é — empurra a favor de ligar. Não se mexe na guarda depois do
+   placar, e é por isso que ela segura.
+2. **1 h 33 por rodada (D-109, ~172 chamadas nas 8 fixtures ≈ 21 por empresa).** Com o fan-out
+   rodando o pipeline uma vez por startup, o juiz é **inviável no caminho de produção** — e isto
+   **não depende de nenhuma métrica de qualidade**. Pela régua de D-084 (latência que o gerente
+   sente), desqualifica sozinho. **É o obstáculo forte, e era o que faltava no comentário.**
+
+O docstring do módulo ganhou o ponteiro correspondente: ele afirmava *"quem decide é o LLM"*, o
+que é verdade do DESENHO e falso do DEFAULT — leitor que parasse ali sairia com a informação
+invertida em relação à flag 20 linhas abaixo.
+
+### ALTERNATIVA DESCARTADA — ligar a flag para a entrega
+
+É a leitura tentadora do achado, e ela não sobrevive a dois fatos. **(a)** A 21 chamadas por
+empresa e 191 s por chamada medidos hoje no smoke, um run de 3 empresas passaria de **uma hora** —
+o vídeo é eliminatório e precisa demonstrar funcionamento real. **(b)** Promover uma capacidade
+no dia anterior à entrega, com base numa medição de OUTRO modelo, é exatamente o que D-078 e
+D-087 proíbem: **medir não é promover**, e o modelo que passou não é o que roda.
+
+### ALTERNATIVA DESCARTADA — deixar como estava e explicar no vídeo
+
+O vídeo dura 7 minutos e o repositório é lido sem ele. Um `False` mal justificado no arquivo é
+lido como abandono por quem abre o código — que é precisamente o eliminatório *"código
+integralmente gerado sem compreensão"*. **A defesa tem de estar onde o defeito é lido.**
+
+### O que isto NÃO fecha
+
+**P-09 continua aberta.** A promoção do juiz segue pendente pelos motivos de D-109, e a
+alternativa que D-109 nomeia — **um juiz que só DESCARTE com alta confiança, deixando o casador
+emitir o resto** — continua **não medida**, e não deve ser citada como se tivesse sido.
+
+
 ## Decisões pendentes
 
 | # | Decisão | Estado |
@@ -4574,7 +4645,7 @@ de um movendo a régua do outro.
 | ~~P-07~~ | ~~Gerenciamento de dependências~~ | **D-004** — conda + `requirements.txt` pinado |
 | ~~P-08~~ | ~~Como o Postgres sobe para quem avaliar~~ | **D-017** — os dois |
 | ~~P-06~~ | ~~Framework de frontend~~ | **D-107** — FastAPI + uvicorn, front à mão, run ao vivo por SSE. Escopo: consultar → ver → recomendações com evidência → exportar, mais a vitrine do passo 7. A camada não tem regra de negócio: onde a tela precisava de uma, a regra foi **extraída** de `briefing.py` em vez de copiada |
-| **P-09** | **Promover o juiz do Extractor?** | D-072 passou o critério; falta decidir a lacuna de recall (100% → 71-79%) |
+| **P-09** | **Promover o juiz do Extractor?** | **A lacuna de recall FOI fechada — a guarda existe e reprova (D-109).** O arco em três modelos: `llama-3.1-8b` reprova por precisão (D-056, morto dois dias depois) · `nemotron-3-nano` **passa TODOS os critérios**, incluindo a guarda de 70% escrita nove dias depois (D-072) · `nemotron-3.5-lightning`, o de hoje, faz **100% de precisão e 0 dores proibidas** — o melhor placar do projeto — e **reprova por recall, 65% contra 70%**. **O obstáculo forte, porém, é outro e independe de qualidade: 1 h 33 por rodada** (~21 chamadas por empresa no fan-out), que a régua de D-084 desqualifica sozinha. **D-113 corrigiu o comentário do código**, que justificava o `False` com o placar do modelo morto e transmitia *"o LLM não deu conta"* — o oposto do medido. **O que continua NÃO MEDIDO, e é a retomada óbvia:** um juiz que só DESCARTE com alta confiança, deixando o casador emitir o resto — ataca a precisão sem pagar o recall |
 | ~~P-10~~ | ~~Régua do motor de recomendação~~ | **D-086** — a régua existe (`--justificativas`, 30 chunks, amostra semeada, rotulada antes do seletor) e o seletor bate a linha trivial: **15/21 vs 12/21**. Num run real, justificativas que servem: **1/6 → 4/6**. A parte de RELEVÂNCIA da recomendação virou **P-21** |
 | **P-11** | **O `min()` da confiança** | 0/6 constante. Barato, mas exige critério fixado antes — uma tentativa já foi reprovada (D-059). **METADE FECHADA em 04/09 (D-100):** o ponteiro `ver D-059` saiu do texto do usuário. **E a hipótese de D-059 foi REFUTADA (D-098):** o braço C de `medir_confianca.py` — evidência mais larga — dá 2, idêntico ao B. O que move o campo é a recência, e ela depende de `data_publicacao`, ausente em **86 dos 93 documentos**. O `min()` fica: consertá-lo hoje é consertar a coleta, que é P-25 |
 | ~~P-16~~ | ~~Julgamento semântico no Evidence Validator~~ | **medido e REPROVADO em D-075** — 4 de 5 alvos passam, o recall no Recommendation falha nas três execuções |
