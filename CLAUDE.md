@@ -212,11 +212,19 @@ critério, e sem ela 49% de precisão parece bom em vez de "17 pontos acima de e
   esse filtro a precisão cai de 49% para 24% **em silêncio** (contrafactual medido em D-090).
   **As 10 chaves de `SETORES` têm empresa** — nenhuma consulta do vocabulário do planner devolve
   zero. **As 4 exclusões do Inception têm caso REAL:** consultoria (Deal), capital aberto
-  (Zenvia/Nasdaq), cripto (Liqi/stablecoin), > 10 anos (**4 casos**: Agrorobótica, Agrotools, Automni e JetBov). **A Solinftec
-  é o CASO-LIMITE, não um segundo caso** (D-097): tem 18 anos, o documento diz *"Criada há 18
-  anos"* — idade, não ano — e a política de literalidade mantém `ano_fundacao: null`, então ela
-  sai **ELEGÍVEL** com *"requisito não verificado"*. É o preço declarado da literalidade, e o
-  Briefing o reporta em vez de inventar um ano.
+  (Zenvia/Nasdaq), cripto (Liqi/stablecoin), > 10 anos (**5 casos**: Agrorobótica, Agrotools,
+  Automni, JetBov e — desde 08/09 — Solinftec). **São 8 recusas em 30**, e `varrer_elegibilidade.py`
+  imprime a tabela.
+  > **A SOLINFTEC MUDOU DE LADO EM 08/09 (D-115), e a entrada anterior dizia o contrário.** Ela
+  > era o CASO-LIMITE: 18 anos, `ano_fundacao: null` porque o documento diz *"Criada há 18 anos"*
+  > — idade, não ano — e saía **ELEGÍVEL** com *"requisito não verificado"*, registrado como "o
+  > preço declarado da literalidade". **Esse preço não precisava ser pago**: não era literalidade
+  > contra inferência, era o filtro não lendo o que estava escrito. `_IDADE_RELATIVA` exige o
+  > particípio de criação adjacente (`criada|fundada|nascida há N anos`) e devolve **limite
+  > inferior** — documento do passado dizendo "há N anos" garante ao menos N hoje —, então
+  > `N > 10` exclui com certeza e `N <= 10` não conclui nada. **O particípio não é zelo:** `há N
+  > anos` solto acerta 1 de 3 na base (a Automni fala do SETOR, a Produzindo Certo contradiz o
+  > ano curado).
   > **O gargalo da curadoria é o 3º documento, não a empresa** (D-090): `seed.py` exige 3
   > documentos e ≥ 2 TIPOS distintos, e 4 empresas boas caíram já coletadas.
 - **16 tecnologias NVIDIA**, 175 chunks estruturais + 202 de controle, gabarito de **24 perguntas**

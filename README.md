@@ -232,7 +232,7 @@ medido. `--refetch` re-baixa e imprime o que mudou.
 
 ```bash
 python scripts/smoke_nvidia.py            # as 3 capacidades da stack, em 4 s
-RERANK_PROVEDOR=nenhum pytest -q          # 128 testes
+RERANK_PROVEDOR=nenhum pytest -q          # 134 testes
 python scripts/avaliar_rag.py             # a régua do RAG: ablação dos 5 motores
 python scripts/avaliar_agentes.py         # a régua dos agentes, com a linha de base trivial
 ```
@@ -278,7 +278,7 @@ Três disciplinas que valem mais que os números:
 │   ├── seed/                    30 startups, uma por arquivo YAML
 │   ├── nvidia/                  manifesto das 16 fontes + o cache versionado delas
 │   └── avaliacao/               os gabaritos: RAG, exclusões, justificativas, regras do TAPI
-├── tests/                       128 testes
+├── tests/                       134 testes
 ├── contexto/                    referência estável sobre o case (TAPI, rubrica, stack, fontes)
 └── projeto/                     o log de decisões, o plano e a pauta corrente
 ```
@@ -286,7 +286,7 @@ Três disciplinas que valem mais que os números:
 ## Decisões de arquitetura
 
 **[`projeto/decisoes.md`](projeto/decisoes.md) é a parte deste repositório que vale mais a
-leitura.** São 112 decisões técnicas, cada uma com **a alternativa que foi descartada e o motivo**
+leitura.** São 117 decisões técnicas, cada uma com **a alternativa que foi descartada e o motivo**
 — porque decisão sem alternativa registrada não é revisável, e em seis meses ninguém lembra por
 quê. Ele registra também o que **deu errado**: hipóteses reprovadas pela própria régua, defeitos
 que só apareceram rodando o sistema, e ao menos uma auditoria cujos achados caíram na verificação.
