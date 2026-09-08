@@ -186,7 +186,17 @@ def teste_diluicao() -> None:
     print("   longo perde para chunk curto mesmo contendo a mesma resposta.\n")
     print(f"   {'tam passagem':>13} {'so enchimento':>14} {'COM resposta':>13} {'ganho':>9}")
 
-    logits, _, _ = _ranquear(QUERY, [RESPOSTA])
+    # `err` era descartado aqui e SÓ aqui — os outros dois pontos de chamada (1b e o laço
+    # abaixo) já checavam e degradavam. Com o provedor `nvidia` fora de entitlement, `_ranquear`
+    # devolve `logits=None` e a linha seguinte estourava `TypeError: 'NoneType' object is not
+    # subscriptable` — um comando anunciado no README morrendo com traceback em vez de dizer o
+    # que houve. Achado pela auditoria independente de 08/09 e reproduzido por execução.
+    logits, _, err = _ranquear(QUERY, [RESPOSTA])
+    if err:
+        print(f"   ERRO na chamada de referencia: {err}")
+        print("   A frase sozinha e a LINHA DE BASE da diluicao: sem ela nao ha o que comparar,")
+        print("   entao o teste 3 nao roda. Verifique o provedor de rerank em src/config.py.")
+        return
     print(f"   {n_tokens(RESPOSTA):>13} {'—':>14} {logits[0]:>13.4f} {'—':>9}   <- a frase sozinha")
 
     n_resposta = n_tokens(RESPOSTA)
