@@ -286,7 +286,7 @@ Três disciplinas que valem mais que os números:
 ## Decisões de arquitetura
 
 **[`projeto/decisoes.md`](projeto/decisoes.md) é a parte deste repositório que vale mais a
-leitura.** São 117 decisões técnicas, cada uma com **a alternativa que foi descartada e o motivo**
+leitura.** São 118 decisões técnicas, cada uma com **a alternativa que foi descartada e o motivo**
 — porque decisão sem alternativa registrada não é revisável, e em seis meses ninguém lembra por
 quê. Ele registra também o que **deu errado**: hipóteses reprovadas pela própria régua, defeitos
 que só apareceram rodando o sistema, e ao menos uma auditoria cujos achados caíram na verificação.

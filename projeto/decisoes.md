@@ -4841,6 +4841,69 @@ de LLM sozinha — o resto é recuperação e o passo 7 com o limitador da trial
 passo 8 **funciona**; ele não é filmável em tempo real.
 
 
+## D-117 — Varredura dos comandos anunciados: 20 de 21 rodam, e o que falhava reprovava uma fonte viva
+
+**Data:** 08/09/2026 · fecha a auditoria de entrega · `pytest` **134 passed** · base **30/93**
+intacta · nenhuma régua se move
+
+### O MÉTODO, e ele é o irmão da varredura de afirmações
+
+O README e o `CLAUDE.md` anunciam ~21 comandos. **O avaliador roda exatamente esses**, e um que
+quebra custa mais que o defeito que ele revela — custa a confiança de que o resto reproduz. Rodei
+todos os que não gastam cota.
+
+**20 de 21 passaram**, incluindo os quatro que sustentam os números do repositório:
+`avaliar_rag.py --validar` **24/24** · a ablação **denso 95% r@1 · 79% e@1** (o número que o README
+afirma) · `avaliar_agentes.py` **49%/100%** · `--regras-tapi` **38% contra 44%**. E
+`diagramas.py` regenerou os dois `.mmd` **byte a byte idênticos** — o diagrama do README não
+divergiu do grafo compilado.
+
+### O QUE FALHAVA: `seed.py --verificar-urls`, e pelo motivo errado
+
+```
+URLS QUE NÃO RESOLVEM:
+  - Laura Networks: HTTP 429 em https://lauranetworks.com/
+```
+
+**429 é *Too Many Requests*: o servidor está VIVO e pedindo cadência.** 403 é ele vivo e recusando
+cliente automatizado. Nenhum dos dois diz que a fonte sumiu — que é a única coisa que este teste
+existe para detectar.
+
+**É a repetição EXATA de D-090, na MESMA URL.** Naquele dia o `HEAD` da `lauranetworks.com` entrava
+em laço de redirect e o verificador dizia que a página morreu, quando o `GET` respondia 200 com 63
+mil caracteres. O comentário que D-090 deixou no código já tinha escrito a regra que este caso
+viola:
+
+> *"Falso NEGATIVO de rastreabilidade é pior que falso positivo: ele manda o curador remover ou
+> trocar uma fonte legítima."*
+
+E é a mesma leitura de **D-070** sobre o catálogo da NVIDIA — *"um 404 ali é quase sempre
+entitlement, não morte; morte tem assinatura própria"*. **Código de status se lê pelo que
+significa, não por `>= 400`.**
+
+### DECISÃO: 403 e 429 viram AVISO VISÍVEL, não falha e não silêncio
+
+```
+[aviso] 429  https://lauranetworks.com/  — servidor vivo, recusou o cliente automatizado
+```
+
+**Não silenciar importa tanto quanto não falhar:** quem cura precisa saber que aquela URL não foi
+conferida de verdade naquele dia. Falha o comando por CDN de mau humor é um extremo; fingir que
+verificou é o outro.
+
+### ALTERNATIVA DESCARTADA — retry com backoff no 429
+
+Resolveria mais casos e é o que um cliente HTTP sério faria. Fica de fora porque **muda o que o
+comando é**: hoje ele é uma varredura rápida sobre 93 URLs, e um backoff honesto num 429 significa
+esperar o `Retry-After` de cada servidor — o comando deixaria de ser algo que se roda antes de
+entregar. O aviso entrega a mesma informação sem esse custo.
+
+### ALTERNATIVA DESCARTADA — trocar a fonte da Laura Networks
+
+Seria exatamente o falso negativo contra o qual D-090 escreveu o aviso: trocar fonte legítima
+porque o instrumento a leu errado. A página está viva — o verificador é que estava.
+
+
 ## Decisões pendentes
 
 | # | Decisão | Estado |

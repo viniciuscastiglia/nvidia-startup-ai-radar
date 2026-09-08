@@ -233,6 +233,26 @@ def verificar_urls(fixtures: list[dict]) -> list[str]:
                         falhas.append(
                             f"{f['nome']}: HEAD {erro_head} e GET {type(exc2).__name__} em {url}")
                         continue
+                # 429 E 403 SÃO O SERVIDOR RESPONDENDO, NÃO A FONTE MORRENDO (08/09, D-117).
+                # ------------------------------------------------------------------------
+                # É a repetição EXATA de D-090, na MESMA URL: em 08/09 a `lauranetworks.com`
+                # devolveu `HTTP 429` a este verificador e ele relatou "não resolve". 429 é
+                # *Too Many Requests* — o servidor está vivo e pedindo cadência; 403 é ele
+                # vivo e recusando um cliente automatizado. Nenhum dos dois diz que a fonte
+                # sumiu, que é a única coisa que este teste existe para detectar.
+                #
+                # É a mesma leitura de D-070 sobre o catálogo da NVIDIA — *"um 404 ali é quase
+                # sempre entitlement, não morte; morte tem assinatura própria"* —, e o docstring
+                # acima já tinha escrito a regra: **falso negativo de rastreabilidade manda o
+                # curador trocar uma fonte legítima.** Tratá-los como falha faz o comando que o
+                # README anuncia quebrar por causa do humor de um CDN.
+                #
+                # Eles ficam VISÍVEIS como aviso, não silenciados: quem cura precisa saber que
+                # aquela URL não foi conferida de verdade hoje.
+                if r.status_code in (403, 429):
+                    print(f"    [aviso] {r.status_code}  {url}  "
+                          f"— servidor vivo, recusou o cliente automatizado (não é fonte morta)")
+                    continue
                 marca = "ok " if r.status_code < 400 else "FALHA"
                 via = f" (HEAD {erro_head}, resolvida por GET)" if erro_head else ""
                 print(f"    [{marca}] {r.status_code}  {url}{via}")
