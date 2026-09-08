@@ -62,12 +62,37 @@ TETO_RECOMENDACOES = 3   # regra 4: recomendar 8 produtos para uma seed é ruíd
 # Regra 2: honestidade sobre o custo de adoção. `cudf.pandas` é zero-code-change;
 # migrar para Triton com TensorRT-LLM é projeto de semanas. Tratar como iguais denuncia
 # motor raso.
+# A TABELA COBRIA 5 DAS 16 ATÉ 08/09, E AS OUTRAS 11 CAÍAM NO DEFAULT `"media"` (D-114).
+# Medido no run das 30: 4 das 6 recomendações de um run tinham complexidade default, e o campo 5
+# dos 7 obrigatórios do TAPI era constante para 69% do catálogo — exatamente o "motor raso" que o
+# comentário acima diz querer evitar. Cada linha abaixo tem a razão, e todas saem de
+# `contexto/03-stack-nvidia.md`, não de julgamento avulso.
+#
+# SÃO 15 E NÃO 16 DE PROPÓSITO: o `NVIDIA Inception` está em `nvidia_rag.NAO_SAO_TECNOLOGIA` e
+# **nunca chega a virar recomendação** (D-082) — ele é o programa que o gerente vende, não stack
+# que a startup adota. Dar-lhe uma entrada aqui seria linha inalcançável fingindo cobertura, que
+# é o mesmo defeito que esta correção veio consertar, só que ao contrário.
 COMPLEXIDADE: dict[str, Complexidade] = {
+    # BAIXA — entra sem reescrever código, ou não é software
     "NVIDIA NIM": "baixa",              # trocar base_url
+    "cuDF": "baixa",                    # `cudf.pandas`: zero-code-change, com fallback CPU
+    "cuML": "baixa",                    # `cuml.accel`: drop-in sobre scikit-learn
+    "RAPIDS / CUDA-X Data Science": "baixa",  # a porta de entrada é cuDF/cuML, as duas drop-in
+
+    # MEDIA — exige integrar um serviço novo, não reescrever o existente
     "NeMo Guardrails": "media",
     "NVIDIA NeMo": "media",
+    "NVIDIA Riva": "media",             # deploy por container NIM, mas pede pipeline de áudio
+    "NVIDIA AI Enterprise": "media",    # licença por GPU/ano + implantação; o custo é comercial
+
+    # ALTA — projeto de semanas, hardware novo, ou domínio regulado
     "Triton Inference Server": "alta",
     "TensorRT-LLM": "alta",
+    "CUDA Toolkit": "alta",             # é para quem já tem kernel custom (contexto/03 §1)
+    "NVIDIA Omniverse": "alta",         # pipeline USD, cena 3D e simulação
+    "NVIDIA Isaac": "alta",             # robótica: integração com hardware e sim-to-real
+    "NVIDIA Healthcare (ex-Clara)": "alta",  # MONAI/BioNeMo/Parabricks + domínio regulado
+    "NVIDIA Morpheus": "alta",          # exige Triton e RAPIDS FIL — herda o custo dos dois
 }
 
 # OS CINCO TEXTOS CURADOS, cada um escrito para uma DOR e não para uma tecnologia — é o que o

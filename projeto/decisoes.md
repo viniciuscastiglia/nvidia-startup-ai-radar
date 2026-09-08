@@ -4633,6 +4633,63 @@ alternativa que D-109 nomeia — **um juiz que só DESCARTE com alta confiança,
 emitir o resto** — continua **não medida**, e não deve ser citada como se tivesse sido.
 
 
+## D-114 — `complexidade` era `"media"` para 11 das 16 tecnologias, e o campo 5 dos 7 não dizia nada
+
+**Data:** 08/09/2026 · achado da auditoria de entrega · **nenhuma régua se move** — `pytest`
+**128 passed**, agentes `3/7 · 6/7 · 0/6 · 6/6 · 49%/100%`, exclusões `10/10` e `11/11`
+
+### O DEFEITO, medido e não suposto
+
+`COMPLEXIDADE` tinha **5 entradas para um corpus de 16 tecnologias**, e a linha que a consome é
+`COMPLEXIDADE.get(citacao.tecnologia, "media")`. As outras **11 caíam no default**. Medido no run
+das 30 (`run-recomendacoes.json`, 89 recomendações) e num run ao vivo de 08/09: **4 das 6
+recomendações traziam complexidade default**.
+
+**É o campo 5 dos 7 obrigatórios do TAPI**, e ele era efetivamente constante para 69% do
+catálogo. O comentário logo acima da tabela já dizia o critério — *"`cudf.pandas` é
+zero-code-change; migrar para Triton com TensorRT-LLM é projeto de semanas. Tratar como iguais
+denuncia motor raso"* — e **o cuDF, o exemplo literal do próprio comentário, não estava na
+tabela.**
+
+### DECISÃO: as 15 tecnologias RECOMENDÁVEIS ganham entrada, cada uma com a razão em uma linha
+
+E a razão sai de `contexto/03-stack-nvidia.md`, não de julgamento avulso — é o que separa
+curadoria de chute:
+
+| nível | tecnologias | o que decide |
+|---|---|---|
+| **baixa** | NIM · cuDF · cuML · RAPIDS/CUDA-X | `cudf.pandas` e `cuml.accel` são **zero-code-change com fallback CPU** (§1); NIM é trocar `base_url` |
+| **media** | NeMo · NeMo Guardrails · Riva · AI Enterprise | serviço novo a integrar, não código a reescrever. Riva faz deploy por container NIM mas pede pipeline de áudio; AI Enterprise é licença por GPU/ano — o custo é comercial |
+| **alta** | Triton · TensorRT-LLM · CUDA Toolkit · Omniverse · Isaac · Healthcare · Morpheus | CUDA é *"para quem já tem kernel custom"* e §1 diz que recomendá-lo a quem só precisa de cuDF **é sinal de motor raso**; Morpheus **exige Triton e RAPIDS FIL**, então herda o custo dos dois; Healthcare soma domínio regulado |
+
+Distribuição final: **4 baixa · 4 media · 7 alta**. Antes eram 2 · 2 · 2 explícitas e 11 no
+default.
+
+### SÃO 15 E NÃO 16, E ESSA É A PARTE QUE QUASE ENTROU ERRADA
+
+A primeira redação desta tabela tinha **16 entradas, incluindo `NVIDIA Inception`** — e ela
+estava errada. `nvidia_rag.NAO_SAO_TECNOLOGIA` filtra o Inception antes da recomendação (D-082):
+ele é o **programa que o gerente vende**, não stack que a startup adota, e o briefing já traz a
+seção `NVIDIA Inception: ELEGÍVEL` logo acima.
+
+**Uma entrada para ele seria linha inalcançável fingindo cobertura — o mesmo defeito que esta
+decisão veio consertar, ao contrário.** O contador de verificação passou a excluir
+`NAO_SAO_TECNOLOGIA` do denominador justamente para que "16/16" não pudesse esconder isso.
+
+### ALTERNATIVA DESCARTADA — deixar o default e documentá-lo
+
+Seria coerente com *"defeito medido defende melhor que conserto apressado"*, mas essa regra
+protege contra conserto **não medido**, e este não muda comportamento nenhum que alguma régua
+observe: `complexidade` não é lida por nenhum teste nem por nenhum harness — só é impressa. O
+custo era 15 linhas de curadoria com fonte; manter o default seria preguiça com nome bonito.
+
+### ALTERNATIVA DESCARTADA — derivar a complexidade do LLM, por tecnologia
+
+Convida paráfrase num campo que o TAPI exige, para ganhar zero: são 15 valores estáveis que
+mudam quando a NVIDIA muda de produto, não quando a startup muda. Curadoria é a ferramenta certa
+para constante de domínio — a mesma razão de `NEGOCIO` ser texto curado (D-104).
+
+
 ## Decisões pendentes
 
 | # | Decisão | Estado |
