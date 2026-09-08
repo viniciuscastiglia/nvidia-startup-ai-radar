@@ -17,9 +17,10 @@ exatamente ela — anexar TODAS as afirmações de cada detector em vez de só a
 mesmo 2 do braço B. Anexar mais evidência não move uma casa.
 
 O que move é a RECÊNCIA, e por um motivo que não estava registrado: `avaliar()` exige
-`>= 1 documento recente` para conceder `alta`, `_recente(None)` devolve `False`, e **86 dos
-93 documentos da base têm `data_publicacao: null`** — porque `coletar.py` não captura data
-nenhuma. Metade da regra está desligada desde sempre. O braço D mede quanto isso vale: +1.
+`>= 1 documento recente` para conceder `alta`, `_recente(None)` devolve `False`, e **a quase
+totalidade dos documentos da base tem `data_publicacao: null`** — porque `coletar.py` não captura
+data nenhuma. Metade da regra está desligada desde sempre. O braço D mede quanto isso vale: +1.
+A contagem exata sai impressa pelo próprio script, e não vive aqui: ela muda a cada empresa nova.
 
 E mesmo o melhor braço (D = 3) apenas EMPATA com a linha trivial em acertos absolutos. O que
 a régua não vê, e decide: o trivial acerta 3 respondendo `alta` para todo mundo — constante e
@@ -108,9 +109,15 @@ def main() -> int:
         alvo = "  <- passa o alvo" if placar[k] >= 4 else ""
         print(f"   {k}  {rotulo:44} {placar[k]}{alvo}")
 
+    # CONTADO, NÃO ESCRITO À MÃO. A versão anterior imprimia o literal "86 dos 93" ao lado de
+    # números calculados — e a base cresceu em D-118 sem que ninguém notasse, então a linha
+    # afirmava um número que o próprio script poderia ter conferido. É o defeito que este
+    # projeto declara evitar no README, cometido dentro de um instrumento de medição.
+    docs = [d for f in regua.carregar() for d in (f.get("documentos") or [])]
+    sem_data = sum(1 for d in docs if not d.get("data_publicacao"))
     print(f"\nC == B refuta a hipótese que D-059 deixou escrita: anexar evidência mais larga")
     print(f"não move o campo. O que move é a recência — e ela depende de `coletar.py` capturar")
-    print(f"`data_publicacao`, que hoje é `null` em 86 dos 93 documentos.")
+    print(f"`data_publicacao`, que hoje é `null` em {sem_data} dos {len(docs)} documentos.")
     print(f"\nNENHUM braço passa o alvo de 4. D empata com o trivial em acertos, e o supera no")
     print(f"que a régua não conta: ele DISCRIMINA. Decidir isso é ato de produto, não de placar.")
     return 0
