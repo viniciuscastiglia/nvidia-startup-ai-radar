@@ -32,3 +32,6 @@ chroma/
 .DS_Store
 .idea/
 .vscode/
+
+# Autoavaliação: fica LOCAL, nunca entregue (ver a nota em sessao-atual.md).
+projeto/avaliacao-*.md
