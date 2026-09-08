@@ -4979,6 +4979,81 @@ recurso escasso (D-093). **Fica declarado em vez de silenciado**, que é a mesma
 com os 38%.
 
 
+## D-119 — O classificador perde 4 AI-native, e o teto disso está calculado desde 27/08
+
+**Data:** 08/09/2026 · **nenhuma linha de código muda** · achado de leitura cruzada entre
+`varrer_classes.py` e os blocos `gabarito:` das 8 fixtures
+
+### O ACHADO, que nenhuma régua isolada mostrava
+
+`varrer_classes.py` imprime a distribuição da base; `avaliar_agentes.py` imprime `classe 3/7`.
+**Nenhum dos dois cruza os dois lados.** Cruzando à mão:
+
+| empresa | `gabarito` | classificador | detectores |
+|---|---|---|---|
+| Axenya | **AI-native** | AI-enabled | `-DT` — falta só o **A** |
+| Doutor-AI | **AI-native** | AI-enabled | `-D-` |
+| Laura Networks | **AI-native** | AI-enabled | `--T` |
+| Maritaca AI | **AI-native** | AI-enabled | `--T` |
+
+**As quatro `AI-native` do gabarito saem `AI-enabled`.** O `classe 3/7` não é ruído distribuído:
+é um **subchamamento sistemático** numa direção só, e isso muda como ele se lê. Erro sistemático
+é diagnosticável; ruído não.
+
+**Consequência que importa mais que o número:** a distribuição impressa — `AI-native 2 ·
+AI-enabled 21 · non-AI 9` — **não é propriedade da BASE, é propriedade do DETECTOR.** A base tem
+pelo menos 5 AI-native (as 4 acima mais a JetBov, que o classificador acerta).
+
+### POR QUE ISSO IMPORTA PARA A DECISÃO DE HOJE, E ELA FOI TOMADA POR ISSO
+
+D-118 entrou com duas empresas para "exercitar a classificação", e a hipótese por trás era que a
+base fosse fina em AI-native. **A hipótese estava errada, e este achado a derruba:** a base não é
+fina, o detector é que subchama. **Adicionar mais empresas AI-native produziria mais rótulos
+`AI-enabled`** — exatamente o que aconteceu com a Enter em D-118.
+
+**Por isso a curadoria PAROU em duas.** Continuar seria gastar horas para mover um número que não
+depende do que se está mexendo.
+
+### O TETO JÁ ESTAVA CALCULADO, e é o que fecha a questão
+
+O comentário de `RUBRICA_EM_DEGRAUS = False` (D-060, 27/08) já respondia:
+
+> A rubrica em degraus faz **4/7**. Recupera a Maritaca e não perde nenhuma das três que a
+> aritmética acertava. Mas empata com o trivial E com o `>= 3`, ou seja: não compra nada que um
+> caractere não compre.
+>
+> **O TETO EXPLICA O EMPATE:** `profundidade_tecnica` devolve **0 em sete das oito fixtures** — só
+> a Maritaca tem vocabulário de infraestrutura nos documentos.
+
+Cruzando com o achado desta entrada: **das 4 perdidas, a melhor rubrica alternativa recupera 1.**
+Axenya, Doutor-AI e Laura Networks dependem do degrau `2b` (autopilot + dado), e as três falham no
+**autopilot** — que é recall de `SINAIS_AUTOPILOT`, vocabulário, e é a **P-12**, registrada desde
+D-060 como exigindo base ampliada e não regra nova.
+
+**O classificador não está no chão por descuido; está no teto do que os documentos publicam.**
+E a Axenya é o caso mais fino: ela tem `D` e `T`, falha só no `A`, e um único detector a separa de
+`AI-native`.
+
+### DECISÃO: nada muda, e a razão de não mexer é a mesma que fez D-060 valer
+
+`SINAIS_AUTOPILOT` é a única alavanca que moveria as três — e é vocabulário casado contra as **8
+fixtures que são a régua**. Ajustá-lo olhando o placar é calibrar contra o gabarito, que é o que
+D-062 existe para impedir, e é o que reprovou a poda de `GATILHOS_DOR` na mesma sessão de 08/09.
+
+**Mexer nele na véspera é pior que o defeito:** moveria `classe` E `maturidade_stack`, que
+compartilham `MARCADORES_PARA_PROFUNDIDADE`, e a maturidade é a guarda que está em 6/7.
+
+### O QUE FICA, e é a defesa
+
+O número é ruim e a linha trivial ganha dele — **isso está publicado, não escondido**. O que o
+acompanha: alvo fixado antes (D-058, ≥ 5/7), alternativa construída e medida (4/7), teto calculado
+(7 de 8 com zero marcador), causa nomeada por empresa (qual detector falta em cada uma), e a
+pendência registrada com o que ela exige (P-12).
+
+**A frase da arguição sai daqui inteira:** *"minha base tem 5 AI-native, meu classificador acha 2,
+perde de uma constante nesse campo, e o teto do conserto está medido — recupera uma."*
+
+
 ## Decisões pendentes
 
 | # | Decisão | Estado |

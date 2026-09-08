@@ -332,6 +332,7 @@ Para avaliar sem Postgres local: `docker compose up -d` (porta 5433) e ajustar `
 |---|---|
 | `projeto/sessao-atual.md` | **no início de qualquer sessão** — o que está aberto e as decisões pendentes |
 | `projeto/revisao-pontos-cegos.md` | **envelope lacrado da revisão do plano** — abre com os limites da auditoria (pode ler sempre) e fecha com a lista de quem fez o plano, que só deve ser lida DEPOIS de você ter escrito a sua |
+| `projeto/avaliacao-08-09.md` | **envelope lacrado da avaliação de 08/09** — a nota por critério do TAPI. **Só abrir DEPOIS de escrever a sua**, senão auditoria vira confirmação. A seção final lista onde ela pode ter errado |
 | `projeto/decisoes.md` | **sempre que uma decisão for tomada** — escrever na hora. É o material de defesa, o roteiro do vídeo e a seção de arquitetura do README |
 | `projeto/plano.md` | **plano dos dias finais** — todo item aberto com destino, portões e eliminatórios · [versão visual](https://claude.ai/code/artifact/b6d37462-6743-43c1-ac6d-da5a15af7839) |
 | `projeto/guia-de-trabalho.md` | método de trabalho e manutenção desta documentação |

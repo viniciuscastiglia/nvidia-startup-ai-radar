@@ -1,93 +1,65 @@
-# Pauta corrente — 08/09: refino dos entregáveis. Entrega 09/09 às 23:59.
+# Pauta corrente — 09/09: ENTREGA às 23:59. O código fechou em 08/09.
 
-> Auditoria de entrega feita em 08/09 **rodando o repositório como um avaliador externo rodaria**:
-> clone limpo, `pytest`, grafo ponta a ponta, réguas. O que ela achou está abaixo, com o custo de
-> cada conserto. **O produto fechou em 06/09** — o que segue são defeitos de acabamento e dois
-> riscos operacionais.
+> **PRÓXIMO PASSO DEFINIDO: uma AUDITORIA INDEPENDENTE, em sessão nova.**
+> A sessão de 08/09 auditou, consertou e verificou os próprios consertos — **não houve checagem
+> independente de nada**. Ela produziu D-113 a D-119 e a nota por critério, e essa nota está
+> **lacrada** em [`projeto/avaliacao-08-09.md`](avaliacao-08-09.md): abrir antes de escrever a sua
+> transforma auditoria em confirmação. A seção "onde a auditoria pode ter errado", no fim daquele
+> arquivo, é por onde começar.
 
-## ✅ O QUE A AUDITORIA CONFIRMOU (não mexer)
+## O que 08/09 fechou — sete decisões, todas verificadas por execução
 
-| verificação | resultado |
+| decisão | o que mudou |
 |---|---|
-| clone limpo × diretório de trabalho | **idêntico**, exceto runs locais (gitignored). `.env` fora do git |
-| `pytest -q` | **128 passed em 7,3 s** — o número que o README afirma |
-| `python -m src.graph` | **exit 0**, briefing completo, os 7 campos, evidência com `url_fonte` |
-| base | 30 startups · 93 documentos · 377 chunks |
-| ingestão offline (`--so-validar`, sem rede) | **175 + 202** — o cache de D-110 reproduz |
-| `smoke_nvidia.py` | **3/3 capacidades** |
+| **D-113** | o comentário de `USAR_JUIZ_LLM` justificava o `False` com o placar de um modelo **morto em 27/08**, e transmitia *"o LLM não deu conta"* — o oposto do medido. O juiz **passou todos os critérios** em D-072 |
+| **D-114** | `COMPLEXIDADE` cobria 5 de 16 tecnologias; as outras 11 caíam no default. **Campo 5 dos 7 obrigatórios** era constante para 69% do catálogo. Agora 15/15 recomendáveis, com razão por linha |
+| **D-115** | a Solinftec saía `ELEGÍVEL` com o documento dizendo *"Criada há 18 anos"*. `há N anos` solto acerta **1 de 3** na base — o particípio de criação é obrigatório |
+| **D-116** | `LLM_TIMEOUT=120` era menor que a latência real (**mediana 216,9 s hoje**, contra 51 s em D-080). `POST /api/perguntar` devolvia **HTTP 500 após 363 s = 3 × 120** com o modelo VIVO |
+| **D-117** | `seed.py --verificar-urls` reprovava uma fonte VIVA por **HTTP 429**. Repetição exata de D-090, na mesma URL |
+| **D-118** | NeoSpace e Enter entram (base **32 · 99**). `AI-native` 1 → 2. A Enter saiu `AI-enabled` e **ficou assim** |
+| **D-119** | **as 4 `AI-native` do gabarito saem `AI-enabled`** — a distribuição de classe é propriedade do DETECTOR, não da base |
 
-## ✅ OS DOIS RISCOS OPERACIONAIS — FECHADOS EM 08/09 (D-116), e eram um só
+**Varredura de afirmações:** o README prometia `128 testes` e entregava 134; o `CLAUDE.md` afirmava
+que a Solinftec era caso-limite ELEGÍVEL, o oposto do que D-115 fez na mesma manhã. Corrigidos.
 
-Eram o mesmo defeito: **`LLM_TIMEOUT=120` menor que a latência real**. Medido n=3 pelo caminho de
-produção: **mediana 216,9 s · faixa 186,5-240,8 s** — a faixa INTEIRA acima do teto, contra 51 s e
-17-88 s que D-080 mediu seis dias antes. Toda tentativa estourava, e os `363 s` do HTTP 500 eram
-`3 × 120`, os três retries do SDK se esgotando **num modelo vivo** (smoke 3/3 no mesmo dia).
+**Varredura de comandos:** os ~21 anunciados foram rodados; **20 passaram** e o que falhava virou
+D-117. As quatro réguas reproduzem: `24/24` no gabarito · `denso 95% r@1 · 79% e@1` · `49%/100%` ·
+`38% contra 44%`.
 
-**`LLM_TIMEOUT` foi para 300** e o passo 8 voltou: q20 do gabarito, **HTTP 200, `ABSTEVE=True`**,
-com as 5 passagens que leu — quatro do `AI Enterprise`, todas impecáveis no assunto e nenhuma com
-o preço. `LENTO` continua não sendo EOL (D-080): a resposta é subir o relógio, não migrar.
+## 🔴 O QUE CONTINUA ABERTO
 
-> **O NÚMERO PARA QUEM FOR GRAVAR: a cena da abstenção custa 510 s de relógio**, dos quais ~217 s
-> são a chamada de LLM e o resto é recuperação mais o passo 7 com o limitador da trial do Cohere.
-> **Ela funciona e não é filmável em tempo real.**
+1. **A auditoria independente** — o item acima, e é o motivo desta pauta existir.
+2. **A INTERFACE NUNCA FOI VISTA RODANDO UMA CONSULTA.** A nota 4 do critério 4 saiu de ver a tela
+   inicial, ler o HTML e exercitar a API. A trilha do fan-out, o dossiê, a evidência clicável e a
+   vitrine do passo 7 **não foram vistos funcionando**. É o furo mais barato de fechar e o mais
+   caro de descobrir tarde.
+3. **`run-recomendacoes.json` tem 30 empresas e a base tem 32** (D-118). Re-rodar custa ~17 min e
+   cota do Cohere.
+4. **A cena da abstenção custa 510 s de relógio** (D-116) — funciona, não é filmável em tempo real.
+   Há um run commitado em `data/runs/exemplo-*.json` como rede.
+5. **O canal de submissão** — o único item que ninguém conserta em 09/09.
 
-## 🟡 DEFEITO REAL, CONSERTO CONTIDO
+## ⛔ DEFEITO MEDIDO SEM CONSERTO DISPONÍVEL — é a defesa, não a pendência
 
-| item | o que está medido | custo |
-|---|---|---|
-| ~~**`COMPLEXIDADE`**~~ ✅ **D-114** | 11 tecnologias caem no default `"media"`. **Campo 5 dos 7 obrigatórios é constante para 69% do catálogo** | 30 min, não move régua nenhuma |
-| ~~**README não nomeia o Diferencial**~~ ✅ | a palavra não aparece; está só em `plano.md` e `achados-04-09.md`. O avaliador percorre os 5 entregáveis do TAPI e adivinha qual é o #5. Não há mapa requisito → onde mora | 45 min |
-| ~~**`docs/*.mmd` não renderizam**~~ ✅ | a arquitetura só existe como ASCII no README | 20 min |
-| ~~**Solinftec `ELEGÍVEL` com 18 anos**~~ ✅ **D-115** | o documento diz *"Criada há 18 anos"*; a política literal deixa `ano_fundacao: null`. **A inferência é sólida e não depende da data do documento**: "há 18 anos" num texto do passado garante ≥ 18 anos hoje, e 18 > 10 | 40 min, muda 1 veredito, `--exclusoes` mede |
-| **Extractor: precisão de dor 49%** | ver a seção abaixo — é a raiz que alimenta 3 critérios | ~1h, com critério de 3 braços |
-
-## 🔬 O GARGALO É O EXTRACTOR, E ELE ALIMENTA TRÊS CRITÉRIOS
-
-Medido em 08/09 sobre o texto bruto da base, **três modos de falha distintos**:
-
-1. **Polissemia de domínio.** `precisão` casa *"agricultura de precisão"* (4 fixtures);
-   `monitoramento` casa *"Programa de Reinserção e Monitoramento"*, *"monitoramento
-   socioambiental"*, *"vibração por rota"* — **nenhuma ocorrência é observabilidade de IA**;
-   `economia` casa *"nova economia baseada no carbono do solo"*; `governança` casa *"presença em
-   conselhos de grandes empresas"* — foi isso que deu **NVIDIA Healthcare a uma agtech** no run
-   de 08/09.
-2. **Proposta de valor ≠ dor própria — é a maior.** *"gerou R$ 13 milhões em economia **para
-   empresas clientes**"*, *"resulta em economia de combustível"*. O casador não separa a dor que
-   a empresa **resolve** da que ela **tem**.
-3. **Boilerplate:** `tempo real`, `crescimento`, `volume`, `integração com`.
-
-**O conserto tem precedente medido NESTE repositório:** `_fala_de_terceiro` (D-085) resolve a
-mesma classe de ambiguidade no filtro do Inception — *"o termo apareceu, mas a frase fala de
-quem?"* — e levou o falso positivo de 2/7 a **7/7**. A pergunta que falta ao Extractor é a irmã:
-*"a frase descreve a dor da empresa ou o benefício que ela vende?"*
-
-> **⚠️ O ACOPLAMENTO QUE QUALQUER CONSERTO AQUI TEM DE RESPEITAR.** `elegibilidade()` varre
-> `perfil.afirmacoes[*].evidencias[*].trecho` — **as mesmas afirmações que o Extractor emite**.
-> Remover dores falsas remove os trechos delas, e a cobertura do filtro do Inception (já só
-> 10,6%, P-23) **encolhe junto**. O critério tem de incluir *"exclusões não regridem"*, senão o
-> conserto do motor degrada o Diferencial em silêncio.
-
-**Critério, a fixar ANTES de medir:** precisão sobe ≥ 10 pontos · recall **não** cai abaixo de
-90% (hoje 100%) · exclusões **não** regridem (hoje 6/6 e 6/6). Qualquer braço que falhe = revert.
-E o desenho é o filtro de proposta de valor, **não podar gatilhos** — podar é calibrar contra o
-gabarito das 8, que é o que D-062 existe para impedir.
-
-## ⛔ DEFEITO REAL SEM CONSERTO DISPONÍVEL — fica escrito, e é a defesa
-
-| item | por que não cabe |
+| defeito | causa, medida |
 |---|---|
-| **`prioridade` nunca é `alta`** nas 30 — medido: 62 `media` · 27 `baixa` · **0 `alta`** em 89 recomendações | cadeia `min()` → `confianca` 0/6 → `data_publicacao` ausente em **86 de 93**. Exige re-coleta (P-25). O docstring de `_prioridade` já dizia; faltava o número |
-| **`justificativa_tecnica` com mobília de página** | **a régua discorda da produção**: o seletor faz 71% contra 57% da trivial no gabarito de 30 chunks, e no run real sai *"More Customer Stories … View All Blogs"*. Resolver a contradição é projeto de medição, não ajuste |
-| **filtro do Inception vê 10,6% do texto** | varrer `conteudo_texto` está **medido e reprovado** (D-102): recusas de 7 → 13, ≥ 4 falso positivo. A saída é inverter a FORMA do veto — de *"não exclua se todas as ocorrências forem de terceiro"* para *"exclua só com autodeclaração de identidade"*. Aí o documento inteiro **ajuda** em vez de atrapalhar. Redesenho |
-| **relevância 38% × 44% da trivial** | depende do conserto do Extractor; re-medir custa ~17 min de run + cota do Cohere |
+| `classe 3/7`, perdendo da trivial 4/7 | **D-119** — teto do conserto é **+1** (D-060: 7 de 8 fixtures com zero marcador) |
+| `prioridade` **nunca** `alta` (0 em 89) | `min()` → `confianca` 0/6 → `data_publicacao` ausente em 86 de 93 (P-11, P-25) |
+| `justificativa_tecnica` com mobília de página | **a régua diz 71% e a produção discorda** — contradição não resolvida |
+| relevância 38% × 44% | dor a 49% alimenta a consulta (D-105) |
+| filtro do Inception vê 10,6% | varrer tudo quebra o veto de terceiro — medido em D-102 |
+
+> **DUAS PROPOSTAS DE 08/09 MORRERAM NA MEDIÇÃO, e ficam registradas porque é o padrão a repetir:**
+> o filtro de "proposta de valor" no Extractor (só **7%** das frases candidatas têm marcador de
+> beneficiário) e a poda de gatilhos por polissemia (**zero** casos nas 8 fixtures do gabarito, então
+> não moveria a régua). Nenhuma das duas entrou.
 
 ## 📌 CONTEXTO QUE NÃO MUDOU
 
 - **Não rode `--refetch`** — reescreve o cache e o corpus deixa de ser o medido (D-110)
-- **Não julgue recomendação com `RERANK_PROVEDOR=nenhum`** (D-097) — modo barato serve para
-  desenvolver, nunca para avaliar
-- **Cota do Cohere é recurso escasso** (D-093) — 1.000 chamadas/mês, e um run das 30 gasta muito
-- **O canal de submissão continua aberto** — é o único item que ninguém conserta em 09/09
+- **Não julgue recomendação com `RERANK_PROVEDOR=nenhum`** (D-097)
+- **Cota do Cohere é escassa** (D-093) — 1.000 chamadas/mês
+- **`LENTO` não é EOL** (D-080) — a resposta é subir o relógio, não migrar
 
 ---
 
