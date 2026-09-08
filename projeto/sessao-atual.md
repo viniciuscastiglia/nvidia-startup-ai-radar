@@ -16,23 +16,29 @@
 | ingestão offline (`--so-validar`, sem rede) | **175 + 202** — o cache de D-110 reproduz |
 | `smoke_nvidia.py` | **3/3 capacidades** |
 
-## 🔴 OS DOIS RISCOS OPERACIONAIS — e são de sistema, não de agenda
+## ✅ OS DOIS RISCOS OPERACIONAIS — FECHADOS EM 08/09 (D-116), e eram um só
 
-1. **`POST /api/perguntar` devolveu HTTP 500 depois de 363 s** (08/09, `cohere`). A porta do
-   passo 8 — D-111 — não responde no estado atual. **Causa não diagnosticada.**
-2. **O modelo está LENTO acima do que D-080 mediu: 191 s para o primeiro token**, contra mediana
-   de 51 s e faixa 17-88 s. **`LLM_TIMEOUT=120` é menor que isso**, então toda chamada estoura e
-   retenta. O grafo sobrevive porque **não chama LLM em produção**; só a rota do passo 8 cai.
-   `LENTO` **não é EOL** (D-080) — não migrar.
+Eram o mesmo defeito: **`LLM_TIMEOUT=120` menor que a latência real**. Medido n=3 pelo caminho de
+produção: **mediana 216,9 s · faixa 186,5-240,8 s** — a faixa INTEIRA acima do teto, contra 51 s e
+17-88 s que D-080 mediu seis dias antes. Toda tentativa estourava, e os `363 s` do HTTP 500 eram
+`3 × 120`, os três retries do SDK se esgotando **num modelo vivo** (smoke 3/3 no mesmo dia).
+
+**`LLM_TIMEOUT` foi para 300** e o passo 8 voltou: q20 do gabarito, **HTTP 200, `ABSTEVE=True`**,
+com as 5 passagens que leu — quatro do `AI Enterprise`, todas impecáveis no assunto e nenhuma com
+o preço. `LENTO` continua não sendo EOL (D-080): a resposta é subir o relógio, não migrar.
+
+> **O NÚMERO PARA QUEM FOR GRAVAR: a cena da abstenção custa 510 s de relógio**, dos quais ~217 s
+> são a chamada de LLM e o resto é recuperação mais o passo 7 com o limitador da trial do Cohere.
+> **Ela funciona e não é filmável em tempo real.**
 
 ## 🟡 DEFEITO REAL, CONSERTO CONTIDO
 
 | item | o que está medido | custo |
 |---|---|---|
-| **`COMPLEXIDADE` cobre 5 de 16** | 11 tecnologias caem no default `"media"`. **Campo 5 dos 7 obrigatórios é constante para 69% do catálogo** | 30 min, não move régua nenhuma |
-| **README não nomeia o Diferencial** | a palavra não aparece; está só em `plano.md` e `achados-04-09.md`. O avaliador percorre os 5 entregáveis do TAPI e adivinha qual é o #5. Não há mapa requisito → onde mora | 45 min |
-| **`docs/*.mmd` não renderizam no GitHub** | a arquitetura só existe como ASCII no README | 20 min |
-| **Solinftec sai `ELEGÍVEL` com 18 anos** | o documento diz *"Criada há 18 anos"*; a política literal deixa `ano_fundacao: null`. **A inferência é sólida e não depende da data do documento**: "há 18 anos" num texto do passado garante ≥ 18 anos hoje, e 18 > 10 | 40 min, muda 1 veredito, `--exclusoes` mede |
+| ~~**`COMPLEXIDADE`**~~ ✅ **D-114** | 11 tecnologias caem no default `"media"`. **Campo 5 dos 7 obrigatórios é constante para 69% do catálogo** | 30 min, não move régua nenhuma |
+| ~~**README não nomeia o Diferencial**~~ ✅ | a palavra não aparece; está só em `plano.md` e `achados-04-09.md`. O avaliador percorre os 5 entregáveis do TAPI e adivinha qual é o #5. Não há mapa requisito → onde mora | 45 min |
+| ~~**`docs/*.mmd` não renderizam**~~ ✅ | a arquitetura só existe como ASCII no README | 20 min |
+| ~~**Solinftec `ELEGÍVEL` com 18 anos**~~ ✅ **D-115** | o documento diz *"Criada há 18 anos"*; a política literal deixa `ano_fundacao: null`. **A inferência é sólida e não depende da data do documento**: "há 18 anos" num texto do passado garante ≥ 18 anos hoje, e 18 > 10 | 40 min, muda 1 veredito, `--exclusoes` mede |
 | **Extractor: precisão de dor 49%** | ver a seção abaixo — é a raiz que alimenta 3 critérios | ~1h, com critério de 3 braços |
 
 ## 🔬 O GARGALO É O EXTRACTOR, E ELE ALIMENTA TRÊS CRITÉRIOS
