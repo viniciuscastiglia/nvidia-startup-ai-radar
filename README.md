@@ -40,17 +40,33 @@ justificativa de negócio, prioridade, complexidade, próxima ação e as fontes
 **Toda conclusão do sistema aponta para o documento que a sustenta.** `Afirmacao` não existe sem
 `list[Evidencia]` — rastreabilidade é propriedade do tipo, não disciplina do programador.
 
-Três coisas que valem ser vistas rodando:
+## O diferencial: este sistema sabe dizer "não"
 
-- **O sistema recusa recomendar.** O filtro do Inception exclui consultoria, capital aberto,
-  cripto e empresas com mais de 10 anos — com a frase do documento que provou a exclusão. E ele
-  separa *"a base prova que é consultoria"* de *"a base não prova que tem developer"*: só o
-  primeiro exclui.
-- **O RAG recusa responder o que não sabe.** Acurácia de abstenção de **23/24** sobre um gabarito
-  de 24 perguntas, das quais 5 não têm resposta no corpus. Quando os trechos falam do assunto mas
-  não contêm o fato, ele diz o que faltou em vez de inventar.
-- **O reranking mostra o que fez.** A tela põe lado a lado a ordem da busca híbrida e a do
-  cross-encoder para a mesma consulta, com o deslocamento de cada passagem.
+> Entregável 5 do TAPI — *"algo único, para diferenciação e destaque competitivo"*.
+
+Um recomendador que sempre recomenda não ajuda ninguém a decidir. **O diferencial deste projeto é
+a recusa fundamentada, e ela aparece em três lugares independentes:**
+
+- **O sistema recusa RECOMENDAR — o filtro do NVIDIA Inception.** Exclui consultoria, capital
+  aberto, cripto e empresa com mais de 10 anos, **citando a frase do documento que provou a
+  exclusão**. E faz duas distinções que quase nenhum filtro faz: separa *"a base prova que é
+  consultoria"* de *"a base não prova que tem developer"* — só o primeiro exclui, o segundo vira
+  *requisito não verificado* — e separa **identidade de tecnologia**: usar blockchain para
+  rastrear boi não faz de ninguém uma cripto, do mesmo jeito que pagar por token não faz
+  (D-090). O veto de terceiro tem escopo de frase, então *"a Automni em parceria com a Davinci
+  Consulting"* não exclui a Automni (D-085). Medido dos **dois lados, nunca somados**: falso
+  negativo 10/10, falso positivo 11/11.
+- **O RAG recusa RESPONDER o que não sabe.** Abstenção de **23/24** sobre um gabarito de 24
+  perguntas, das quais **5 não têm resposta no corpus**. O erro que ele existe para evitar é o
+  pior de todos num briefing comercial: responder com trecho perfeitamente relevante que não
+  contém o fato, citando fonte real e inventando só o número.
+- **E o sistema recusa AFIRMAR sem lastro** — é a rastreabilidade da seção acima, vista do outro
+  lado: como `Afirmacao` não existe sem `list[Evidencia]`, uma conclusão sem fonte não é
+  improvável, é **inexprimível**. O rodapé do briefing vira verificação, não promessa.
+
+Some-se a isso a vitrine do passo 7, que põe lado a lado a ordem da busca híbrida e a do
+cross-encoder para a mesma consulta, com o deslocamento de cada passagem: **o reranking mostra o
+que fez**, em vez de ser afirmado.
 
 ## Arquitetura
 
@@ -77,6 +93,77 @@ registra o erro e **preserva** o que as anteriores produziram). Uma chain usaria
 
 O **pipeline de RAG tem os 9 passos** que o TAPI especifica, um módulo por passo em `src/rag/`.
 O passo 8 — geração com citação e abstenção — é acessível pela interface, em `POST /api/perguntar`.
+
+### O grafo compilado
+
+Os dois diagramas abaixo **não são desenhados à mão**: `python scripts/diagramas.py` os gera a
+partir do grafo já compilado, então eles não conseguem divergir do código.
+
+```mermaid
+graph TD;
+    __start__([__start__]):::first
+    query_planner(query_planner)
+    retriever(retriever)
+    analisar_startup("analisar_startup<br/><small><em>fan-out por Send</em></small>")
+    briefing("briefing<br/><small><em>defer = True</em></small>")
+    __end__([__end__]):::last
+    __start__ --> query_planner;
+    query_planner --> retriever;
+    retriever -.-> analisar_startup;
+    retriever -.-> briefing;
+    analisar_startup --> briefing;
+    briefing --> __end__;
+    classDef default fill:#f2f0ff,line-height:1.2
+    classDef first fill-opacity:0
+    classDef last fill:#bfb6fc
+```
+
+As duas arestas pontilhadas saindo do `retriever` são a condicional `distribuir`: com empresas
+recuperadas ela devolve um `Send` por empresa; com **zero** empresas ela aponta direto para o
+`briefing` — sem essa segunda aresta o nó com `defer=True` nunca executaria, porque `defer` não
+agenda nada, só **atrasa** o que já foi agendado.
+
+E o subgrafo que cada `Send` instancia, uma vez por empresa:
+
+```mermaid
+graph TD;
+    __start__([__start__]):::first
+    extractor(extractor)
+    classifier(classifier)
+    evidence_validator(evidence_validator)
+    elegibilidade(elegibilidade)
+    nvidia_rag(nvidia_rag)
+    recommendation(recommendation)
+    __end__([__end__]):::last
+    __start__ --> extractor;
+    extractor --> classifier;
+    classifier --> evidence_validator;
+    evidence_validator --> elegibilidade;
+    elegibilidade --> nvidia_rag;
+    nvidia_rag --> recommendation;
+    recommendation --> __end__;
+    classDef default fill:#f2f0ff,line-height:1.2
+    classDef first fill-opacity:0
+    classDef last fill:#bfb6fc
+```
+
+Cada nó acima tem um `__error_handler__` que o diagrama omite por legibilidade — eles aparecem em
+[`docs/subgrafo-analise.mmd`](docs/subgrafo-analise.mmd), que é a saída bruta do compilador.
+
+## Onde mora cada entregável do TAPI
+
+| # | Entregável | Onde | Como verificar |
+|---|---|---|---|
+| 1 | **Sistema multi-agente com LangGraph** | [`src/graph.py`](src/graph.py) (topologia) · [`src/agents/`](src/agents/) (um agente por módulo) · [`src/state.py`](src/state.py) (os dois estados) | `python -m src.graph "fintechs brasileiras usando IA"` |
+| 2 | **RAG NVIDIA com reranking** | [`src/rag/`](src/rag/) — **um módulo por passo** do pipeline de 9 do TAPI | `python scripts/avaliar_rag.py` · `--geracao` para a abstenção |
+| 3 | **Motor de recomendação** | [`src/agents/recommendation.py`](src/agents/recommendation.py) — os **7 campos obrigatórios** são atributos de `Recomendacao` em [`src/state.py`](src/state.py) | `python scripts/avaliar_agentes.py --regras-tapi` |
+| 4 | **Interface web** | [`src/web/`](src/web/) — FastAPI + SSE, front à mão | `python -m src.web` |
+| 5 | **Diferencial** | a **recusa fundamentada** — [seção acima](#o-diferencial-este-sistema-sabe-dizer-não) · [`src/agents/briefing.py`](src/agents/briefing.py) (`elegibilidade`) · [`src/rag/geracao.py`](src/rag/geracao.py) (abstenção) | `python scripts/varrer_elegibilidade.py --motivos` |
+
+Os **7 campos obrigatórios do output** (§5.5 do TAPI) são atributos numerados de `Recomendacao`,
+e não texto que um LLM prometeu produzir — *"cumpre o requisito" passa a ser verificável lendo a
+classe*: `tecnologias` · `justificativa_tecnica` · `justificativa_negocio` · `prioridade` ·
+`complexidade` · `proxima_acao` · `evidencias` + `citacoes_rag`.
 
 ## Stack
 
