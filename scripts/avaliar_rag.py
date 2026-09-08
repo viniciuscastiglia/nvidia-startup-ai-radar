@@ -63,6 +63,7 @@ from __future__ import annotations
 import argparse
 import re
 import sys
+import time
 from pathlib import Path
 
 import yaml
@@ -407,10 +408,19 @@ def avaliar_geracao(perguntas: list[dict], estrategia: str, cfg: dict) -> int:
     n_resposta = n_abstencao = 0
     erros: list[tuple[str, str]] = []
 
-    for p in perguntas:
+    for i, p in enumerate(perguntas, 1):
+        # Progresso em tempo real, mesmo idioma de `evidence_validator.py:139`: este laço é
+        # SERIAL e cada `gerar()` é uma chamada de LLM que hoje custa ~6 min (D-116 mediu 216,9 s
+        # em 08/09 e a medição desta sessão deu 377,6 s). A rodada inteira levou 1h14 IMPRIMINDO
+        # NADA, porque o harness só descarrega o buffer no fim — e sem isto não há como
+        # distinguir "lento" de "pendurado". A diferença decide se o problema é orçamento de
+        # tempo ou bug, e é a mesma cegueira que o validador já tinha consertado.
+        print(f"  [{i:2}/{len(perguntas)}] {p['id']:5} ... ", end="", flush=True)
+        t_ini = time.perf_counter()
         ordenado = recuperar("rerank_hibrido", p["pergunta"], estrategia, cfg)[:k]
         citacoes = [para_citacao(pa, rerank=s) for pa, s in ordenado]
         r = gerar(p["pergunta"], citacoes)
+        print(f"{time.perf_counter() - t_ini:5.1f}s", flush=True)
 
         sem_resposta = p["tipo"] == "sem_resposta"
         esperado = "abster" if sem_resposta else "responder"
@@ -434,7 +444,8 @@ def avaliar_geracao(perguntas: list[dict], estrategia: str, cfg: dict) -> int:
             citou = f"{r.indices_citados} {'fonte certa' if do_certo else 'FONTE ERRADA (!)'}"
 
         regime = p.get("regime", p["tipo"])
-        print(f"{p['id']:5}{regime:22}{esperado:10}{obteve:10}{'ok ' if ok else 'ERRO'}{citou}")
+        print(f"{p['id']:5}{regime:22}{esperado:10}{obteve:10}{'ok ' if ok else 'ERRO'}{citou}",
+              flush=True)
         if not ok:
             erros.append((p["id"], r.motivo_abstencao or r.texto[:90]))
 
