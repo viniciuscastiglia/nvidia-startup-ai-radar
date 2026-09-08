@@ -3,7 +3,8 @@
 > **PRÓXIMO PASSO DEFINIDO: uma AUDITORIA INDEPENDENTE, em sessão nova.**
 > A sessão de 08/09 auditou, consertou e verificou os próprios consertos — **não houve checagem
 > independente de nada**. Ela produziu D-113 a D-119 e a nota por critério, e essa nota está
-> **lacrada** em [`projeto/avaliacao-08-09.md`](avaliacao-08-09.md): abrir antes de escrever a sua
+> **lacrada** em `projeto/avaliacao-08-09.md` — que é **local e fora do git de propósito**, porque
+> nota que o candidato dá a si mesmo não se entrega. Abri-la antes de escrever a sua
 > transforma auditoria em confirmação. A seção "onde a auditoria pode ter errado", no fim daquele
 > arquivo, é por onde começar.
 
