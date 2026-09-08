@@ -193,6 +193,50 @@ def _ocorre(termo: str, texto: str) -> bool:
     return re.search(rf"\b{re.escape(termo)}", texto) is not None
 
 
+# IDADE DECLARADA EM ANOS RELATIVOS — D-115.
+#
+# O VERBO DE CRIAÇÃO É OBRIGATÓRIO, E ISSO NÃO É ZELO: É O QUE A BASE MOSTROU.
+# `há N anos` aparece 3 vezes nas 93 fixtures, e um padrão solto acertaria UMA:
+#
+#   Solinftec        "CRIADA há 18 anos por pesquisadores cubanos"   -> é a empresa   ✓
+#   Automni          "Há 8 anos, A INDÚSTRIA 4.0 tinha raríssimas"   -> é o SETOR     ✗
+#   Produzindo Certo "Há 17 anos, aliamos assistência técnica"       -> é a empresa,
+#                     mas contradiz o `ano_fundacao: 2019` curado                     ✗
+#
+# 33% de precisão — a mesma assinatura do casador de dores. Exigir o particípio adjacente
+# resolve os três casos, e é o mesmo idioma de `MARCADORES_DE_TERCEIRO`: marcador observado,
+# escopo estreito, preço declarado — só cobre o que já se viu.
+_IDADE_RELATIVA = re.compile(
+    r"\b(?:criad|fundad|nascid|constitu[ií]d|iniciad)[ao]s?\s+h[áa]\s+(\d{1,2})\s+anos?\b",
+    re.IGNORECASE,
+)
+
+
+def _idade_minima_declarada(documentos) -> tuple[int, object, str] | None:
+    """A MAIOR idade relativa declarada com verbo de criação, e o documento que a prova.
+
+    Devolve LIMITE INFERIOR, não idade exata, e a assimetria é o ponto: um documento do
+    PASSADO dizendo "criada há N anos" garante que hoje a empresa tem **pelo menos** N anos —
+    nunca menos. Por isso `N > IDADE_MAXIMA` exclui com certeza e `N <= IDADE_MAXIMA` não
+    conclui nada (o documento pode ser antigo). É a mesma disciplina da borda do ano: decidir
+    só onde o dado decide.
+
+    Isso também é o que torna a regra imune a `data_publicacao`, ausente em 86 dos 93
+    documentos (P-25): o limite inferior não depende de quando o texto foi escrito.
+    """
+    melhor: tuple[int, object, str] | None = None
+    for doc in documentos or []:
+        texto = getattr(doc, "conteudo_texto", None)
+        if not texto:
+            continue
+        for m in _IDADE_RELATIVA.finditer(texto):
+            anos = int(m.group(1))
+            if melhor is None or anos > melhor[0]:
+                ini = max(0, m.start() - 60)
+                melhor = (anos, doc, texto[ini:m.end() + 60].strip())
+    return melhor
+
+
 def _fala_de_terceiro(termo: str, texto: str) -> bool:
     """A ocorrência do termo está numa frase que fala de OUTRA empresa? Ver `MARCADORES_DE_TERCEIRO`.
 
@@ -267,8 +311,34 @@ def elegibilidade(analise_startup, perfil) -> Elegibilidade:
                 f"{IDADE_MAXIMA})"
             )
 
-    # Requisitos que a base não tem como provar. NÃO excluem — viram pauta da conversa.
+    # IDADE SEM ANO: o documento diz "criada há N anos" — D-115.
+    #
+    # POR QUE SÓ QUANDO `ano_fundacao` É NULO: o ano curado é mais preciso e já resolve a borda
+    # com o cuidado acima. Onde os dois existem, o ano ganha — o relativo é o plano B, não um
+    # segundo voto.
+    #
+    # POR QUE LÊ `documentos` E NÃO OS TRECHOS DE EVIDÊNCIA, contra o padrão do resto da função:
+    # medido em 08/09, a frase da Solinftec **não cai em nenhum trecho de evidência** — a versão
+    # que respeitasse o padrão seria INERTE, e é o erro de D-112 outra vez. E aqui a varredura
+    # ampla é segura, ao contrário do que P-23 mede para `EXCLUSOES`: aquele risco vem do `all()`
+    # de `_fala_de_terceiro`, que dilui quanto mais texto recebe. Esta regra não usa o veto de
+    # terceiro — ela casa um particípio adjacente a um número, e mais texto só a torna mais
+    # completa.
     if not analise_startup.ano_fundacao:
+        achado = _idade_minima_declarada(analise_startup.documentos)
+        if achado and achado[0] > IDADE_MAXIMA:
+            anos, doc, trecho = achado
+            motivos.append(
+                f"exclusão por idade: o documento declara que a empresa foi criada há {anos} "
+                f"anos, então tem ao menos {anos} hoje (o programa exige menos de "
+                f"{IDADE_MAXIMA})"
+            )
+            evidencias.append(Evidencia.de_documento(doc, trecho))
+
+    # Requisitos que a base não tem como provar. NÃO excluem — viram pauta da conversa.
+    if not analise_startup.ano_fundacao and not any(
+        m.startswith("exclusão por idade") for m in motivos
+    ):
         pendentes.append("ano de fundação não consta na base — verificar se tem menos de 10 anos")
     if not analise_startup.site:
         pendentes.append("site ativo não confirmado na base")

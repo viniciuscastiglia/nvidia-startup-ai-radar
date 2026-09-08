@@ -19,7 +19,7 @@ from __future__ import annotations
 import pytest
 
 from src.agents.briefing import elegibilidade
-from src.state import Afirmacao, Evidencia, PerfilStartup, StartupRef
+from src.state import Afirmacao, DocumentoRef, Evidencia, PerfilStartup, StartupRef
 
 
 def _perfil(*trechos: str) -> PerfilStartup:
@@ -45,9 +45,24 @@ def _perfil(*trechos: str) -> PerfilStartup:
     )
 
 
-def _startup(ano_fundacao: int | None = 2022) -> StartupRef:
+def _startup(ano_fundacao: int | None = 2022, *documentos: str) -> StartupRef:
+    """`documentos` recebe o `conteudo_texto` BRUTO — é o que a regra de idade relativa lê
+    (D-115), e o único ponto de `elegibilidade()` que não passa pelos trechos de evidência."""
     return StartupRef(
-        startup_id=1, nome="Acme", site="https://exemplo.test", ano_fundacao=ano_fundacao
+        startup_id=1,
+        nome="Acme",
+        site="https://exemplo.test",
+        ano_fundacao=ano_fundacao,
+        documentos=[
+            DocumentoRef(
+                documento_id=i,
+                tipo="noticia",
+                titulo=f"materia {i}",
+                url_fonte=f"https://exemplo.test/n{i}",
+                conteudo_texto=t,
+            )
+            for i, t in enumerate(documentos, 1)
+        ],
     )
 
 
@@ -271,3 +286,83 @@ def test_um_ano_abaixo_da_borda_passa_sem_pendencia_de_idade():
     r = elegibilidade(_startup(ano_fundacao=date.today().year - IDADE_MAXIMA + 1), _perfil("t"))
     assert r.elegivel
     assert not any("idade na borda" in p for p in r.requisitos_nao_verificados)
+
+
+# ---------------------------------------------------------------------------------------------
+# IDADE DECLARADA EM ANOS RELATIVOS — D-115
+#
+# Os três primeiros testes são as TRÊS ocorrências reais de `há N anos` nas 93 fixtures, e são
+# um conjunto de propósito: o primeiro sozinho é satisfeito por um regex solto de `há N anos`,
+# e os outros dois são exatamente o que esse regex quebraria. Foram eles que derrubaram a
+# primeira versão da regra, antes de ela existir em código.
+# ---------------------------------------------------------------------------------------------
+
+SOLINFTEC = ("A carteira acumulada de contratos deve superar R$ 2,5 bilhões este ano. "
+             "Criada há 18 anos por pesquisadores cubanos que vieram ao Brasil, a empresa "
+             "passou a atuar na indústria.")
+AUTOMNI = ("Nossa curiosidade de conhecer veio do próprio mercado. Há 8 anos, a indústria 4.0 "
+           "tinha raríssimas soluções de veículos autônomos robotizados.")
+PRODUZINDO_CERTO = ("Gerando transparência e aproximando empresas e produtores rurais. "
+                    "Há 17 anos, aliamos assistência técnica de campo ao uso de tecnologias.")
+
+
+def test_idade_relativa_com_verbo_de_criacao_exclui():
+    """O caso da Solinftec: 18 anos declarados, `ano_fundacao` nulo pela política de
+    literalidade. Antes de D-115 ela saía ELEGÍVEL — um limite de "menos de 10 anos" deixando
+    passar uma empresa que o próprio documento diz ter 18."""
+    r = elegibilidade(_startup(None, SOLINFTEC), _perfil("texto sem termo excludente"))
+    assert not r.elegivel
+    assert any("idade" in m for m in r.motivos_exclusao)
+    assert any("18" in m for m in r.motivos_exclusao)
+
+
+def test_idade_relativa_do_SETOR_nao_exclui():
+    """O caso da Automni: *"Há 8 anos, A INDÚSTRIA 4.0 tinha..."* não fala da empresa.
+
+    Sem o particípio adjacente exigido, um regex de `há N anos` leria idade onde há contexto
+    de mercado — a mesma família de defeito que `GATILHOS_DOR` tem com "agricultura de
+    precisão"."""
+    r = elegibilidade(_startup(None, AUTOMNI), _perfil("texto sem termo excludente"))
+    assert r.elegivel
+    assert not any("idade" in m for m in r.motivos_exclusao)
+
+
+def test_idade_relativa_sem_verbo_de_criacao_nao_exclui_nem_falando_da_empresa():
+    """O caso da Produzindo Certo: *"Há 17 anos, aliamos assistência técnica"* fala da empresa
+    de verdade, mas contradiz o `ano_fundacao: 2019` que a curadoria extraiu de outro documento.
+
+    A regra se cala: "operamos há 17 anos" não é "fomos criados há 17 anos" — pode ser a
+    trajetória de uma antecessora. Preferir o silêncio ao palpite é a mesma escolha da borda
+    do ano, e é o que impede a base de se contradizer em silêncio."""
+    r = elegibilidade(_startup(None, PRODUZINDO_CERTO), _perfil("texto sem termo excludente"))
+    assert r.elegivel
+
+
+def test_ano_curado_tem_precedencia_sobre_a_idade_relativa():
+    """O relativo é plano B, não segundo voto: com `ano_fundacao` presente, quem decide é ele.
+    Aqui o ano diz 2022 (nova) e o texto diz 18 anos — e a empresa passa."""
+    r = elegibilidade(_startup(2022, SOLINFTEC), _perfil("texto sem termo excludente"))
+    assert r.elegivel
+
+
+def test_idade_relativa_abaixo_do_limite_nao_conclui_nada():
+    """A ASSIMETRIA QUE JUSTIFICA A REGRA INTEIRA. "Criada há 3 anos" num documento de data
+    desconhecida dá um LIMITE INFERIOR: a empresa tem *ao menos* 3 anos, e pode ter 30 se o
+    texto for antigo. Só `> IDADE_MAXIMA` conclui; abaixo disso a pendência de ano continua."""
+    r = elegibilidade(_startup(None, "A startup foi criada há 3 anos por dois engenheiros."),
+                      _perfil("texto sem termo excludente"))
+    assert r.elegivel
+    assert any("ano de fundação" in p for p in r.requisitos_nao_verificados)
+
+
+def test_exclusao_por_idade_relativa_aponta_para_a_evidencia():
+    """A invariante do repositório vale para a regra nova: nenhuma conclusão sem `Evidencia`.
+
+    E a pendência de "ano de fundação não consta" SAI quando a exclusão entra — mantê-la seria
+    o briefing pedindo para verificar a idade de uma empresa que ele acabou de recusar por
+    idade."""
+    r = elegibilidade(_startup(None, SOLINFTEC), _perfil("texto sem termo excludente"))
+    assert r.evidencias
+    assert "criada há 18 anos" in r.evidencias[-1].trecho.lower()
+    assert r.evidencias[-1].url_fonte
+    assert not any("ano de fundação" in p for p in r.requisitos_nao_verificados)

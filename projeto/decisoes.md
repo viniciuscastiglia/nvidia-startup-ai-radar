@@ -4690,6 +4690,87 @@ mudam quando a NVIDIA muda de produto, não quando a startup muda. Curadoria é 
 para constante de domínio — a mesma razão de `NEGOCIO` ser texto curado (D-104).
 
 
+## D-115 — O filtro do Inception aprende a ler idade sem ano, e a primeira versão da regra foi derrubada pelos dados
+
+**Data:** 08/09/2026 · achado da auditoria de entrega · `pytest` **128 → 134** · exclusões
+**10/10 e 11/11 idênticas** · régua dos agentes **idêntica** · `varrer_elegibilidade` **7 → 8
+recusas**, e a única nova é a Solinftec
+
+### O DEFEITO, e ele era visível na tabela que o repositório manda LER
+
+A Solinftec saía **`ELEGÍVEL`** de um filtro que exige *"menos de 10 anos"*, enquanto o documento
+dela diz, literal: *"**Criada há 18 anos** por pesquisadores cubanos"*. `ano_fundacao` fica `null`
+porque a política de literalidade só aceita ano, e *"há 18 anos"* é idade.
+
+`CLAUDE.md` chamava isso de *"o preço declarado da literalidade"*. **É defensável como política e
+indefensável como saída**: o gerente que abrir esse briefing perde tempo com uma empresa que o
+próprio documento desqualifica. Política honesta não vira resultado certo por decreto.
+
+### O QUE QUASE ENTROU ERRADO, E É O ACHADO DESTA ENTRADA
+
+A regra óbvia — casar `há N anos` — foi escrita, e **os dados a derrubaram antes de virar código**.
+As **três** ocorrências do padrão nas 93 fixtures:
+
+| fixture | frase | é a idade da empresa? |
+|---|---|---|
+| Solinftec | *"**Criada** há 18 anos por pesquisadores cubanos"* | **sim** |
+| Automni | *"Há 8 anos, **a indústria 4.0** tinha raríssimas soluções"* | **não — é o SETOR** |
+| Produzindo Certo | *"Há 17 anos, aliamos assistência técnica"* | fala da empresa, mas **contradiz o `ano_fundacao: 2019`** curado de outro documento |
+
+**Um regex solto teria 33% de precisão — a assinatura exata do `GATILHOS_DOR`**, o defeito que
+esta mesma auditoria mediu no Extractor. **Exigir o particípio de criação adjacente resolve os
+três casos**, e é o idioma que `MARCADORES_DE_TERCEIRO` já usa: marcador observado, escopo
+estreito, preço declarado — só cobre o que já se viu.
+
+### DECISÃO: `_IDADE_RELATIVA` exige verbo de criação, devolve LIMITE INFERIOR e só exclui com certeza
+
+- **Só age quando `ano_fundacao` é nulo.** O ano curado é mais preciso e já trata a borda; o
+  relativo é plano B, não segundo voto.
+- **Devolve limite inferior, não idade.** Um documento **do passado** dizendo *"criada há N anos"*
+  garante que hoje a empresa tem **ao menos** N — nunca menos. Então `N > 10` exclui com certeza,
+  e `N <= 10` **não conclui nada**, porque o texto pode ser antigo: a pendência de ano continua.
+  É a mesma assimetria da borda de D-085 — decidir só onde o dado decide.
+- **Efeito colateral que vale mais que a regra: a idade relativa é imune à ausência de
+  `data_publicacao`**, que falta em **86 dos 93 documentos** (P-25). O limite inferior não depende
+  de quando o texto foi escrito, e é por isso que esta regra funciona onde a aritmética de data
+  não funcionaria.
+
+### POR QUE ELA LÊ `documentos` E NÃO OS TRECHOS DE EVIDÊNCIA — a exceção, e ela é medida
+
+Todo o resto de `elegibilidade()` varre `perfil.afirmacoes[*].evidencias[*].trecho`. **Esta regra
+não, e a razão foi verificada por execução antes de o código existir:** rodado o Extractor sobre
+a Solinftec, a Automni e a Produzindo Certo, a frase *"Criada há 18 anos"* **não cai em nenhum
+trecho de evidência** — nem ela, nem nenhuma outra ocorrência do padrão nas três. A versão que
+respeitasse o padrão do módulo seria **INERTE**, e teria passado nos testes que eu mesmo
+escreveria. **É o erro de D-112 outra vez** (`estrategia_analise` era constante, então "fazer um
+nó lê-la" satisfazia a letra sem mudar nada), pego desta vez antes e não depois.
+
+**E a varredura ampla aqui é segura, ao contrário do que D-102 mede para `EXCLUSOES`.** Aquele
+risco vem do `all()` de `_fala_de_terceiro`: o veto exige que **toda** ocorrência do termo caia em
+frase com marcador, então cada caractere a mais é outra chance de o `all()` falhar — e as recusas
+vão de 7 para 13. **Esta regra não usa o veto de terceiro.** Ela casa um particípio adjacente a um
+número; mais texto só a torna mais completa. As duas coisas foram medidas separadamente porque
+são mecanismos diferentes, e tratá-las como a mesma teria barrado um conserto correto.
+
+### ALTERNATIVA DESCARTADA — preencher `ano_fundacao: 2008` na fixture
+
+Inferir o ano a partir da idade e da data presumida do documento é exatamente o que **D-021**
+barrou nas fixtures do seed, e produziria um ano falso num campo que o Briefing imprime como
+fato. A regra fica no código, onde é auditável e onde diz o que sabe: *"ao menos 18"*, não *"2008"*.
+
+### ALTERNATIVA DESCARTADA — aceitar a saída e defender a política
+
+Foi a conduta anterior, e ela vinha com argumento bom (literalidade não inventa dado). O que a
+derruba é que **as duas coisas não estavam em conflito**: o documento *diz* a idade, com todas as
+letras. Não era literalidade contra inferência — era o filtro não lendo o que estava escrito.
+
+### O que isto NÃO fecha
+
+**P-23 continua aberta.** A cobertura de 10,6% vale para `EXCLUSOES`, que é a maior parte do
+filtro; esta entrada abre uma exceção medida para UMA regra, pelo motivo específico de ela não
+compartilhar o mecanismo do `all()`. **Não é precedente para varrer `conteudo_texto` no resto.**
+
+
 ## Decisões pendentes
 
 | # | Decisão | Estado |
