@@ -8,6 +8,40 @@
 > transforma auditoria em confirmação. A seção "onde a auditoria pode ter errado", no fim daquele
 > arquivo, é por onde começar.
 
+## 📥 QUANDO A AUDITORIA EXTERNA VOLTAR — leia isto ANTES de consertar qualquer coisa
+
+A auditoria roda em `~/auditoria-radar` (clone descartável, `CLAUDE.md` substituído pela carta do
+avaliador, sem memória automática e **sem** a autoavaliação de 08/09). Para trazer o resultado:
+
+```bash
+cp ~/auditoria-radar/RELATORIO.md ~/case-nvidia/projeto/auditoria-externa.md
+```
+
+*(peça à sessão de auditoria que grave o relatório em `RELATORIO.md` na raiz dela)*
+
+**A REGRA AO RECEBER, E ELA JÁ CUSTOU CARO DUAS VEZES: verifique o achado antes de consertar.**
+
+- Em **03/09**, três achados de uma auditoria caíram na verificação — e um deles era o classificado
+  como "o mais grave".
+- Em **08/09**, **duas propostas minhas morreram na medição**: o filtro de "proposta de valor" no
+  Extractor (só 7% das frases candidatas têm marcador de beneficiário) e a poda de gatilhos por
+  polissemia (zero casos nas 8 fixtures do gabarito, logo não moveria régua nenhuma).
+
+**Auditoria produz hipótese, não fato.** Para cada achado, antes de tocar em código:
+
+1. **Reproduza** — qual comando mostra o defeito? Se nenhum mostra, não está provado.
+2. **Meça o custo do conserto NA RÉGUA** — `avaliar_agentes.py`, `--exclusoes` e `pytest` custam
+   zero API e ~20 s somados. Fixe o critério **antes** de rodar (D-055).
+3. **Um conserto por commit**, com a régua rodada depois de cada um. Régua que se move sem
+   explicação = `git revert` imediato, sem tentar consertar por cima.
+
+**A BARRA É MAIS ALTA NA VÉSPERA.** Um defeito medido e explicado defende melhor que um conserto
+apressado que ninguém mediu — é o que sustenta P-21, P-23 e D-119 hoje. Mudança de produção a esta
+altura só entra se: (a) o defeito foi reproduzido, (b) a régua não regride, e (c) a reversão é um
+commit.
+
+---
+
 ## O que 08/09 fechou — sete decisões, todas verificadas por execução
 
 | decisão | o que mudou |
