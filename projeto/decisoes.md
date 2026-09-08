@@ -4771,6 +4771,76 @@ filtro; esta entrada abre uma exceção medida para UMA regra, pelo motivo espec
 compartilhar o mecanismo do `all()`. **Não é precedente para varrer `conteudo_texto` no resto.**
 
 
+## D-116 — O passo 8 estava inacessível por um número de configuração, e o modelo ficou 4× mais lento em 6 dias
+
+**Data:** 08/09/2026 · achado da auditoria de entrega · `LLM_TIMEOUT` **120 → 300** ·
+`pytest` **134 passed** · verificado por execução: `POST /api/perguntar` **HTTP 500 → HTTP 200**
+
+### O SINTOMA, e ele era eliminatório em silêncio
+
+`POST /api/perguntar` — a porta do passo 8, aberta em D-111 — devolvia **HTTP 500 depois de
+363 s**, com `OpenAITimeoutError: Request timed out.` no log. **O modelo estava VIVO**: o smoke do
+mesmo dia deu 3/3 capacidades.
+
+363 s não é número aleatório: é **3 × 120**, o `max_retries=2` do SDK esgotando três tentativas de
+120 s. **Toda** tentativa estourava, porque o teto era menor que a latência real.
+
+### A MEDIÇÃO, n=3 pelo caminho de produção (D-039)
+
+| | D-080 (02/09) | **hoje, 08/09** |
+|---|---|---|
+| mediana | 51 s | **216,9 s** |
+| faixa | 17-88 s | **186,5-240,8 s** |
+| `LLM_TIMEOUT` | 120 | era 120 — **abaixo do MÍNIMO medido** |
+
+**~4× mais lento em 6 dias, sem aviso e sem mudança nossa.** A faixa inteira acima do teto, então
+não havia caso em que uma tentativa completasse.
+
+### DECISÃO: 300, e o número sai do máximo medido com folga
+
+**300 e não 250:** o máximo de hoje foi 240,8 s, e teto colado no máximo observado volta a falhar
+no primeiro dia pior — que é exatamente o que aconteceu com os 120 de D-080.
+
+**O CUSTO, DECLARADO:** com `max_retries=2`, uma chamada de fato pendurada agora leva **900 s**
+para desistir, contra 360. É o preço de não abortar chamada viva, e a assimetria é a mesma que
+D-080 usou: desistir de resposta que ia chegar é **erro silencioso**; demorar é **erro visível**.
+
+**Mexer no número de retries é OUTRA decisão e não entrou junto.** Com o teto certo, a primeira
+tentativa completa e os retries voltam a ser o que devem ser: defesa contra falha transitória, não
+o caminho normal.
+
+### A LIÇÃO QUE VALE MAIS QUE O NÚMERO, e ela é sobre o `CLAUDE.md`
+
+D-080 escreveu "mediana 51 s" no `CLAUDE.md`, que é lido em toda sessão — e o número **caducou em
+6 dias**. É a repetição exata do que D-080 corrigiu: *"a versão anterior deste comentário dizia
+'responde em ~650 ms' — era verdade em 01/09 e ficou falsa em 24 h."*
+
+**A latência deste fornecedor não é constante do projeto; é propriedade do fornecedor no dia.** O
+`CLAUDE.md` passou a dizer isso em vez de publicar um número como se fosse estável, e a conduta é
+re-medir antes de confiar. **Isso não muda a regra de D-080:** `LENTO` continua não sendo EOL, e a
+resposta certa continua sendo subir o relógio, não migrar o modelo.
+
+### VERIFICADO POR EXECUÇÃO, e é o que fecha a entrada
+
+Servidor reiniciado com o config novo, q20 do gabarito — *"Qual o preço da licença do NVIDIA AI
+Enterprise por GPU por ano em reais?"*:
+
+```
+HTTP 200 em 510,1 s
+ABSTEVE : True
+motivo  : "não há menção ao preço da licença ... Apenas informações sobre trial gratuito,
+           features e deployment guides estão presentes."
+citações: 5 — quatro do AI Enterprise, uma do Riva
+```
+
+**A abstenção funciona e é a cena que o projeto tem de mais raro:** cinco passagens impecáveis no
+assunto, e o sistema recusa porque nenhuma contém o fato.
+
+**O NÚMERO QUE FICA REGISTRADO PARA QUEM FOR GRAVAR: 510 s de relógio**, contra ~217 s da chamada
+de LLM sozinha — o resto é recuperação e o passo 7 com o limitador da trial do Cohere (D-068). O
+passo 8 **funciona**; ele não é filmável em tempo real.
+
+
 ## Decisões pendentes
 
 | # | Decisão | Estado |

@@ -143,10 +143,17 @@ Consulta do usuário
 >   antes de entregar é a única defesa que existe** — são 4 segundos, e o quarto EOL passou 13 horas
 >   despercebido por ninguém ter rodado.
 > - **EXISTE UMA QUARTA ASSINATURA, E ELA NÃO É MORTE: `LENTO` (D-080).** O modelo responde HTTP
->   200 acima do relógio — mediana medida de **51 s**, faixa 17-88 s. As três assinaturas de D-079
->   descrevem só respostas que CHEGAM; um **timeout não é conclusão**. O smoke separa os casos e
->   imprime a conduta. **`LENTO` NÃO justifica trocar de modelo** — em 02/09, lê-lo como EOL teria
->   aberto uma migração desnecessária a 5 dias do vídeo.
+>   200 acima do relógio. As três assinaturas de D-079 descrevem só respostas que CHEGAM; um
+>   **timeout não é conclusão**. O smoke separa os casos e imprime a conduta. **`LENTO` NÃO
+>   justifica trocar de modelo** — em 02/09, lê-lo como EOL teria aberto uma migração
+>   desnecessária a 5 dias do vídeo.
+> - **E A LENTIDÃO PIORA COM O TEMPO: 51 s EM 02/09, 217 s EM 08/09 (D-116).** Medido n=3 pelo
+>   caminho de produção: mediana **216,9 s**, faixa **186,5-240,8 s** — contra 51 s e 17-88 s de
+>   D-080, ~4× mais lento em 6 dias. **`LLM_TIMEOUT` subiu de 120 para 300**, porque a faixa
+>   inteira estava acima do teto e TODA tentativa estourava: `POST /api/perguntar` devolvia
+>   **HTTP 500 depois de 363 s (= 3 × 120) com o modelo VIVO**. A lição operacional é que este
+>   número **não é constante do projeto, é propriedade do fornecedor no dia** — re-meça antes de
+>   confiar nele, e não o leia como EOL.
 > - **Env var não protege o embedder.** Trocar o modelo muda o espaço vetorial e invalida os 377
 >   vetores — é `scripts/reembedar.py` mais re-medir a régua inteira (D-046).
 > - **O PASSO 7 TEM FORNECEDOR ÚNICO: `RERANK_PROVEDOR=nvidia` NÃO É OPÇÃO DESDE MAIO (D-097).**

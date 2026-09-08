@@ -143,7 +143,25 @@ LLM = ConfigLLM(
     # faixa 17-88 s, e uma chamada de 88 s é 30 (falha) + 30 (falha) + ~28 (sucesso). O timeout
     # curto não protegia de nada — ele TRIPLICAVA o relógio de cada chamada lenta e escondia a
     # latência real atrás de retries silenciosos. Com 120 s cada chamada é uma tentativa só.
-    timeout=float(_env("LLM_TIMEOUT", "120")),
+    #
+    # 120 -> 300 EM 08/09 (D-116), PELO MESMO ARGUMENTO E COM O MODELO 4x MAIS LENTO.
+    # Medido hoje, n=3 pelo caminho de produção: **mediana 216,9 s · faixa 186,5-240,8 s**.
+    # A faixa inteira está ACIMA do teto de 120, então TODA tentativa estourava e a chamada só
+    # terminava quando os 3 retries se esgotavam — exatamente o defeito que D-080 consertou,
+    # voltando por deriva do fornecedor em vez de por escolha.
+    #
+    # E ele não era teórico: `POST /api/perguntar` devolvia **HTTP 500 depois de 363 s**
+    # (= 3 x 120), com `OpenAITimeoutError` no log, num modelo que estava VIVO. O passo 8 do
+    # TAPI — a porta da abstenção — estava inacessível por um número de configuração.
+    #
+    # 300 e não 250: o máximo medido foi 240,8 s, e um teto colado no máximo observado volta a
+    # falhar no primeiro dia pior. 300 dá ~25% de folga sobre o pior caso de hoje.
+    #
+    # O CUSTO, DECLARADO: com `max_retries=2`, uma chamada de fato pendurada agora leva 900 s
+    # para desistir, contra 360. É o preço de não abortar chamada viva, e a assimetria é a mesma
+    # de D-080 — desistir de resposta que ia chegar é erro silencioso; demorar é erro visível.
+    # Mexer no número de retries é OUTRA decisão e não entra junto.
+    timeout=float(_env("LLM_TIMEOUT", "300")),
 )
 
 EMBEDDING = ConfigEmbedding(
