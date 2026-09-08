@@ -5184,6 +5184,95 @@ tanto a escolha da passagem quanto a do span, porque a mesma função decide as 
 **Nova pendência: P-27** — o ponto cego de `pontuar()`, com o desenho da penalidade de forma e o
 custo de medi-la.
 
+## D-121 — A auditoria independente volta: 8 dos 10 achados confirmados, 1 refutado, e 2 com o diagnóstico errado
+
+**Data:** 08/09/2026 · **6 consertos entram, 3 achados não** · o protocolo de recebimento de
+`sessao-atual.md` foi aplicado achado a achado, antes de tocar em código
+
+### O PROTOCOLO EXISTIA PORQUE JÁ TINHA CUSTADO CARO DUAS VEZES, E PAGOU DE NOVO
+
+Em 03/09, três achados de auditoria caíram na verificação — um deles classificado como "o mais
+grave". Em 08/09 pela manhã, duas propostas próprias morreram na medição. A regra escrita era:
+**reproduza antes de consertar; auditoria produz hipótese, não fato.**
+
+| # | achado | veredito |
+|---|---|---|
+| 1 | `verificar_reranker.py` estoura `TypeError` | **CONFIRMADO por execução** |
+| 2 | README diz 30 startups / 93 documentos | **CONFIRMADO** — banco: 32 / 99 |
+| 3 | README diz 118 decisões | **CONFIRMADO** — eram 119, hoje 120 |
+| 4 | README diz smoke "em 4 segundos" | **CONFIRMADO como número velho**, mas ver abaixo |
+| 5 | `medir_confianca.py:113` imprime literal | **CONFIRMADO** — diz 86/93, real 91/99 |
+| 6 | `run-recomendacoes.json` tem 30, base tem 32 | **CONFIRMADO** — faltam Enter e NeoSpace |
+| 7 | README: "um módulo por passo" dos 9 | **CONFIRMADO** — só 5 dos 9 são módulo |
+| 8 | aviso de depreciação do LangGraph | **NÃO REPRODUZIDO** — custa run com API, e é warning |
+| 9 | `--geracao` roda 1h14 sem imprimir nada | **CONFIRMADO** |
+| 10 | `seed.py --verificar-urls` reescreve o banco | **REFUTADO** |
+
+### O QUE CAIU, E POR QUE IMPORTA MAIS QUE OS QUE PASSARAM
+
+**#10 é falso, e a descrição está invertida.** O código verifica **antes** de semear
+(`seed.py:333` → `:344`), não depois. E já existe a forma de só conferir:
+`--verificar-urls --so-validar` retorna 0 antes de `semear()`. O `CLAUDE.md` descreve o comando
+como *"semeia e confere"* — comportamento documentado, não defeito.
+
+**#1 tem a causa errada, e a causa errada é pior que o defeito.** A auditoria chamou o HTTP 404 de
+*"a morte que o próprio `.env` documenta"*. O corpo diz `Function '...': Not found for account
+'...'` — isso é **entitlement (D-070)**, não morte. Morte tem assinatura própria: **410 com a data
+de EOL no corpo**. Registrar o 404 como EOL desfaria exatamente a distinção que D-070 construiu
+com instrumento versionado.
+
+**#4 mede um dia e o apresenta como constante.** A auditoria mediu 1m02; a verificação de hoje,
+**11 s**. Corrigir o README de "4 s" para "11 s" cometeria de novo o defeito que o README declara
+evitar. **O número saiu, não foi atualizado.**
+
+### O CONSERTO QUE NÃO É CONSERTO DE NÚMERO
+
+`medir_confianca.py` não passou a dizer "91 de 99" — passou a **contar**, de `regua.carregar()`,
+que é a fonte que o script já lê. Trocar o literal só adiaria a próxima vez: a base cresceu em
+D-118 e ninguém notou que a linha tinha envelhecido. **Um instrumento de medição que afirma um
+número à mão ao lado de números que calcula é o defeito do README cometido dentro da régua.**
+
+### O QUE NÃO ENTROU, COM A RAZÃO
+
+**#6 — re-rodar `run-recomendacoes.json` com as 32.** É a entrada de `--regras-tapi`, a régua do
+**38% × 44%**. Custa ~17 min e cota do Cohere, e **pode mover a manchete para qualquer lado**:
+a NeoSpace é `AI-native` e sweet-spot. Medir na véspera um número que vira defesa, sem tempo de
+explicar o que ele devolver, é o oposto de D-055. Fica aberto e nomeado.
+
+**#8 — o warning do LangGraph.** Não reproduzido: exige run com API para ler checkpoint salvo, e é
+aviso de compatibilidade futura, não falha. Não se conserta o que não se viu.
+
+### DOIS ACHADOS DE BANCADA QUE A VERIFICAÇÃO PRODUZIU
+
+**1. `conda run` SEM `--no-capture-output` segura toda a saída até o processo terminar.** A
+primeira tentativa de verificar o conserto do #9 deu log vazio por causa disso, não do código.
+Se a auditoria mediu o "1h14 mudo" por esse caminho, parte do silêncio era do harness dela — o
+`flush` continua certo, porque o buffer do Python é real e independente.
+
+**2. `ast.parse` NÃO valida a posição de `from __future__`; `compile` valida.** O conserto do #9
+inseriu `import time` antes do `from __future__`, e o check de sintaxe passou. **Um verificador
+que aprova código que não roda é pior que nenhum**, e este passou por um. Pego rodando o script.
+
+### DECISÃO
+
+Entram **6 consertos**, um por commit, com o portão rodado depois de cada um: README (números e os
+9 passos), `verificar_reranker.py`, `medir_confianca.py`, `avaliar_rag.py --geracao`. **Réguas
+idênticas depois de tudo:** `134 passed` · `classe 3/7 · stack 6/7 · confianca 0/6` · exclusões
+`10/10 e 11/11` · gabarito `24/24`.
+
+**Verificação de sistema desta sessão, por execução:** grafo ponta a ponta em **143 s** com rerank
+Cohere vivo (confirmado à parte: 0,3 s, ordena certo), interface subindo e servindo `/`,
+`/api/runs`, `briefing.txt` e `run.json`, e smoke **3/3**.
+
+### O QUE FICA, e é a defesa
+
+A auditoria foi rodada num clone com `CLAUDE.md` substituído pela carta do avaliador, sem memória
+e sem acesso à autoavaliação. **Ela achou 10 coisas e 1 estava errada, 2 tinham a causa errada.**
+Isso não desqualifica a auditoria — qualifica o protocolo. **A frase da arguição:** *"recebi uma
+auditoria independente, verifiquei achado a achado antes de tocar em código, um caiu e dois
+tinham diagnóstico errado — e os dois erros de diagnóstico eram sobre distinções que o meu
+próprio log já tinha construído com instrumento."*
+
 
 ## Decisões pendentes
 
