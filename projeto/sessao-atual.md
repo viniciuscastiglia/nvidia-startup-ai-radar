@@ -77,9 +77,43 @@ rerank Cohere vivo · interface sobe e serve `/`, `/api/runs`, `briefing.txt` e 
 **3/3 em 11 s**. Réguas idênticas depois de tudo: `classe 3/7 · stack 6/7 · confianca 0/6` ·
 exclusões `10/10 e 11/11` · gabarito `24/24`.
 
+## 🎬 HANDOFF PARA A SESSÃO DO VÍDEO — leia isto primeiro
+
+**O código fechou. Só o vídeo resta, e o roteiro já está escrito e medido:
+`projeto/roteiro-video.md`.**
+
+A sessão que gravar o vídeo **não precisa reverificar o sistema** — quem viu tudo rodar em 08/09
+foi o Vinícius, ao vivo, e ele é a fonte. O que ela precisa saber:
+
+| fato | valor | quando foi medido |
+|---|---|---|
+| suíte | `134 passed` em 7 s | 08/09 |
+| grafo ponta a ponta, 3 empresas, rerank ligado | **143 s** | 08/09 |
+| trilha do fan-out ao vivo | funciona, vista na tela | 08/09 |
+| espera no `nvidia_rag`, 2 empresas | **60–90 s** | 08/09 |
+| a cena da abstenção | **377,6 s** | 08/09, caminho de produção |
+| smoke | 3/3 em **11 s** | 08/09, com a chave nova |
+| fala do roteiro | **824 palavras = 5:41** a 145 ppm | 08/09 |
+
+**O que a sessão nova DEVE refazer antes de gravar, e só isso:**
+
+1. `python scripts/smoke_nvidia.py` — 3/3. **Não existe aviso prévio de EOL neste catálogo**, e o
+   quarto EOL passou 13 h despercebido por ninguém ter rodado.
+2. Confirmar `RERANK_PROVEDOR=cohere`. Com o rerank desligado a tela mostra a **tecnologia
+   errada** (D-097), e isso apareceria no vídeo sem avisar ninguém.
+3. **NÃO rodar `--refetch`** — reescreve o cache e o corpus deixa de ser o que foi medido.
+
+**O que ela NÃO deve refazer:** a verificação de 08/09 inteira. Está em D-121 e no git.
+
+> **O viés que motivou a troca de sessão, escrito para que ela não o herde:** a sessão de 08/09
+> passou o dia dentro de defeitos — auditoria externa, D-120, D-121, cota morrendo — e isso
+> contaminou o primeiro rascunho do roteiro, que dedicava 13% do vídeo a *"o que meu sistema
+> reprova"*. **O vídeo mostra o sistema funcionando**; a honestidade sobre defeito é a nota final,
+> não o prato. O roteiro atual já está corrigido nesse ponto (D-122).
+
 ## 🔴 O QUE CONTINUA ABERTO
 
-1. **O VÍDEO — roteiro E gravação, nenhum dos dois existe.** É eliminatório e é o **único item que
+1. **O VÍDEO — o roteiro EXISTE (`projeto/roteiro-video.md`, D-122); falta gravar.** É eliminatório e é o **único item que
    ainda move nota de forma garantida**: 0 → nível 3 vale **+15 pontos**. Os critérios 2, 4 e 6 já
    estão em 4/4 (30 pontos sem folga) e os critérios 1 e 3 pedem redesenho dos agentes.
 2. **`run-recomendacoes.json` tem 30 empresas e a base tem 32** (D-118, achado #6 da auditoria).
