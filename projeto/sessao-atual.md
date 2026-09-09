@@ -91,9 +91,24 @@ exclusões `10/10 e 11/11` · gabarito `24/24`.
    > **E o número que engana: o smoke deu chat completion em 6,9 s no mesmo minuto.** O smoke manda
    > prompt trivial pedindo 120 tokens; o passo 8 manda 5 passagens com `json_schema`. **O smoke é
    > instrumento de VIDA, não de latência** — não planeje o vídeo pelo relógio dele.
-4. **A interface nunca foi vista por MIM rodando uma consulta ponta a ponta na tela.** A auditoria
-   diz que rodou e que os quatro itens funcionam; eu confirmei que ela sobe, serve e exporta. A
-   diferença entre relato e execução é a que já derrubou um achado hoje.
+4. ✅ **FECHADO — a trilha do fan-out foi vista ao vivo em 08/09.** `query_planner ✓ → retriever ✓
+   → analisar_startup → briefing` no topo, e uma linha por empresa com os seis nós do subgrafo
+   acendendo por SSE. As duas empresas avançam em ritmos diferentes, o que é o fan-out visível.
+   Confirmada também, ao vivo, a ressalva da auditoria: `analisar_startup` recebe ✓ antes de todas
+   as branches terminarem.
+
+> ## ⚠️ A COTA MENSAL DO COHERE ZEROU EM 08/09, PELA SEGUNDA VEZ (a 1ª foi D-093)
+>
+> `429` com *"limited to 1000 API calls / month"*, `retry-after` **ausente**. Ela morreu **no meio
+> de um run pela interface** — a trilha ficou parada em `nvidia_rag` por 4 minutos sem erro
+> nenhum na tela e sem uma linha no log do servidor. **O sintoma de cota esgotada é
+> indistinguível de lentidão** para quem olha só a tela.
+>
+> **Chave nova no `.env`, verificada:** smoke 3/3 em 11 s e o run de 2 empresas completou.
+>
+> **Antes de gravar, teste o rerank — não só o smoke.** O smoke faz UMA chamada de rerank; um run
+> de 2 empresas faz muitas. Se a cota morrer no meio da gravação, a recomendação degrada em
+> silêncio (D-097) e o vídeo mostra a tecnologia errada sem avisar ninguém.
 
 ## ⛔ DEFEITO MEDIDO SEM CONSERTO DISPONÍVEL — é a defesa, não a pendência
 
