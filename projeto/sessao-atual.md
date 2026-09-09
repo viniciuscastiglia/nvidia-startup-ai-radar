@@ -104,11 +104,13 @@ exclusões `10/10 e 11/11` · gabarito `24/24`.
 > nenhum na tela e sem uma linha no log do servidor. **O sintoma de cota esgotada é
 > indistinguível de lentidão** para quem olha só a tela.
 >
-> **Chave nova no `.env`, verificada:** smoke 3/3 em 11 s e o run de 2 empresas completou.
+> **Chave nova no `.env`, verificada:** smoke 3/3 em 11 s e o run de 2 empresas completou. Com
+> ~985 chamadas restantes, **a cota NÃO é risco para a gravação** — um run de 2 empresas gasta
+> ordem de dezena, e dez tomadas ficam na casa da centena.
 >
-> **Antes de gravar, teste o rerank — não só o smoke.** O smoke faz UMA chamada de rerank; um run
-> de 2 empresas faz muitas. Se a cota morrer no meio da gravação, a recomendação degrada em
-> silêncio (D-097) e o vídeo mostra a tecnologia errada sem avisar ninguém.
+> **O que fica não é o risco, é o mecanismo:** o esgotamento não dá erro na tela nem no log, só
+> para de andar. Se algum dia um run travar num nó sem mensagem, teste o provedor direto antes de
+> procurar bug no grafo — foi o que resolveu em 4 minutos o que a tela não dizia.
 
 ## ⛔ DEFEITO MEDIDO SEM CONSERTO DISPONÍVEL — é a defesa, não a pendência
 
