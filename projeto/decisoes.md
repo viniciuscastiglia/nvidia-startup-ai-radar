@@ -5287,6 +5287,63 @@ tinham diagnóstico errado — e os dois erros de diagnóstico eram sobre distin
 próprio log já tinha construído com instrumento."*
 
 
+## D-122 — O diferencial declarado passa a ser a AVALIAÇÃO; a recusa fundamentada vira o caso visível dela
+
+**Data:** 08/09/2026 · **nenhuma linha de código muda** · reposicionamento de README e roteiro
+
+### O QUE MUDOU
+
+O entregável 5 do TAPI pede *"algo único, para diferenciação e destaque competitivo"*. Até hoje o
+README respondia **a recusa fundamentada** — o filtro do Inception, a abstenção do RAG e a
+rastreabilidade como tipo. Passa a responder: **toda afirmação deste sistema tem um script que a
+mede, e três delas me reprovam.**
+
+### POR QUE, E A RAZÃO NÃO É MINHA
+
+**A auditoria independente chegou nisso sozinha**, sem que a pergunta lhe fosse feita. A última
+seção dela abre com *"o que este repositório faz de melhor não é o sistema — é a régua"*, e o
+README ainda anunciava outra coisa. **O diferencial estava declarado no lugar errado por
+desatenção, não por decisão.**
+
+Três razões sustentam a troca:
+
+1. **Raridade.** Recusa fundamentada é uma boa feature de produto. Linha de base trivial
+   obrigatória (D-051), critério fixado antes de medir (D-055), medir ≠ promover (D-078) e
+   hipótese reprovada registrada **como reprovada** são prática de engenharia — e o TAPI diz
+   avaliar *"a capacidade de tomar e defender decisões técnicas"*.
+2. **É o que responde toda pergunta de arguição.** Inclusive as perguntas sobre a recusa: *"como
+   você sabe que o filtro funciona?"* → `10/10 e 11/11, dos dois lados, nunca somados`.
+3. **Régua que reprova o autor não se falsifica.** Qualquer um afirma que sua feature funciona;
+   ninguém inventa *"meu motor perde de uma constante"*.
+
+### O QUE NÃO SE FEZ, E É A PARTE QUE IMPORTA
+
+**Não se trocou uma pela outra — subordinou-se uma à outra.** O filtro do Inception é o que o
+gerente VÊ; a régua é invisível para ele. Trocar teria custado a cena demonstrável de 20 segundos
+em troca de uma tabela de terminal. Na moldura nova a régua é a manchete e a recusa é a **prova
+exibível** — não se perde nada dos dois lados.
+
+### E ELE PEGOU UM ERRO NA HORA DE ESCREVER
+
+Ao montar a tabela do README eu afirmei que a linha trivial de `maturidade_stack` era 5/7. **Rodei
+`--baseline` antes de commitar: é 6/7 — o motor EMPATA.** Publicar um número não medido na seção
+que declara *"toda afirmação tem um script que a mede"* teria sido a contradição mais cara possível.
+Na mesma passada saiu o *"22 empresas sem gabarito"*, que virou **24** quando a base foi para 32
+em D-118.
+
+### CONSEQUÊNCIA NO ROTEIRO, E ELA REVERTEU UMA PROPOSTA MINHA
+
+Duas horas antes eu havia proposto **cortar o bloco final da régua de 0:56 para 0:30**, com o
+argumento de que era o meu viés de defeito falando depois de um dia inteiro dentro de auditoria.
+**Com a moldura nova, aquele corte cortava a manchete.** O bloco cresceu para 1:06, mudou de tom —
+de *"o que eu reprovo em mim"* para *"como eu sei de tudo que falei"* — e as 120 palavras saíram
+dos três blocos de demo.
+
+**Alternativa descartada:** manter a recusa como manchete e citar a régua de passagem. Ela perde
+porque deixa a pergunta *"como você sabe?"* sem dono, e é exatamente a pergunta que o TAPI diz que
+vai fazer.
+
+
 ## Decisões pendentes
 
 | # | Decisão | Estado |

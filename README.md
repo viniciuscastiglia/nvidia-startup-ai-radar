@@ -40,12 +40,49 @@ justificativa de negócio, prioridade, complexidade, próxima ação e as fontes
 **Toda conclusão do sistema aponta para o documento que a sustenta.** `Afirmacao` não existe sem
 `list[Evidencia]` — rastreabilidade é propriedade do tipo, não disciplina do programador.
 
-## O diferencial: este sistema sabe dizer "não"
+## O diferencial: toda afirmação deste sistema tem um script que a mede — e dois deles me reprovam
 
 > Entregável 5 do TAPI — *"algo único, para diferenciação e destaque competitivo"*.
 
-Um recomendador que sempre recomenda não ajuda ninguém a decidir. **O diferencial deste projeto é
-a recusa fundamentada, e ela aparece em três lugares independentes:**
+Não é raro um projeto afirmar que funciona. É raro ele **poder ser desmentido pelo próprio autor**.
+Aqui, cada afirmação sobre o sistema tem um comando que a produz, e o resultado entra no
+repositório mesmo quando é ruim:
+
+| o que se afirma | o motor | a linha trivial | onde |
+|---|---|---|---|
+| classifica AI-native / AI-enabled / non-AI | **3/7** | **4/7** ← perde | `avaliar_agentes.py` |
+| mede a maturidade da stack | **6/7** | **6/7** ← empata | idem |
+| gradua a confiança do diagnóstico | **0/6** | **3/8** ← perde | idem |
+| identifica a dor da empresa | **49% / 100%** | 32% | idem |
+| recomenda a tecnologia relevante | **38%** | **44%** ← perde | `--regras-tapi` |
+| escolhe o trecho da justificativa | **71%** | 57% | `--justificativas` |
+| filtra quem não cabe no Inception | **10/10 e 11/11** | — | `--exclusoes` |
+| recusa responder o que não sabe | **23/24** | — | `avaliar_rag.py --geracao` |
+| recupera o trecho certo (recall estrito) | **95%** | 79% sem rerank | `avaliar_rag.py` |
+
+**Três linhas onde o motor perde, uma onde empata, e todas publicadas.** Um recomendador que perde de um recomendador
+constante é um defeito — e ele vai para a defesa com a causa nomeada e o teto do conserto
+calculado, não escondido.
+
+O que faz disto uma régua e não um placar:
+
+- **A linha de base trivial é obrigatória em toda tabela** (D-051). Sem ela, *"49% de precisão"*
+  parece bom; com ela, você vê que são 17 pontos acima de emitir tudo — e que em três campos o
+  motor não compra nada.
+- **O critério é fixado ANTES de medir** (D-055). Alvo decidido depois do placar não é medição.
+- **Medir não é promover** (D-078). Modelo que ganhou a comparação e não foi para produção está
+  registrado com a razão.
+- **Hipótese reprovada fica registrada como reprovada**, com o comando que a derruba: rubrica em
+  degraus (D-060), `PROFUNDOS` alternativo (D-106), confiança do diagnóstico (D-059), o juiz do
+  Groq (D-109), e duas propostas que morreram na medição em 08/09.
+- **O gabarito tem duas camadas** (D-062): 8 das 32 empresas são anotadas e movem número; as
+  outras 24 entram como dado puro. Anotá-las seria calibrar contra o próprio gabarito — e sem
+  esse filtro a precisão **cai de 49% para 24%, em silêncio**.
+
+### O caso mais visível da régua: o sistema sabe dizer "não"
+
+Um recomendador que sempre recomenda não ajuda ninguém a decidir. A recusa fundamentada aparece em
+três lugares independentes — e cada um é uma linha da tabela acima, não uma promessa:
 
 - **O sistema recusa RECOMENDAR — o filtro do NVIDIA Inception.** Exclui consultoria, capital
   aberto, cripto e empresa com mais de 10 anos, **citando a frase do documento que provou a
@@ -55,14 +92,16 @@ a recusa fundamentada, e ela aparece em três lugares independentes:**
   rastrear boi não faz de ninguém uma cripto, do mesmo jeito que pagar por token não faz
   (D-090). O veto de terceiro tem escopo de frase, então *"a Automni em parceria com a Davinci
   Consulting"* não exclui a Automni (D-085). Medido dos **dois lados, nunca somados**: falso
-  negativo 10/10, falso positivo 11/11.
+  negativo 10/10, falso positivo 11/11 — porque os dois erros têm custos diferentes.
 - **O RAG recusa RESPONDER o que não sabe.** Abstenção de **23/24** sobre um gabarito de 24
   perguntas, das quais **5 não têm resposta no corpus**. O erro que ele existe para evitar é o
   pior de todos num briefing comercial: responder com trecho perfeitamente relevante que não
-  contém o fato, citando fonte real e inventando só o número.
-- **E o sistema recusa AFIRMAR sem lastro** — é a rastreabilidade da seção acima, vista do outro
-  lado: como `Afirmacao` não existe sem `list[Evidencia]`, uma conclusão sem fonte não é
-  improvável, é **inexprimível**. O rodapé do briefing vira verificação, não promessa.
+  contém o fato, citando fonte real e inventando só o número. E a abstenção **não mora num
+  limiar**: duas hipóteses de corte por score foram medidas e reprovadas (D-033, D-035) — as
+  distribuições se sobrepõem nos cinco motores.
+- **E o sistema recusa AFIRMAR sem lastro** — como `Afirmacao` não existe sem `list[Evidencia]`,
+  uma conclusão sem fonte não é improvável, é **inexprimível**. O rodapé do briefing vira
+  verificação, não promessa.
 
 Some-se a isso a vitrine do passo 7, que põe lado a lado a ordem da busca híbrida e a do
 cross-encoder para a mesma consulta, com o deslocamento de cada passagem: **o reranking mostra o
@@ -162,7 +201,7 @@ Cada nó acima tem um `__error_handler__` que o diagrama omite por legibilidade 
 | 2 | **RAG NVIDIA com reranking** | [`src/rag/`](src/rag/) — os passos 2, 3, 6, 7 e 8 do pipeline de 9 do TAPI, um módulo cada | `python scripts/avaliar_rag.py` · `--geracao` para a abstenção |
 | 3 | **Motor de recomendação** | [`src/agents/recommendation.py`](src/agents/recommendation.py) — os **7 campos obrigatórios** são atributos de `Recomendacao` em [`src/state.py`](src/state.py) | `python scripts/avaliar_agentes.py --regras-tapi` |
 | 4 | **Interface web** | [`src/web/`](src/web/) — FastAPI + SSE, front à mão | `python -m src.web` |
-| 5 | **Diferencial** | a **recusa fundamentada** — [seção acima](#o-diferencial-este-sistema-sabe-dizer-não) · [`src/agents/briefing.py`](src/agents/briefing.py) (`elegibilidade`) · [`src/rag/geracao.py`](src/rag/geracao.py) (abstenção) | `python scripts/varrer_elegibilidade.py --motivos` |
+| 5 | **Diferencial** | **a avaliação: toda afirmação tem um script que a mede** — [seção acima](#o-diferencial-toda-afirmação-deste-sistema-tem-um-script-que-a-mede--e-dois-deles-me-reprovam) · [`scripts/avaliar_agentes.py`](scripts/avaliar_agentes.py) · [`scripts/avaliar_rag.py`](scripts/avaliar_rag.py). O caso mais visível dela é a **recusa fundamentada**: [`elegibilidade`](src/agents/briefing.py) e a [abstenção](src/rag/geracao.py) | `python scripts/avaliar_agentes.py --baseline` · `--exclusoes` · `varrer_elegibilidade.py --motivos` |
 
 Os **7 campos obrigatórios do output** (§5.5 do TAPI) são atributos numerados de `Recomendacao`,
 e não texto que um LLM prometeu produzir — *"cumpre o requisito" passa a ser verificável lendo a
