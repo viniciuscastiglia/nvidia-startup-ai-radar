@@ -82,18 +82,16 @@ exclusões `10/10 e 11/11` · gabarito `24/24`.
 1. **O VÍDEO — roteiro E gravação, nenhum dos dois existe.** É eliminatório e é o **único item que
    ainda move nota de forma garantida**: 0 → nível 3 vale **+15 pontos**. Os critérios 2, 4 e 6 já
    estão em 4/4 (30 pontos sem folga) e os critérios 1 e 3 pedem redesenho dos agentes.
-2. **O canal de submissão** — ninguém tratou, e não é código. É o item que torna todo o resto
-   irrelevante se falhar.
-3. **`run-recomendacoes.json` tem 30 empresas e a base tem 32** (D-118, achado #6 da auditoria).
+2. **`run-recomendacoes.json` tem 30 empresas e a base tem 32** (D-118, achado #6 da auditoria).
    Re-rodar custa ~17 min e cota do Cohere, e **pode mover a manchete 38%×44% para qualquer lado** —
    a NeoSpace é `AI-native` e sweet-spot. Critério fixado ANTES, ou não rode.
-4. **A cena da abstenção custa 377,6 s** — re-medida em 08/09 pelo caminho de produção, contra os
+3. **A cena da abstenção custa 377,6 s** — re-medida em 08/09 pelo caminho de produção, contra os
    510 s anteriores. Continua **não filmável em tempo real**: grave por cima do run commitado em
    `data/runs/exemplo-*.json`.
    > **E o número que engana: o smoke deu chat completion em 6,9 s no mesmo minuto.** O smoke manda
    > prompt trivial pedindo 120 tokens; o passo 8 manda 5 passagens com `json_schema`. **O smoke é
    > instrumento de VIDA, não de latência** — não planeje o vídeo pelo relógio dele.
-5. **A interface nunca foi vista por MIM rodando uma consulta ponta a ponta na tela.** A auditoria
+4. **A interface nunca foi vista por MIM rodando uma consulta ponta a ponta na tela.** A auditoria
    diz que rodou e que os quatro itens funcionam; eu confirmei que ela sobe, serve e exporta. A
    diferença entre relato e execução é a que já derrubou um achado hoje.
 
@@ -173,7 +171,6 @@ D-087.
 4. **`RERANK_PROVEDOR=cohere` para gravar** (D-097) e `empresas` **baixo** — um run de 2 empresas
    custou ~2 min medidos hoje.
 5. **NÃO rode `--refetch` antes de gravar.** Ele reescreve o cache e o corpus deixa de ser o medido.
-6. **O canal de submissão continua aberto** — é o único item que ninguém conserta em 09/09.
 
 ### O que continua ACEITO e escrito, com os dois lados medidos
 
@@ -628,8 +625,8 @@ produto.**
 ## Decisões do Vinícius
 
 - ✅ **A entrega é INDIVIDUAL**, e o formato é **o repositório + o vídeo** (03/09).
-- **O canal de submissão** segue aberto, com prazo **06/09**. É o único item que ninguém conserta
-  em 09/09.
+- ✅ **O canal de submissão é um formulário que eles enviam** (resolvido em 08/09). **Item
+  encerrado — não reabrir.**
 - **04/09: escopo da interface (P-06) e se (b) entra** — as duas se decidem com o briefing real na
   frente, e ele existe agora, com 30 empresas em 10 setores.
 - O repositório é **público**, então `projeto/` faz parte do entregável — mas só se o README
