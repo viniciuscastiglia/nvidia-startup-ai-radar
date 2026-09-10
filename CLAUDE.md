@@ -163,8 +163,8 @@ Consulta do usuário
 >   **o Cohere é ponto único de falha.** Rode `smoke_nvidia.py` antes de gravar e de entregar.
 > - **A COTA MENSAL DA TRIAL DO COHERE ACABOU EM 03/09 (D-093).** `429` com *"limited to 1000
 >   API calls / month"* — **não é o teto por minuto, é o do mês**, e ele não recupera sozinho.
->   **`RERANK_PROVEDOR=nenhum` roda tudo** — grafo completo e `pytest` 81 passed **em 6,5 s**,
->   contra 150-460 s com o Cohere ligado. Use isso como **default de desenvolvimento**; o
+>   **`RERANK_PROVEDOR=nenhum` roda tudo** — grafo completo e `pytest` **134 passed em 7,3 s**
+>   (medido em 09/09), contra 150-460 s com o Cohere ligado. Use isso como **default de desenvolvimento**; o
 >   Cohere entra só quando se quer medir o passo 7.
 > - **MAS NÃO JULGUE RECOMENDAÇÃO COM O RERANK DESLIGADO (D-097).** Em 03/09 uma auditoria quase
 >   registrou como defeito grave o *"NVIDIA Healthcare recomendado para uma agtech"*. Era artefato
@@ -190,8 +190,8 @@ Nenhum número vive aqui: números envelhecem e este arquivo é carregado em tod
 | abstenção do passo 8 | **D-040** · re-medida em 06/09 nos **dois** provedores (D-111) | `--geracao` |
 | filtro do Inception (falso positivo E negativo) | **D-085** | `--exclusoes` |
 | `justificativa_tecnica`: seletor × os 150 primeiros | **D-086** | `--justificativas` |
-| filtro do Inception, os 30 vereditos numa tabela | **D-094** | `varrer_elegibilidade.py` |
-| classe das 30 + o custo de cada conserto na régua | **D-098, D-101** | `varrer_classes.py` |
+| filtro do Inception, os 32 vereditos numa tabela | **D-094** | `varrer_elegibilidade.py` |
+| classe das 32 + o custo de cada conserto na régua | **D-098, D-101** | `varrer_classes.py` |
 | confiança do diagnóstico, os 4 braços | **D-098** | `medir_confianca.py` |
 | relevância: as 7 regras do TAPI × a linha trivial | **D-105** | `--regras-tapi` |
 | `PROFUNDOS` alternativo — braço REPROVADO | **D-106** | `--profundos` |
@@ -202,18 +202,19 @@ critério, e sem ela 49% de precisão parece bom em vez de "17 pontos acima de e
 
 ## Estado da base
 
-- **30 startups** em `data/seed/*.yaml`, **93 documentos**, `url_fonte` verificadas **93/93**
-  (D-090). **A M3 fechou** — é o piso de 30-50 que o TAPI recomenda. `ano_fundacao` literal em
-  18 de 30, `estagio` em 11, `localizacao` em 9: baixo **de propósito**, porque só entra o que
+- **32 startups** em `data/seed/*.yaml`, **99 documentos**, `url_fonte` verificadas **99/99**
+  (D-090 mediu 93/93; re-medido em 09/09 com as 6 de D-118 — *todas as URLs resolvem*).
+  **A M3 fechou** — é o piso de 30-50 que o TAPI recomenda. `ano_fundacao` literal em
+  20 de 32, `estagio` em 12, `localizacao` em 9: baixo **de propósito**, porque só entra o que
   o documento diz LITERALMENTE — `null` faz o Briefing reportar *"requisito não verificado"*.
   **Duas camadas (D-062):** **8 com bloco `gabarito:`** — a régua dos critérios 1 e 3, e as únicas
-  que movem número — e **22 como DADO, sem gabarito**, porque anotá-las seria calibrar contra o
+  que movem número — e **24 como DADO, sem gabarito**, porque anotá-las seria calibrar contra o
   próprio gabarito. `avaliar_agentes.py` filtra por `gabarito` e imprime as duas contagens; sem
   esse filtro a precisão cai de 49% para 24% **em silêncio** (contrafactual medido em D-090).
   **As 10 chaves de `SETORES` têm empresa** — nenhuma consulta do vocabulário do planner devolve
   zero. **As 4 exclusões do Inception têm caso REAL:** consultoria (Deal), capital aberto
   (Zenvia/Nasdaq), cripto (Liqi/stablecoin), > 10 anos (**5 casos**: Agrorobótica, Agrotools,
-  Automni, JetBov e — desde 08/09 — Solinftec). **São 8 recusas em 30**, e `varrer_elegibilidade.py`
+  Automni, JetBov e — desde 08/09 — Solinftec). **São 8 recusas em 32**, e `varrer_elegibilidade.py`
   imprime a tabela.
   > **A SOLINFTEC MUDOU DE LADO EM 08/09 (D-115), e a entrada anterior dizia o contrário.** Ela
   > era o CASO-LIMITE: 18 anos, `ano_fundacao: null` porque o documento diz *"Criada há 18 anos"*
@@ -271,10 +272,10 @@ python scripts/avaliar_agentes.py              # extrator + classificador + vali
 python scripts/avaliar_agentes.py --exclusoes  # filtro do Inception: falso positivo E negativo
 python scripts/avaliar_agentes.py --justificativas  # o seletor do trecho técnico vs. os 150 primeiros
 python scripts/avaliar_agentes.py --regras-tapi     # relevância: as 7 regras do TAPI, com trivial (D-105)
-python scripts/avaliar_agentes.py --regras-tapi --rodar-motor  # refaz o run das 30 antes: CUSTA API, ~17 min
-python scripts/varrer_elegibilidade.py         # o veredito das 30 numa tabela, zero API (D-094)
+python scripts/avaliar_agentes.py --regras-tapi --rodar-motor  # refaz o run das 32 antes: CUSTA API, ~17 min
+python scripts/varrer_elegibilidade.py         # o veredito das 32 numa tabela, zero API (D-094)
 python scripts/varrer_elegibilidade.py --motivos   # com a evidência de cada recusa
-python scripts/varrer_classes.py               # o veredito de CLASSE das 30, com quadrante (D-098)
+python scripts/varrer_classes.py               # o veredito de CLASSE das 32, com quadrante (D-098)
 python scripts/varrer_classes.py --custo-desenhos  # o que cada conserto custa NA RÉGUA
 python scripts/varrer_classes.py --forca-bruta     # PROVA que `fora-do-funil` é inalcançável (D-103)
 python scripts/varrer_classes.py --prioridades     # os 4 desenhos de `prioridade` (D-103)
