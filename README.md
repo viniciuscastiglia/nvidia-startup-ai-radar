@@ -261,6 +261,15 @@ python -m src.web                       # interface em http://127.0.0.1:8000
 python -m src.graph "fintechs brasileiras usando IA"    # ou pela linha de comando
 ```
 
+**Sem chave de API e sem banco ainda se vê o sistema rodado.**
+[`data/runs/exemplo-agro-visao-computacional.json`](data/runs/exemplo-agro-visao-computacional.json)
+é um run real commitado — 3 empresas, o passo 7 com o Cohere ligado, o briefing inteiro e as
+fontes. Feito só o passo 1, `python -m src.web` sobe e **"Runs salvos"** abre esse run: a tela o
+desenha do **mesmo** JSON que ela desenha ao vivo, com data, empresas e qual provedor de rerank o
+produziu — e **isso não toca Postgres nem a API** (verificado com `DATABASE_URL` apontando para um
+banco inexistente: `HTTP 200`). Faltando credencial, a tela avisa na abertura em vez de deixar o
+leitor gastar minutos num run que vai falhar. Ver não é o mesmo que rodar — mas é melhor que ler.
+
 **Sem chave de rerank o projeto roda**: `RERANK_PROVEDOR=nenhum` tira o passo 7 do caminho e a
 busca híbrida sozinha faz 95% de recall@1. Use isso para desenvolver — a suíte passa em 7 s em vez
 de 150-460 s. **Mas não julgue as recomendações assim**: quem decide qual tecnologia a empresa
@@ -293,7 +302,7 @@ README — eles envelhecem, e cada um tem um comando que o reproduz:
 | **a linha de base trivial**, obrigatória em toda tabela de agente | `python scripts/avaliar_agentes.py --baseline` |
 | filtro do Inception — falso positivo **e** falso negativo, nunca somados | `python scripts/avaliar_agentes.py --exclusoes` |
 | relevância da recomendação: as 7 regras de exemplo do TAPI | `python scripts/avaliar_agentes.py --regras-tapi` |
-| o veredito de elegibilidade das 30, numa tabela para LER | `python scripts/varrer_elegibilidade.py` |
+| o veredito de elegibilidade das 32, numa tabela para LER | `python scripts/varrer_elegibilidade.py` |
 
 Três disciplinas que valem mais que os números:
 
