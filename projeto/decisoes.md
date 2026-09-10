@@ -5344,6 +5344,30 @@ porque deixa a pergunta *"como você sabe?"* sem dono, e é exatamente a pergunt
 vai fazer.
 
 
+## D-123 — A varredura de entrega: o link que ia ser enviado era um 404
+
+**Data:** 09/09/2026 · dia da entrega · smoke **3/3** · `pytest` **134 passed em 7,3 s**
+**Decisão:** o repositório vai **público**, com os 37 commits empurrados, e o README passa a
+ensinar o caminho de quem não tem chave de API. O vídeo fica só no formulário (decisão do autor).
+**Alternativas descartadas:** manter privado e convidar os avaliadores como colaboradores — cada
+um teria de aceitar convite por e-mail antes de conseguir abrir, e a entrega é **um link**; e
+empurrar sem reconferir os números, que é o que quase aconteceu.
+**Motivo:** o entregável estava **inalcançável, e nada no repositório acusava**. O remoto estava
+`PRIVATE` e **34 commits atrás** (`pushedAt` de 06/09): a URL devolveria 404 e, com acesso,
+mostraria o projeto sem a semana final — sem a porta do passo 8 (D-111), sem D-115/116/118, sem o
+README que nomeia o Diferencial. **Nenhum teste vê isso**, porque não é propriedade do código: é
+propriedade do que foi publicado. Conferido **sem token, como o avaliador confere**: `HTTP 200` na
+URL, `private: False`, os 10 arquivos essenciais em `200`, e `.env` e `projeto/avaliacao-*.md` em
+**`404`** — o `.gitignore` cumpriu nos dois.
+**O segundo achado, e é de conteúdo:** `data/runs/exemplo-*.json` existe desde 06/09 justamente
+para quem não tem chave, e o docstring de `persistencia.py` promete que *"quem clonar sem chave
+nenhuma consegue ver o sistema"* — mas **o README nunca o mencionou**, então para quem clona ele
+não existia. Medido aqui: com `DATABASE_URL` apontando para um banco inexistente,
+`python -m src.web` sobe e serve o run (`HTTP 200`). **Ver o run não toca Postgres nem a API** — é uma
+promessa mais forte do que a que estava escrita, e agora está escrita.
+**Reversível?** a visibilidade, sim; **a publicação, não** — clone de terceiro sobrevive. É por
+isso que conferir o que sobe vem **antes** do `push`, e não depois.
+
 ## Decisões pendentes
 
 | # | Decisão | Estado |
