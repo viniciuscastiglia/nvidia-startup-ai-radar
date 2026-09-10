@@ -73,7 +73,6 @@ Quem não entende o que construiu não consegue evoluir nem depurar. Ao implemen
 - Português nas explicações e na documentação.
 - **Subagentes: evitar neste projeto.** Eles começam sem contexto e devolvem resultado pronto —
   código que entra sem ninguém entender por quê é código que ninguém consegue evoluir depois.
-  Ver `projeto/guia-de-trabalho.md`.
 - **RODE O SISTEMA. Leitura de código não substitui execução (D-083).** Toda sessão que mexe em
   comportamento roda `python -m src.graph` **antes de fechar**, e olha a saída — não o traceback.
   Medido em 02/09: duas sessões de auditoria estática não acharam nenhum dos três defeitos que uma
@@ -332,10 +331,8 @@ Para avaliar sem Postgres local: `docker compose up -d` (porta 5433) e ajustar `
 | Arquivo | Abrir quando |
 |---|---|
 | `projeto/sessao-atual.md` | **no início de qualquer sessão** — o que está aberto e as decisões pendentes |
-| `projeto/revisao-pontos-cegos.md` | **envelope lacrado da revisão do plano** — abre com os limites da auditoria (pode ler sempre) e fecha com a lista de quem fez o plano, que só deve ser lida DEPOIS de você ter escrito a sua |
 | `projeto/decisoes.md` | **sempre que uma decisão for tomada** — escrever na hora. É o material de defesa, o roteiro do vídeo e a seção de arquitetura do README |
 | `projeto/plano.md` | **plano dos dias finais** — todo item aberto com destino, portões e eliminatórios · [versão visual](https://claude.ai/code/artifact/b6d37462-6743-43c1-ac6d-da5a15af7839) |
-| `projeto/guia-de-trabalho.md` | método de trabalho e manutenção desta documentação |
 | `contexto/01-tapi.md` | precisar do requisito exato: schema, os 7 campos do output, pipeline de 9 passos, regras do vídeo, tabela do barema |
 | `contexto/02-rubrica-ai-native.md` | for mexer no Extractor, no Classifier ou no Evidence Validator — é a rubrica que o TAPI não fornece |
 | `contexto/03-stack-nvidia.md` | for mexer na base de conhecimento ou no motor de recomendação |
